@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"    
+    android:orientation="vertical" >    
+    
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent" 
+        android:layout_above="@+id/ll"/>
+    
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"    
+	    android:orientation="vertical"
+	    android:layout_alignParentBottom="true"	    
+	    android:padding="10dip"
+	    >
+<!-- 	    android:background="@color/light_grey" -->
+
+    <Button
+        android:id="@+id/go_to_route_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Començar itinerari!" />
+    
+    </LinearLayout>
+    
+</RelativeLayout>
+
+<!-- <fragment xmlns:android="http://schemas.android.com/apk/res/android" -->
+<!--       android:id="@+id/map" -->
+<!--       android:layout_width="match_parent" -->
+<!--       android:layout_height="match_parent" -->
+<!--       android:name="com.google.android.gms.maps.MapFragment"/> -->
