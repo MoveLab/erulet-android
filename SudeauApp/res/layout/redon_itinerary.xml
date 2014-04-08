@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Redon: llocs d’interès "
+        android:background="@color/dark_grey"
+        android:textColor="@color/white" 
+       android:textSize="30sp"
+       android:gravity="center" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/redon_itn"
+        android:scaleType="center" />
+
+</LinearLayout>
