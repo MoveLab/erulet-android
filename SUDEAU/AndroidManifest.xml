@@ -50,5 +50,8 @@
         <activity
             android:name="net.movelab.sudeau.DetailItineraryActivity">
         </activity>
+        <activity
+            android:name="net.movelab.sudeau.CompassActivity">
+        </activity>
     </application>			    
 </manifest>

@@ -4,11 +4,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -18,15 +29,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
-
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class DetailItineraryActivity extends Activity {
 	
@@ -70,9 +72,17 @@ public class DetailItineraryActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.detail_itinerary_map);
 		setUpMapIfNeeded();		
+		Button btn_compass = (Button)findViewById(R.id.go_to_compass);
+		btn_compass.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(DetailItineraryActivity.this,CompassActivity.class);
+				startActivity(i);				
+			}
+		});
 	}
 	
 	private void setUpMapIfNeeded() {
