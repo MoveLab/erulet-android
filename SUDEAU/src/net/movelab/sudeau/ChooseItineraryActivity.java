@@ -1,16 +1,18 @@
 package net.movelab.sudeau;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -19,18 +21,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
-import com.google.android.gms.maps.model.UrlTileProvider;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class ChooseItineraryActivity extends Activity {
 
@@ -48,38 +38,41 @@ public class ChooseItineraryActivity extends Activity {
 		setUpMapIfNeeded();
 		initControls();
 	}
-	
-	private void initControls(){
+
+	private void initControls() {
 		goToRouteBtn = (Button) findViewById(R.id.go_to_route_btn);
-		goToRouteBtn.setOnClickListener(new View.OnClickListener() {			
+		goToRouteBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Intent i = new Intent(ChooseItineraryActivity.this,DetailItineraryActivity.class);
+				Intent i = new Intent(ChooseItineraryActivity.this,
+						DetailItineraryActivity.class);
 				startActivity(i);
 			}
-		});		
+		});
 	}
 
 	private void setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (mMap == null) {
+
 			mMap = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				// addMarkers
 				addRouteMarkers();
-			}
-			if (mMap != null) {
+
 				TileProvider tileProvider = initTileProvider();
 				TileOverlay tileOverlay = mMap
 						.addTileOverlay(new TileOverlayOptions()
 								.tileProvider(tileProvider));
 				tileOverlay.setVisible(true);
+
+				mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(VALL_ARAN_1,
+						11));
 			}
-			mMap.setMapType(GoogleMap.MAP_TYPE_NONE);			
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(VALL_ARAN_1,11));			
 		}
 	}
 
@@ -89,24 +82,33 @@ public class ChooseItineraryActivity extends Activity {
 				.position(VALL_ARAN_1)
 				.title("Itinerari 1")
 				.snippet("Descripció breu de l'itinerari 1!")
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 		Marker my_marker_2 = mMap.addMarker(new MarkerOptions()
 				.position(VALL_ARAN_2)
 				.title("Itinerari 2")
 				.snippet("Descripció breu de l'itinerari 2!")
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 		Marker my_marker_3 = mMap.addMarker(new MarkerOptions()
 				.position(ESTANH_REDON)
 				.title("Estanh Redon")
 				.snippet("Descripció breu de l'itinerari 3!")
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 	}
 
 	private TileProvider initTileProvider() {
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {
-				InputStream is = getAssets().open("OSMPublicTransport_HiRes.mbtiles");
+				// InputStream is = getAssets().open(
+				// "OSMPublicTransport_HiRes.mbtiles");
+
+				File inputFile = new File(
+						Environment.getExternalStorageDirectory(),
+						"OSMPublicTransport_HiRes.mbtiles");
+				FileInputStream is = new FileInputStream(inputFile);
 				int size = is.available();
 				byte[] buffer = new byte[size];
 				is.read(buffer);

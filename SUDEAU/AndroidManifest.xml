@@ -38,6 +38,10 @@
         <activity
             android:name="net.movelab.sudeau.ChooseItineraryActivity">
         </activity>
+                <activity
+            android:name="net.movelab.sudeau.ChooseItineraryActivityLegacy">
+        </activity>
+        
         <activity
             android:name="net.movelab.sudeau.PlaceInfoActivity">
         </activity>
