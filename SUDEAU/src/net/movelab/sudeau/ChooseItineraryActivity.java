@@ -3,11 +3,11 @@ package net.movelab.sudeau;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
@@ -102,13 +102,13 @@ public class ChooseItineraryActivity extends Activity {
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {
-				// InputStream is = getAssets().open(
-				// "OSMPublicTransport_HiRes.mbtiles");
+				 InputStream is = getAssets().open(
+				 "OSMPublicTransport_HiRes.mbtiles");
 
-				File inputFile = new File(
-						Environment.getExternalStorageDirectory(),
-						"OSMPublicTransport_HiRes.mbtiles");
-				FileInputStream is = new FileInputStream(inputFile);
+//				File inputFile = new File(
+//						Environment.getExternalStorageDirectory(),
+//						"OSMPublicTransport_HiRes.mbtiles");
+//				FileInputStream is = new FileInputStream(inputFile);
 				int size = is.available();
 				byte[] buffer = new byte[size];
 				is.read(buffer);
