@@ -1,73 +1,88 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <TextView
-        android:id="@+id/btn_info"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:text="Test" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/btn_routes"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_marginBottom="10dip"
-        android:layout_weight="1"
-        android:background="@drawable/selectorcolors_light"
-        android:contentDescription="Itineraris"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="10dip"
-        android:src="@drawable/routes_btn" />
+        <Button
+            android:id="@+id/btn_info"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_info_icon"
+            android:text="Informació general" >
+        </Button>
 
-    <ImageView
-        android:id="@+id/btn_spc_eco"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_marginBottom="10dip"
-        android:layout_weight="1"
-        android:background="@drawable/selectorcolors_light"
-        android:contentDescription="Espai/ecosistema a visitar"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="10dip"
-        android:src="@drawable/spc_eco_btn" />
+        <Button
+            android:id="@+id/btn_routes"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_itinerary_icon"
+            android:text="Itineraris" >
+        </Button>
 
-    <ImageView
-        android:id="@+id/btn_refinfo"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_marginBottom="10dip"
-        android:layout_weight="1"
-        android:background="@drawable/selectorcolors_light"
-        android:contentDescription="Informació de referència"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="10dip"
-        android:src="@drawable/refinfo_btn" />
+        <Button
+            android:id="@+id/btn_spc_eco"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_map_marker"
+            android:text="Espai/ecosistema a visitar" >
+        </Button>
 
-    <ImageView
-        android:id="@+id/btn_other_usrs"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_marginBottom="10dip"
-        android:layout_weight="1"
-        android:background="@drawable/selectorcolors_light"
-        android:contentDescription="Accés a informació compartida per altres usuaris"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="10dip"
-        android:src="@drawable/other_users_btn" />
+        <Button
+            android:id="@+id/btn_refinfo"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_search_icon"
+            android:text="Informació de referència" >
+        </Button>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="50dip"
+        <Button
+            android:id="@+id/btn_other_usrs"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_share_icon"
+            android:text="Informació compartit" >
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:src="@drawable/municipality_logo" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:orientation="vertical" >
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_erulet" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/municipality_logo" />
+    </LinearLayout>
+
+</RelativeLayout>

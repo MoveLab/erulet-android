@@ -1,7 +1,6 @@
 package net.movelab.sudeau;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
@@ -55,24 +54,22 @@ public class ChooseItineraryActivity extends Activity {
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (mMap == null) {
-
 			mMap = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				// addMarkers
 				addRouteMarkers();
-
+			}
+			if (mMap != null) {
 				TileProvider tileProvider = initTileProvider();
 				TileOverlay tileOverlay = mMap
 						.addTileOverlay(new TileOverlayOptions()
 								.tileProvider(tileProvider));
 				tileOverlay.setVisible(true);
-
-				mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(VALL_ARAN_1,
-						11));
 			}
+			mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(VALL_ARAN_1, 11));
 		}
 	}
 
@@ -102,13 +99,8 @@ public class ChooseItineraryActivity extends Activity {
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {
-				 InputStream is = getAssets().open(
-				 "OSMPublicTransport_HiRes.mbtiles");
-
-//				File inputFile = new File(
-//						Environment.getExternalStorageDirectory(),
-//						"OSMPublicTransport_HiRes.mbtiles");
-//				FileInputStream is = new FileInputStream(inputFile);
+				InputStream is = getAssets().open(
+						"OSMPublicTransport_HiRes.mbtiles");
 				int size = is.available();
 				byte[] buffer = new byte[size];
 				is.read(buffer);
