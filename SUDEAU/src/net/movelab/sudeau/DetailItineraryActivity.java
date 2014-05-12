@@ -90,8 +90,20 @@ public class DetailItineraryActivity extends Activity {
 				Intent i = new Intent(DetailItineraryActivity.this,CompassActivity.class);
 				startActivity(i);				
 			}
-		});				
+		});
 		
+		Button btn_stop_tracking = (Button)findViewById(R.id.stop_tracking);
+		btn_stop_tracking.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				stopTracking();
+			}
+		});
+		
+		startTracking();
+	}
+	
+	private void startTracking(){
 		Intent intent = new Intent(
 				getString(R.string.internal_message_id) + Util.MESSAGE_SCHEDULE);
 		sendBroadcast(intent);
@@ -102,6 +114,12 @@ public class DetailItineraryActivity extends Activity {
 		
 		fixReceiver = new FixReceiver(mMap);
 		registerReceiver(fixReceiver, fixFilter);
+	}
+	
+	private void stopTracking(){
+		Intent intent = new Intent(
+				getString(R.string.internal_message_id) + Util.MESSAGE_UNSCHEDULE);
+		sendBroadcast(intent);
 	}
 	
 	private void setupView(){
