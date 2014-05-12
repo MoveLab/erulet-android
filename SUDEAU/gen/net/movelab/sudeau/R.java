@@ -247,61 +247,66 @@ containing a value of this type.
         public static final int detail_pic_8=0x7f02001c;
         public static final int grey_border=0x7f02001d;
         public static final int ic_erulet=0x7f02001e;
-        public static final int ic_info_icon=0x7f02001f;
-        public static final int ic_itinerary_icon=0x7f020020;
-        public static final int ic_launcher=0x7f020021;
-        public static final int ic_map_marker=0x7f020022;
-        public static final int ic_plusone_medium_off_client=0x7f020023;
-        public static final int ic_plusone_small_off_client=0x7f020024;
-        public static final int ic_plusone_standard_off_client=0x7f020025;
-        public static final int ic_plusone_tall_off_client=0x7f020026;
-        public static final int ic_search_icon=0x7f020027;
-        public static final int ic_search_map_marker=0x7f020028;
-        public static final int ic_share_icon=0x7f020029;
-        public static final int info_btn=0x7f02002a;
-        public static final int municipality_logo=0x7f02002b;
-        public static final int no_picture=0x7f02002c;
-        public static final int other_users_btn=0x7f02002d;
-        public static final int redon_itn=0x7f02002e;
-        public static final int redon_panorama=0x7f02002f;
-        public static final int redon_sat=0x7f020030;
-        public static final int refinfo_btn=0x7f020031;
-        public static final int routes_btn=0x7f020032;
-        public static final int select_route_image=0x7f020033;
-        public static final int selectorcolors_light=0x7f020034;
-        public static final int spc_eco_btn=0x7f020035;
-        public static final int switchboard_buttons=0x7f020036;
-        public static final int switchboard_buttons_focused=0x7f020037;
-        public static final int switchboard_buttons_pressed=0x7f020038;
-        public static final int woodcut=0x7f020039;
+        public static final int ic_erulet_marker=0x7f02001f;
+        public static final int ic_erulet_pin=0x7f020020;
+        public static final int ic_info_icon=0x7f020021;
+        public static final int ic_itinerary_icon=0x7f020022;
+        public static final int ic_launcher=0x7f020023;
+        public static final int ic_map_marker=0x7f020024;
+        public static final int ic_plusone_medium_off_client=0x7f020025;
+        public static final int ic_plusone_small_off_client=0x7f020026;
+        public static final int ic_plusone_standard_off_client=0x7f020027;
+        public static final int ic_plusone_tall_off_client=0x7f020028;
+        public static final int ic_search_icon=0x7f020029;
+        public static final int ic_search_map_marker=0x7f02002a;
+        public static final int ic_share_icon=0x7f02002b;
+        public static final int ic_stat_launcher=0x7f02002c;
+        public static final int info_btn=0x7f02002d;
+        public static final int municipality_logo=0x7f02002e;
+        public static final int no_picture=0x7f02002f;
+        public static final int other_users_btn=0x7f020030;
+        public static final int redon_itn=0x7f020031;
+        public static final int redon_panorama=0x7f020032;
+        public static final int redon_sat=0x7f020033;
+        public static final int refinfo_btn=0x7f020034;
+        public static final int routes_btn=0x7f020035;
+        public static final int select_route_image=0x7f020036;
+        public static final int selectorcolors_light=0x7f020037;
+        public static final int spc_eco_btn=0x7f020038;
+        public static final int switchboard_buttons=0x7f020039;
+        public static final int switchboard_buttons_focused=0x7f02003a;
+        public static final int switchboard_buttons_pressed=0x7f02003b;
+        public static final int woodcut=0x7f02003c;
     }
     public static final class id {
-        public static final int action_settings=0x7f050019;
+        public static final int action_settings=0x7f05001b;
+        public static final int btn_dbtest=0x7f05000a;
         public static final int btn_info=0x7f050005;
         public static final int btn_other_usrs=0x7f050009;
         public static final int btn_refinfo=0x7f050008;
         public static final int btn_routes=0x7f050006;
         public static final int btn_spc_eco=0x7f050007;
-        public static final int go_to_compass=0x7f050014;
-        public static final int go_to_route_btn=0x7f05000c;
+        public static final int go_to_compass=0x7f050016;
+        public static final int go_to_route_btn=0x7f05000d;
         public static final int hybrid=0x7f050004;
-        public static final int imageView1=0x7f050016;
-        public static final int imageViewCompass=0x7f05000e;
-        public static final int info_pic=0x7f05000f;
-        public static final int info_snippet=0x7f050010;
-        public static final int info_title=0x7f050011;
-        public static final int linear_layout_detail_map=0x7f050013;
-        public static final int ll=0x7f05000b;
-        public static final int map=0x7f05000a;
-        public static final int mapDetail=0x7f050012;
+        public static final int imageView1=0x7f050018;
+        public static final int imageViewCompass=0x7f05000f;
+        public static final int info_pic=0x7f050010;
+        public static final int info_snippet=0x7f050011;
+        public static final int info_title=0x7f050012;
+        public static final int linear_layout_detail_map=0x7f050015;
+        public static final int ll=0x7f05000c;
+        public static final int map=0x7f05000b;
+        public static final int mapDetail=0x7f050014;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
-        public static final int test_image=0x7f050018;
-        public static final int textView1=0x7f050015;
-        public static final int title=0x7f050017;
-        public static final int tvHeading=0x7f05000d;
+        public static final int test_image=0x7f05001a;
+        public static final int textView1=0x7f050017;
+        public static final int title=0x7f050019;
+        public static final int tvDatabaseTest=0x7f050013;
+        public static final int tvHeading=0x7f05000e;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -312,13 +317,15 @@ containing a value of this type.
         public static final int choose_itinerary_map=0x7f030002;
         public static final int compass=0x7f030003;
         public static final int custominfowindow=0x7f030004;
-        public static final int detail_itinerary_map=0x7f030005;
-        public static final int info_activity=0x7f030006;
-        public static final int otherusers_activity=0x7f030007;
-        public static final int redon_itinerary=0x7f030008;
-        public static final int redon_panorama=0x7f030009;
-        public static final int redon_sat=0x7f03000a;
-        public static final int showimageasset_activity=0x7f03000b;
+        public static final int database_test=0x7f030005;
+        public static final int detail_itinerary_map=0x7f030006;
+        public static final int drive_layout=0x7f030007;
+        public static final int info_activity=0x7f030008;
+        public static final int otherusers_activity=0x7f030009;
+        public static final int redon_itinerary=0x7f03000a;
+        public static final int redon_panorama=0x7f03000b;
+        public static final int redon_sat=0x7f03000c;
+        public static final int showimageasset_activity=0x7f03000d;
     }
     public static final class menu {
         public static final int switchboard=0x7f0a0000;
@@ -420,13 +427,15 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
-        public static final int dummy_button=0x7f06001f;
-        public static final int dummy_content=0x7f060020;
-        public static final int hello_world=0x7f06001d;
+        public static final int content_provider_authority_fixes=0x7f060022;
+        public static final int content_provider_authority_uploadqueue=0x7f060021;
+        public static final int internal_message_id=0x7f06001d;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f06001a;
-        public static final int title_activity_info=0x7f06001e;
+        public static final int tracking_notification=0x7f060020;
+        public static final int tracking_notification_initial=0x7f06001e;
+        public static final int tracking_notification_subject=0x7f06001f;
     }
     public static final class style {
         /** 

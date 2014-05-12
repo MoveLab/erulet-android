@@ -14,13 +14,13 @@ public class Switchboard extends Activity {
 	private Button btn_spc_eco;
 	private Button btn_refinfo;
 	private Button btn_other_usrs;
+	private Button btn_dbtest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_switchboard);
 		initButtons();
-
 	}
 
 	@Override
@@ -74,7 +74,18 @@ public class Switchboard extends Activity {
 				startActivity(i);
 			}
 		});
+		
+		btn_dbtest = (Button) findViewById(R.id.btn_dbtest);
+		btn_dbtest.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(Switchboard.this,
+						DriveActivity.class);
+				startActivity(i);
+			}
+		});
 
+		
 	}
 
 }

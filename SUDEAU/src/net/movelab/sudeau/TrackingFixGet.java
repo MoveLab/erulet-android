@@ -407,9 +407,12 @@ public class TrackingFixGet extends Service {
 				+ Util.MESSAGE_FIX_RECORDED);
 		Bundle bundle = new Bundle();
 		bundle.putString("nFixes", String.valueOf(PropertyHolder.getNFixes()));
-		bundle.putBoolean(NEW_RECORD, newRecord);
+		bundle.putBoolean(NEW_RECORD, newRecord);		
+		bundle.putDouble("lat", location.getLatitude());
+		bundle.putDouble("long", location.getLongitude());
+		
 		intent.putExtras(bundle);
-
+				
 		sendBroadcast(intent);
 	}
 
@@ -417,91 +420,91 @@ public class TrackingFixGet extends Service {
 
 		// Log.e("FixGet", "useFix started");
 
-		if (PropertyHolder.isInit() == false)
-			PropertyHolder.init(context);
-
-		if (PropertyHolder.getStoreMyData() == true) {
-
-			ContentResolver cr = getContentResolver();
-
-			float dist = -1;
-
-			Cursor c = cr.query(Util.getFixesUri(context), Fixes.KEYS_LATLON,
-					null, null, null);
-
-			int id = -1;
-
-			if (c.moveToLast()) {
-
-				int latCol = c.getColumnIndexOrThrow(Fixes.KEY_LATITUDE);
-				int lonCol = c.getColumnIndexOrThrow(Fixes.KEY_LONGITUDE);
-				int idCol = c.getColumnIndexOrThrow(Fixes.KEY_ROWID);
-
-				float[] distResult = new float[1];
-
-				id = c.getInt(idCol);
-
-				Location.distanceBetween(c.getDouble(latCol),
-						c.getDouble(lonCol), location.getLatitude(),
-						location.getLongitude(), distResult);
-
-				dist = distResult[0];
-
-			}
-			c.close();
-
-			if (dist > minDist || dist == -1) {
-
-				// create new entry with time and sdtime both set to the
-				// location time. (We will update sdtime in next chunk of code
-				// if the person
-				// stays in same 50 m radius.)
-				cr.insert(
-						Util.getFixesUri(context),
-						LocationContentValues.createFix(location,
-								location.getTime()));
-
+//		if (PropertyHolder.isInit() == false)
+//			PropertyHolder.init(context);
+//
+//		if (PropertyHolder.getStoreMyData() == true) {
+//
+//			ContentResolver cr = getContentResolver();
+//
+//			float dist = -1;
+//
+//			Cursor c = cr.query(Util.getFixesUri(context), Fixes.KEYS_LATLON,
+//					null, null, null);
+//
+//			int id = -1;
+//
+//			if (c.moveToLast()) {
+//
+//				int latCol = c.getColumnIndexOrThrow(Fixes.KEY_LATITUDE);
+//				int lonCol = c.getColumnIndexOrThrow(Fixes.KEY_LONGITUDE);
+//				int idCol = c.getColumnIndexOrThrow(Fixes.KEY_ROWID);
+//
+//				float[] distResult = new float[1];
+//
+//				id = c.getInt(idCol);
+//
+//				Location.distanceBetween(c.getDouble(latCol),
+//						c.getDouble(lonCol), location.getLatitude(),
+//						location.getLongitude(), distResult);
+//
+//				dist = distResult[0];
+//
+//			}
+//			c.close();
+//
+//			if (dist > minDist || dist == -1) {
+//
+//				// create new entry with time and sdtime both set to the
+//				// location time. (We will update sdtime in next chunk of code
+//				// if the person
+//				// stays in same 50 m radius.)
+//				cr.insert(
+//						Util.getFixesUri(context),
+//						LocationContentValues.createFix(location,
+//								location.getTime()));
+//
 				announceFix(location, true);
-
-			} else if (id > 0) {
-
-				ContentValues cv = new ContentValues();
-				String sc = Fixes.KEY_ROWID + " = " + id;
-				cv.put(Fixes.KEY_STATION_DEPARTURE_TIMELONG, location.getTime());
-				cv.put(Fixes.KEY_ACCURACY, location.getAccuracy());
-				cv.put(Fixes.KEY_PROVIDER, location.getProvider());
-
-				cr.update(Util.getFixesUri(context), cv, sc, null);
-
-				announceFix(location, false);
-
-			}
-
-
-		}
-
-		if (PropertyHolder.getShareData()) {
-
-			boolean ml = (!Secure.getString(getContentResolver(),
-					Secure.ALLOW_MOCK_LOCATION).equals("0"));
-
-			// Log.e(TAG, "mock locations=" + ml);
-
-			String prefix = ml ? "PMF" : "FIX";
-
-			String thisFix = location.getLatitude() + ","
-					+ location.getLongitude() + "," + location.getAccuracy()
-					+ "," + location.getProvider() + ","
-					+ Util.iso8601(location.getTime()) + ","
-					+ PowerSensor.PowerLevel;
-
-			ContentResolver ucr = getContentResolver();
-			ucr.insert(Util.getUploadQueueUri(context),
-					TrackingUploadContentValues.createUpload(prefix, thisFix));
-
-		}
-
-		unWakeLock();
+//
+//			} else if (id > 0) {
+//
+//				ContentValues cv = new ContentValues();
+//				String sc = Fixes.KEY_ROWID + " = " + id;
+//				cv.put(Fixes.KEY_STATION_DEPARTURE_TIMELONG, location.getTime());
+//				cv.put(Fixes.KEY_ACCURACY, location.getAccuracy());
+//				cv.put(Fixes.KEY_PROVIDER, location.getProvider());
+//
+//				cr.update(Util.getFixesUri(context), cv, sc, null);
+//
+//				announceFix(location, false);
+//
+//			}
+//
+//
+//		}
+//
+//		if (PropertyHolder.getShareData()) {
+//
+//			boolean ml = (!Secure.getString(getContentResolver(),
+//					Secure.ALLOW_MOCK_LOCATION).equals("0"));
+//
+//			// Log.e(TAG, "mock locations=" + ml);
+//
+//			String prefix = ml ? "PMF" : "FIX";
+//
+//			String thisFix = location.getLatitude() + ","
+//					+ location.getLongitude() + "," + location.getAccuracy()
+//					+ "," + location.getProvider() + ","
+//					+ Util.iso8601(location.getTime()) + ","
+//					+ PowerSensor.PowerLevel;
+//
+//			ContentResolver ucr = getContentResolver();
+//			ucr.insert(Util.getUploadQueueUri(context),
+//					TrackingUploadContentValues.createUpload(prefix, thisFix));
+//
+//		}
+//
+//		unWakeLock();
 
 	}
 

@@ -61,6 +61,16 @@
             android:drawableLeft="@drawable/ic_share_icon"
             android:text="Informació compartit" >
         </Button>
+        
+        <Button
+            android:id="@+id/btn_dbtest"
+            android:layout_width="80dip"
+            android:layout_height="0dip"
+            android:layout_marginBottom="10dip"
+            android:layout_weight="0.15"
+            android:text="test" >
+
+        </Button>
     </LinearLayout>
 
     <LinearLayout
