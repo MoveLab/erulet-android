@@ -9,11 +9,13 @@ public class Route {
 	@DatabaseField(id=true)
 	private String id;
 	@DatabaseField
+	private String idRouteBasedOn;
+	@DatabaseField
 	private String name;
 	@DatabaseField
 	private String description;
-	@DatabaseField(foreign=true, columnName="userId")
-	private User user;	
+	@DatabaseField
+	private String userId;	
 	@DatabaseField(foreign=true, columnName="trackId")
 	private Track track;
 	private Reference reference;
@@ -25,12 +27,12 @@ public class Route {
 		this.id=id; 
 	}
 
-	public User getUser() {
-		return user;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	
 	public Reference getReference() {
@@ -76,6 +78,14 @@ public class Route {
 	@Override
 	public String toString(){
 		return "ROUTE " + id + " " + name;
+	}
+
+	public String getIdRouteBasedOn() {
+		return idRouteBasedOn;
+	}
+
+	public void setIdRouteBasedOn(String idRouteBasedOn) {
+		this.idRouteBasedOn = idRouteBasedOn;
 	}
 
 }

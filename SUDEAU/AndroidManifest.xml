@@ -50,9 +50,7 @@
         <activity android:name="net.movelab.sudeau.DetailItineraryActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.CompassActivity" >
-        </activity>
-        <activity android:name="net.movelab.sudeau.DbTestActivity" >
-        </activity>
+        </activity>        
         <activity android:name="net.movelab.sudeau.DriveActivity" >
         </activity>
         
@@ -67,7 +65,7 @@
         
         <service android:name="net.movelab.sudeau.TrackingFixGet" />        
 <!--         <service android:name="net.movelab.sudeau.FileUploader" /> -->
-        <service android:name="net.movelab.sudeau.TrackingUpload" />          
+<!--         <service android:name="net.movelab.sudeau.TrackingUpload" />           -->
 
 <!--         <provider -->
 <!--             android:name="edu.princeton.jrpalmer.asmlibrary.SpaceMapperContentProvider" -->

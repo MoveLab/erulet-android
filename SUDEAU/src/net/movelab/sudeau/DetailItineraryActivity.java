@@ -36,6 +36,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings.Global;
+import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -77,11 +79,14 @@ public class DetailItineraryActivity extends Activity {
 	private ArrayList<Step> interestSteps;		
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
+		
+	private int routeMode;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_itinerary_map);
+		setWorkingMode();
 		setupView();
 		Button btn_compass = (Button)findViewById(R.id.go_to_compass);
 		btn_compass.setOnClickListener(new OnClickListener() {			
@@ -99,27 +104,86 @@ public class DetailItineraryActivity extends Activity {
 				stopTracking();
 			}
 		});
-		
+				
 		startTracking();
 	}
 	
 	private void startTracking(){
-		Intent intent = new Intent(
-				getString(R.string.internal_message_id) + Util.MESSAGE_SCHEDULE);
-		sendBroadcast(intent);
-				
-		fixFilter = new IntentFilter(getResources().getString(
-				R.string.internal_message_id)
-				+ Util.MESSAGE_FIX_RECORDED);
+		if(routeMode > 1){
+			Intent intent = new Intent(
+					getString(R.string.internal_message_id) + Util.MESSAGE_SCHEDULE);
+			sendBroadcast(intent);
+					
+			fixFilter = new IntentFilter(getResources().getString(
+					R.string.internal_message_id)
+					+ Util.MESSAGE_FIX_RECORDED);
+			
+			fixReceiver = new FixReceiver(mMap);
+			registerReceiver(fixReceiver, fixFilter);
+						
+		}
 		
-		fixReceiver = new FixReceiver(mMap);
-		registerReceiver(fixReceiver, fixFilter);
+	}
+	
+	private void saveRoute(){
+		
+		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();		
+		String android_id = Secure.getString(getBaseContext().getContentResolver(),
+				Secure.ANDROID_ID);
+		
+		//Save track
+		Track t = new Track();
+		t.setId(DataContainer.getTrackId(dataBaseHelper, android_id));
+		if(IGlobalValues.DEBUG){
+			Log.d("saveRoute","Adding track - id " + t.getId());
+		}
+		try{
+			dataBaseHelper.getTrackDataDao().create(t);			
+		}catch(RuntimeException ex){
+			Log.e("Inserting track","Insert error " + ex.toString());
+		}
+		
+		//Save steps		
+		for(int i = 0; i < currentSteps.size(); i++){
+			Step s = currentSteps.get(i);
+			s.setId( DataContainer.getStepId(dataBaseHelper, android_id) );
+			s.setTrack(t);			
+			if(IGlobalValues.DEBUG){
+				Log.d("saveRoute","Adding step - id " + s.getId() + " order " + s.getOrder());
+			}
+			try{
+				dataBaseHelper.getStepDataDao().create(s);						
+			}catch(RuntimeException ex){
+				Log.e("Inserting step","Insert error " + ex.toString());
+			}
+		}
+		
+		//Save route
+		Route r = new Route();		
+		r.setId(DataContainer.getRouteId(dataBaseHelper, android_id));
+		if(currentRoute!=null)
+			r.setIdRouteBasedOn(currentRoute.getId());
+		r.setUserId(android_id);
+		r.setTrack(t);
+		r.setName("Route created on phone");
+		if(IGlobalValues.DEBUG){
+			Log.d("saveRoute","Adding route - id " + r.getId());
+		}
+		try{
+			dataBaseHelper.getRouteDataDao().create(r);						
+		}catch(RuntimeException ex){
+			Log.e("Inserting route","Insert error " + ex.toString());
+		}
+		
 	}
 	
 	private void stopTracking(){
 		Intent intent = new Intent(
 				getString(R.string.internal_message_id) + Util.MESSAGE_UNSCHEDULE);
 		sendBroadcast(intent);
+		if(routeMode==2){
+			saveRoute();
+		}
 	}
 	
 	private void setupView(){
@@ -133,6 +197,13 @@ public class DetailItineraryActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {	
 		super.onConfigurationChanged(newConfig);
 		setupView();
+	}
+	
+	private void setWorkingMode(){
+		Bundle extras = getIntent().getExtras();
+		if(extras!=null){
+			routeMode = extras.getInt("mode");			
+		}
 	}
 	
 	private void setCurrentRoute(){
@@ -156,7 +227,8 @@ public class DetailItineraryActivity extends Activity {
 	        OpenHelperManager.releaseHelper();
 	        dataBaseHelper = null;
 	    }
-		unregisterReceiver(fixReceiver);
+		if(fixReceiver!=null)
+			unregisterReceiver(fixReceiver);
 	}
 	
 	private void setUpMapIfNeeded() {
@@ -227,8 +299,17 @@ public class DetailItineraryActivity extends Activity {
 	}
 	
 	private void setUpCamera(){
-		Step s = DataContainer.getRouteStarter(currentRoute, dataBaseHelper);
-		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(s.getLatitude(),s.getLongitude()) , 15));
+//		Step s = DataContainer.getRouteStarter(currentRoute, dataBaseHelper);
+//		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(s.getLatitude(),s.getLongitude()) , 15));
+		Track t = currentRoute.getTrack();
+		List<Step> steps = DataContainer.getTrackSteps(t, dataBaseHelper);
+		LatLngBounds.Builder b = new LatLngBounds.Builder();
+		for(int i = 0; i < steps.size(); i++){
+			Step s = steps.get(i);
+			b.include(new LatLng(s.getLatitude(),s.getLongitude()));
+		}
+		LatLngBounds bounds = b.build();                		
+		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,400,400,20));		
 	}
 	
 	private void checkLocationIsWithinEffectRadius(LatLng location){
@@ -326,17 +407,42 @@ public class DetailItineraryActivity extends Activity {
 	
 	public class FixReceiver extends BroadcastReceiver {
 		
-		GoogleMap mMap;
+		private GoogleMap mMap;
+		private ArrayList<Step> stepsInProgress;
+		private Polyline trackInProgress;
 		
 		public FixReceiver(GoogleMap mMap){
 			super();
 			this.mMap=mMap;
+			stepsInProgress = new ArrayList<Step>();
+		}
+		
+		public ArrayList<Step> getStepsInProgress(){
+			return stepsInProgress;
+		}
+		
+		public void setStepsInProgress(ArrayList<Step> steps){
+			stepsInProgress=steps;
+		}
+		
+		private void updateTrackInProgress(){
+			if(stepsInProgress.size()>1){
+				PolylineOptions rectOptions = new PolylineOptions();			
+				rectOptions.zIndex(1);
+				rectOptions.color(Color.GREEN);
+				for(int i=0; i < stepsInProgress.size(); i++){
+					Step step = stepsInProgress.get(i);
+					rectOptions.add(new LatLng(step.getLatitude(), step.getLongitude()));
+				}
+				trackInProgress = mMap.addPolyline(rectOptions);
+			}
 		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			double lat = intent.getExtras().getDouble("lat", 0);
 			double lng = intent.getExtras().getDouble("long", 0);
+			double alt = intent.getExtras().getDouble("alt", 0);
 			DateFormat df = new SimpleDateFormat("HH:mm:ss.SSSZ");
 			Date time = new Date(System.currentTimeMillis());
 			//Toast.makeText(getApplicationContext(), lat + " - " + lng, Toast.LENGTH_SHORT).show();
@@ -347,8 +453,22 @@ public class DetailItineraryActivity extends Activity {
 			.snippet("Location " + lat + " - " + lng + " " + df.format(time))
 			.icon(BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location , 15));
+			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location , 15));			
 			
+			Step s = new Step();
+			s.setAbsoluteTime(time);
+			s.setAltitude(alt);
+			s.setLatitude(lat);
+			s.setLongitude(lng);
+			stepsInProgress.add(s);
+			int order = stepsInProgress.size()-1;
+			s.setOrder(order);
+			//We set and retrieve id right after insert
+			//s.setId( DataContainer.getStepId(dataBaseHelper, android_id) );
+			updateTrackInProgress();
+			if(IGlobalValues.DEBUG){
+				Log.d("onReceive","Received new location " + lat + " " + lng + " t " + df.format(time));
+			}
 		}
 	}
 

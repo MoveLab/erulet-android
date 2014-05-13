@@ -1,36 +1,123 @@
 package net.movelab.sudeau.database;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.movelab.sudeau.IGlobalValues;
 import net.movelab.sudeau.Util;
 import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.Preference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
-import net.movelab.sudeau.model.User;
 import android.content.Context;
 import android.util.Log;
 
 import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 public class DataContainer {
+			
+	/**
+	 * Incremental unique route id
+	 * 	
+	 * @param db
+	 * @param userId
+	 * @return
+	 */
+	public static String getRouteId(DataBaseHelper db, String userId){
+		QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao().queryBuilder();
+		Where<Route, String> where = queryBuilder.where();
+		String retVal=null;
+		try {
+			where.eq("userId", userId);
+			PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+			List<Route> userRoutes = db.getRouteDataDao().query(preparedQuery);			
+			if(userRoutes != null){
+				int c = userRoutes.size() + 1;
+				retVal = "R_" + userId + "_" + c; 				
+			}else{
+				retVal = "R_" + userId + "_1";
+			}
+			if(IGlobalValues.DEBUG){
+				Log.d("getRouteId","Returning route id" + retVal);
+			}
+			return retVal;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return retVal;
+	}
+	
+	/**
+	 * Incremental unique track id
+	 * 
+	 * @param db
+	 * @param userId
+	 * @return
+	 */
+	public static String getTrackId(DataBaseHelper db, String userId){
+		QueryBuilder<Track, String> queryBuilder = db.getTrackDataDao().queryBuilder();
+		Where<Track, String> where = queryBuilder.where();
+		String retVal=null;
+		try {			
+			where.like("id", "%" + userId + "%");
+			PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
+			List<Track> trackRoutes = db.getTrackDataDao().query(preparedQuery);			
+			if(trackRoutes != null){
+				int c = trackRoutes.size() + 1;
+				retVal = "T_" + userId + "_" + c;
+			}else{
+				retVal = "T_" + userId + "_1";
+			}
+			if(IGlobalValues.DEBUG){
+				Log.d("getTrackId","Returning track id" + retVal);
+			}			
+			return retVal;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return retVal;
+	}
+	
+	public static String getStepId(DataBaseHelper db, String userId){
+		QueryBuilder<Step, String> queryBuilder = db.getStepDataDao().queryBuilder();
+		Where<Step, String> where = queryBuilder.where();
+		String retVal=null;
+		try {			
+			where.like("id", "%" + userId + "%");
+			PreparedQuery<Step> preparedQuery = queryBuilder.prepare();
+			List<Step> userSteps = db.getStepDataDao().query(preparedQuery);			
+			if(userSteps != null){
+				int c = userSteps.size() + 1;
+				retVal = "S_" + userId + "_" + c;
+			}else{
+				retVal = "S_" + userId + "_1";
+			}
+			if(IGlobalValues.DEBUG){
+				Log.d("getTrackId","Returning step id" + retVal);
+			}			
+			return retVal;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return retVal;
+	}
 	
 	public static Route findRouteById(String idRoute, DataBaseHelper db){
 		Route r = db.getRouteDataDao().queryForId(idRoute);
 		return r;
 	}
-	
-	public static List<User> getAllUsers(DataBaseHelper db){			
-		List<User> users = db.getUserDataDao().queryForAll();
-		return users;
-	}
-	
+		
 	public static List<Track> getAllTracks(DataBaseHelper db) {
 		List<Track> tracks = db.getTrackDataDao().queryForAll();
 		return tracks;
@@ -87,50 +174,19 @@ public class DataContainer {
 	
 	public static void loadSampleData(DataBaseHelper db, Context context){
 		
-		RuntimeExceptionDao<User, String> userDataDao = db.getUserDataDao();
-		RuntimeExceptionDao<Preference, String> preferenceDataDao = db.getPreferenceDataDao();
 		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
 		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
 		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
 		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
 		RuntimeExceptionDao<EruMedia, String> mediaDataDao = db.getMediaDataDao();
-		
-		Log.d("Insert","Inserting user records...");
-		//Unique android id 
-		//User u1 = new User(Secure.getString(this.getContentResolver(),Secure.ANDROID_ID),"User1");		
-		User u1 = new User("USER_0","User1");
-		try{
-			userDataDao.create(u1);
-		}catch(RuntimeException ex){
-			Log.e("Inserting user","Insert error " + ex.toString());
-		}
-		
+				
 		Track t = new Track("TRACK1","A track");			
 		try{
 			trackDataDao.create(t);			
 		}catch(RuntimeException ex){
 			Log.e("Inserting track","Insert error " + ex.toString());
 		}
-		
-		Preference p1 = new Preference();
-		p1.setId("1");
-		p1.setKey("key1");
-		p1.setValue("value1");
-		p1.setUser(u1);
-		
-		Preference p2 = new Preference();
-		p2.setId("2");
-		p2.setKey("key2");
-		p2.setValue("value2");
-		p2.setUser(u1);
-				
-		try{
-			preferenceDataDao.create(p1);
-			preferenceDataDao.create(p2);
-		}catch(RuntimeException ex){
-			Log.e("Inserting preference","Insert error " + ex.toString());
-		}
-		
+								
 		byte[] image1 = null;
 		try {
 			image1 = Util.readFile("no_picture.png", context);
@@ -195,7 +251,7 @@ public class DataContainer {
 		r.setId("ROUTE1");
 		r.setName("Estanh Redon");
 		r.setDescription("Ruta a l'Estanh Redon");
-		r.setUser(u1);
+		r.setUserId("1");
 		r.setTrack(t);
 		
 		try{

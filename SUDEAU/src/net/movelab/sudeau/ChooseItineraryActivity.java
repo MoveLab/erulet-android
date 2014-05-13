@@ -12,6 +12,9 @@ import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +22,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -45,6 +50,11 @@ public class ChooseItineraryActivity extends Activity {
 	private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
+	
+	private static final String TITLE = "Tria la opció de ruta que prefereixes:";
+	private static final String OPTION_1 = "Vull visualitzar la ruta, sense fer un seguiment de la meva posició.";
+	private static final String OPTION_2 = "Vull recórrer la ruta, fent un seguiment en tot moment de la meva posició.";
+	private static final String OPTION_3 = "Vull recórrer la ruta, fent un seguiment en tot moment i desar la meva pròpia versió de la ruta.";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,26 @@ public class ChooseItineraryActivity extends Activity {
 	    }
 	}
 	
+	public void showItineraryOptions(){		
+		final CharSequence[] items = {OPTION_1,OPTION_2,OPTION_3};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(TITLE);
+		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+					Intent i = new Intent(ChooseItineraryActivity.this,
+						DetailItineraryActivity.class);
+					Route r = routeTable.get(selectedMarker);
+					i.putExtra("idRoute",r.getId());
+					i.putExtra("mode",which);
+					startActivity(i);
+				}
+			}
+		);
+		builder.show();
+	}
+	
 	private void setUpDBIfNeeded() {
 		if(dataBaseHelper == null){
 			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
@@ -80,11 +110,7 @@ public class ChooseItineraryActivity extends Activity {
 				if(selectedMarker==null){
 					Toast.makeText(getApplicationContext(), "No hi ha cap ruta seleccionada; si us plau tria una ruta...", Toast.LENGTH_LONG).show();
 				}else{
-					Intent i = new Intent(ChooseItineraryActivity.this,
-							DetailItineraryActivity.class);
-					Route r = routeTable.get(selectedMarker);
-					i.putExtra("idRoute",r.getId());
-					startActivity(i);
+					showItineraryOptions();										
 				}
 			}
 		});
@@ -122,11 +148,12 @@ public class ChooseItineraryActivity extends Activity {
 					return false;
 				}
 			});
+						
 		}
 	}
 	
-	private void setUpCamera(){
-		LatLngBounds bounds = new LatLngBounds(ESTANH_REDON, ESTANH_REDON);
+	private void setUpCamera(){				
+		LatLngBounds bounds = new LatLngBounds.Builder().include(ESTANH_REDON).build();                
 		if(routeTable.size()>0){
 			if(routeTable.size()==1){
 				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ESTANH_REDON, 11));
@@ -135,7 +162,7 @@ public class ChooseItineraryActivity extends Activity {
 				while(markers.hasMoreElements()){
 					Marker m = markers.nextElement();
 					bounds = bounds.including(m.getPosition());
-					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,400,400,20));
 				}
 			}									
 		}		

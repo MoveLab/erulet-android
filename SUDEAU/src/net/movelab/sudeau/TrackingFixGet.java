@@ -410,6 +410,7 @@ public class TrackingFixGet extends Service {
 		bundle.putBoolean(NEW_RECORD, newRecord);		
 		bundle.putDouble("lat", location.getLatitude());
 		bundle.putDouble("long", location.getLongitude());
+		bundle.putDouble("alt", location.getAltitude());
 		
 		intent.putExtras(bundle);
 				
