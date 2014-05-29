@@ -14,11 +14,11 @@
     <LinearLayout
         android:id="@+id/ll"
         android:layout_width="match_parent"
-	    android:layout_height="wrap_content"    
-	    android:orientation="vertical"
-	    android:layout_alignParentBottom="true"	    
-	    android:padding="10dip"
-	    >
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
 <!-- 	    android:background="@color/light_grey" -->
 
     <Button
@@ -28,6 +28,17 @@
         android:text="Començar itinerari!" />
     
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:text="Itineraris"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
     
 </RelativeLayout>
 

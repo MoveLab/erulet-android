@@ -18,7 +18,14 @@ public class Route {
 	private String userId;	
 	@DatabaseField(foreign=true, columnName="trackId")
 	private Track track;
+	@DatabaseField(foreign=true, columnName="referenceId")
 	private Reference reference;
+	@DatabaseField
+	private boolean ecosystem;
+	@DatabaseField(foreign=true, columnName="ecoId")
+	private Route eco;
+	@DatabaseField
+	private boolean upLoaded;
 
 	public Route() {		
 	}
@@ -88,4 +95,28 @@ public class Route {
 		this.idRouteBasedOn = idRouteBasedOn;
 	}
 
+	public boolean isEcosystem() {
+		return ecosystem;
+	}
+
+	public void setEcosystem(boolean ecosystem) {
+		this.ecosystem = ecosystem;
+	}
+
+	public Route getEco() {
+		return eco;
+	}
+
+	public void setEco(Route eco) {
+		this.eco = eco;
+	}
+
+	public boolean isUpLoaded() {
+		return upLoaded;
+	}
+
+	public void setUpLoaded(boolean upLoaded) {
+		this.upLoaded = upLoaded;
+	}
+	
 }

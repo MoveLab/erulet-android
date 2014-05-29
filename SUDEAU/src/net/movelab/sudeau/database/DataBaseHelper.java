@@ -2,6 +2,7 @@ package net.movelab.sudeau.database;
 
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.EruMedia;
+import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
@@ -18,7 +19,7 @@ import com.j256.ormlite.table.TableUtils;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 38;
+	public static final int DATABASE_VERSION = 83;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		
@@ -36,6 +37,9 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	private Dao<EruMedia, String> mediaDao;
 	private RuntimeExceptionDao<EruMedia, String> mediaRuntimeDao;
+	
+	private Dao<Reference, String> referenceDao;
+	private RuntimeExceptionDao<Reference, String> referenceRuntimeDao;
            
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +54,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Step.class);
 			TableUtils.createTable(connectionSource, HighLight.class);
 			TableUtils.createTable(connectionSource, EruMedia.class);
+			TableUtils.createTable(connectionSource, Reference.class);
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
@@ -66,6 +71,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Step.class, true);
 			TableUtils.dropTable(connectionSource, HighLight.class, true);
 			TableUtils.dropTable(connectionSource, EruMedia.class, true);
+			TableUtils.dropTable(connectionSource, Reference.class, true);
 			onCreate(db,connectionSource);
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't drop databases", e);
@@ -143,6 +149,20 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		return mediaRuntimeDao;
 	}
 	
+	public Dao<Reference, String> getReferenceDao() throws java.sql.SQLException {
+		if (referenceDao == null) {
+			referenceDao = getDao(Reference.class);
+		}
+		return referenceDao;
+	}
+	
+	public RuntimeExceptionDao<Reference, String> getReferenceDataDao() {
+		if (referenceRuntimeDao == null) {			
+			referenceRuntimeDao = getRuntimeExceptionDao(Reference.class);
+		}
+		return referenceRuntimeDao;
+	}
+	
 	/**
 	 * Close the database connections and clear any cached DAOs.
 	 */
@@ -159,6 +179,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		hlRuntimeDao = null;
 		mediaDao = null;
 		mediaRuntimeDao = null;
+		referenceDao = null;
+		referenceRuntimeDao = null;
 	}
 	
 	

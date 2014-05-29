@@ -8,14 +8,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.Hashtable;
 import java.util.List;
 
-import net.movelab.sudeau.TrackingFixGet.StopReceiver;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.geometry.LineSegment;
+import net.movelab.sudeau.geometry.SnapCalculatorV1;
+import net.movelab.sudeau.geometry.SnapCalculatorV2;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
@@ -31,17 +33,16 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings.Global;
+import android.os.Vibrator;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -66,6 +67,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.geometry.Point;
+import com.google.maps.android.projection.SphericalMercatorProjection;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class DetailItineraryActivity extends Activity {
@@ -79,33 +82,76 @@ public class DetailItineraryActivity extends Activity {
 	private ArrayList<Step> interestSteps;		
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
+	private Polyline perpPolyLine;
+	private Hashtable<Marker, Step> stepTable;
+	private Vibrator v;
 		
 	private int routeMode;
+	private int group1 = 1;
+	private int first_id = Menu.FIRST;
+	private int second_id = Menu.FIRST+1;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.detail_itinerary_map);
+		setContentView(R.layout.detail_itinerary_map);		
+		v = (Vibrator)getBaseContext().getSystemService(Context.VIBRATOR_SERVICE);
 		setWorkingMode();
 		setupView();
-		Button btn_compass = (Button)findViewById(R.id.go_to_compass);
-		btn_compass.setOnClickListener(new OnClickListener() {			
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(DetailItineraryActivity.this,CompassActivity.class);
-				startActivity(i);				
-			}
-		});
+//		Button btn_compass = (Button)findViewById(R.id.go_to_compass);
+//		btn_compass.setOnClickListener(new OnClickListener() {			
+//			@Override
+//			public void onClick(View v) {
+//				Intent i = new Intent(DetailItineraryActivity.this,CompassActivity.class);
+//				startActivity(i);				
+//			}
+//		});
 		
-		Button btn_stop_tracking = (Button)findViewById(R.id.stop_tracking);
-		btn_stop_tracking.setOnClickListener(new OnClickListener() {			
-			@Override
-			public void onClick(View v) {
-				stopTracking();
-			}
-		});
-				
+//		Button btn_stop_tracking = (Button)findViewById(R.id.stop_tracking);
+//		btn_stop_tracking.setOnClickListener(new OnClickListener() {			
+//			@Override
+//			public void onClick(View v) {
+//				stopTracking();
+//			}
+//		});						
 		startTracking();
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu (Menu menu) {
+		if(currentRoute != null && !currentRoute.isEcosystem()){
+			for (int i = 0; i < menu.size(); i++){
+	            menu.getItem(i).setVisible(false);
+			}
+		}
+	    return true;
+	}		
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		menu.add(group1,first_id,first_id,"Dades ambientals");
+		menu.add(group1,second_id,second_id,"Fotografia interactiva");				
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+			case 1:
+				Intent ihtml = new Intent(DetailItineraryActivity.this,
+						HTMLViewerActivity.class);
+				ihtml.putExtra("idReference",currentRoute.getReference().getId());
+				startActivity(ihtml);
+			    return true;
+			case 2:
+				Intent i = new Intent(DetailItineraryActivity.this,
+						InteractiveImageActivity.class);
+				startActivity(i);
+				return true;
+			default:
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private void startTracking(){
@@ -183,14 +229,14 @@ public class DetailItineraryActivity extends Activity {
 		sendBroadcast(intent);
 		if(routeMode==2){
 			saveRoute();
-		}
+		}		
 	}
 	
 	private void setupView(){
 		setUpDBIfNeeded();
 		setCurrentRoute();
 		setUpMapIfNeeded();		
-		setUpCamera();
+		setUpCamera();		
 	}
 	
 	@Override
@@ -255,7 +301,24 @@ public class DetailItineraryActivity extends Activity {
 				@Override
 				public void onInfoWindowClick(Marker marker) {
 					// TODO Auto-generated method stub
-					Toast.makeText(getApplicationContext(), marker.getSnippet(), Toast.LENGTH_SHORT).show();
+					//Toast.makeText(getApplicationContext(), marker.getSnippet(), Toast.LENGTH_SHORT).show();
+					//If it's a route, we open the EcosystemDetailActivity
+					Step s = stepTable.get(marker);
+					if(s == null){
+						Intent i = new Intent(DetailItineraryActivity.this,
+								DetailItineraryActivity.class);						
+						Route r = DataContainer.getRouteEcosystem(currentRoute, dataBaseHelper);
+						i.putExtra("idRoute",r.getId());
+						i.putExtra("mode",0);
+						startActivity(i);
+					}else{						
+						if( s.getReference()!=null ){							
+							Intent i = new Intent(DetailItineraryActivity.this,
+									HTMLViewerActivity.class);							
+							i.putExtra("idReference",s.getReference().getId());
+							startActivity(i);
+						}
+					}
 				}
 			});
 			mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
@@ -266,36 +329,75 @@ public class DetailItineraryActivity extends Activity {
 				}
 				
 				@Override
-				public View getInfoContents(Marker marker) {
+				public View getInfoContents(Marker marker) {					
 					View myContentView = getLayoutInflater().inflate(R.layout.custominfowindow, null); 
 					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
-		            snippet.setText(marker.getSnippet());		            
-		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
-		            Drawable image = null;
-		            byte[] b = DataContainer.getStepMedia(interestStep, dataBaseHelper);
-		            if(b != null){
-			            ByteArrayInputStream is = new ByteArrayInputStream(b);
-			            image = Drawable.createFromStream(is, null);
-			            picture.setImageDrawable(image);
-		            }
+					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
+					Step s = stepTable.get(marker);
+					if( s != null ){
+						HighLight h1 = s.getHighlight();
+						title.setText(h1.getName());
+			            snippet.setText(h1.getLongText());		            
+			            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
+			            picture.setImageResource(R.drawable.ic_itinerary_icon);
+			            v.vibrate(250);
+//			            Drawable image = null;
+//			            byte[] b = DataContainer.getStepMedia(interestStep, dataBaseHelper);
+//			            if(b != null){
+//				            ByteArrayInputStream is = new ByteArrayInputStream(b);
+//				            image = Drawable.createFromStream(is, null);
+//				            picture.setImageDrawable(image);
+//			            }
+					}else{
+						//Is ecosystem
+						Route ecosystem = DataContainer.getRouteEcosystem(currentRoute, dataBaseHelper);
+						title.setText( ecosystem.getName() );
+			            snippet.setText( ecosystem.getDescription() );		            
+			            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
+			            picture.setImageResource(R.drawable.ic_launcher);
+					}					
 		            return myContentView;
 				}
 			});
 			mMap.setOnMapClickListener(new OnMapClickListener() {				
 				@Override
-				public void onMapClick(LatLng point) {
-					if(bogus_location != null){
-						bogus_location.remove();						
-					}
-					bogus_location = mMap.addMarker(new MarkerOptions()
-					.position(new LatLng(point.latitude, point.longitude))
-					.title("Bogus location")
-					.snippet("Bogus location")					
-					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_erulet_pin)));
-					checkLocationIsWithinEffectRadius(point);					
-				}
+				public void onMapClick(LatLng point) {					
+//					if(bogus_location != null){
+//						bogus_location.remove();						
+//					}
+//					bogus_location = mMap.addMarker(new MarkerOptions()
+//					.position(new LatLng(point.latitude, point.longitude))
+//					.title("Bogus location")
+//					.snippet("Bogus location")					
+//					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_erulet_pin)));
+//					checkLocationIsWithinEffectRadius(point);					
+					//Snap to nearest step...
+//					SnapCalculatorV2 sc = new SnapCalculatorV2();					
+//					LatLng pointInTrack = sc.snapToCurrentTrack(fixReceiver.getStepsInProgress(), point);
+//					LineSegment perp = sc.getPerpendicularToNearest();
+//					if(perp != null)
+//						drawPerpLine(perp);
+//					mMap.addMarker(new MarkerOptions()
+//					.position(new LatLng(pointInTrack.latitude, pointInTrack.longitude))
+//					.title("Snapped")
+//					.snippet(pointInTrack.latitude + " " + pointInTrack.longitude)					
+//					.icon(BitmapDescriptorFactory
+//							.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));					
+				}				
 			});
 		}
+	}
+	
+	private void drawPerpLine(LineSegment perp) {
+		PolylineOptions rectOptions = new PolylineOptions();			
+		rectOptions.zIndex(1);
+		rectOptions.color(Color.MAGENTA);
+		Point p1 = perp.getP1();
+		Point p2 = perp.getP2();
+		SphericalMercatorProjection sp = new SphericalMercatorProjection(6371);		
+		rectOptions.add( sp.toLatLng(p1) );
+		rectOptions.add( sp.toLatLng(p2) );		
+		perpPolyLine = mMap.addPolyline(rectOptions);
 	}
 	
 	private void setUpCamera(){
@@ -345,8 +447,34 @@ public class DetailItineraryActivity extends Activity {
 					interestStep = null;
 				}
 			}
-			i++;
+			i++;			
 		}
+	}
+	
+	private void addEcoSystemMarker(Route route){
+		Step step = DataContainer.getRouteStarter(route, dataBaseHelper);
+		Marker m = mMap.addMarker(new MarkerOptions()
+		.position(new LatLng(step.getLatitude(), step.getLongitude()))
+		.title( route.getName() )			
+		.snippet( route.getDescription() )			
+		.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+				//BitmapDescriptorFactory.fromResource(R.drawable.ic_eco_pin)));
+				//.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));		
+	}
+	
+	private void addMarkerIfNeeded(Step step){
+		//stepTable
+		HighLight hl;
+		if( (hl = step.getHighlight()) !=null ){
+			Marker m = mMap.addMarker(new MarkerOptions()
+			.position(new LatLng(step.getLatitude(), step.getLongitude()))
+			.title( hl.getName() )			
+			.snippet( hl.getLongText() )			
+			.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+					//BitmapDescriptorFactory.fromResource(R.drawable.ic_wp_pin)));
+					//.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+			stepTable.put(m, step);
+		}		
 	}
 	
 	private void addEffectRadiusIfNeeded(Step step){
@@ -372,7 +500,10 @@ public class DetailItineraryActivity extends Activity {
 		}
 	}
 	
-	private void addRouteMarkersFromDB() {		
+	private void addRouteMarkersFromDB() {
+		if(stepTable == null){
+			stepTable = new Hashtable<Marker, Step>();
+		}
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = currentRoute.getTrack();
 		List<Step> steps = DataContainer.getTrackSteps(t, dataBaseHelper);
@@ -380,10 +511,16 @@ public class DetailItineraryActivity extends Activity {
 			Step step = steps.get(j);
 			rectOptions.add(new LatLng(step.getLatitude(), step.getLongitude()));
 			addEffectRadiusIfNeeded(step);
+			addMarkerIfNeeded(step);
 		}
 		rectOptions.zIndex(1);
 		rectOptions.color(Color.RED);								
 		Polyline polyline = mMap.addPolyline(rectOptions);
+		if(currentRoute.getEco() != null){
+			//addEcoSystemMarker( currentRoute.getEco() );
+			Route eco = DataContainer.getRouteEcosystem(currentRoute, dataBaseHelper);
+			addEcoSystemMarker( eco );
+		}
 	}
 	
 	private TileProvider initTileProvider() {
@@ -447,27 +584,41 @@ public class DetailItineraryActivity extends Activity {
 			Date time = new Date(System.currentTimeMillis());
 			//Toast.makeText(getApplicationContext(), lat + " - " + lng, Toast.LENGTH_SHORT).show();
 			LatLng location = new LatLng(lat, lng);
-			Marker m = mMap.addMarker(new MarkerOptions()
-			.position(location)
-			.title("Location " + lat + " - " + lng + " " + df.format(time))
-			.snippet("Location " + lat + " - " + lng + " " + df.format(time))
-			.icon(BitmapDescriptorFactory
-					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location , 15));			
-			
-			Step s = new Step();
-			s.setAbsoluteTime(time);
-			s.setAltitude(alt);
-			s.setLatitude(lat);
-			s.setLongitude(lng);
-			stepsInProgress.add(s);
-			int order = stepsInProgress.size()-1;
-			s.setOrder(order);
-			//We set and retrieve id right after insert
-			//s.setId( DataContainer.getStepId(dataBaseHelper, android_id) );
-			updateTrackInProgress();
-			if(IGlobalValues.DEBUG){
-				Log.d("onReceive","Received new location " + lat + " " + lng + " t " + df.format(time));
+			boolean addNewStep = true;
+			if(stepsInProgress.size() > 0){
+				Step last = stepsInProgress.get( stepsInProgress.size()-1 );
+				if(last.getLatitude() == location.latitude && 
+					last.getLongitude() == location.longitude ){
+					//Point is same as last, we don't add it to the track
+					if(IGlobalValues.DEBUG){
+						Log.d("onReceive","Received new location " + lat + " " + lng + " t " + df.format(time) + " same as last");
+					}	
+					addNewStep=false;
+				}
+			}
+			if(addNewStep){
+				Marker m = mMap.addMarker(new MarkerOptions()
+				.position(location)
+				.title("Location " + lat + " - " + lng + " " + df.format(time))
+				.snippet("Location " + lat + " - " + lng + " " + df.format(time))
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location , 16));			
+				
+				Step s = new Step();
+				s.setAbsoluteTime(time);
+				s.setAltitude(alt);
+				s.setLatitude(lat);
+				s.setLongitude(lng);
+				stepsInProgress.add(s);
+				int order = stepsInProgress.size()-1;
+				s.setOrder(order);
+				//We set and retrieve id right after insert
+				//s.setId( DataContainer.getStepId(dataBaseHelper, android_id) );
+				updateTrackInProgress();
+				if(IGlobalValues.DEBUG){
+					Log.d("onReceive","Received new location " + lat + " " + lng + " t " + df.format(time));
+				}
 			}
 		}
 	}

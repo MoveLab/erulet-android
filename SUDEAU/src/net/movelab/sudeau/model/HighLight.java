@@ -10,6 +10,8 @@ public class HighLight {
 	private String id;
 	@DatabaseField
 	private String name;
+	@DatabaseField
+	private String longText;
 	@DatabaseField(foreign=true, columnName="mediaId")	
 	private EruMedia media;
 	@DatabaseField
@@ -31,13 +33,14 @@ public class HighLight {
 		this.id=id;
 		this.name=name;
 		this.radius=radius;
-	}
+	}		
 	
-	public HighLight(String id, String name, double radius, EruMedia media) {
+	public HighLight(String id, String name, String longText, double radius, EruMedia media) {
 		this.id=id;
 		this.name=name;
 		this.radius=radius;
 		this.media=media;
+		this.longText=longText;
 	}
 
 	public EruMedia getMedia() {
@@ -75,6 +78,14 @@ public class HighLight {
 	@Override
 	public String toString(){
 		return "HIGHLIGHT " + id + " " + name + " " + radius;
+	}
+
+	public String getLongText() {
+		return longText;
+	}
+
+	public void setLongText(String longText) {
+		this.longText = longText;
 	}
 
 }

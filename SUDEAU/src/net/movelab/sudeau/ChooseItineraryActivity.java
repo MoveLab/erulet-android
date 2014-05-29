@@ -9,6 +9,7 @@ import java.util.List;
 
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
@@ -18,13 +19,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
@@ -44,9 +50,8 @@ public class ChooseItineraryActivity extends Activity {
 	private GoogleMap mMap;
 //	private static final LatLng MY_POINT = new LatLng(41.66, 1.54);
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
-//	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);
-	private static final LatLng ESTANH_REDON = new LatLng(42.64, 0.78);
-	private Button goToRouteBtn;
+//	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);	
+	private Button goToRouteBtn;	
 	private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
@@ -55,6 +60,10 @@ public class ChooseItineraryActivity extends Activity {
 	private static final String OPTION_1 = "Vull visualitzar la ruta, sense fer un seguiment de la meva posició.";
 	private static final String OPTION_2 = "Vull recórrer la ruta, fent un seguiment en tot moment de la meva posició.";
 	private static final String OPTION_3 = "Vull recórrer la ruta, fent un seguiment en tot moment i desar la meva pròpia versió de la ruta.";
+	
+	private int group1 = 1;
+	private int first_id = Menu.FIRST;
+	private int second_id = Menu.FIRST+1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +73,32 @@ public class ChooseItineraryActivity extends Activity {
 		setUpMapIfNeeded();
 		setUpCamera();
 		initControls();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		menu.add(group1,first_id,first_id,"Els meus itineraris...");		
+		menu.add(group1,second_id,second_id,"Itineraris compartits...");
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+			case 1:
+				Intent i1 = new Intent(ChooseItineraryActivity.this,
+						MyItinerariesActivity.class);				
+				startActivity(i1);
+			    return true;	
+			case 2:
+				Intent i2 = new Intent(ChooseItineraryActivity.this,
+						OtherItinerariesActivity.class);				
+				startActivity(i2);
+			    return true;
+			default:
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -87,7 +122,7 @@ public class ChooseItineraryActivity extends Activity {
 						DetailItineraryActivity.class);
 					Route r = routeTable.get(selectedMarker);
 					i.putExtra("idRoute",r.getId());
-					i.putExtra("mode",which);
+					i.putExtra("mode",which);					
 					startActivity(i);
 				}
 			}
@@ -98,7 +133,8 @@ public class ChooseItineraryActivity extends Activity {
 	private void setUpDBIfNeeded() {
 		if(dataBaseHelper == null){
 			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
-			DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
+			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
+			DataContainer.loadRedon(dataBaseHelper, this.getBaseContext());
 		}
 	}
 
@@ -113,7 +149,7 @@ public class ChooseItineraryActivity extends Activity {
 					showItineraryOptions();										
 				}
 			}
-		});
+		});		
 	}
 
 	private void setUpMapIfNeeded() {
@@ -138,14 +174,35 @@ public class ChooseItineraryActivity extends Activity {
 			mMap.setOnMapClickListener(new OnMapClickListener() {				
 				@Override
 				public void onMapClick(LatLng point) {
-					selectedMarker=null;
+					selectedMarker=null;					
 				}
 			});
 			mMap.setOnMarkerClickListener(new OnMarkerClickListener() {				
 				@Override
 				public boolean onMarkerClick(Marker marker) {
 					selectedMarker=marker;
+					Route r = routeTable.get(marker);					
 					return false;
+				}
+			});
+			mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+				
+				@Override
+				public View getInfoWindow(Marker marker) {
+					return null;
+				}
+				
+				@Override
+				public View getInfoContents(Marker marker) {					
+					View myContentView = getLayoutInflater().inflate(R.layout.custominfowindow, null); 
+					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
+					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
+					Route r = routeTable.get(marker);					
+		            snippet.setText(r.getDescription());
+		            title.setText(r.getName());
+		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
+		            picture.setImageResource(R.drawable.ic_itinerary_icon);		            
+		            return myContentView;
 				}
 			});
 						
@@ -153,10 +210,10 @@ public class ChooseItineraryActivity extends Activity {
 	}
 	
 	private void setUpCamera(){				
-		LatLngBounds bounds = new LatLngBounds.Builder().include(ESTANH_REDON).build();                
+		LatLngBounds bounds = new LatLngBounds.Builder().include(IGlobalValues.ESTANH_REDON).build();                
 		if(routeTable.size()>0){
 			if(routeTable.size()==1){
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ESTANH_REDON, 11));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(IGlobalValues.ESTANH_REDON, 11));
 			}else{
 				Enumeration<Marker> markers = routeTable.keys();
 				while(markers.hasMoreElements()){
@@ -180,7 +237,7 @@ public class ChooseItineraryActivity extends Activity {
 			Marker my_marker = mMap.addMarker(new MarkerOptions()
 			.position(new LatLng(start.getLatitude(), start.getLongitude()))
 			.title(r.getName())
-			.snippet(r.getDescription())
+			.snippet(null)
 			.icon(BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 			routeTable.put(my_marker, r);

@@ -8,30 +8,17 @@
         android:id="@+id/mapDetail"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent" 
-        android:layout_above="@+id/linear_layout_detail_map"/>
-    
-    <LinearLayout
-        android:id="@+id/linear_layout_detail_map"
+        android:layout_height="fill_parent" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="10dip" >
-
-    <Button
-        android:id="@+id/go_to_compass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Brúixola" />
-
-    <Button
-        android:id="@+id/stop_tracking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Atura seguiment" />
-    
-    </LinearLayout>
-    
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:text="Seguiment itinerari..."
+        android:textColor="@color/white"
+        android:textSize="30sp" />
 
 </RelativeLayout>

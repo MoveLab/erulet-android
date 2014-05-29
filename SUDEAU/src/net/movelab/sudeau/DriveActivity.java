@@ -127,7 +127,7 @@ public class DriveActivity extends Activity implements ConnectionCallbacks,
                     mBitmapToSave = null;
                     // Just start the camera again for another photo.
                     startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE),
-                            REQUEST_CODE_CAPTURE_IMAGE);
+                            REQUEST_CODE_CAPTURE_IMAGE);                    
                 }
                 break;
         }

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_vert"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:layout_marginBottom="5dip"
+            android:text="Erulet"
+            android:textStyle="bold"            
+            android:textSize="25sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dip"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:src="@drawable/ic_launcher" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:src="@drawable/ic_erulet_new" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lbl_credits_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="Aquesta aplicació per dispositius mòbils ha estat desenvolupada en el marc del projecte:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginBottom="40dip"
+            android:src="@drawable/ic_sudeau" />
+
+        <TextView
+            android:id="@+id/lbl_credits_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"            
+            android:gravity="center"
+            android:layout_marginBottom="5dip"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp"
+            android:text="Coordinació i disseny de continguts:"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dip"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_loop" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_ceab_ub_creaf" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lbl_credits_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Disseny tècnic:"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dip"
+            android:src="@drawable/ic_movelab" />
+
+        <TextView
+            android:id="@+id/lbl_credits_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Organitza:"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dip"
+            android:src="@drawable/ic_ajunt" />
+
+        <TextView
+            android:id="@+id/lbl_credits_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Financia:"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dip"
+            android:src="@drawable/ic_sudoe_eu" />
+
+        <TextView
+            android:id="@+id/lbl_credits_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Han col·laborat:"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/lbl_credits_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Lluís Camarero, Jordi Catalan, Frederic Bartumeus, John Palmer, Agustí Escobar, Enric Ballesteros, Guillermo de Mendoza, Fulanito de Tal, Laltre També, I. Elde Mesenllà"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</ScrollView>

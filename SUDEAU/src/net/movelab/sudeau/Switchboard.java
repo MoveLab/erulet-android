@@ -8,13 +8,11 @@ import android.view.View;
 import android.widget.Button;
 
 public class Switchboard extends Activity {
-
-	private Button btn_info;
+	
+	private Button btn_manual;
+	private Button btn_security;
 	private Button btn_routes;
-	private Button btn_spc_eco;
-	private Button btn_refinfo;
-	private Button btn_other_usrs;
-	private Button btn_dbtest;
+	private Button btn_credits;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +29,20 @@ public class Switchboard extends Activity {
 	}
 
 	private void initButtons() {
-		btn_info = (Button) findViewById(R.id.btn_info);
-		btn_info.setOnClickListener(new View.OnClickListener() {
+		btn_manual = (Button) findViewById(R.id.btn_manual);
+		btn_manual.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Intent i = new Intent(Switchboard.this, InfoActivity.class);
+				Intent i = new Intent(Switchboard.this, ManualActivity.class);
+				startActivity(i);
+			}
+		});			
+		btn_security = (Button) findViewById(R.id.btn_security_info);
+		btn_security.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(Switchboard.this,
+						SecurityRules.class);
 				startActivity(i);
 			}
 		});
@@ -48,43 +55,15 @@ public class Switchboard extends Activity {
 				startActivity(i);
 			}
 		});
-		btn_spc_eco = (Button) findViewById(R.id.btn_spc_eco);
-		btn_spc_eco.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent i = new Intent(Switchboard.this, PlaceInfoActivity.class);
-				startActivity(i);
-			}
-		});
-		btn_refinfo = (Button) findViewById(R.id.btn_refinfo);
-		btn_refinfo.setOnClickListener(new View.OnClickListener() {
+		btn_credits = (Button) findViewById(R.id.btn_credits);
+		btn_credits.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				Intent i = new Intent(Switchboard.this,
-						ReferenceInfoActivity.class);
+						CreditsActivity.class);
 				startActivity(i);
 			}
 		});
-		btn_other_usrs = (Button) findViewById(R.id.btn_other_usrs);
-		btn_other_usrs.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent i = new Intent(Switchboard.this,
-						OtherUsersActivity.class);
-				startActivity(i);
-			}
-		});
-		
-		btn_dbtest = (Button) findViewById(R.id.btn_dbtest);
-		btn_dbtest.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent i = new Intent(Switchboard.this,
-						DriveActivity.class);
-				startActivity(i);
-			}
-		});
-
 		
 	}
 

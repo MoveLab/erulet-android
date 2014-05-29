@@ -26,6 +26,7 @@ public class Step implements Comparable<Step> {
 	private double precision;
 	@DatabaseField(foreign=true, columnName="hlId")
 	private HighLight highlight;
+	@DatabaseField(foreign=true, columnName="referenceId")
 	private Reference reference;
 	@DatabaseField
 	private int order;
@@ -56,14 +57,21 @@ public class Step implements Comparable<Step> {
 		this.highlight=highlight;
 	}
 
-//	public Location getLocation() {
-//		return location;		
-//	}
-//
-//	public void setLocation(Location location) {
-//		this.location = location;
-//	}
 
+	public Step(String id, String name, double latitude, double longitude, double altitude,
+			double precision, int order, Track track, HighLight highlight, Reference reference){
+		this.id=id;
+		this.name=name;
+		this.latitude=latitude;
+		this.longitude=longitude;
+		this.altitude=altitude;
+		this.precision=precision;
+		this.order=order;
+		this.track=track;
+		this.highlight=highlight;
+		this.reference = reference;
+	}
+	
 	public int getOrder() {
 		return order;
 	}
@@ -168,6 +176,21 @@ public class Step implements Comparable<Step> {
 	@Override
 	public int compareTo(Step another) {
 		return Integer.valueOf(order).compareTo(Integer.valueOf(another.getOrder()));
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(!( o instanceof Step )){
+			return false;
+		}
+		Step that = (Step)o;
+		if( getId()!=null && that.getId()!=null){
+			return getId().equalsIgnoreCase(that.getId());
+		}else{
+			return this.getLatitude() == that.getLatitude() &&
+					this.getLongitude() == that.getLongitude() &&
+					this.getAltitude() == that.getAltitude();
+		}
 	}
 
 }
