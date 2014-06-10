@@ -119,6 +119,11 @@ public class DataContainer {
 		return r;
 	}
 	
+	public static Step findStepById(String idStep, DataBaseHelper db){
+		Step s = db.getStepDataDao().queryForId(idStep);
+		return s;
+	}
+	
 	public static Reference findReferenceById(String idReference,
 			DataBaseHelper db) {
 		Reference r = db.getReferenceDataDao().queryForId(idReference);

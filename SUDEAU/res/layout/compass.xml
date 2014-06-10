@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="2dp"
         android:text="Orientació: 0.0" />
 
     <ImageView
@@ -19,5 +19,37 @@
         android:layout_below="@+id/tvHeading"
         android:layout_centerHorizontal="true"
         android:src="@drawable/woodcut" />
+    
+    <ImageView
+        android:id="@+id/imageViewNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvHeading"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/nav_arrow" />
+
+    <TextView
+        android:id="@+id/tvDist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvCurrentLoc"
+        android:layout_centerHorizontal="true"
+        android:text="Distància: ????" />
+
+    <TextView
+        android:id="@+id/tvCurrentLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageViewCompass"
+        android:layout_centerHorizontal="true"
+        android:text="Ubicació actual: ????" />
+
+    <TextView
+        android:id="@+id/tvNavLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvHeading"
+        android:layout_alignTop="@+id/imageViewCompass"
+        android:text="Ubicació destí: ????" />
 
 </RelativeLayout>

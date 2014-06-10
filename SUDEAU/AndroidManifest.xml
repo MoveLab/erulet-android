@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.movelab.sudeau"
-    android:versionCode="1"    
+    android:versionCode="1"
+    android:installLocation="preferExternal"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -70,7 +71,7 @@
         <activity android:name="net.movelab.sudeau.OtherItinerariesActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.VideoPlayActivity" >
-        </activity>
+        </activity>        
         
         <receiver android:name="net.movelab.sudeau.TrackingBroadcastReceiver" >
             <intent-filter>
