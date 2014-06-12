@@ -3,20 +3,11 @@
     android:layout_height="match_parent"
     android:background="#fff" >
 
-    <TextView
-        android:id="@+id/tvHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginTop="2dp"
-        android:text="Orientació: 0.0" />
-
     <ImageView
         android:id="@+id/imageViewCompass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvHeading"
+        android:layout_below="@+id/compass_text_container"
         android:layout_centerHorizontal="true"
         android:src="@drawable/woodcut" />
     
@@ -24,32 +15,66 @@
         android:id="@+id/imageViewNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvHeading"
+        android:layout_below="@+id/compass_text_container"
         android:layout_centerHorizontal="true"
         android:src="@drawable/nav_arrow" />
 
     <TextView
-        android:id="@+id/tvDist"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvCompassActivityLabel"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tvCurrentLoc"
-        android:layout_centerHorizontal="true"
-        android:text="Distància: ????" />
+        android:layout_alignParentRight="true"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:text="Navegació a punt..."
+        android:textColor="@color/white"
+        android:textSize="30sp" />
 
-    <TextView
-        android:id="@+id/tvCurrentLoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/imageViewCompass"
-        android:layout_centerHorizontal="true"
-        android:text="Ubicació actual: ????" />
+    <LinearLayout
+        android:id="@+id/compass_text_container"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/tvCompassActivityLabel"
+        android:layout_alignParentLeft="true"        
+        android:background="@color/dark_grey"        
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tvNavLoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvHeading"
-        android:layout_alignTop="@+id/imageViewCompass"
-        android:text="Ubicació destí: ????" />
+        <TextView
+            android:id="@+id/tvBearing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="20sp"            
+            android:text="Orientació: 0.0" />
+
+        <TextView
+            android:id="@+id/tvDist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="20sp"
+            android:text="Distància: ????" />
+
+        <TextView
+            android:id="@+id/tvCurrentLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="20sp"
+            android:text="Ubicació actual: ????" />
+
+        <TextView
+            android:id="@+id/tvNavLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="20sp"
+            android:text="Ubicació destí: ????" />
+
+    </LinearLayout>
 
 </RelativeLayout>

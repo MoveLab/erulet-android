@@ -57,6 +57,11 @@ public class DataContainer {
 		return retVal;
 	}
 	
+	public static Route refreshRoute(Route r, DataBaseHelper db) {	
+		db.getRouteDataDao().refresh(r);
+		return r;
+	}
+	
 	/**
 	 * Incremental unique track id
 	 * 
@@ -112,6 +117,10 @@ public class DataContainer {
 			e.printStackTrace();
 		}	
 		return retVal;
+	}
+	
+	public static void editRoute(Route editedRoute, DataBaseHelper db) {
+		db.getRouteDataDao().update(editedRoute);
 	}
 	
 	public static Route findRouteById(String idRoute, DataBaseHelper db){

@@ -71,7 +71,9 @@
         <activity android:name="net.movelab.sudeau.OtherItinerariesActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.VideoPlayActivity" >
-        </activity>        
+        </activity>
+        <activity android:name="net.movelab.sudeau.EditRouteActivity" >
+        </activity>
         
         <receiver android:name="net.movelab.sudeau.TrackingBroadcastReceiver" >
             <intent-filter>

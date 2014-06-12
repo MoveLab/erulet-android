@@ -33,7 +33,8 @@ public class Switchboard extends Activity {
 		btn_manual.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Intent i = new Intent(Switchboard.this, ManualActivity.class);
+				//Intent i = new Intent(Switchboard.this, ManualActivity.class);
+				Intent i = new Intent(Switchboard.this, EditRouteActivity.class);
 				startActivity(i);
 			}
 		});			

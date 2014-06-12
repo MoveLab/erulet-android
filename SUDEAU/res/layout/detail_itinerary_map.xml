@@ -8,7 +8,8 @@
         android:id="@+id/mapDetail"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/textView1" />
 
     <TextView
         android:id="@+id/textView1"
@@ -23,40 +24,65 @@
         android:textSize="30sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="150px"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|right"        
         android:orientation="horizontal"
         android:padding="5dp" >
 
-        <Button
-            android:id="@+id/btn_stop_tracking"
-            style="?android:attr/buttonStyleSmall"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"            
-            android:background="#AFFF"
-            android:padding="5dp"
-            android:text="Aturar seguiment" />
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/btn_add_content"
-            style="?android:attr/buttonStyleSmall"
+            <Button
+                android:id="@+id/btn_stop_tracking"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#AFFF"
+                android:padding="5dp"
+                android:text="Aturar seguiment" />
+
+            <Button
+                android:id="@+id/btn_add_content"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#AFFF"
+                android:padding="5dp"
+                android:text="Afegir observació" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:background="#AFFF"
-            android:padding="5dp"            
-            android:text="Afegir observació" />                
-        
-        <Button
-            android:id="@+id/btn_compass_to_point"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:background="#AFFF"
-            android:padding="5dp"            
-            android:text="Navegar a punt..." />
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/btn_compass_to_point"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_height="30dp"
+                android:background="#AFFF"
+                android:padding="5dp"
+                android:text="Navegar a punt..." />
+
+            <Button
+                android:id="@+id/btn_test_json"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#AFFF"
+                android:padding="5dp"
+                android:text="Test json" />
+
+        </LinearLayout>
             
     </LinearLayout>
 

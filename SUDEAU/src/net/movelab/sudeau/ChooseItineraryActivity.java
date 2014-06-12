@@ -193,11 +193,12 @@ public class ChooseItineraryActivity extends Activity {
 				}
 				
 				@Override
-				public View getInfoContents(Marker marker) {					
+				public View getInfoContents(Marker marker) {
 					View myContentView = getLayoutInflater().inflate(R.layout.custominfowindow, null); 
 					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
 					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
-					Route r = routeTable.get(marker);					
+					Route r = routeTable.get(marker);
+					r = DataContainer.refreshRoute(r,dataBaseHelper);
 		            snippet.setText(r.getDescription());
 		            title.setText(r.getName());
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);

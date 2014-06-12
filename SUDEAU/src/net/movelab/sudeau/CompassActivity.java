@@ -9,8 +9,10 @@ import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
@@ -18,7 +20,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -39,7 +43,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     private IntentFilter fixFilter;
 	private CompassFixReceiver fixReceiver;
 	private DataBaseHelper dataBaseHelper;
-	private TextView tvHeading;
+	private TextView tvBearing;
 	private TextView tvLocation;
 	private TextView tvNav;
 	private TextView tvDist;
@@ -55,24 +59,26 @@ public class CompassActivity extends Activity implements SensorEventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.compass);
-        df = new DecimalFormat("#.00"); 
-        setUpDBIfNeeded();
-        startTracking();
-        setNavPoint();
+        setContentView(R.layout.compass);        
 
         // 
         image = (ImageView) findViewById(R.id.imageViewCompass);
         navArrow = (ImageView) findViewById(R.id.imageViewNav);
 
         // TextView that will tell the user what degree is he heading
-        tvHeading = (TextView) findViewById(R.id.tvHeading);        
+        tvBearing = (TextView) findViewById(R.id.tvBearing);        
         tvLocation = (TextView) findViewById(R.id.tvCurrentLoc);
         tvNav = (TextView) findViewById(R.id.tvNavLoc);
         tvDist = (TextView) findViewById(R.id.tvDist);
 
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        
+        df = new DecimalFormat("0.00"); 
+        setUpDBIfNeeded();
+        checkLocationServicesStatus();
+        startTracking();
+        setNavPoint();
     }
     
     public class CompassFixReceiver extends BroadcastReceiver {
@@ -88,6 +94,56 @@ public class CompassActivity extends Activity implements SensorEventListener {
 		}
     	
     }
+    
+    private void checkLocationServicesStatus() {
+		LocationManager lm = null;
+		boolean gps_enabled = false;
+		boolean network_enabled = false;
+		if (lm == null)
+			lm = (LocationManager) getBaseContext().getSystemService(
+					Context.LOCATION_SERVICE);
+		try {
+			gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		} catch (Exception ex) {
+		}
+		try {
+			network_enabled = lm
+					.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		} catch (Exception ex) {
+		}
+
+		if (!gps_enabled && !network_enabled) {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+			dialog.setMessage("La localització del dispositiu no està activada; cal activar-la.");
+			dialog.setPositiveButton("Accedir a activar localització",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(
+								DialogInterface paramDialogInterface,
+								int paramInt) {
+							// TODO Auto-generated method stub
+							Intent myIntent = new Intent(
+									Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+							startActivity(myIntent);
+							// get gps
+						}
+					});
+			dialog.setNegativeButton("Cancel·lar",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(
+								DialogInterface paramDialogInterface,
+								int paramInt) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+			dialog.show();
+		}
+	}
+    
     
     public void setNavPoint(){
     	Bundle extras = getIntent().getExtras();
@@ -150,19 +206,20 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	float sensorDeltaDegree = Math.round(event.values[0]);    	
     	if( currentLocation!=null && navLocation!=null ){    		
     		currentBearingDegree = currentLocation.bearingTo(navLocation) - sensorDeltaDegree;
-    		tvDist.setText("Distància: " + currentLocation.distanceTo(navLocation));
-    		tvLocation.setText("Ubicació actual: " + df.format(currentLocation.getLatitude()) + "-" + df.format(currentLocation.getLongitude()));
-    		tvNav.setText("Ubicació destí: " + df.format(navLocation.getLatitude()) + "-" + df.format(navLocation.getLongitude()));
+    		tvDist.setText("Distància: " + currentLocation.distanceTo(navLocation) + " metres");
+    		tvLocation.setText("Ubicació actual: " + df.format(currentLocation.getLatitude()) + " - " + df.format(currentLocation.getLongitude()));
+    		tvNav.setText("Ubicació destí: " + df.format(navLocation.getLatitude()) + " - " + df.format(navLocation.getLongitude()));
     	}                        
 
-        tvHeading.setText("Orientació: " + Float.toString(sensorDeltaDegree) + " graus");
+        tvBearing.setText("Orientació: " + Float.toString(sensorDeltaDegree) + " graus");
         
-        RotateAnimation raB = new RotateAnimation(
+        RotateAnimation raB = null;        
+    	raB = new RotateAnimation(
         		currentBearingDegree, 
                 -sensorDeltaDegree,
                 Animation.RELATIVE_TO_SELF, 0.5f, 
                 Animation.RELATIVE_TO_SELF,
-                0.5f);
+                0.5f);        
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(
@@ -173,7 +230,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
                 0.5f);
 
         // how long the animation will take place
-        raB.setDuration(50);
+        raB.setDuration(500);
         ra.setDuration(100);
 
         // set the animation after the end of the reservation status

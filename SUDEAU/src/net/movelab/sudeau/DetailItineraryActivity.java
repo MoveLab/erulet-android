@@ -7,9 +7,13 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
@@ -17,6 +21,7 @@ import net.movelab.sudeau.geometry.LineSegment;
 import net.movelab.sudeau.geometry.SnapCalculatorV1;
 import net.movelab.sudeau.geometry.SnapCalculatorV2;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
@@ -106,7 +111,7 @@ public class DetailItineraryActivity extends Activity {
 		setupView();
 		
 		Button btn_compass = (Button)findViewById(R.id.btn_compass_to_point);
-		 btn_compass.setOnClickListener(new OnClickListener() {
+		btn_compass.setOnClickListener(new OnClickListener() {
 			 @Override
 			 public void onClick(View v) {
 				 if(selectedMarker == null){
@@ -120,15 +125,37 @@ public class DetailItineraryActivity extends Activity {
 			 }
 		 });
 
-		// Button btn_stop_tracking = (Button)findViewById(R.id.stop_tracking);
-		// btn_stop_tracking.setOnClickListener(new OnClickListener() {
-		// @Override
-		// public void onClick(View v) {
-		// stopTracking();
-		// }
-		// });
+		 Button btn_stop_tracking = (Button)findViewById(R.id.btn_stop_tracking);
+		 btn_stop_tracking.setOnClickListener(new OnClickListener() {
+			 @Override
+			 public void onClick(View v) {
+				 stopTracking();
+			 }
+		 });
+		 
+		Button btn_test = (Button)findViewById(R.id.btn_test_json);
+		btn_test.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View arg0) {
+				//testJson();
+				saveRoute();
+			}
+		});
+		
 		checkLocationServicesStatus();
 		startTracking();
+	}
+	
+	private void testJson(){		
+		try {
+			JSONObject redon = JSONConverter.routeToJSONObject(currentRoute);
+			Log.d("JSONOutput",redon.toString());
+			JSONConverter.jsonToRoute(redon.toString());
+			Toast.makeText(getApplicationContext(),redon.toString(), Toast.LENGTH_LONG).show();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void checkLocationServicesStatus() {
@@ -236,55 +263,67 @@ public class DetailItineraryActivity extends Activity {
 
 	private void saveRoute() {
 
-		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
-		String android_id = Secure.getString(getBaseContext()
-				.getContentResolver(), Secure.ANDROID_ID);
-
-		// Save track
-		Track t = new Track();
-		t.setId(DataContainer.getTrackId(dataBaseHelper, android_id));
-		if (IGlobalValues.DEBUG) {
-			Log.d("saveRoute", "Adding track - id " + t.getId());
-		}
+//		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
+//		String android_id = Secure.getString(getBaseContext()
+//				.getContentResolver(), Secure.ANDROID_ID);
+//
+//		// Save track
+//		Track t = new Track();
+//		t.setId(DataContainer.getTrackId(dataBaseHelper, android_id));
+//		if (IGlobalValues.DEBUG) {
+//			Log.d("saveRoute", "Adding track - id " + t.getId());
+//		}
+//		try {
+//			dataBaseHelper.getTrackDataDao().create(t);
+//		} catch (RuntimeException ex) {
+//			Log.e("Inserting track", "Insert error " + ex.toString());
+//		}
+//
+//		// Save steps
+//		for (int i = 0; i < currentSteps.size(); i++) {
+//			Step s = currentSteps.get(i);
+//			s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
+//			s.setTrack(t);
+//			if (IGlobalValues.DEBUG) {
+//				Log.d("saveRoute", "Adding step - id " + s.getId() + " order "
+//						+ s.getOrder());
+//			}
+//			try {
+//				dataBaseHelper.getStepDataDao().create(s);
+//			} catch (RuntimeException ex) {
+//				Log.e("Inserting step", "Insert error " + ex.toString());
+//			}
+//		}
+//
+//		// Save route
+//		Route r = new Route();
+//		r.setId(DataContainer.getRouteId(dataBaseHelper, android_id));
+//		if (currentRoute != null)
+//			r.setIdRouteBasedOn(currentRoute.getId());
+//		r.setUserId(android_id);
+//		r.setTrack(t);
+//		r.setName("Route created on phone");
+//		if (IGlobalValues.DEBUG) {
+//			Log.d("saveRoute", "Adding route - id " + r.getId());
+//		}
+//		try {
+//			dataBaseHelper.getRouteDataDao().create(r);
+//		} catch (RuntimeException ex) {
+//			Log.e("Inserting route", "Insert error " + ex.toString());
+//		}
+		
+		Intent i = new Intent(DetailItineraryActivity.this,
+				EditRouteActivity.class);
+		String routeJson;
 		try {
-			dataBaseHelper.getTrackDataDao().create(t);
-		} catch (RuntimeException ex) {
-			Log.e("Inserting track", "Insert error " + ex.toString());
-		}
-
-		// Save steps
-		for (int i = 0; i < currentSteps.size(); i++) {
-			Step s = currentSteps.get(i);
-			s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
-			s.setTrack(t);
-			if (IGlobalValues.DEBUG) {
-				Log.d("saveRoute", "Adding step - id " + s.getId() + " order "
-						+ s.getOrder());
-			}
-			try {
-				dataBaseHelper.getStepDataDao().create(s);
-			} catch (RuntimeException ex) {
-				Log.e("Inserting step", "Insert error " + ex.toString());
-			}
-		}
-
-		// Save route
-		Route r = new Route();
-		r.setId(DataContainer.getRouteId(dataBaseHelper, android_id));
-		if (currentRoute != null)
-			r.setIdRouteBasedOn(currentRoute.getId());
-		r.setUserId(android_id);
-		r.setTrack(t);
-		r.setName("Route created on phone");
-		if (IGlobalValues.DEBUG) {
-			Log.d("saveRoute", "Adding route - id " + r.getId());
-		}
-		try {
-			dataBaseHelper.getRouteDataDao().create(r);
-		} catch (RuntimeException ex) {
-			Log.e("Inserting route", "Insert error " + ex.toString());
-		}
-
+			routeJson = JSONConverter.routeToJSONObject(currentRoute).toString();
+			i.putExtra("routeJson", routeJson );
+			startActivity(i);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+					
 	}
 
 	private void stopTracking() {
@@ -412,7 +451,7 @@ public class DetailItineraryActivity extends Activity {
 						ImageView picture = (ImageView) myContentView
 								.findViewById(R.id.info_pic);
 						picture.setImageResource(R.drawable.ic_itinerary_icon);
-						v.vibrate(250);
+						v.vibrate(125);
 						// Drawable image = null;
 						// byte[] b = DataContainer.getStepMedia(interestStep,
 						// dataBaseHelper);

@@ -7,6 +7,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @DatabaseTable(tableName = "step")
 public class Step implements Comparable<Step> {
@@ -191,6 +193,6 @@ public class Step implements Comparable<Step> {
 					this.getLongitude() == that.getLongitude() &&
 					this.getAltitude() == that.getAltitude();
 		}
-	}
-
+	}	
+	
 }
