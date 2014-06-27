@@ -8,8 +8,21 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent" 
-        android:layout_above="@+id/ll"/>
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/ll"
+        android:layout_below="@+id/tvTitolTriaItinerari" />
+
+    <TextView
+        android:id="@+id/tvTitolTriaItinerari"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:text="Itineraris"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
     
     <LinearLayout
         android:id="@+id/ll"
@@ -28,17 +41,6 @@
         android:text="Començar itinerari!" />
     
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/dark_grey"
-        android:gravity="center"
-        android:text="Itineraris"
-        android:textColor="@color/white"
-        android:textSize="30sp" />
     
 </RelativeLayout>
 

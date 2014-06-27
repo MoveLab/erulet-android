@@ -161,6 +161,9 @@ public class JSONConverter {
 		if(j.has("name")){
 			h.setName(j.getString("name"));
 		}
+		if(j.has("imagePath")){
+			h.setImagePath(j.getString("imagePath"));
+		}
 		if(j.has("radius")){
 			h.setRadius(j.getDouble("radius"));
 		}		
@@ -187,6 +190,7 @@ public class JSONConverter {
 		JSONObject j = new JSONObject();
 		j.put("id", h.getId());
 		j.put("longText", h.getLongText());
+		j.put("imagePath",h.getImagePath());
 		j.put("name", h.getName());
 		j.put("radius", h.getRadius());
 		return j;
@@ -244,7 +248,9 @@ public class JSONConverter {
 		j.put("order", s.getOrder());
 		j.put("precision", s.getPrecision());
 		j.put("reference", referenceToJSONObject(s.getReference()));
-		j.put("absoluteTime", spdf.format(s.getAbsoluteTime()));
+		if(s.getAbsoluteTime()!=null){
+			j.put("absoluteTime", spdf.format(s.getAbsoluteTime()));
+		}
 		j.put("relativeTime", s.getRelativeTime());
 		return j;
 	}

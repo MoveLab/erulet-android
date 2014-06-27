@@ -22,13 +22,14 @@ public class EditRouteActivity extends Activity {
 	private EditText routeName;
 	private EditText routeDescription;
 	private DataBaseHelper dataBaseHelper;
+	private String android_id;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_route);
-		setUpDBIfNeeded();		
+		setUpDBIfNeeded();
 		setEditedRoute();
 		initInterface();		
 	}
@@ -38,16 +39,18 @@ public class EditRouteActivity extends Activity {
 			dataBaseHelper = OpenHelperManager.getHelper(this,
 					DataBaseHelper.class);
 		}
+		android_id = DataContainer.getAndroidId(getContentResolver());
 	}
 	
-	private void save(){
-		if(editedRoute.getId()!=null){ //Edit
-			editedRoute.setName( routeName.getText().toString() );
-			editedRoute.setDescription( routeDescription.getText().toString() );
+	private void save(String android_id){
+		editedRoute.setName( routeName.getText().toString() );
+		editedRoute.setDescription( routeDescription.getText().toString() );
+		if(editedRoute.getId()!=null){ //Edit			
 			DataContainer.editRoute(editedRoute,dataBaseHelper);
 			Toast.makeText(getApplicationContext(),"Canvis desats amb èxit...", Toast.LENGTH_LONG).show();
 		}else{ //Insert
-			
+			DataContainer.insertRoute(editedRoute,dataBaseHelper,android_id);
+			Toast.makeText(getApplicationContext(),"Canvis desats amb èxit...", Toast.LENGTH_LONG).show();
 		}
 	}
 	
@@ -60,7 +63,7 @@ public class EditRouteActivity extends Activity {
 		btn_save.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {				
-				save();
+				save(android_id);
 			}
 		});
 		Button btn_cancel = (Button)findViewById(R.id.btn_editRoute_cancel);

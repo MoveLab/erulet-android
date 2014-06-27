@@ -76,6 +76,12 @@ public class ChooseItineraryActivity extends Activity {
 	}
 	
 	@Override
+	protected void onResume() {	
+		super.onResume();
+		refreshMapView();
+	}
+	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		menu.add(group1,first_id,first_id,"Els meus itineraris...");		
 		menu.add(group1,second_id,second_id,"Itineraris compartits...");
@@ -100,7 +106,7 @@ public class ChooseItineraryActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+		
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -122,12 +128,13 @@ public class ChooseItineraryActivity extends Activity {
 						DetailItineraryActivity.class);
 					Route r = routeTable.get(selectedMarker);
 					i.putExtra("idRoute",r.getId());
-					i.putExtra("mode",which);					
-					startActivity(i);
+					i.putExtra("mode",which);
+					dialog.dismiss();
+					startActivity(i);					
 				}
 			}
 		);
-		builder.show();
+		builder.show();		
 	}
 	
 	private void setUpDBIfNeeded() {
@@ -224,6 +231,12 @@ public class ChooseItineraryActivity extends Activity {
 				}
 			}									
 		}		
+	}
+	
+	private void refreshMapView(){
+		mMap.clear();
+		addRouteMarkersFromDB();
+		setUpCamera();
 	}
 
 	private void addRouteMarkersFromDB() {

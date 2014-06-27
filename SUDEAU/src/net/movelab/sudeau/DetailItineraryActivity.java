@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import org.json.JSONObject;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.geometry.LineSegment;
-import net.movelab.sudeau.geometry.SnapCalculatorV1;
 import net.movelab.sudeau.geometry.SnapCalculatorV2;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
@@ -41,6 +41,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -88,7 +89,9 @@ public class DetailItineraryActivity extends Activity {
 	private Marker interestAreaMarker;
 	private Marker selectedMarker;
 	private Step interestStep;
-	private Route currentRoute;
+	private String stepBeingEditedId;
+	private Step currentStep;
+	private Route currentRoute;	
 	private ArrayList<Step> interestSteps;
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
@@ -100,6 +103,8 @@ public class DetailItineraryActivity extends Activity {
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST + 1;
+	
+	static final int HIGHLIGHT_INFO_REQUEST = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,11 +147,62 @@ public class DetailItineraryActivity extends Activity {
 			}
 		});
 		
+		Button btn_add_content = (Button)findViewById(R.id.btn_add_content);
+		btn_add_content.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				if(currentStep!=null){
+					Intent i = new Intent(DetailItineraryActivity.this,EditHighLightActivity.class);
+					stepBeingEditedId = currentStep.getId();
+					i.putExtra("lat",Double.toString(currentStep.getLatitude()));
+					i.putExtra("long",Double.toString(currentStep.getLongitude()));
+					SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
+					i.putExtra("date",spdf.format(currentStep.getAbsoluteTime()));					
+			        startActivityForResult(i, HIGHLIGHT_INFO_REQUEST);				    
+				}else{
+					Toast.makeText(getApplicationContext(), "Encara no hi ha punts a la ruta, espera un moment...", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		
 		checkLocationServicesStatus();
 		startTracking();
 	}
 	
-	private void testJson(){		
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode==HIGHLIGHT_INFO_REQUEST){
+			if(resultCode==RESULT_OK){
+				Toast.makeText(getApplicationContext(), "Intent finalitzat amb èxit", Toast.LENGTH_LONG).show();
+				String hlName = data.getStringExtra("hlName");
+				String hlLongText = data.getStringExtra("hlLongText");
+				String imagePath = data.getStringExtra("imagePath");
+				HighLight hl = new HighLight();
+				hl.setName(hlName);
+				hl.setLongText(hlLongText);
+				hl.setImagePath(imagePath);				
+				Step s = fixReceiver.getStepById(stepBeingEditedId);
+				if(s!=null){
+					s.setHighlight(hl);
+					//Add marker for new highlight					
+				}
+				Marker m = mMap
+						.addMarker(new MarkerOptions()
+								.position(new LatLng(s.getLatitude(), s.getLongitude()))
+								.title(hl.getName())
+								.snippet(hl.getLongText())
+								.icon(BitmapDescriptorFactory
+										.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+				// BitmapDescriptorFactory.fromResource(R.drawable.ic_wp_pin)));
+				// .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+				stepTable.put(m, s);
+			}else if(resultCode==RESULT_CANCELED){
+				Toast.makeText(getApplicationContext(), "Usuari ha cancel·lat", Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+	
+	private void testJson(){
 		try {
 			JSONObject redon = JSONConverter.routeToJSONObject(currentRoute);
 			Log.d("JSONOutput",redon.toString());
@@ -260,63 +316,33 @@ public class DetailItineraryActivity extends Activity {
 		}
 
 	}
+	
+	private Route createNewRoute(){
+		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
+		String android_id = Secure.getString(getBaseContext()
+				.getContentResolver(), Secure.ANDROID_ID);		
+		Track t = new Track();		
+		t.setSteps(currentSteps);
+		for (int i = 0; i < currentSteps.size(); i++) {
+			Step s = currentSteps.get(i);			
+			s.setTrack(t);
+		}
+		// Save route
+		Route r = new Route();		
+		if (currentRoute != null)
+			r.setIdRouteBasedOn(currentRoute.getId());
+		r.setUserId(android_id);
+		r.setTrack(t);
+		return r;
+	}
 
-	private void saveRoute() {
-
-//		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
-//		String android_id = Secure.getString(getBaseContext()
-//				.getContentResolver(), Secure.ANDROID_ID);
-//
-//		// Save track
-//		Track t = new Track();
-//		t.setId(DataContainer.getTrackId(dataBaseHelper, android_id));
-//		if (IGlobalValues.DEBUG) {
-//			Log.d("saveRoute", "Adding track - id " + t.getId());
-//		}
-//		try {
-//			dataBaseHelper.getTrackDataDao().create(t);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting track", "Insert error " + ex.toString());
-//		}
-//
-//		// Save steps
-//		for (int i = 0; i < currentSteps.size(); i++) {
-//			Step s = currentSteps.get(i);
-//			s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
-//			s.setTrack(t);
-//			if (IGlobalValues.DEBUG) {
-//				Log.d("saveRoute", "Adding step - id " + s.getId() + " order "
-//						+ s.getOrder());
-//			}
-//			try {
-//				dataBaseHelper.getStepDataDao().create(s);
-//			} catch (RuntimeException ex) {
-//				Log.e("Inserting step", "Insert error " + ex.toString());
-//			}
-//		}
-//
-//		// Save route
-//		Route r = new Route();
-//		r.setId(DataContainer.getRouteId(dataBaseHelper, android_id));
-//		if (currentRoute != null)
-//			r.setIdRouteBasedOn(currentRoute.getId());
-//		r.setUserId(android_id);
-//		r.setTrack(t);
-//		r.setName("Route created on phone");
-//		if (IGlobalValues.DEBUG) {
-//			Log.d("saveRoute", "Adding route - id " + r.getId());
-//		}
-//		try {
-//			dataBaseHelper.getRouteDataDao().create(r);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting route", "Insert error " + ex.toString());
-//		}
-		
+	private void saveRoute() {			
 		Intent i = new Intent(DetailItineraryActivity.this,
 				EditRouteActivity.class);
-		String routeJson;
+		String routeJson;		
+		Route r = createNewRoute();
 		try {
-			routeJson = JSONConverter.routeToJSONObject(currentRoute).toString();
+			routeJson = JSONConverter.routeToJSONObject(r).toString();
 			i.putExtra("routeJson", routeJson );
 			startActivity(i);
 		} catch (JSONException e) {
@@ -359,7 +385,7 @@ public class DetailItineraryActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			String idRoute = extras.getString("idRoute");
-			currentRoute = DataContainer.findRouteById(idRoute, dataBaseHelper);
+			currentRoute = DataContainer.findRouteById(idRoute, dataBaseHelper);			 
 		}
 	}
 
@@ -450,7 +476,12 @@ public class DetailItineraryActivity extends Activity {
 						snippet.setText(h1.getLongText());
 						ImageView picture = (ImageView) myContentView
 								.findViewById(R.id.info_pic);
-						picture.setImageResource(R.drawable.ic_itinerary_icon);
+						if(h1.getImagePath()!=null && !h1.getImagePath().trim().equalsIgnoreCase("")){
+							String imagePath = h1.getImagePath();							
+							picture.setImageURI( Uri.parse(imagePath) );
+						}else{												
+							picture.setImageResource(R.drawable.ic_itinerary_icon);
+						}
 						v.vibrate(125);
 						// Drawable image = null;
 						// byte[] b = DataContainer.getStepMedia(interestStep,
@@ -705,6 +736,14 @@ public class DetailItineraryActivity extends Activity {
 				trackInProgress = mMap.addPolyline(rectOptions);
 			}
 		}
+		
+		public Step getStepById(String id){
+			for(Step s : stepsInProgress){
+				if(s.getId().equalsIgnoreCase(id))
+					return s;
+			}
+			return null;
+		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -712,13 +751,14 @@ public class DetailItineraryActivity extends Activity {
 			double lng = intent.getExtras().getDouble("long", 0);
 			double alt = intent.getExtras().getDouble("alt", 0);
 			DateFormat df = new SimpleDateFormat("HH:mm:ss.SSSZ");
-			Date time = new Date(System.currentTimeMillis());
+			long currentTime = System.currentTimeMillis();
+			Date time = new Date(currentTime);
 			// Toast.makeText(getApplicationContext(), lat + " - " + lng,
 			// Toast.LENGTH_SHORT).show();
 			LatLng location = new LatLng(lat, lng);
 			boolean addNewStep = true;
 			if (stepsInProgress.size() > 0) {
-				Step last = stepsInProgress.get(stepsInProgress.size() - 1);
+				Step last = stepsInProgress.get(stepsInProgress.size() - 1);				
 				if (last.getLatitude() == location.latitude
 						&& last.getLongitude() == location.longitude) {
 					// Point is same as last, we don't add it to the track
@@ -731,29 +771,44 @@ public class DetailItineraryActivity extends Activity {
 				}
 			}
 			if (addNewStep) {
-				Marker m = mMap
-						.addMarker(new MarkerOptions()
-								.position(location)
-								.title("Location " + lat + " - " + lng + " "
-										+ df.format(time))
-								.snippet(
-										"Location " + lat + " - " + lng + " "
-												+ df.format(time))
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+//				Marker m = mMap
+//						.addMarker(new MarkerOptions()
+//								.position(location)
+//								.title("Location " + lat + " - " + lng + " "
+//										+ df.format(time))
+//								.snippet(
+//										"Location " + lat + " - " + lng + " "
+//												+ df.format(time))
+//								.icon(BitmapDescriptorFactory
+//										.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));				
 				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16));
 
 				Step s = new Step();
+				s.setId( Long.toString(currentTime) );
 				s.setAbsoluteTime(time);
 				s.setAltitude(alt);
 				s.setLatitude(lat);
 				s.setLongitude(lng);
+				
+				CircleOptions copt = new CircleOptions();
+				copt.center(new LatLng(s.getLatitude(), s.getLongitude()));
+				copt.radius(10);
+				copt.zIndex(1);
+				copt.strokeColor(Color.BLACK);
+				copt.strokeWidth(0.1f);
+				// Fill color of the circle
+				// 0x represents, this is an hexadecimal code
+				// 55 represents percentage of transparency. For 100% transparency,
+				// specify 00.
+				// For 0% transparency ( ie, opaque ) , specify ff
+				// The remaining 6 characters(00ff00) specify the fill color
+				copt.fillColor(0x55FF0701);
+				mMap.addCircle(copt);
+				
+				currentStep = s;
 				stepsInProgress.add(s);
 				int order = stepsInProgress.size() - 1;
 				s.setOrder(order);
-				// We set and retrieve id right after insert
-				// s.setId( DataContainer.getStepId(dataBaseHelper, android_id)
-				// );
 				updateTrackInProgress();
 				if (IGlobalValues.DEBUG) {
 					Log.d("onReceive", "Received new location " + lat + " "

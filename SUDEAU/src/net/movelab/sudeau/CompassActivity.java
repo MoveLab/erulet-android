@@ -176,6 +176,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	Intent intent = new Intent(getString(R.string.internal_message_id)
 				+ Util.MESSAGE_UNSCHEDULE);
 		sendBroadcast(intent);
+		unregisterReceiver(fixReceiver);
     }
 
 

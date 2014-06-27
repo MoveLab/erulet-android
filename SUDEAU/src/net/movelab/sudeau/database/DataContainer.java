@@ -15,7 +15,9 @@ import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -55,11 +57,39 @@ public class DataContainer {
 			e.printStackTrace();
 		}	
 		return retVal;
-	}
+	}	
 	
 	public static Route refreshRoute(Route r, DataBaseHelper db) {	
-		db.getRouteDataDao().refresh(r);
+		db.getRouteDataDao().refresh(r);		
 		return r;
+	}
+	
+	public static void deleteRouteCascade(Route r, DataBaseHelper db){
+		if(r.getTrack() != null){
+			deleteTrackCascade(r.getTrack(), db);
+		}
+		db.getRouteDataDao().delete(r);
+	}
+	
+	public static void deleteTrackCascade(Track t, DataBaseHelper db){
+		if(t.getSteps() != null){
+			List<Step> steps = getTrackSteps(t, db);
+			for(Step s : steps){
+				deleteStepCascade(s, db);
+			}
+		}
+		db.getTrackDataDao().delete(t);
+	}
+	
+	public static void deleteStepCascade(Step s, DataBaseHelper db){
+		if(s.getHighlight()!=null){
+			deleteHighLight(s.getHighlight(), db);
+		}
+		db.getStepDataDao().delete(s);
+	}
+	
+	public static void deleteHighLight(HighLight h, DataBaseHelper db){
+		db.getHlDataDao().delete(h);
 	}
 	
 	/**
@@ -119,6 +149,11 @@ public class DataContainer {
 		return retVal;
 	}
 	
+	public static String getAndroidId(ContentResolver cr){
+		String android_id = Secure.getString(cr, Secure.ANDROID_ID);
+		return android_id;
+	}
+		
 	public static void editRoute(Route editedRoute, DataBaseHelper db) {
 		db.getRouteDataDao().update(editedRoute);
 	}
@@ -142,6 +177,23 @@ public class DataContainer {
 	public static List<Track> getAllTracks(DataBaseHelper db) {
 		List<Track> tracks = db.getTrackDataDao().queryForAll();
 		return tracks;
+	}
+	
+	public static List<Route> getUserRoutes(DataBaseHelper db, String userId) {
+		List<Route> userRoutes = new ArrayList<Route>();
+		QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao().queryBuilder();
+		Where<Route, String> where = queryBuilder.where();
+		String retVal=null;
+		try {						
+			where.eq("userId",userId);
+			PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+			userRoutes = db.getRouteDataDao().query(preparedQuery);
+			return userRoutes;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return userRoutes;
 	}
 	
 	public static List<Route> getAllRoutes(DataBaseHelper db) {		
@@ -719,6 +771,88 @@ public class DataContainer {
 		
 		return r;
 	}
+
+	public static void insertRoute(Route editedRoute,DataBaseHelper dataBaseHelper, 
+			String android_id) { 				
+		// Save track
+		//Track t = new Track();
+		if(editedRoute.getTrack()!=null){
+			Track t = editedRoute.getTrack();
+			editedRoute.getTrack().setId(DataContainer.getTrackId(dataBaseHelper, android_id));
+			if (IGlobalValues.DEBUG) {
+				Log.d("insertRoute", "Adding track - id " + t.getId());
+			}
+			try {
+				dataBaseHelper.getTrackDataDao().create(t);
+			} catch (RuntimeException ex) {
+				Log.e("Inserting track", "Insert error " + ex.toString());
+			}
+			
+			if(t.getSteps()!=null){
+				List<Step> currentSteps = (List<Step>)t.getSteps();				
+				for (int i = 0; i < currentSteps.size(); i++) {
+					Step s = currentSteps.get(i);
+					s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
+					s.setTrack(t);
+					if(s.getHighlight()!=null){
+						HighLight h = s.getHighlight();
+						h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
+						if (IGlobalValues.DEBUG) {
+							Log.d("insertRoute", "Adding highlight - id " + h.getId());
+						}
+						try {
+							dataBaseHelper.getHlDataDao().create(h);
+						} catch (RuntimeException ex) {
+							Log.e("Inserting step", "Insert error " + ex.toString());
+						}
+					}
+					if (IGlobalValues.DEBUG) {
+						Log.d("insertRoute", "Adding step - id " + s.getId() + " order "
+								+ s.getOrder());
+					}
+					try {
+						dataBaseHelper.getStepDataDao().create(s);
+					} catch (RuntimeException ex) {
+						Log.e("Inserting step", "Insert error " + ex.toString());
+					}
+				}
+			}					
+		}						
+		
+		editedRoute.setId(DataContainer.getRouteId(dataBaseHelper, android_id));						
+		try {
+			dataBaseHelper.getRouteDataDao().create(editedRoute);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting route", "Insert error " + ex.toString());
+		}
+	}
+
+	public static String getHighLightId(DataBaseHelper db,
+			String userId) {
+		QueryBuilder<HighLight, String> queryBuilder = db.getHlDataDao().queryBuilder();
+		Where<HighLight, String> where = queryBuilder.where();
+		String retVal=null;
+		try {			
+			where.like("id", "%" + userId + "%");
+			PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
+			List<HighLight> userHighLights = db.getHlDataDao().query(preparedQuery);			
+			if(userHighLights != null){
+				int c = userHighLights.size() + 1;
+				retVal = "H_" + userId + "_" + c;
+			}else{
+				retVal = "H_" + userId + "_1";
+			}
+			if(IGlobalValues.DEBUG){
+				Log.d("getHighLightId","Returning highlight id" + retVal);
+			}			
+			return retVal;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return retVal;
+	}
+	
 	
 
 }
