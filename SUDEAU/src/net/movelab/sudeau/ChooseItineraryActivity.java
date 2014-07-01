@@ -31,6 +31,7 @@ import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
@@ -50,8 +51,7 @@ public class ChooseItineraryActivity extends Activity {
 	private GoogleMap mMap;
 //	private static final LatLng MY_POINT = new LatLng(41.66, 1.54);
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
-//	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);	
-	private Button goToRouteBtn;	
+//	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
 	private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
@@ -71,8 +71,7 @@ public class ChooseItineraryActivity extends Activity {
 		setContentView(R.layout.choose_itinerary_map);
 		setUpDBIfNeeded();
 		setUpMapIfNeeded();
-		setUpCamera();
-		initControls();
+		setUpCamera();		
 	}
 	
 	@Override
@@ -143,21 +142,7 @@ public class ChooseItineraryActivity extends Activity {
 			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
 			DataContainer.loadRedon(dataBaseHelper, this.getBaseContext());
 		}
-	}
-
-	private void initControls() {
-		goToRouteBtn = (Button) findViewById(R.id.go_to_route_btn);
-		goToRouteBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				if(selectedMarker==null){
-					Toast.makeText(getApplicationContext(), "No hi ha cap ruta seleccionada; si us plau tria una ruta...", Toast.LENGTH_LONG).show();
-				}else{
-					showItineraryOptions();										
-				}
-			}
-		});		
-	}
+	}	
 
 	private void setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -192,6 +177,18 @@ public class ChooseItineraryActivity extends Activity {
 					return false;
 				}
 			});
+			
+			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+				@Override
+				public void onInfoWindowClick(Marker arg0) {
+					if(selectedMarker==null){
+						Toast.makeText(getApplicationContext(), "No hi ha cap ruta seleccionada; si us plau tria una ruta...", Toast.LENGTH_LONG).show();
+					}else{
+						showItineraryOptions();										
+					}
+				}
+			});
+			
 			mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
 				
 				@Override
@@ -248,32 +245,16 @@ public class ChooseItineraryActivity extends Activity {
 		for(int i=0; i < routes.size(); i++){			
 			Route r = routes.get(i);
 			Step start = DataContainer.getRouteStarter(r, dataBaseHelper);
-			Marker my_marker = mMap.addMarker(new MarkerOptions()
-			.position(new LatLng(start.getLatitude(), start.getLongitude()))
-			.title(r.getName())
-			.snippet(null)
-			.icon(BitmapDescriptorFactory
-					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-			routeTable.put(my_marker, r);
+			if(start!=null){
+				Marker my_marker = mMap.addMarker(new MarkerOptions()
+				.position(new LatLng(start.getLatitude(), start.getLongitude()))
+				.title(r.getName())
+				.snippet(null)
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+				routeTable.put(my_marker, r);
+			}
 		}
-//		Marker my_marker = mMap.addMarker(new MarkerOptions()
-//				.position(VALL_ARAN_1)
-//				.title("Itinerari 1")
-//				.snippet("Descripció breu de l'itinerari 1!")
-//				.icon(BitmapDescriptorFactory
-//						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-//		Marker my_marker_2 = mMap.addMarker(new MarkerOptions()
-//				.position(VALL_ARAN_2)
-//				.title("Itinerari 2")
-//				.snippet("Descripció breu de l'itinerari 2!")
-//				.icon(BitmapDescriptorFactory
-//						.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-//		Marker my_marker_3 = mMap.addMarker(new MarkerOptions()
-//				.position(ESTANH_REDON)
-//				.title("Estanh Redon")
-//				.snippet("Descripció breu de l'itinerari 3!")
-//				.icon(BitmapDescriptorFactory
-//						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 	}
 
 	private TileProvider initTileProvider() {

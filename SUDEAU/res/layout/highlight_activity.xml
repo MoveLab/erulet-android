@@ -39,6 +39,13 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
+                android:id="@+id/tvHlAlt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Altitud:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
                 android:id="@+id/tvLongHl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,7 +84,7 @@
         <ImageButton
             android:id="@+id/btnPicture"
             android:layout_width="match_parent"
-            android:layout_height="198dp"
+            android:layout_height="100dp"
             android:src="@android:drawable/ic_menu_camera" />
 
         <LinearLayout

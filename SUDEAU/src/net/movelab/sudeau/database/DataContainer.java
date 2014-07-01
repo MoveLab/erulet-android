@@ -43,7 +43,9 @@ public class DataContainer {
 			PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
 			List<Route> userRoutes = db.getRouteDataDao().query(preparedQuery);			
 			if(userRoutes != null){
-				int c = userRoutes.size() + 1;
+				//int c = userRoutes.size() + 1;
+				List<String> routeIds = getRouteIds(userRoutes);
+				int c = getMaxCounter(routeIds);
 				retVal = "R_" + userId + "_" + c; 				
 			}else{
 				retVal = "R_" + userId + "_1";
@@ -57,7 +59,116 @@ public class DataContainer {
 			e.printStackTrace();
 		}	
 		return retVal;
-	}	
+	}
+	
+	
+	/**
+	 * Incremental unique route id
+	 * 	
+	 * @param db
+	 * @param userId
+	 * @return
+	 */
+	public static String getHighLighId(DataBaseHelper db, String userId){
+		QueryBuilder<HighLight, String> queryBuilder = db.getHlDataDao().queryBuilder();
+		Where<HighLight, String> where = queryBuilder.where();
+		String retVal=null;
+		try {
+			where.like("id", "%" + userId + "%");
+			PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
+			List<HighLight> userHighLights = db.getHlDataDao().query(preparedQuery);			
+			if(userHighLights != null){
+				//int c = userRoutes.size() + 1;
+				List<String> highLightIds = getHighLightIds(userHighLights);
+				int c = getMaxCounter(highLightIds);
+				retVal = "H_" + userId + "_" + c; 				
+			}else{
+				retVal = "H_" + userId + "_1";
+			}
+			if(IGlobalValues.DEBUG){
+				Log.d("getHighLightId","Returning higlight id" + retVal);
+			}
+			return retVal;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return retVal;
+	}
+	
+	private static List<String> getHighLightIds(List<HighLight> userHighLights){
+		ArrayList<String> retVal = new ArrayList<String>();
+		for(int i = 0; i < userHighLights.size(); i++){
+			retVal.add(userHighLights.get(i).getId());
+		}
+		return retVal;
+	}
+	
+	private static List<String> getRouteIds(List<Route> userRoutes){
+		ArrayList<String> retVal = new ArrayList<String>();
+		for(int i = 0; i < userRoutes.size(); i++){
+			retVal.add(userRoutes.get(i).getId());
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Creates an empty route/track entry to the database, and returns the route object 
+	 */
+	public static Route createEmptyRoute(DataBaseHelper db, String userId){		
+		String idTrack = getTrackId(db, userId);
+		if(IGlobalValues.DEBUG){
+			Log.d("createEmptyRoute","Getting track id " + idTrack);
+		}
+		Track t = new Track();
+		t.setId(idTrack);		
+		db.getTrackDataDao().create(t);
+		String idRoute = getRouteId(db, userId);
+		if(IGlobalValues.DEBUG){
+			Log.d("createEmptyRoute","Getting route id " + idRoute);
+		}
+		Route r = new Route();
+		r.setId(idRoute);
+		r.setName("La meva ruta");
+		r.setDescription("La meva descripcio");
+		r.setUserId(userId);
+		r.setTrack(t);
+		db.getRouteDataDao().create(r);
+		if(IGlobalValues.DEBUG){
+			Log.d("createEmptyRoute","Route " + idRoute + " saved");
+		}
+		return r;
+	}
+	
+	public static void addStepToTrack(Step s, Track t, String userId, DataBaseHelper db){
+		//Track is already created
+		s.setTrack(t);		
+		String stepId = getStepId(db, userId);
+		if(IGlobalValues.DEBUG){
+			Log.d("addStepToTrack","Getting step id " + stepId);
+		}
+		s.setId(stepId);
+		db.getStepDataDao().create(s);
+		if(IGlobalValues.DEBUG){
+			Log.d("addStepToTrack","step " + stepId + " saved");
+		}
+		t.getSteps().add(s);		
+	}
+	
+	public static void addHighLightToStep(Step s, HighLight h, String userId, DataBaseHelper db){
+		//Step already exists
+		String hlId = getHighLighId(db, userId);
+		h.setId(hlId);		
+		db.getHlDataDao().create(h);
+		if(IGlobalValues.DEBUG){
+			Log.d("addHighLightToStep","highlight " + hlId + " saved");
+		}
+		s.setHighlight(h);
+		db.getStepDataDao().update(s);
+		if(IGlobalValues.DEBUG){
+			Log.d("addHighLightToStep","step " + s.getId() + " updated (added highlight)");
+		}
+	}
 	
 	public static Route refreshRoute(Route r, DataBaseHelper db) {	
 		db.getRouteDataDao().refresh(r);		
@@ -108,7 +219,9 @@ public class DataContainer {
 			PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
 			List<Track> trackRoutes = db.getTrackDataDao().query(preparedQuery);			
 			if(trackRoutes != null){
-				int c = trackRoutes.size() + 1;
+				List<String> ids = getTrackIds(trackRoutes);
+				int c = getMaxCounter(ids);
+				//int c = trackRoutes.size() + 1;
 				retVal = "T_" + userId + "_" + c;
 			}else{
 				retVal = "T_" + userId + "_1";
@@ -124,6 +237,31 @@ public class DataContainer {
 		return retVal;
 	}
 	
+	private static List<String> getTrackIds(List<Track> tracks){
+		ArrayList<String> ids = new ArrayList<String>();
+		for(int i = 0; i < tracks.size(); i++){
+			ids.add(tracks.get(i).getId());
+		}
+		return ids;
+	}
+	
+	private static int getMaxCounter(List<String> ids){
+		//Each string has the structure [CHARACTER]_[Android_id]_[Counter]
+		//We want to extract the counter
+		if(ids.size() == 0){
+			return 1;
+		}else{
+			int max = 0;
+			for(int i = 0; i < ids.size(); i++){
+				String counter_s = ids.get(i).split("_")[2];
+				int counter = Integer.parseInt(counter_s);
+				if(counter > max)
+					max = counter;
+			}
+			return max + 1;
+		}
+	}
+	
 	public static String getStepId(DataBaseHelper db, String userId){
 		QueryBuilder<Step, String> queryBuilder = db.getStepDataDao().queryBuilder();
 		Where<Step, String> where = queryBuilder.where();
@@ -133,7 +271,9 @@ public class DataContainer {
 			PreparedQuery<Step> preparedQuery = queryBuilder.prepare();
 			List<Step> userSteps = db.getStepDataDao().query(preparedQuery);			
 			if(userSteps != null){
-				int c = userSteps.size() + 1;
+				List<String> stepIds = getStepIds(userSteps);
+				//int c = userSteps.size() + 1;
+				int c = getMaxCounter(stepIds);
 				retVal = "S_" + userId + "_" + c;
 			}else{
 				retVal = "S_" + userId + "_1";
@@ -147,6 +287,14 @@ public class DataContainer {
 			e.printStackTrace();
 		}	
 		return retVal;
+	}
+	
+	private static List<String> getStepIds(List<Step> steps){
+		ArrayList<String> ids = new ArrayList<String>();
+		for(int i = 0; i < steps.size(); i++){
+			ids.add(steps.get(i).getId());
+		}
+		return ids;
 	}
 	
 	public static String getAndroidId(ContentResolver cr){

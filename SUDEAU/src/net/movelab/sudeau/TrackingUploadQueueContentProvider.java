@@ -77,7 +77,7 @@ public abstract class TrackingUploadQueueContentProvider extends ContentProvider
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-			// TODO
+			// TODO Add database upgrade code
 
 		}
 	}

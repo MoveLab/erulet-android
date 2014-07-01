@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +32,8 @@ public class EditHighLightActivity extends Activity {
 	private ImageButton btn_picture;	
 	private File currentPhoto;
 	private Bitmap thumbnail;	
+	private TextView tvName;
+	private TextView tvLongText;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +45,35 @@ public class EditHighLightActivity extends Activity {
 		if (extras != null) {
 			String lat = extras.getString("lat");
 			String llong = extras.getString("long");
+			String alt = extras.getString("alt");
 			String date = extras.getString("date");
+			String name = extras.getString("hlname");
+			String longText = extras.getString("hllongtext");
+			String imagePath = extras.getString("hlimagepath");
+			if(name!=null){
+				tvName.setText(name);
+			}
+			if(longText!=null){
+				tvLongText.setText(longText);
+			}
+			if(imagePath!=null){
+				Uri uri = Uri.parse(imagePath);
+				currentPhoto = new File(uri.getPath());
+				try {
+					createThumbnail();
+					btn_picture.setImageBitmap(thumbnail);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}							
+			}
 			TextView datatxt =  (TextView)findViewById(R.id.tvHlData);
 			TextView lattxt =  (TextView)findViewById(R.id.tvLatHl);
 			TextView longtxt =  (TextView)findViewById(R.id.tvLongHl);
+			TextView alttxt =  (TextView)findViewById(R.id.tvHlAlt);
 			datatxt.setText(date);
 			lattxt.setText(lat);
+			alttxt.setText(alt);
 			longtxt.setText(llong);
 		}
 	}
@@ -55,16 +81,16 @@ public class EditHighLightActivity extends Activity {
 	private void createImageFile() throws IOException {
 	    // Create an image file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String imageFileName = "JPEG_" + timeStamp + "_";
+	    String imageFileName = "Erulet_" + timeStamp + "_";
 	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 	    currentPhoto = File.createTempFile(
 	        imageFileName,  /* prefix */
 	        ".jpg",         /* suffix */
 	        storageDir      /* directory */
 	    );
-
-	    // Save a file: path for use with ACTION_VIEW intents
-	    //mCurrentPhotoPath = "file://" + image.getAbsolutePath();	    	   
+	    //Update media gallery with image
+	    MediaScannerConnection.scanFile(this, new String[] { currentPhoto.getPath() }, 
+	    		new String[] { "image/jpeg" }, null);	    	  
 	}
 
 	private void dispatchTakePictureIntent() {
@@ -119,8 +145,8 @@ public class EditHighLightActivity extends Activity {
 		btn_picture = (ImageButton)findViewById(R.id.btnPicture);		
 		Button btn_save = (Button)findViewById(R.id.btnHlSave);
 		Button btn_cancel = (Button)findViewById(R.id.btnHlCancel);
-		final TextView tvName = (TextView)findViewById(R.id.txtNameHl);
-		final TextView tvLongText = (TextView)findViewById(R.id.txtLongHl);
+		tvName = (TextView)findViewById(R.id.txtNameHl);
+		tvLongText = (TextView)findViewById(R.id.txtLongHl);
 		btn_picture.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				dispatchTakePictureIntent();

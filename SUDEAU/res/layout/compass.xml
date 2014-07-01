@@ -7,7 +7,7 @@
         android:id="@+id/imageViewCompass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/compass_text_container"
+        android:layout_below="@+id/route_text_container"
         android:layout_centerHorizontal="true"
         android:src="@drawable/woodcut" />
     
@@ -15,7 +15,7 @@
         android:id="@+id/imageViewNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/compass_text_container"
+        android:layout_below="@+id/route_text_container"
         android:layout_centerHorizontal="true"
         android:src="@drawable/nav_arrow" />
 
@@ -31,7 +31,7 @@
         android:textSize="30sp" />
 
     <LinearLayout
-        android:id="@+id/compass_text_container"
+        android:id="@+id/route_text_container"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:layout_below="@+id/tvCompassActivityLabel"

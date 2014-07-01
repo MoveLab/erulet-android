@@ -1,5 +1,6 @@
 package net.movelab.sudeau.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,16 +19,19 @@ public class Track {
 	private Collection<Step> steps;
 	private Reference reference;
 
-	public Track(){		
+	public Track(){
+		steps = new ArrayList<Step>();
 	}
 	
 	public Track(String id) {
-		this.id=id; 
+		this.id=id;
+		steps = new ArrayList<Step>();
 	}
 	
 	public Track(String id, String name) {
 		this.id=id; 
 		this.name=name;
+		steps = new ArrayList<Step>();
 	}
 
 	public Reference getReference() {

@@ -51,7 +51,7 @@ public class MyItinerariesActivity extends Activity {
 		List<Route> myRoutes = loadRoutes(android_id);
 		
 		routeArrayAdapter = new MyRouteArrayAdapter(this, myRoutes,dataBaseHelper);
-		listView.setAdapter(routeArrayAdapter);
+		listView.setAdapter(routeArrayAdapter);			
 
 	}
 	
@@ -86,7 +86,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 	private final Context context;
 	private final DataBaseHelper dataBaseHelper;
 	private List<Route> routes;
-	private Route currentRoute;
+	//private Route currentRoute;
 
 	public MyRouteArrayAdapter(Context context, List<Route> objects, 
 			DataBaseHelper dataBaseHelper) {
@@ -107,8 +107,8 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 		    TextView nom = (TextView) rowView.findViewById(R.id.route_name);
 		    TextView description = (TextView) rowView.findViewById(R.id.route_description);
 		    ImageButton edit = (ImageButton) rowView.findViewById(R.id.route_edit);		    
-		    ImageButton delete = (ImageButton) rowView.findViewById(R.id.route_delete);
-		    currentRoute = routes.get(position);
+		    ImageButton delete = (ImageButton) rowView.findViewById(R.id.route_delete);		    
+		    final Route currentRoute = routes.get(position);
 		    nom.setText(currentRoute.getName());
 		    description.setText(currentRoute.getDescription());
 		    edit.setOnClickListener(new OnClickListener() {
@@ -135,7 +135,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 			        alertDialog.setTitle("Confirmar esborrat...");
 			 
 			        // Setting Dialog Message
-			        alertDialog.setMessage("S'esborrarà la ruta! Segur que vols continuar?");
+			        alertDialog.setMessage("S'esborrarà la ruta:\n" + currentRoute.getName() +  "\nSegur que vols continuar?");
 			 
 			        // Setting Icon to Dialog
 			        alertDialog.setIcon(R.drawable.ic_delete);

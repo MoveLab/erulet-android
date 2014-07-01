@@ -145,7 +145,7 @@ public class JSONConverter {
 			}
 		}		
 		if(j.has("relativeTime")){			
-			s.setRelativeTime(j.getLong("relativeTime"));
+			s.setAbsoluteTimeMillis(j.getLong("relativeTime"));
 		}		
 		return s;
 	}
@@ -251,7 +251,7 @@ public class JSONConverter {
 		if(s.getAbsoluteTime()!=null){
 			j.put("absoluteTime", spdf.format(s.getAbsoluteTime()));
 		}
-		j.put("relativeTime", s.getRelativeTime());
+		j.put("relativeTime", s.getAbsoluteTimeMillis());
 		return j;
 	}
 		

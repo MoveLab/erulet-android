@@ -1,5 +1,9 @@
 package net.movelab.sudeau.model;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -35,7 +39,7 @@ public class Step implements Comparable<Step> {
 	@DatabaseField
 	private Date absoluteTime;
 	@DatabaseField
-	private long relativeTime;
+	private long absoluteTimeMillis;
 	@DatabaseField(foreign=true, columnName="trackId")
     private Track track;
 
@@ -90,12 +94,12 @@ public class Step implements Comparable<Step> {
 		this.absoluteTime = timestamp;
 	}
 
-	public long getRelativeTime() {
-		return relativeTime;
+	public long getAbsoluteTimeMillis() {
+		return absoluteTimeMillis;
 	}
 
-	public void setRelativeTime(long relativeTime) {
-		this.relativeTime = relativeTime;
+	public void setAbsoluteTimeMillis(long relativeTime) {
+		this.absoluteTimeMillis = relativeTime;
 	}
 
 	public HighLight getHighlight() {
@@ -173,6 +177,20 @@ public class Step implements Comparable<Step> {
 	@Override
 	public String toString(){
 		return "STEP" + " " + id + " " + name + " " + latitude + " " + longitude; 
+	}
+	
+	public String getInfoWindowString(){
+		StringBuilder sl = new StringBuilder();
+		SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
+		sl.append("Data: " + spdf.format(getAbsoluteTime())  + "\n");
+		spdf = new SimpleDateFormat("HH:mm:ss");
+		Date hour = new Date(getAbsoluteTimeMillis());
+		sl.append("Hora: " + spdf.format(hour) + "\n");
+		NumberFormat df = new DecimalFormat("0.00");
+		sl.append("Latitud: " + df.format(getLatitude()) + "\n");
+		sl.append("Longitud: " + df.format(getLongitude()) + "\n");
+		sl.append("Alçada: " + df.format(getAltitude()) + "\n");
+		return sl.toString();
 	}
 
 	@Override

@@ -15,12 +15,66 @@
         android:id="@+id/tvEditRouteLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edició de dades de la ruta..."
         android:background="@color/dark_grey"
-        android:gravity="center"        
+        android:gravity="center"
+        android:text="Edició de dades de la ruta..."
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:id="@+id/route_text_container"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="@color/dark_grey"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvTotalDist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:text="Distancia total"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Temps total"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvPointsNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Numero punts"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvHighLightsNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Numero punts interes"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        
+        <TextView
+            android:id="@+id/tvRamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Desnivell"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,13 +121,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
             android:text="Desar" />
-
-        <Button
-            android:id="@+id/btn_editRoute_cancel"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"            
-            android:text="Cancel·lar" />
 
     </LinearLayout>
 

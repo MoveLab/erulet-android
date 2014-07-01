@@ -9,7 +9,6 @@
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/ll"
         android:layout_below="@+id/tvTitolTriaItinerari" />
 
     <TextView
@@ -23,24 +22,6 @@
         android:text="Itineraris"
         android:textColor="@color/white"
         android:textSize="30sp" />
-    
-    <LinearLayout
-        android:id="@+id/ll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:padding="5dp" >
-
-<!-- 	    android:background="@color/light_grey" -->
-
-    <Button
-        android:id="@+id/go_to_route_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Començar itinerari!" />
-    
-    </LinearLayout>
     
 </RelativeLayout>
 
