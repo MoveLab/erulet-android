@@ -69,7 +69,7 @@ public class DataContainer {
 	 * @param userId
 	 * @return
 	 */
-	public static String getHighLighId(DataBaseHelper db, String userId){
+	public static String getHighLightId(DataBaseHelper db, String userId){
 		QueryBuilder<HighLight, String> queryBuilder = db.getHlDataDao().queryBuilder();
 		Where<HighLight, String> where = queryBuilder.where();
 		String retVal=null;
@@ -157,7 +157,7 @@ public class DataContainer {
 	
 	public static void addHighLightToStep(Step s, HighLight h, String userId, DataBaseHelper db){
 		//Step already exists
-		String hlId = getHighLighId(db, userId);
+		String hlId = getHighLightId(db, userId);
 		h.setId(hlId);		
 		db.getHlDataDao().create(h);
 		if(IGlobalValues.DEBUG){
@@ -359,6 +359,15 @@ public class DataContainer {
 		}	
 		return routes;
 		
+	}
+	
+	public static HighLight getHighLightStep(Step s, DataBaseHelper db){
+		HighLight h = s.getHighlight();
+		if(h==null)
+			return null;
+		else
+			db.getHlDataDao().refresh(h);
+		return h;
 	}
 	
 	public static Route getRouteEcosystem(Route route, DataBaseHelper db) {
@@ -974,32 +983,7 @@ public class DataContainer {
 			Log.e("Inserting route", "Insert error " + ex.toString());
 		}
 	}
-
-	public static String getHighLightId(DataBaseHelper db,
-			String userId) {
-		QueryBuilder<HighLight, String> queryBuilder = db.getHlDataDao().queryBuilder();
-		Where<HighLight, String> where = queryBuilder.where();
-		String retVal=null;
-		try {			
-			where.like("id", "%" + userId + "%");
-			PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
-			List<HighLight> userHighLights = db.getHlDataDao().query(preparedQuery);			
-			if(userHighLights != null){
-				int c = userHighLights.size() + 1;
-				retVal = "H_" + userId + "_" + c;
-			}else{
-				retVal = "H_" + userId + "_1";
-			}
-			if(IGlobalValues.DEBUG){
-				Log.d("getHighLightId","Returning highlight id" + retVal);
-			}			
-			return retVal;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		return retVal;
-	}
+	
 	
 	
 

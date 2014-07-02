@@ -25,6 +25,9 @@ public class EditRouteActivity extends Activity {
 	private EditText routeDescription;
 	private DataBaseHelper dataBaseHelper;
 	private String android_id;	
+	
+	//TODO Improve default name, allow for multiple non-colliding defaults
+	//TODO Create input validation
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

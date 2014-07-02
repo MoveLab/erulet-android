@@ -2,6 +2,7 @@ package net.movelab.sudeau;
 
 import java.text.DecimalFormat;
 
+import com.google.android.gms.common.data.DataBufferUtils;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.movelab.sudeau.DetailItineraryActivity.FixReceiver;
@@ -43,6 +44,8 @@ public class CompassActivity extends Activity implements SensorEventListener {
     private IntentFilter fixFilter;
 	private CompassFixReceiver fixReceiver;
 	private DataBaseHelper dataBaseHelper;
+	private TextView tvWpName;
+	private TextView tvWpDescription;
 	private TextView tvBearing;
 	private TextView tvLocation;
 	private TextView tvNav;
@@ -70,6 +73,8 @@ public class CompassActivity extends Activity implements SensorEventListener {
         tvLocation = (TextView) findViewById(R.id.tvCurrentLoc);
         tvNav = (TextView) findViewById(R.id.tvNavLoc);
         tvDist = (TextView) findViewById(R.id.tvDist);
+        tvWpName = (TextView) findViewById(R.id.tvWpName);
+        tvWpDescription = (TextView) findViewById(R.id.tvWpDescription);
 
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -153,6 +158,24 @@ public class CompassActivity extends Activity implements SensorEventListener {
 			navLocation = new Location("");//provider name is unecessary
 			navLocation.setLatitude(s.getLatitude());//your coords of course
 			navLocation.setLongitude(s.getLongitude());
+			if(s.getHighlight()!=null){
+				DataContainer.getHighLightStep(s, dataBaseHelper);
+				if(s.getHighlight().getName() == null || 
+						s.getHighlight().getName().equalsIgnoreCase("")){
+					tvWpName.setText("Nom: no assignat");					
+				}else{
+					tvWpName.setText("Nom: " + s.getHighlight().getName());
+				}
+				if(s.getHighlight().getLongText() == null || 
+						s.getHighlight().getLongText().equalsIgnoreCase("")){
+					tvWpDescription.setText("Descripció: no assignat");
+				}else{
+					tvWpDescription.setText("Descripció: " + s.getHighlight().getLongText());					
+				}				
+			}else{
+				tvWpName.setText("El punt no té nom");
+				tvWpDescription.setText("El punt no té descripció");
+			}
 		}
     }
     

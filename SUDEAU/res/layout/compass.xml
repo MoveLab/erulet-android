@@ -40,12 +40,30 @@
         android:orientation="vertical" >
 
         <TextView
+            android:id="@+id/tvWpName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="15sp"            
+            android:text="Nom:" />
+        
+        <TextView
+            android:id="@+id/tvWpDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+        	android:textSize="15sp"            
+            android:text="Descripció:" />
+        
+        <TextView
             android:id="@+id/tvBearing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_marginLeft="5dp"
-        	android:textSize="20sp"            
+        	android:textSize="12sp"            
             android:text="Orientació: 0.0" />
 
         <TextView
@@ -54,7 +72,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_marginLeft="5dp"
-        	android:textSize="20sp"
+        	android:textSize="12sp"
             android:text="Distància: ????" />
 
         <TextView
@@ -63,7 +81,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_marginLeft="5dp"
-        	android:textSize="20sp"
+        	android:textSize="12sp"
             android:text="Ubicació actual: ????" />
 
         <TextView
@@ -72,7 +90,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_marginLeft="5dp"
-        	android:textSize="20sp"
+        	android:textSize="12sp"
             android:text="Ubicació destí: ????" />
 
     </LinearLayout>

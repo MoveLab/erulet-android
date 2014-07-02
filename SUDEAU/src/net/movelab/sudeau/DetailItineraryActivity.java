@@ -62,6 +62,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -83,6 +84,11 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class DetailItineraryActivity extends Activity {
 
+	//TODO Give user option to delete track for route with a single waypoint
+	//TODO Modify route drawing so that it shows precision
+	//TODO Unify geometry and marker drawing
+	//TODO Enable pop-ups while tracking
+	
 	private GoogleMap mMap;
 	private DataBaseHelper dataBaseHelper;
 	private Marker bogus_location;
@@ -102,6 +108,7 @@ public class DetailItineraryActivity extends Activity {
 	private Hashtable<Marker, Step> userRouteMarkers;
 	private Vibrator v;
 	private String userId;
+	private boolean tracking;
 
 	private int routeMode;
 	private int group1 = 1;
@@ -180,6 +187,26 @@ public class DetailItineraryActivity extends Activity {
 	}
 	
 	@Override
+	public void onBackPressed() {
+		if(routeMode==2 && tracking){
+		    new AlertDialog.Builder(this)
+		    .setIcon(android.R.drawable.ic_dialog_alert)
+		    .setTitle("Finalització de ruta")
+		    .setMessage("Estàs capturant una ruta. Si abandones la pantalla de mapa, s'aturarà la captura i es deixarà la ruta tal com està ara mateix. Confirmes que vols sortir?")
+		    .setPositiveButton("Sí", new DialogInterface.OnClickListener(){
+		        @Override
+		        public void onClick(DialogInterface dialog, int which) {
+		        	stopTracking();
+		            finish();    
+		        }	
+		    }).setNegativeButton("No", null)
+		    .show();
+		}else{
+			finish();
+		}
+	}
+	
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==HIGHLIGHT_INFO_REQUEST){
 			if(resultCode==RESULT_OK){				
@@ -191,6 +218,7 @@ public class DetailItineraryActivity extends Activity {
 				hl.setLongText(hlLongText);
 				hl.setImagePath(imagePath);				
 				Step s = fixReceiver.getStepById(stepBeingEditedId);
+				hl.setRadius(s.getPrecision());
 				if(s!=null){
 					s.setHighlight(hl);
 				}
@@ -336,7 +364,8 @@ public class DetailItineraryActivity extends Activity {
 					R.string.internal_message_id)
 					+ Util.MESSAGE_FIX_RECORDED);			
 			fixReceiver = new FixReceiver(mMap);
-			registerReceiver(fixReceiver, fixFilter);									
+			registerReceiver(fixReceiver, fixFilter);
+			tracking=true;
 		}		
 	}
 	
@@ -382,6 +411,7 @@ public class DetailItineraryActivity extends Activity {
 		if (routeMode == 2) {
 			saveRoute();
 		}
+		tracking=false;
 	}
 
 	private void setupView() {
@@ -450,7 +480,12 @@ public class DetailItineraryActivity extends Activity {
 						.addTileOverlay(new TileOverlayOptions()
 								.tileProvider(tileProvider));
 				tileOverlay.setVisible(true);
-			}			
+			}
+			if(mMap != null){
+				if(routeMode==1){
+					mMap.setMyLocationEnabled(true);
+				}
+			}
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
@@ -821,12 +856,29 @@ public class DetailItineraryActivity extends Activity {
 		}
 
 		private void updateTrackInProgress() {
-			if (stepsInProgress.size() > 1) {
-				PolylineOptions rectOptions = new PolylineOptions();
-				rectOptions.zIndex(1);
-				rectOptions.color(Color.GREEN);
+			PolylineOptions rectOptions = new PolylineOptions();
+			rectOptions.zIndex(1);
+			rectOptions.color(Color.GREEN);									
+			if (stepsInProgress.size() > 1) {								
 				for (int i = 0; i < stepsInProgress.size(); i++) {
+					
 					Step step = stepsInProgress.get(i);
+					
+					CircleOptions copt = new CircleOptions();
+					copt.center(new LatLng(step.getLatitude(), step.getLongitude()));
+					copt.radius(step.getPrecision());
+					copt.zIndex(1);
+					copt.strokeColor(Color.BLACK);
+					copt.strokeWidth(0.1f);
+					// Fill color of the circle
+					// 0x represents, this is an hexadecimal code
+					// 55 represents percentage of transparency. For 100% transparency,
+					// specify 00.
+					// For 0% transparency ( ie, opaque ) , specify ff
+					// The remaining 6 characters(00ff00) specify the fill color
+					copt.fillColor(0x55FF0701);
+					mMap.addCircle(copt);
+					
 					rectOptions.add(new LatLng(step.getLatitude(), step
 							.getLongitude()));
 				}
@@ -841,33 +893,44 @@ public class DetailItineraryActivity extends Activity {
 			}
 			return null;
 		}
+		
+		private boolean locationExists(LatLng current, List<Step> steps){
+			for(int i = 0; i < steps.size(); i++){
+				Step thisStep = steps.get(i);
+				if( thisStep.getLatitude() == current.latitude &&  
+						thisStep.getLongitude() == current.longitude ){
+					return true;
+				}
+			}
+			return false;
+		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			double lat = intent.getExtras().getDouble("lat", 0);
 			double lng = intent.getExtras().getDouble("long", 0);
 			double alt = intent.getExtras().getDouble("alt", 0);
+			double accuracy = intent.getExtras().getDouble("acc", 0);
 			DateFormat df = new SimpleDateFormat("HH:mm:ss.SSSZ");
 			long currentTime = System.currentTimeMillis();
 			Date time = new Date(currentTime);
-			// Toast.makeText(getApplicationContext(), lat + " - " + lng,
-			// Toast.LENGTH_SHORT).show();
 			LatLng location = new LatLng(lat, lng);
-			boolean addNewStep = true;
-			if (stepsInProgress.size() > 0) {
-				Step last = stepsInProgress.get(stepsInProgress.size() - 1);				
-				if (last.getLatitude() == location.latitude
-						&& last.getLongitude() == location.longitude) {
-					// Point is same as last, we don't add it to the track
-					if (IGlobalValues.DEBUG) {
-						Log.d("onReceive", "Received new location " + lat + " "
-								+ lng + " t " + df.format(time)
-								+ " same as last");
-					}
-					addNewStep = false;
-				}
+//			boolean addNewStep = true;
+			boolean locationExists = locationExists(location, stepsInProgress);
+//			if (stepsInProgress.size() > 0) {
+//				Step last = stepsInProgress.get(stepsInProgress.size() - 1);				
+//				if (last.getLatitude() == location.latitude
+//						&& last.getLongitude() == location.longitude) {
+//					// Point is same as last, we don't add it to the track
+			if (IGlobalValues.DEBUG) {
+				Log.d("onReceive", "Received new location " + lat + " "
+						+ lng + " t " + df.format(time)
+						+ " already logged");
 			}
-			if (addNewStep) {
+//					addNewStep = false;
+//				}
+//			}
+			if (!locationExists) {
 				Marker m = mMap
 						.addMarker(new MarkerOptions()
 								.position(location)
@@ -887,6 +950,7 @@ public class DetailItineraryActivity extends Activity {
 				s.setAltitude(alt);
 				s.setLatitude(lat);
 				s.setLongitude(lng);
+				s.setPrecision(accuracy);
 								
 				currentStep = s;
 				stepsInProgress.add(s);

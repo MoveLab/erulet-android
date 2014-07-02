@@ -29,6 +29,8 @@ import android.widget.TextView;
 
 public class MyItinerariesActivity extends Activity {
 	
+	//TODO Add date and time of creation of the route
+	
 	private DataBaseHelper dataBaseHelper;		
 	private MyRouteArrayAdapter routeArrayAdapter;
 	private ListView listView;

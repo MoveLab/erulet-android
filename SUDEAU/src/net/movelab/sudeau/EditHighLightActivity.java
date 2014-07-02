@@ -82,7 +82,7 @@ public class EditHighLightActivity extends Activity {
 	    // Create an image file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	    String imageFileName = "Erulet_" + timeStamp + "_";
-	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);	    
 	    currentPhoto = File.createTempFile(
 	        imageFileName,  /* prefix */
 	        ".jpg",         /* suffix */
@@ -90,12 +90,12 @@ public class EditHighLightActivity extends Activity {
 	    );
 	    //Update media gallery with image
 	    MediaScannerConnection.scanFile(this, new String[] { currentPhoto.getPath() }, 
-	    		new String[] { "image/jpeg" }, null);	    	  
+	    		new String[] { "image/jpeg" }, null);
 	}
 
 	private void dispatchTakePictureIntent() {
 	    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {	    	
+	    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 	        try {
 	            createImageFile();
 	        } catch (IOException ex) {
