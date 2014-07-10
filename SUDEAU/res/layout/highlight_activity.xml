@@ -15,42 +15,45 @@
             android:layout_height="wrap_content"
             android:background="@color/dark_grey"
             android:gravity="center"
-            android:text="Afegir informació a punt..."
-            android:textColor="@color/white"
+            android:text="Afegir informació a punt..."            
             android:textSize="25sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content"            
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/tvHlData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Data:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_marginLeft="5dp"                
+                android:text="Data:"                
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvLatHl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lat:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/tvHlAlt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Altitud:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_marginLeft="5dp"                
+                android:text="Lat:"                
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvLongHl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Long:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_marginLeft="5dp"                
+                android:text="Long:"                
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvHlAlt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"                
+                android:text="Altitud:"                
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
@@ -81,11 +84,69 @@
             <requestFocus />
         </EditText>
 
-        <ImageButton
-            android:id="@+id/btnPicture"
+        <TextView
+            android:id="@+id/tvImageVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Afegir imatge o capturar video:" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:src="@android:drawable/ic_menu_camera" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioGroup
+                android:id="@+id/rgImageVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/rbImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="Imatge"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rbVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="Video"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rbImgVidNull"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="Res"
+                    android:textSize="12sp" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/btnPicture"                    
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_menu_camera" />
+
+                <ImageButton
+                    android:id="@+id/btnVideo"                    
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_media_play" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,9 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancel·lar" />
-
         </LinearLayout>
-
     </LinearLayout>
 
 </ScrollView>

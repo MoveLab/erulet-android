@@ -17,28 +17,30 @@ public class ModelUtilities {
 	public static float getTotalDistance(Route r){
 		float retVal = 0;
 		List<Step> steps = getStepsIfAvailable(r);
-		boolean finished = false;
-		int i = 0;
-		do{
-			Step s0 = steps.get(i);
-			Step s1 = steps.get(i + 1);
-			
-			Location location1 = new Location("");
-			location1.setLatitude(s0.getLatitude());
-			location1.setLongitude(s0.getLongitude());
-			
-			Location location2 = new Location("");
-			location2.setLatitude(s1.getLatitude());
-			location2.setLongitude(s1.getLongitude());
-			
-			retVal+= location1.distanceTo(location2);
-			
-			if (i == steps.size() - 2) {
-				finished = true;
-			}
-			i++;
-			
-		}while(!finished);							
+		if(steps != null){
+			boolean finished = false;
+			int i = 0;
+			do{
+				Step s0 = steps.get(i);
+				Step s1 = steps.get(i + 1);
+				
+				Location location1 = new Location("");
+				location1.setLatitude(s0.getLatitude());
+				location1.setLongitude(s0.getLongitude());
+				
+				Location location2 = new Location("");
+				location2.setLatitude(s1.getLatitude());
+				location2.setLongitude(s1.getLongitude());
+				
+				retVal+= location1.distanceTo(location2);
+				
+				if (i == steps.size() - 2) {
+					finished = true;
+				}
+				i++;
+				
+			}while(!finished);
+		}
 		return retVal;
 	}
 	

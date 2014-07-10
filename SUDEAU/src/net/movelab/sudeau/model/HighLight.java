@@ -15,7 +15,7 @@ public class HighLight {
 	@DatabaseField(foreign=true, columnName="mediaId")	
 	private EruMedia media;
 	@DatabaseField
-	private String imagePath;
+	private String mediaPath;
 	@DatabaseField
 	private double radius;
 	
@@ -90,12 +90,12 @@ public class HighLight {
 		this.longText = longText;
 	}
 
-	public String getImagePath() {
-		return imagePath;
+	public String getMediaPath() {
+		return mediaPath;
 	}
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
+	public void setMediaPath(String imagePath) {
+		this.mediaPath = imagePath;
 	}
 
 }

@@ -3,7 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll_vert"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent"    
     android:layout_centerHorizontal="true" >
 
 <LinearLayout
@@ -18,15 +18,13 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="Edició de dades de la ruta..."
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"        
         android:textSize="24sp" />
 
     <LinearLayout
         android:id="@+id/route_text_container"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@color/dark_grey"
+        android:layout_height="100dp"        
         android:orientation="vertical" >
 
         <TextView
@@ -35,8 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="Distancia total"
-            android:textColor="@color/white"
+            android:text="Distancia total"            
             android:textSize="12sp" />
 
         <TextView
@@ -44,8 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Temps total"
-            android:textColor="@color/white"
+            android:text="Temps total"            
             android:textSize="12sp" />
 
         <TextView
@@ -53,8 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Numero punts"
-            android:textColor="@color/white"
+            android:text="Numero punts"            
             android:textSize="12sp" />
 
         <TextView
@@ -62,8 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Numero punts interes"
-            android:textColor="@color/white"
+            android:text="Numero punts interes"            
             android:textSize="12sp" />
         
         <TextView
@@ -71,40 +65,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Desnivell"
-            android:textColor="@color/white"
+            android:text="Desnivell"            
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"        
+        android:layout_marginTop="20dp"        
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/tvHlNameLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content"            
             android:text="Nom de la ruta:" />
 
         <EditText
             android:id="@+id/et_RouteName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" />
+            android:ems="10"
+            android:hint="Un nom curt, fàcil de reconèixer" />
 
         <TextView
             android:id="@+id/tvEditRouteDescriptionLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content"            
             android:text="Descripció de la ruta:" />
 
         <EditText
             android:id="@+id/et_RouteDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"            
+            android:ems="10"
+            android:hint="Una descripció més llarga"
             android:inputType="textMultiLine" />
 
     </LinearLayout>
@@ -112,14 +107,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center"        
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btn_editRoute_save"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"            
+            android:layout_height="wrap_content"                       
             android:text="Desar" />
 
     </LinearLayout>

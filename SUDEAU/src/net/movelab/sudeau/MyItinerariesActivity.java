@@ -30,6 +30,8 @@ import android.widget.TextView;
 public class MyItinerariesActivity extends Activity {
 	
 	//TODO Add date and time of creation of the route
+	//TODO Modify layout so that it acommodates landscape orientation better
+	
 	
 	private DataBaseHelper dataBaseHelper;		
 	private MyRouteArrayAdapter routeArrayAdapter;

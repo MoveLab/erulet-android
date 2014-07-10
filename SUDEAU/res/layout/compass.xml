@@ -1,22 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#fff" >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageViewCompass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/route_text_container"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/woodcut" />
+        android:layout_below="@+id/route_text_container"        
+        android:layout_centerHorizontal="true"        
+        android:src="@drawable/woodcut_neg" />
     
     <ImageView
         android:id="@+id/imageViewNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/route_text_container"
-        android:layout_centerHorizontal="true"
+        android:layout_centerHorizontal="true"        
         android:src="@drawable/nav_arrow" />
 
     <TextView
@@ -26,24 +25,21 @@
         android:layout_alignParentRight="true"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Navegació a punt..."
-        android:textColor="@color/white"
+        android:text="Navegació a punt..."        
         android:textSize="30sp" />
 
     <LinearLayout
         android:id="@+id/route_text_container"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/tvCompassActivityLabel"
-        android:layout_alignParentLeft="true"        
-        android:background="@color/dark_grey"        
+        android:layout_alignParentLeft="true"                       
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/tvWpName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="15sp"            
             android:text="Nom:" />
@@ -51,8 +47,7 @@
         <TextView
             android:id="@+id/tvWpDescription"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="15sp"            
             android:text="Descripció:" />
@@ -60,8 +55,7 @@
         <TextView
             android:id="@+id/tvBearing"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"            
             android:text="Orientació: 0.0" />
@@ -69,8 +63,7 @@
         <TextView
             android:id="@+id/tvDist"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
             android:text="Distància: ????" />
@@ -78,8 +71,7 @@
         <TextView
             android:id="@+id/tvCurrentLoc"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
             android:text="Ubicació actual: ????" />
@@ -87,8 +79,7 @@
         <TextView
             android:id="@+id/tvNavLoc"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
             android:text="Ubicació destí: ????" />

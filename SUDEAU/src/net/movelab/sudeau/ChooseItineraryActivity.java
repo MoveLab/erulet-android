@@ -49,6 +49,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 public class ChooseItineraryActivity extends Activity {
 
 	private GoogleMap mMap;
+	private MapBoxOfflineTileProvider tileProvider;
 //	private static final LatLng MY_POINT = new LatLng(41.66, 1.54);
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
 //	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
@@ -113,6 +114,9 @@ public class ChooseItineraryActivity extends Activity {
 	        OpenHelperManager.releaseHelper();
 	        dataBaseHelper = null;
 	    }
+		if(tileProvider!=null){
+			tileProvider.close();
+		}
 	}
 	
 	public void showItineraryOptions(){		
@@ -156,7 +160,7 @@ public class ChooseItineraryActivity extends Activity {
 				addRouteMarkersFromDB();
 			}
 			if (mMap != null) {
-				TileProvider tileProvider = initTileProvider();
+				tileProvider = initTileProvider();
 				TileOverlay tileOverlay = mMap
 						.addTileOverlay(new TileOverlayOptions()
 								.tileProvider(tileProvider));
@@ -257,7 +261,7 @@ public class ChooseItineraryActivity extends Activity {
 		}
 	}
 
-	private TileProvider initTileProvider() {
+	private MapBoxOfflineTileProvider initTileProvider() {
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {

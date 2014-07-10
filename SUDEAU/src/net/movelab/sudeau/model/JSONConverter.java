@@ -162,7 +162,7 @@ public class JSONConverter {
 			h.setName(j.getString("name"));
 		}
 		if(j.has("imagePath")){
-			h.setImagePath(j.getString("imagePath"));
+			h.setMediaPath(j.getString("imagePath"));
 		}
 		if(j.has("radius")){
 			h.setRadius(j.getDouble("radius"));
@@ -190,7 +190,7 @@ public class JSONConverter {
 		JSONObject j = new JSONObject();
 		j.put("id", h.getId());
 		j.put("longText", h.getLongText());
-		j.put("imagePath",h.getImagePath());
+		j.put("imagePath",h.getMediaPath());
 		j.put("name", h.getName());
 		j.put("radius", h.getRadius());
 		return j;

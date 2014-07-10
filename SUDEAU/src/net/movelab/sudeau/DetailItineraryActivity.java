@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -34,13 +35,16 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,15 +55,19 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.UiSettings;
@@ -68,6 +76,7 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -84,12 +93,15 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class DetailItineraryActivity extends Activity {
 
-	//TODO Give user option to delete track for route with a single waypoint
-	//TODO Modify route drawing so that it shows precision
-	//TODO Unify geometry and marker drawing
+	//TODO Unify geometry and marker drawing functions
 	//TODO Enable pop-ups while tracking
+	//TODO Use different markers for edited/empty waypoints
+	//TODO Use numbered markers
+	//TODO allow navigation (compass) without markers
+	//TODO find way to mark clearly last recorded user position (not with a marker)
 	
 	private GoogleMap mMap;
+	private MapBoxOfflineTileProvider tileProvider;
 	private DataBaseHelper dataBaseHelper;
 	private Marker bogus_location;
 	private Marker interestAreaMarker;
@@ -100,12 +112,12 @@ public class DetailItineraryActivity extends Activity {
 	//Route selected in choose itinerary activity
 	private Route selectedRoute;
 	private Route routeInProgress;
-	private ArrayList<Step> interestSteps;
+	private ArrayList<Step> highLightedSteps;
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
 	private Polyline perpPolyLine;
 	private Hashtable<Marker, Step> currentRouteMarkers;
-	private Hashtable<Marker, Step> userRouteMarkers;
+	private Hashtable<Marker, Step> routeInProgressMarkers;
 	private Vibrator v;
 	private String userId;
 	private boolean tracking;
@@ -115,7 +127,9 @@ public class DetailItineraryActivity extends Activity {
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST + 1;
 	
-	static final int HIGHLIGHT_INFO_REQUEST = 1;
+	private float TAP_TOLERANCE_DIST = 100;
+	
+	static final int HIGHLIGHT_INFO_REQUEST = 1;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +137,7 @@ public class DetailItineraryActivity extends Activity {
 		setContentView(R.layout.detail_itinerary_map);
 		v = (Vibrator) getBaseContext().getSystemService(
 				Context.VIBRATOR_SERVICE);
+		
 		setWorkingMode();
 		setupView();
 		
@@ -136,7 +151,7 @@ public class DetailItineraryActivity extends Activity {
 					 Intent i = new Intent(DetailItineraryActivity.this,CompassActivity.class);
 					 Step s = currentRouteMarkers.get(selectedMarker);
 					 i.putExtra("idStep",s.getId());
-					 startActivity(i);
+					 startActivity(i);					 
 				 }
 			 }
 		 });
@@ -148,34 +163,13 @@ public class DetailItineraryActivity extends Activity {
 				 stopTracking();
 			 }
 		 });
-		 
-		Button btn_test = (Button)findViewById(R.id.btn_test_json);
-		btn_test.setOnClickListener(new OnClickListener() {			
-			@Override
-			public void onClick(View arg0) {
-				//testJson();
-				saveRoute();
-			}
-		});
-		
+		 		
 		Button btn_add_content = (Button)findViewById(R.id.btn_add_content);
 		btn_add_content.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				if(currentStep!=null){
-					Intent i = new Intent(DetailItineraryActivity.this,EditHighLightActivity.class);
-					stepBeingEditedId = currentStep.getId();
-					//Step already has haighlight
-					if(currentStep.getHighlight()!=null){
-						i.putExtra("hlname",currentStep.getHighlight().getName());
-						i.putExtra("hllongtext",currentStep.getHighlight().getLongText());
-						i.putExtra("hlimagepath", currentStep.getHighlight().getImagePath());
-					}
-					i.putExtra("lat",Double.toString(currentStep.getLatitude()));
-					i.putExtra("long",Double.toString(currentStep.getLongitude()));
-					SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
-					i.putExtra("date",spdf.format(currentStep.getAbsoluteTime()));					
-			        startActivityForResult(i, HIGHLIGHT_INFO_REQUEST);				    
+					showAddMarkerOnTapDialog(currentStep);				    
 				}else{
 					Toast.makeText(getApplicationContext(), "Encara no hi ha punts a la ruta, espera un moment...", Toast.LENGTH_LONG).show();
 				}
@@ -195,9 +189,9 @@ public class DetailItineraryActivity extends Activity {
 		    .setMessage("Estàs capturant una ruta. Si abandones la pantalla de mapa, s'aturarà la captura i es deixarà la ruta tal com està ara mateix. Confirmes que vols sortir?")
 		    .setPositiveButton("Sí", new DialogInterface.OnClickListener(){
 		        @Override
-		        public void onClick(DialogInterface dialog, int which) {
+		        public void onClick(DialogInterface dialog, int which) {		        	
 		        	stopTracking();
-		            finish();    
+		            finish();		        	
 		        }	
 		    }).setNegativeButton("No", null)
 		    .show();
@@ -216,7 +210,7 @@ public class DetailItineraryActivity extends Activity {
 				HighLight hl = new HighLight();
 				hl.setName(hlName);
 				hl.setLongText(hlLongText);
-				hl.setImagePath(imagePath);				
+				hl.setMediaPath(imagePath);				
 				Step s = fixReceiver.getStepById(stepBeingEditedId);
 				hl.setRadius(s.getPrecision());
 				if(s!=null){
@@ -224,21 +218,11 @@ public class DetailItineraryActivity extends Activity {
 				}
 				//Aggressively save highlight
 				saveHighLight(hl);
-				//Add marker for new highlight
-				Marker m = mMap
-						.addMarker(new MarkerOptions()
-								.position(new LatLng(s.getLatitude(), s.getLongitude()))
-								.title(hl.getName())
-								.snippet(hl.getLongText())
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-				// BitmapDescriptorFactory.fromResource(R.drawable.ic_wp_pin)));
-				// .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-				//currentRouteMarkers.put(m, s);
-				if(userRouteMarkers==null){
-					userRouteMarkers = new Hashtable<Marker, Step>();
+				//This is a cheap way to refresh the info window content
+				if(selectedMarker != null){
+					selectedMarker.hideInfoWindow();
+					selectedMarker.showInfoWindow();
 				}
-				userRouteMarkers.put(m, s);
 			}else if(resultCode==RESULT_CANCELED){
 				Toast.makeText(getApplicationContext(), "Cancel·lat per l'usuari", Toast.LENGTH_LONG).show();
 			}
@@ -257,18 +241,6 @@ public class DetailItineraryActivity extends Activity {
 		}
 	}
 	
-	private void testJson(){
-		try {
-			JSONObject redon = JSONConverter.routeToJSONObject(selectedRoute);
-			Log.d("JSONOutput",redon.toString());
-			JSONConverter.jsonToRoute(redon.toString());
-			Toast.makeText(getApplicationContext(),redon.toString(), Toast.LENGTH_LONG).show();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	private void checkLocationServicesStatus() {
 		LocationManager lm = null;
 		boolean gps_enabled = false;
@@ -391,8 +363,7 @@ public class DetailItineraryActivity extends Activity {
 	private void saveRoute() {			
 		Intent i = new Intent(DetailItineraryActivity.this,
 				EditRouteActivity.class);
-		String routeJson;		
-		//Route r = createNewRoute();
+		String routeJson;
 		try {
 			routeJson = JSONConverter.routeToJSONObject(routeInProgress).toString();
 			i.putExtra("routeJson", routeJson );
@@ -415,18 +386,43 @@ public class DetailItineraryActivity extends Activity {
 	}
 
 	private void setupView() {
+//		if(mMap!=null){
+//			mMap.clear();			
+//		}
 		setUpDBIfNeeded();
 		setUpRoutes();
 		setUpMapIfNeeded();
 		drawCurrentRouteFromDB();
-		drawUserRoute();
+		//drawUserRoute();
+		if(fixReceiver!=null){
+			fixReceiver.updateTrackInProgress();
+		}
+		refreshUserMarkers();
 		setUpCamera();
 	}
-
+	
+	private void refreshUserMarkers(){
+		if(routeInProgressMarkers!=null){
+			Enumeration<Marker> userMarkers = routeInProgressMarkers.keys();
+			while(userMarkers.hasMoreElements()){
+				Marker m = userMarkers.nextElement();
+				m = mMap.addMarker(new MarkerOptions()
+				.position(m.getPosition())
+				.title(m.getTitle())
+				.snippet(m.getSnippet())
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+			}
+		}
+	}
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
+		super.onConfigurationChanged(newConfig);		
 		setupView();
+		if(fixReceiver!=null){
+			fixReceiver.moveCameraToLastPosition();
+		}
 	}
 
 	private void setWorkingMode() {
@@ -463,8 +459,14 @@ public class DetailItineraryActivity extends Activity {
 			OpenHelperManager.releaseHelper();
 			dataBaseHelper = null;
 		}
-		if (fixReceiver != null)
+		if (fixReceiver != null){
 			unregisterReceiver(fixReceiver);
+			fixReceiver = null;
+		}
+		if(tileProvider!=null){
+			tileProvider.close();
+			tileProvider=null;
+		}
 	}
 
 	private void setUpMapIfNeeded() {
@@ -475,31 +477,27 @@ public class DetailItineraryActivity extends Activity {
 					R.id.mapDetail)).getMap();
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
-				TileProvider tileProvider = initTileProvider();
+				tileProvider = initTileProvider();
 				TileOverlay tileOverlay = mMap
 						.addTileOverlay(new TileOverlayOptions()
 								.tileProvider(tileProvider));
 				tileOverlay.setVisible(true);
 			}
-			if(mMap != null){
-				if(routeMode==1){
-					mMap.setMyLocationEnabled(true);
-				}
-			}
+//			if(mMap != null){
+//				if(routeMode==1){
+//					mMap.setMyLocationEnabled(true);
+//				}
+//			}
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 				@Override
 				public void onInfoWindowClick(Marker marker) {
-					// TODO Auto-generated method stub
-					// Toast.makeText(getApplicationContext(),
-					// marker.getSnippet(), Toast.LENGTH_SHORT).show();
-					// If it's a route, we open the EcosystemDetailActivity
 					Step s = currentRouteMarkers.get(marker);
 					boolean isUserMarker = false;
 					if(s == null){
-						if(userRouteMarkers!=null){
-							s = userRouteMarkers.get(marker);
+						if(routeInProgressMarkers!=null){
+							s = routeInProgressMarkers.get(marker);
 							isUserMarker=true;
 						}
 					}
@@ -529,7 +527,7 @@ public class DetailItineraryActivity extends Activity {
 								if(s.getHighlight()!=null){
 									i.putExtra("hlname",s.getHighlight().getName());
 									i.putExtra("hllongtext",s.getHighlight().getLongText());
-									i.putExtra("hlimagepath", s.getHighlight().getImagePath());
+									i.putExtra("hlimagepath", s.getHighlight().getMediaPath());
 								}
 						        startActivityForResult(i, HIGHLIGHT_INFO_REQUEST);
 							}
@@ -546,7 +544,7 @@ public class DetailItineraryActivity extends Activity {
 
 				@Override
 				public View getInfoContents(Marker marker) {
-					selectedMarker = marker;
+					selectedMarker = marker;					
 					View myContentView = getLayoutInflater().inflate(
 							R.layout.custominfowindow, null);
 					TextView snippet = (TextView) myContentView
@@ -556,10 +554,10 @@ public class DetailItineraryActivity extends Activity {
 					Step s = currentRouteMarkers.get(marker);
 					boolean isUserMarker = false;
 					if(s == null){
-						if(userRouteMarkers==null){
+						if(routeInProgressMarkers==null){
 							isUserMarker = false;
 						}else{
-							s = userRouteMarkers.get(marker);
+							s = routeInProgressMarkers.get(marker);
 							isUserMarker = !(s==null);
 						}						
 					}
@@ -573,9 +571,18 @@ public class DetailItineraryActivity extends Activity {
 								title.setText(h1.getName());
 								snippet.setText(h1.getLongText());
 								ImageView picture = (ImageView) myContentView.findViewById(R.id.info_pic);
-								if(h1.getImagePath()!=null && !h1.getImagePath().trim().equalsIgnoreCase("")){
-									String imagePath = h1.getImagePath();							
-									picture.setImageURI( Uri.parse(imagePath) );
+								if(h1.getMediaPath()!=null && !h1.getMediaPath().trim().equalsIgnoreCase("")){									
+									String file = h1.getMediaPath();
+									if(file.contains("mp4")){										
+										file = file.replace("file://", "");
+										Bitmap bm = ThumbnailUtils.createVideoThumbnail( 
+												file, 
+												android.provider.MediaStore.Video.Thumbnails.MICRO_KIND
+												); 
+										picture.setImageBitmap(bm);
+									}else{
+										picture.setImageURI( Uri.parse(file) );
+									}									
 								}else{												
 									picture.setImageResource(R.drawable.ic_itinerary_icon);
 								}
@@ -585,25 +592,24 @@ public class DetailItineraryActivity extends Activity {
 							title.setText(h1.getName());
 							snippet.setText(h1.getLongText());
 							ImageView picture = (ImageView) myContentView.findViewById(R.id.info_pic);
-							if(h1.getImagePath()!=null && !h1.getImagePath().trim().equalsIgnoreCase("")){
-								String imagePath = h1.getImagePath();							
-								picture.setImageURI( Uri.parse(imagePath) );
+							if(h1.getMediaPath()!=null && !h1.getMediaPath().trim().equalsIgnoreCase("")){									
+								String file = h1.getMediaPath();
+								if(file.contains("mp4")){
+									file = file.replace("file://", "");
+									Bitmap bm = ThumbnailUtils.createVideoThumbnail( 
+											file, 
+											android.provider.MediaStore.Video.Thumbnails.MINI_KIND
+											); 
+									picture.setImageBitmap(bm);
+								}else{
+									picture.setImageURI( Uri.parse(file) );
+								}									
 							}else{												
 								picture.setImageResource(R.drawable.ic_itinerary_icon);
 							}
 						}
 						
 						v.vibrate(125);
-
-						// Drawable image = null;
-						// byte[] b = DataContainer.getStepMedia(interestStep,
-						// dataBaseHelper);
-						// if(b != null){
-						// ByteArrayInputStream is = new
-						// ByteArrayInputStream(b);
-						// image = Drawable.createFromStream(is, null);
-						// picture.setImageDrawable(image);
-						// }
 						
 					} else {
 						// Is ecosystem
@@ -621,7 +627,12 @@ public class DetailItineraryActivity extends Activity {
 			mMap.setOnMapClickListener(new OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng point) {
-					selectedMarker=null;	
+					Step nearestStepToTap = getRouteInProgressNearestStep(point,TAP_TOLERANCE_DIST);
+					if(nearestStepToTap==null){
+						selectedMarker=null;
+					}else{
+						showAddMarkerOnTapDialog(nearestStepToTap);
+					}
 					// if(bogus_location != null){
 					// bogus_location.remove();
 					// }
@@ -650,6 +661,100 @@ public class DetailItineraryActivity extends Activity {
 				}
 			});
 		}
+	}	
+	
+	private boolean markerAlreadyOnStep(Step s){
+		if(routeInProgressMarkers==null || routeInProgressMarkers.size()==0){
+			return false;
+		}
+		Enumeration e = routeInProgressMarkers.elements();
+		while(e.hasMoreElements()){
+			Step s_n = (Step) e.nextElement();
+			if(s_n.equals(s)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void showAddMarkerOnTapDialog(final Step s){
+		if(!markerAlreadyOnStep(s)){
+			if(routeInProgressMarkers==null){
+				routeInProgressMarkers = new Hashtable<Marker, Step>();
+			}		
+			
+			LatLng point = new LatLng(s.getLatitude(), s.getLongitude());
+			
+			final Marker m = mMap
+					.addMarker(new MarkerOptions()
+							.position(point)
+							.title("Marcador temporal")
+							.snippet("Afegim o no?")
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));				
+			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, mMap.getCameraPosition().zoom));		
+			routeInProgressMarkers.put(m, s);			
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			AlertDialog dialog = builder.create();
+			dialog.setCancelable(false);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		    WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+		    wmlp.gravity = Gravity.TOP | Gravity.LEFT;
+		    wmlp.x = 100;   //x position
+		    wmlp.y = 100;   //y position
+			dialog.setMessage("Vols afegir aquest marcador?");		
+			dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Sí",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {					
+					}
+				});
+			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No",
+				new DialogInterface.OnClickListener() {
+	
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {
+						m.remove();
+						routeInProgressMarkers.remove(s);
+					}
+				});		
+			dialog.show();
+		}
+	}
+	
+	private Step getRouteInProgressNearestStep(LatLng point, float tolerance){
+		Step retVal = null;
+		if(routeInProgress!=null){
+			if(routeInProgress.getTrack() != null && 
+					routeInProgress.getTrack().getSteps() != null && 
+					routeInProgress.getTrack().getSteps().size() > 0 ){
+				ArrayList<Step> steps = (ArrayList<Step>) routeInProgress.getTrack().getSteps();
+				float minDist = Float.MAX_VALUE;
+				for(int i = 0; i < steps.size(); i++){
+					Step s = steps.get(i);
+					
+					Location stepLocation = new Location("");
+					stepLocation.setLatitude(s.getLatitude());
+					stepLocation.setLongitude(s.getLongitude());
+					
+					Location tapLocation = new Location("");
+					tapLocation.setLatitude(point.latitude);
+					tapLocation.setLongitude(point.longitude);
+					
+					float distance = stepLocation.distanceTo(tapLocation);					
+					if(distance <= tolerance && distance < minDist){
+						minDist = distance;
+						retVal = s;
+					}
+				}
+			}
+		}
+		return retVal;
 	}
 
 	private void drawPerpLine(LineSegment perp) {
@@ -683,8 +788,8 @@ public class DetailItineraryActivity extends Activity {
 	private void checkLocationIsWithinEffectRadius(LatLng location) {
 		boolean found = false;
 		int i = 0;
-		while (i < interestSteps.size() && !found) {
-			Step s = interestSteps.get(i);
+		while (i < highLightedSteps.size() && !found) {
+			Step s = highLightedSteps.get(i);
 			float[] results = new float[3];
 			Location.distanceBetween(location.latitude, location.longitude,
 					s.getLatitude(), s.getLongitude(), results);
@@ -747,15 +852,15 @@ public class DetailItineraryActivity extends Activity {
 		}
 	}
 
-	private void addEffectRadiusIfNeeded(Step step) {
-		if (interestSteps == null) {
-			interestSteps = new ArrayList<Step>();
-		}
-		HighLight hl;
-		if ((hl = step.getHighlight()) != null) {
+	private void addPrecisionRadius(Step step) {
+//		if (highLightedSteps == null) {
+//			highLightedSteps = new ArrayList<Step>();
+//		}
+//		HighLight hl;
+//		if ((hl = step.getHighlight()) != null) {
 			CircleOptions copt = new CircleOptions();
 			copt.center(new LatLng(step.getLatitude(), step.getLongitude()));
-			copt.radius(hl.getRadius());
+			copt.radius(step.getPrecision());
 			copt.zIndex(1);
 			copt.strokeColor(Color.BLACK);
 			copt.strokeWidth(0.1f);
@@ -765,10 +870,10 @@ public class DetailItineraryActivity extends Activity {
 			// specify 00.
 			// For 0% transparency ( ie, opaque ) , specify ff
 			// The remaining 6 characters(00ff00) specify the fill color
-			copt.fillColor(0x55FF0701);
+			copt.fillColor(0x556F6F6F);
 			mMap.addCircle(copt);
-			interestSteps.add(step);
-		}
+//			highLightedSteps.add(step);
+//		}
 	}
 
 	private void drawUserRoute() {
@@ -780,7 +885,7 @@ public class DetailItineraryActivity extends Activity {
 					Step step = stepsInProgress.get(i);
 					rectOptions
 						.add(new LatLng(step.getLatitude(), step.getLongitude()));
-					addEffectRadiusIfNeeded(step);
+					addPrecisionRadius(step);
 					addMarkerIfNeeded(step,BitmapDescriptorFactory.HUE_CYAN);
 				}
 				rectOptions.zIndex(2);
@@ -801,7 +906,7 @@ public class DetailItineraryActivity extends Activity {
 			Step step = steps.get(j);
 			rectOptions
 					.add(new LatLng(step.getLatitude(), step.getLongitude()));
-			addEffectRadiusIfNeeded(step);
+			addPrecisionRadius(step);
 			addMarkerIfNeeded(step,BitmapDescriptorFactory.HUE_BLUE);
 		}
 		rectOptions.zIndex(1);
@@ -815,7 +920,7 @@ public class DetailItineraryActivity extends Activity {
 		}
 	}
 
-	private TileProvider initTileProvider() {
+	private MapBoxOfflineTileProvider initTileProvider() {
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {
@@ -840,6 +945,7 @@ public class DetailItineraryActivity extends Activity {
 		private GoogleMap mMap;
 		private ArrayList<Step> stepsInProgress;
 		private Polyline trackInProgress;
+		private CameraUpdate cu;
 
 		public FixReceiver(GoogleMap mMap) {
 			super();
@@ -855,11 +961,11 @@ public class DetailItineraryActivity extends Activity {
 			stepsInProgress = steps;
 		}
 
-		private void updateTrackInProgress() {
+		public void updateTrackInProgress() {			
 			PolylineOptions rectOptions = new PolylineOptions();
 			rectOptions.zIndex(1);
 			rectOptions.color(Color.GREEN);									
-			if (stepsInProgress.size() > 1) {								
+			if (stepsInProgress.size() > 0) {								
 				for (int i = 0; i < stepsInProgress.size(); i++) {
 					
 					Step step = stepsInProgress.get(i);
@@ -876,7 +982,7 @@ public class DetailItineraryActivity extends Activity {
 					// specify 00.
 					// For 0% transparency ( ie, opaque ) , specify ff
 					// The remaining 6 characters(00ff00) specify the fill color
-					copt.fillColor(0x55FF0701);
+					copt.fillColor(0x5500FFFF);
 					mMap.addCircle(copt);
 					
 					rectOptions.add(new LatLng(step.getLatitude(), step
@@ -931,17 +1037,18 @@ public class DetailItineraryActivity extends Activity {
 //				}
 //			}
 			if (!locationExists) {
-				Marker m = mMap
-						.addMarker(new MarkerOptions()
-								.position(location)
-								.title("Location " + lat + " - " + lng + " "
-										+ df.format(time))
-								.snippet(
-										"Location " + lat + " - " + lng + " "
-												+ df.format(time))
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));				
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16));
+//				Marker m = mMap
+//						.addMarker(new MarkerOptions()
+//								.position(location)
+//								.title("Location " + lat + " - " + lng + " "
+//										+ df.format(time))
+//								.snippet(
+//										"Location " + lat + " - " + lng + " "
+//												+ df.format(time))
+//								.icon(BitmapDescriptorFactory
+//										.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
+				mMap.moveCamera(cu);
 
 				Step s = new Step();
 				s.setId( Long.toString(currentTime) );
@@ -967,10 +1074,16 @@ public class DetailItineraryActivity extends Activity {
 					Log.d("onReceive", "Received new location " + lat + " "
 							+ lng + " t " + df.format(time));
 				}
-				if(userRouteMarkers==null){
-					userRouteMarkers = new Hashtable<Marker, Step>();
-				}
-				userRouteMarkers.put(m, s);
+//				if(userRouteMarkers==null){
+//					userRouteMarkers = new Hashtable<Marker, Step>();
+//				}
+//				userRouteMarkers.put(m, s);
+			}
+		}
+
+		public void moveCameraToLastPosition(){
+			if(cu!=null){
+				mMap.moveCamera(cu);
 			}
 		}
 	}

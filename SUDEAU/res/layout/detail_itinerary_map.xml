@@ -19,8 +19,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Seguiment itinerari..."
-        android:textColor="@color/white"
+        android:text="Seguiment itinerari..."       
         android:textSize="30sp" />
 
     <LinearLayout
@@ -42,8 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="#AFFF"
+                android:layout_marginBottom="5dp"                
                 android:padding="5dp"
                 android:text="Aturar seguiment" />
 
@@ -51,8 +49,7 @@
                 android:id="@+id/btn_add_content"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:background="#AFFF"
+                android:layout_height="30dp"                
                 android:padding="5dp"
                 android:text="Afegir observació" />
 
@@ -68,19 +65,9 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_height="30dp"
-                android:background="#AFFF"
+                android:layout_height="30dp"                
                 android:padding="5dp"
                 android:text="Navegar a punt..." />
-
-            <Button
-                android:id="@+id/btn_test_json"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:background="#AFFF"
-                android:padding="5dp"
-                android:text="Test json" />
 
         </LinearLayout>
             
