@@ -143,8 +143,8 @@ public class ChooseItineraryActivity extends Activity {
 	private void setUpDBIfNeeded() {
 		if(dataBaseHelper == null){
 			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
-			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
-			DataContainer.loadRedon(dataBaseHelper, this.getBaseContext());
+			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());			
+			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
 		}
 	}	
 
@@ -236,6 +236,14 @@ public class ChooseItineraryActivity extends Activity {
 	
 	private void refreshMapView(){
 		mMap.clear();
+		if(tileProvider!=null){
+			tileProvider.close();
+		}
+		tileProvider = initTileProvider();
+		TileOverlay tileOverlay = mMap
+				.addTileOverlay(new TileOverlayOptions()
+						.tileProvider(tileProvider));
+		tileOverlay.setVisible(true);
 		addRouteMarkersFromDB();
 		setUpCamera();
 	}

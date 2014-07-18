@@ -236,7 +236,7 @@ public class EditHighLightActivity extends Activity {
 	}
 	
 	private void createVideoThumbnail() throws FileNotFoundException{
-		videoThumbnail = ThumbnailUtils.createVideoThumbnail( currentVideo.getAbsolutePath(), android.provider.MediaStore.Video.Thumbnails.MINI_KIND);        
+		videoThumbnail = ThumbnailUtils.createVideoThumbnail( currentVideo.getAbsolutePath(), android.provider.MediaStore.Video.Thumbnails.MINI_KIND);		
     }
 	
 	private void createThumbnail() throws FileNotFoundException{		                        
@@ -307,6 +307,7 @@ public class EditHighLightActivity extends Activity {
 			}
 		});
 		imageOrVideo = (RadioGroup)findViewById(R.id.rgImageVideo);
+		tvName.requestFocus();
 	}
 	
 }

@@ -33,41 +33,41 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            <Button
+            android:orientation="horizontal" >
+            
+            <ImageButton 
                 android:id="@+id/btn_stop_tracking"
-                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"                
+                android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Aturar seguiment" />
+                android:background="@color/white"
+                android:src="@drawable/stop"
+                />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_add_content"
-                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"                
+                android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Afegir observació" />
+                android:background="@color/white"
+                android:src="@drawable/add_location_btn"
+                />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/btn_compass_to_point"
-                style="?android:attr/buttonStyleSmall"
+            <ImageButton
+                android:id="@+id/btn_compass"
                 android:layout_width="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_height="30dp"                
+                android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Navegar a punt..." />
+                android:background="@color/white"
+                android:src="@drawable/compass_btn" />
+
+            <ImageButton
+                android:id="@+id/btn_whereami"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:background="@color/white"
+                android:src="@drawable/whereami_btn"  />
 
         </LinearLayout>
             

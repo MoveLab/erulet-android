@@ -10,7 +10,6 @@ public class Reference {
 	private String name;
 	@DatabaseField
 	private String textContent;
-	private EruMedia media;
 
 	public Reference(){
 		
@@ -27,15 +26,7 @@ public class Reference {
 	public void setTextContent(String textContent) {
 		this.textContent = textContent;
 	}
-
-	public EruMedia getMedia() {
-		return media;
-	}
-
-	public void setMedia(EruMedia media) {
-		this.media = media;
-	}
-
+	
 	public String getId() {
 		return id;
 	}

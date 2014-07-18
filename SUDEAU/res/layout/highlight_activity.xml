@@ -65,7 +65,7 @@
         <EditText
             android:id="@+id/txtNameHl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content"            
             android:ems="10" />
 
         <TextView
@@ -91,7 +91,7 @@
             android:text="Afegir imatge o capturar video:" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="match_parent"            
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
@@ -127,7 +127,7 @@
             </RadioGroup>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="match_parent"                
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 

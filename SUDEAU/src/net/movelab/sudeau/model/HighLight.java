@@ -11,9 +11,7 @@ public class HighLight {
 	@DatabaseField
 	private String name;
 	@DatabaseField
-	private String longText;
-	@DatabaseField(foreign=true, columnName="mediaId")	
-	private EruMedia media;
+	private String longText;	
 	@DatabaseField
 	private String mediaPath;
 	@DatabaseField
@@ -37,20 +35,11 @@ public class HighLight {
 		this.radius=radius;
 	}		
 	
-	public HighLight(String id, String name, String longText, double radius, EruMedia media) {
+	public HighLight(String id, String name, String longText, double radius) {
 		this.id=id;
 		this.name=name;
-		this.radius=radius;
-		this.media=media;
+		this.radius=radius;		
 		this.longText=longText;
-	}
-
-	public EruMedia getMedia() {
-		return media;
-	}
-
-	public void setMedia(EruMedia media) {
-		this.media = media;
 	}
 
 	public double getRadius() {

@@ -1,7 +1,7 @@
 package net.movelab.sudeau.database;
 
 import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.EruMedia;
+//import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
@@ -19,7 +19,7 @@ import com.j256.ormlite.table.TableUtils;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 90;
+	public static final int DATABASE_VERSION = 93;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		
@@ -35,8 +35,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	private Dao<HighLight, String> hlDao;
 	private RuntimeExceptionDao<HighLight, String> hlRuntimeDao;
 	
-	private Dao<EruMedia, String> mediaDao;
-	private RuntimeExceptionDao<EruMedia, String> mediaRuntimeDao;
+//	private Dao<EruMedia, String> mediaDao;
+//	private RuntimeExceptionDao<EruMedia, String> mediaRuntimeDao;
 	
 	private Dao<Reference, String> referenceDao;
 	private RuntimeExceptionDao<Reference, String> referenceRuntimeDao;
@@ -53,7 +53,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Route.class);
 			TableUtils.createTable(connectionSource, Step.class);
 			TableUtils.createTable(connectionSource, HighLight.class);
-			TableUtils.createTable(connectionSource, EruMedia.class);
+			//TableUtils.createTable(connectionSource, EruMedia.class);
 			TableUtils.createTable(connectionSource, Reference.class);
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't create database", e);
@@ -70,7 +70,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Track.class, true);
 			TableUtils.dropTable(connectionSource, Step.class, true);
 			TableUtils.dropTable(connectionSource, HighLight.class, true);
-			TableUtils.dropTable(connectionSource, EruMedia.class, true);
+			//TableUtils.dropTable(connectionSource, EruMedia.class, true);
 			TableUtils.dropTable(connectionSource, Reference.class, true);
 			onCreate(db,connectionSource);
 		} catch (java.sql.SQLException e) {
@@ -135,19 +135,19 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		return hlRuntimeDao;
 	}		
 	
-	public Dao<EruMedia, String> getMediaDao() throws java.sql.SQLException {
-		if (mediaDao == null) {
-			mediaDao = getDao(EruMedia.class);
-		}
-		return mediaDao;
-	}
-	
-	public RuntimeExceptionDao<EruMedia, String> getMediaDataDao() {
-		if (mediaRuntimeDao == null) {			
-			mediaRuntimeDao = getRuntimeExceptionDao(EruMedia.class);
-		}
-		return mediaRuntimeDao;
-	}
+//	public Dao<EruMedia, String> getMediaDao() throws java.sql.SQLException {
+//		if (mediaDao == null) {
+//			mediaDao = getDao(EruMedia.class);
+//		}
+//		return mediaDao;
+//	}
+//	
+//	public RuntimeExceptionDao<EruMedia, String> getMediaDataDao() {
+//		if (mediaRuntimeDao == null) {			
+//			mediaRuntimeDao = getRuntimeExceptionDao(EruMedia.class);
+//		}
+//		return mediaRuntimeDao;
+//	}
 	
 	public Dao<Reference, String> getReferenceDao() throws java.sql.SQLException {
 		if (referenceDao == null) {
@@ -177,8 +177,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		stepRuntimeDao = null;
 		hlDao = null;
 		hlRuntimeDao = null;
-		mediaDao = null;
-		mediaRuntimeDao = null;
+//		mediaDao = null;
+//		mediaRuntimeDao = null;
 		referenceDao = null;
 		referenceRuntimeDao = null;
 	}
