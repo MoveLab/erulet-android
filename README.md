@@ -13,7 +13,10 @@ Features
 * Multilingual: User can select between Aranese, Catalan, Casillian, French, and English.
 * Optimized for outdoor use: Works offline with minimal battery drain
 
-** Account Registration**
+**Account Registration**
+
+* When user first installs app, they are given option to create an account with a username and password. They can decline to do so, in which case they use the app anonymously but cannot later log in to view their data on the web, or they can choose a username and password that will let them log into to the server later. There is also the option of registering an "expert" account, which requires that the users already have a code.
+* This activity will be implemented on the server side, so the app itself just needs a webview with javascript enabled.
 
 **Route Selection**
 
