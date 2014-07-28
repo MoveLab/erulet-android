@@ -3,7 +3,7 @@ Erulet - Android Application
 
 Erulet is an open source mobile application that aims to disseminate information, facilitate visits, and engage the public to participate in studying and protecting natural areas of the Val d'Aran.
 
-Features
+Detailed Specifications
 -----------------
 
 **General**
@@ -41,3 +41,62 @@ Features
 **Explorer Mode: Compass View**
 
 * From the map view, users can select a compass icon to be taken to the compass view. This view shows a compass that is oriented based on the device's magnetic sensor. If the user enters this view after first clicking a navigational waypoint or a point of interest, the compass includes a small marker indicating the direction to this point.
+
+
+**Data Model**
+
+The following sql statements show the app's internal data madel, which is synced to the server:
+
+
+CREATE TABLE `track` 
+(
+	`id` VARCHAR , 
+	`name` VARCHAR , 
+	PRIMARY KEY (`id`) 
+) 
+CREATE TABLE `route` 
+(
+	`description` VARCHAR , 
+	`ecoId` VARCHAR , 
+	`userId` VARCHAR , 
+	`id` VARCHAR , 
+	`idRouteBasedOn` VARCHAR , 
+	`name` VARCHAR , 
+	`referenceId` VARCHAR , 
+	`trackId` VARCHAR , 
+	`upLoaded` SMALLINT , 
+	`ecosystem` SMALLINT , 
+	PRIMARY KEY (`id`) 
+) 
+CREATE TABLE `step` 
+(
+	`absoluteTime` VARCHAR , 
+	`trackId` VARCHAR , 
+	`referenceId` VARCHAR , 
+	`hlId` VARCHAR , 
+	`id` VARCHAR , 
+	`name` VARCHAR , 
+	`longitude` DOUBLE PRECISION , 
+	`latitude` DOUBLE PRECISION , 
+	`absoluteTimeMillis` BIGINT , 
+	`precision` DOUBLE PRECISION , 
+	`altitude` DOUBLE PRECISION , 
+	`order` INTEGER , 
+	PRIMARY KEY (`id`) 
+) 
+CREATE TABLE `highlight` 
+(
+	`id` VARCHAR , 
+	`longText` VARCHAR , 
+	`mediaPath` VARCHAR , 
+	`name` VARCHAR , 
+	`radius` DOUBLE PRECISION , 
+	PRIMARY KEY (`id`) 
+) 
+CREATE TABLE `reference` 
+(
+	`id` VARCHAR , 
+	`name` VARCHAR , 
+	`textContent` VARCHAR , 
+	PRIMARY KEY (`id`) 
+) 
