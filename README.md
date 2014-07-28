@@ -47,7 +47,7 @@ Detailed Specifications
 
 The following sql statements show the app's internal data madel, which is synced to the server:
 
-
+```
 CREATE TABLE `track` 
 (
 	`id` VARCHAR , 
@@ -100,3 +100,4 @@ CREATE TABLE `reference`
 	`textContent` VARCHAR , 
 	PRIMARY KEY (`id`) 
 ) 
+```
