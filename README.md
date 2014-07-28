@@ -35,12 +35,16 @@ Detailed Specifications
 * Points of interest display popups with information about important features that users pass along the route. This information will include text, photos, video, and audio content created by the project team.
 * Visitor views contain content shared by other users. Only a limited number of these are downloaded for offline viewing when a user selects the given route.
 * The map view includea a button that lets the user see their current location.
+* It also includes a button that lets the user add "visitor views" -- multimedia content linked to a location on the map. Visitor views are made public only if the user selects this option, and only if sufficiently close to an actual route (since we want to discourage hiking off designated trails).
 * If in self-tracking mode, the app estimates the user's location at regular intervals and displays the track on the map.
-
 
 **Explorer Mode: Compass View**
 
 * From the map view, users can select a compass icon to be taken to the compass view. This view shows a compass that is oriented based on the device's magnetic sensor. If the user enters this view after first clicking a navigational waypoint or a point of interest, the compass includes a small marker indicating the direction to this point.
+
+**Ratings**
+
+* Users can give ratings to any route, point of interest, visitor view, or indiviual photo or video.
 
 
 **Data Model**
