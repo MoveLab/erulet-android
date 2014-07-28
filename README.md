@@ -18,6 +18,11 @@ Detailed Specifications
 * When user first installs app, they are given option to create an account with a username and password. They can decline to do so, in which case they use the app anonymously but cannot later log in to view their data on the web, or they can choose a username and password that will let them log into to the server later. There is also the option of registering an "expert" account, which requires that the users already have a code.
 * This activity will be implemented on the server side, so the app itself just needs a webview with javascript enabled.
 
+**Content download**
+
+* The app lets users choose which content to donwload for offline use. This includs maptiles, which can be served from within the app when there is no connection. 
+
+
 **Route Selection**
 
 * Displays large map with each route marked with one icon.
