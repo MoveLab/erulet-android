@@ -53,10 +53,15 @@ public class EditHighLightActivity extends Activity {
 	private RadioButton rbVideo;
 	private RadioButton rbNone;
 	
+	private EruletApp app;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
 		setContentView(R.layout.highlight_activity);
 		setUpInterface();
 		Bundle extras = getIntent().getExtras();
@@ -141,9 +146,8 @@ public class EditHighLightActivity extends Activity {
 	    }	    
 	}
 	
-	private void createVideoFile() throws IOException {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String imageFileName = "Erulet_" + timeStamp + "_";
+	private void createVideoFile() throws IOException {		
+	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
 	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);	    
 	    currentVideo = File.createTempFile(
 	        imageFileName,  /* prefix */
@@ -157,8 +161,7 @@ public class EditHighLightActivity extends Activity {
 	
 	private void createImageFile() throws IOException {
 	    // Create an image file name
-	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    String imageFileName = "Erulet_" + timeStamp + "_";
+	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
 	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);	    
 	    currentPhoto = File.createTempFile(
 	        imageFileName,  /* prefix */

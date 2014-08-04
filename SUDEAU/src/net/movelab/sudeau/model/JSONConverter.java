@@ -45,19 +45,11 @@ public class JSONConverter {
 		if(j.has("userid")){
 			r.setUserId(j.getString("userid"));
 		}
-		if(j.has("isecosystem")){
-			r.setEcosystem(j.getBoolean("isecosystem"));
-		}
 		if(j.has("isuploaded")){
 			r.setUpLoaded(j.getBoolean("isuploaded"));
-		}
-		if(j.has("eco")){
-			if(j.getJSONObject("eco") != null){
-				Route rt = jsonObjectToRoute(j.getJSONObject("eco"));
-				r.setEco(rt);
-			}else{
-				r.setEco(null);
-			}
+		}		
+		if(j.has("localcarto")){
+			r.setLocalCarto(j.getString("localcarto"));
 		}
 		return r;
 	}
@@ -166,7 +158,10 @@ public class JSONConverter {
 		}
 		if(j.has("radius")){
 			h.setRadius(j.getDouble("radius"));
-		}		
+		}
+		if(j.has("type")){
+			h.setType(j.getInt("type"));
+		}
 		return h;
 	}
 	
@@ -193,6 +188,7 @@ public class JSONConverter {
 		j.put("imagePath",h.getMediaPath());
 		j.put("name", h.getName());
 		j.put("radius", h.getRadius());
+		j.put("type", h.getType());
 		return j;
 	}
 	
@@ -218,10 +214,9 @@ public class JSONConverter {
 		j.put("idroutebasedon", r.getIdRouteBasedOn());		
 		j.put("reference", referenceToJSONObject(r.getReference()));
 		j.put("track", trackToJSONObject(r.getTrack()));
-		j.put("userid", r.getUserId());
-		j.put("isecosystem", r.isEcosystem());
+		j.put("userid", r.getUserId());		
 		j.put("isuploaded", r.isUpLoaded());
-		j.put("eco", routeToJSONObject(r.getEco()));
+		j.put("localcarto", r.getLocalCarto());
 		return j;
 	}
 	

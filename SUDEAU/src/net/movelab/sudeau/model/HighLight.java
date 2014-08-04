@@ -16,6 +16,13 @@ public class HighLight {
 	private String mediaPath;
 	@DatabaseField
 	private double radius;
+	@DatabaseField
+	private int type;
+	
+	public static final int WAYPOINT = 0;
+	public static final int POINT_OF_INTEREST = 1;
+	public static final int POINT_OF_INTEREST_OFFICIAL = 2;
+	public static final int ALERT = 3;
 	
 	public HighLight() {		
 	}
@@ -40,6 +47,14 @@ public class HighLight {
 		this.name=name;
 		this.radius=radius;		
 		this.longText=longText;
+	}
+	
+	public HighLight(String id, String name, String longText, double radius, int type) {
+		this.id=id;
+		this.name=name;
+		this.radius=radius;		
+		this.longText=longText;
+		this.type=type;
 	}
 
 	public double getRadius() {
@@ -85,6 +100,14 @@ public class HighLight {
 
 	public void setMediaPath(String imagePath) {
 		this.mediaPath = imagePath;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

@@ -18,6 +18,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +54,7 @@ public class ChooseItineraryActivity extends Activity {
 //	private static final LatLng MY_POINT = new LatLng(41.66, 1.54);
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
 //	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
-	private DataBaseHelper dataBaseHelper;
+	//private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
 	
@@ -65,12 +66,17 @@ public class ChooseItineraryActivity extends Activity {
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST+1;
+	
+	private EruletApp app;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.choose_itinerary_map);
-		setUpDBIfNeeded();
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
+		//setUpDBIfNeeded();
 		setUpMapIfNeeded();
 		setUpCamera();		
 	}
@@ -110,10 +116,10 @@ public class ChooseItineraryActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (dataBaseHelper != null) {
-	        OpenHelperManager.releaseHelper();
-	        dataBaseHelper = null;
-	    }
+//		if (dataBaseHelper != null) {
+//	        OpenHelperManager.releaseHelper();
+//	        dataBaseHelper = null;
+//	    }
 		if(tileProvider!=null){
 			tileProvider.close();
 		}
@@ -140,13 +146,13 @@ public class ChooseItineraryActivity extends Activity {
 		builder.show();		
 	}
 	
-	private void setUpDBIfNeeded() {
-		if(dataBaseHelper == null){
-			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
-			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());			
-			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
-		}
-	}	
+//	private void setUpDBIfNeeded() {
+//		if(dataBaseHelper == null){
+//			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
+//			//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());			
+//			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+//		}
+//	}	
 
 	private void setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -206,7 +212,7 @@ public class ChooseItineraryActivity extends Activity {
 					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
 					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
 					Route r = routeTable.get(marker);
-					r = DataContainer.refreshRoute(r,dataBaseHelper);
+					r = DataContainer.refreshRoute(r,app.getDataBaseHelper());
 		            snippet.setText(r.getDescription());
 		            title.setText(r.getName());
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
@@ -250,13 +256,13 @@ public class ChooseItineraryActivity extends Activity {
 
 	private void addRouteMarkersFromDB() {
 		// custom icon
-		List<Route> routes = DataContainer.getAllRoutes(dataBaseHelper);
+		List<Route> routes = DataContainer.getAllRoutes(app.getDataBaseHelper());
 		if(routeTable == null){
 			routeTable = new Hashtable<Marker, Route>();
 		}
 		for(int i=0; i < routes.size(); i++){			
 			Route r = routes.get(i);
-			Step start = DataContainer.getRouteStarter(r, dataBaseHelper);
+			Step start = DataContainer.getRouteStarter(r, app.getDataBaseHelper());
 			if(start!=null){
 				Marker my_marker = mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(start.getLatitude(), start.getLongitude()))
@@ -269,7 +275,7 @@ public class ChooseItineraryActivity extends Activity {
 		}
 	}
 
-	private MapBoxOfflineTileProvider initTileProvider() {
+	private MapBoxOfflineTileProvider initTileProvider() {		
 		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
 		if (!f.exists())
 			try {

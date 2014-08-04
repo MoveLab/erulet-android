@@ -344,21 +344,9 @@ public class DataContainer {
 		return userRoutes;
 	}
 	
-	public static List<Route> getAllRoutes(DataBaseHelper db) {		
-		QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao().queryBuilder();
-		Where<Route, String> where = queryBuilder.where();
-		List<Route> routes = new ArrayList<Route>();
-		try {			
-			where.eq("ecosystem", false);
-			PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
-			routes = db.getRouteDataDao().query(preparedQuery);											
-			return routes;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+	public static List<Route> getAllRoutes(DataBaseHelper db) {				
+		List<Route> routes = db.getRouteDataDao().queryForAll();
 		return routes;
-		
 	}
 	
 	public static HighLight getHighLightStep(Step s, DataBaseHelper db){
@@ -368,13 +356,7 @@ public class DataContainer {
 		else
 			db.getHlDataDao().refresh(h);
 		return h;
-	}
-	
-	public static Route getRouteEcosystem(Route route, DataBaseHelper db) {
-		Route r = route.getEco();
-		db.getRouteDataDao().refresh(r);
-		return r;
-	}
+	}	
 	
 	public static Reference getReferenceStep(Step s, DataBaseHelper db){
 		Reference r = s.getReference();		
@@ -452,19 +434,25 @@ public class DataContainer {
 				"Des del pàrquing de l’Espitau de Vielha, passar pel carrer que formen " + 
 				"el complex d’edificacions de l’Espitau per trobar al fons un corriol que puja " + 
 				"fins a a la pista de Conangles (0.2 km, desnivell 60 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);		
+		
 		HighLight h2 = new HighLight(
 				"hl_redon_wp02",
 				"WP02 - Pista de Conangles",
 				"Seguir la pista cap a la dreta, fins arribar a una bifurcació abans del pont " + 
 				"que travessa el riu de Conangles (0.7 km, desnivell 40 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h3 = new HighLight(
 				"hl_redon_wp03",
 				"WP03 - Bifurcació",
 				"Pendre el ramal de l’esquerra fins arribar al final on hi ha un pas de pedres " + 
 				"per travessar el barranc del Redon (0.2 km, desnivell -10 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h4 = new HighLight(
 				"hl_redon_wp04",
 				"WP04 - Pas del barranc del Redon",
@@ -472,14 +460,17 @@ public class DataContainer {
 				"vermelles del GR-11, que travessa una fageda que més adalt del camí es converteix " + 
 				"en un bosc de pins més obert, fins arribar a un ressalt empinat on el camí fa " + 
 				"diverses marrades (0.75 km, desnivell 90 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h5 = new HighLight(
 				"hl_redon_wp05",
 				"WP05 - Ressalt",
 				"Pujar el resalt, travessar el pletiu que s’obre al cap d’amunt i pujar suaument "
 				+ "en direcció al barranc que queda al davant per anar a trobar el pas per creuar-ho " +
 				"(0.2 km, desnivell 40 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		
 		HighLight h6 = new HighLight(
 				"hl_redon_wp06",
@@ -487,14 +478,18 @@ public class DataContainer {
 				"Travessar el rierol i pujar cap a l’esquerra i pendent pronunciada, en direcció "
 				+ "a un vell pi solitari on comencen els Marrècs (marrades) de l’Escaleta " +
 				"( 0.1 km, desnivell 50 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h7 = new HighLight(
 				"hl_redon_wp07",
 				"WP07 - Marrècs de l’Escaleta",
 				"Seguir el corriol que puja amb pendent forta fent diverses marrades, per arribar " +
 				"al punt on torna a travessar el barranc més amunt, ja convertit en una canal molt " + 
 				"dreta (0.3 km, desnivell 100 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h8 = new HighLight(
 				"hl_redon_wp08",
 				"WP08 - Pas de la canal",
@@ -502,7 +497,8 @@ public class DataContainer {
 				"continuar pel corriol que uns pocs metres més amunt flanqueja unes amples pales " +
 				"herboses, fins arribar on el GR-11 es desvia cap a la dreta per anar al " + 
 				"Pòrt de Rius (0.3 km, desnivell 20 m) ",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		
 		HighLight h9 = new HighLight(
 				"hl_redon_wp09",
@@ -510,7 +506,9 @@ public class DataContainer {
 				"Deixar el desviament a la dreta i continuar en la mateixa direcció que portem, " +
 				"tot continuant el llarg flanqueig, fins arribar a un ressalt de roca que queda per " +
 				"sobre del camí (0.2 km, desnivell 40 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h10 = new HighLight(
 				"hl_redon_wp10",
 				"WP10 - ressalt de roca",
@@ -518,36 +516,43 @@ public class DataContainer {
 				"a la dreta, per continuar pel camí que va es va apropant al barranc del Redon en un " + 
 				"llarg flanqueig, fins a trobar-ho i resseguir-ho fins arribar a l’estany " + 
 				"(0.7 km, desnivell 100 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
+		
 		HighLight h11 = new HighLight(
 				"hl_redon_wp11",
 				"WP11 - Arribada",
 				null,
-				10);
+				10,
+				HighLight.WAYPOINT);
 		
 		HighLight h12 = new HighLight(
 				"hl_redon_poi01",
 				"POI1 - Estació limnològica",
 				"Fes clic per detalls...",
-				10);
+				10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		
 		HighLight h13 = new HighLight(
 				"hl_redon_poi02",
 				"POI2 - Volantins",
 				"Fes clic per detalls...",
-				10);
+				10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		
 		HighLight h14 = new HighLight(
 				"hl_redon_poi03",
 				"POI3 - Peixos",
 				"Fes clic per detalls...",
-				10);
+				10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		
 		HighLight h15 = new HighLight(
 				"hl_redon_poi04",
 				"POI4 - Capbussada",
 				"Fes clic per detalls...",
-				10);
+				10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		
 		try{
 			
@@ -731,8 +736,8 @@ public class DataContainer {
 		r.setName("Estanh Redon");		
 		r.setDescription("Itinerari de 3.6 km amb 600 m de desnivell (1.5 - 2 h a peu), per visitar l’Estanh Redon.\nSortida des de l’Espitau de Vielha, a la boca sud del túnel. El camí és al començament una pista forestal, i després un corriol ben fresat per on es pot caminar amb poca dificultat. Segueix inicialment la ruta GR-11, però cap a l’útim terç el camí pren una variant. L’itinerari és adequat per a persones a partir de 10 anys, acostumades a caminar per la muntanya i amb una condició física mitja. El Redon és un exemple d’estany de gran mida i aigües molt transparents, encaixonat en un circ de parets escarpades. Ha estat objecte de recerca científica des de fa dècades, i a la vora hi ha un petit laboratori de camp i una estació meteorològica.");
 		r.setUserId("1");
-		//r.setEco(ecosystem);		
 		r.setTrack(t);
+		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
 		
 		try{
 			routeDataDao.create(r);			
@@ -747,9 +752,7 @@ public class DataContainer {
 		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
 		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
 		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
-		//RuntimeExceptionDao<EruMedia, String> mediaDataDao = db.getMediaDataDao();
-		
-		Route ecosystem = loadSampleEcosystem(db, context);
+		//RuntimeExceptionDao<EruMedia, String> mediaDataDao = db.getMediaDataDao();				
 		
 		Track t = new Track("TRACK_REDON","Waypoints recorregut Estanh Redon");			
 		try{
@@ -767,19 +770,22 @@ public class DataContainer {
 				"Des del pàrquing de l’Espitau de Vielha, passar pel carrer que formen " + 
 				"el complex d’edificacions de l’Espitau per trobar al fons un corriol que puja " + 
 				"fins a a la pista de Conangles (0.2 km, desnivell 60 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);		
 		HighLight h2 = new HighLight(
 				"hl_redon_wp02",
 				"WP02 - Pista de Conangles",
 				"Seguir la pista cap a la dreta, fins arribar a una bifurcació abans del pont " + 
 				"que travessa el riu de Conangles (0.7 km, desnivell 40 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		HighLight h3 = new HighLight(
 				"hl_redon_wp03",
 				"WP03 - Bifurcació",
 				"Pendre el ramal de l’esquerra fins arribar al final on hi ha un pas de pedres " + 
 				"per travessar el barranc del Redon (0.2 km, desnivell -10 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);		
 		HighLight h4 = new HighLight(
 				"hl_redon_wp04",
 				"WP04 - Pas del barranc del Redon",
@@ -787,29 +793,32 @@ public class DataContainer {
 				"vermelles del GR-11, que travessa una fageda que més adalt del camí es converteix " + 
 				"en un bosc de pins més obert, fins arribar a un ressalt empinat on el camí fa " + 
 				"diverses marrades (0.75 km, desnivell 90 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		HighLight h5 = new HighLight(
 				"hl_redon_wp05",
 				"WP05 - Ressalt",
 				"Pujar el resalt, travessar el pletiu que s’obre al cap d’amunt i pujar suaument "
 				+ "en direcció al barranc que queda al davant per anar a trobar el pas per creuar-ho " +
 				"(0.2 km, desnivell 40 m)",
-				10);
-		
+				10,
+				HighLight.WAYPOINT);		
 		HighLight h6 = new HighLight(
 				"hl_redon_wp06",
 				"WP06 - Pas del barranc",
 				"Travessar el rierol i pujar cap a l’esquerra i pendent pronunciada, en direcció "
 				+ "a un vell pi solitari on comencen els Marrècs (marrades) de l’Escaleta " +
 				"( 0.1 km, desnivell 50 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		HighLight h7 = new HighLight(
 				"hl_redon_wp07",
 				"WP07 - Marrècs de l’Escaleta",
 				"Seguir el corriol que puja amb pendent forta fent diverses marrades, per arribar " +
 				"al punt on torna a travessar el barranc més amunt, ja convertit en una canal molt " + 
 				"dreta (0.3 km, desnivell 100 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		HighLight h8 = new HighLight(
 				"hl_redon_wp08",
 				"WP08 - Pas de la canal",
@@ -817,15 +826,16 @@ public class DataContainer {
 				"continuar pel corriol que uns pocs metres més amunt flanqueja unes amples pales " +
 				"herboses, fins arribar on el GR-11 es desvia cap a la dreta per anar al " + 
 				"Pòrt de Rius (0.3 km, desnivell 20 m) ",
-				10);
-		
+				10,
+				HighLight.WAYPOINT);
 		HighLight h9 = new HighLight(
 				"hl_redon_wp09",
 				"WP09 - desviament GR11",
 				"Deixar el desviament a la dreta i continuar en la mateixa direcció que portem, " +
 				"tot continuant el llarg flanqueig, fins arribar a un ressalt de roca que queda per " +
 				"sobre del camí (0.2 km, desnivell 40 m)",
-				10);		
+				10,
+				HighLight.WAYPOINT);
 		HighLight h10 = new HighLight(
 				"hl_redon_wp10",
 				"WP10 - ressalt de roca",
@@ -833,12 +843,14 @@ public class DataContainer {
 				"a la dreta, per continuar pel camí que va es va apropant al barranc del Redon en un " + 
 				"llarg flanqueig, fins a trobar-ho i resseguir-ho fins arribar a l’estany " + 
 				"(0.7 km, desnivell 100 m)",
-				10);
+				10,
+				HighLight.WAYPOINT);
 		HighLight h11 = new HighLight(
 				"hl_redon_wp11",
 				"WP11 - Arribada",
 				null,
-				10);
+				10,
+				HighLight.WAYPOINT);
 		try{
 			
 			hlDataDao.create(h1);
@@ -970,9 +982,9 @@ public class DataContainer {
 		r.setId("ROUTE_REDON");
 		r.setName("Estanh Redon");		
 		r.setDescription("Itinerari de 3.6 km amb 600 m de desnivell (1.5 - 2 h a peu), per visitar l’Estanh Redon.\nSortida des de l’Espitau de Vielha, a la boca sud del túnel. El camí és al començament una pista forestal, i després un corriol ben fresat per on es pot caminar amb poca dificultat. Segueix inicialment la ruta GR-11, però cap a l’útim terç el camí pren una variant. L’itinerari és adequat per a persones a partir de 10 anys, acostumades a caminar per la muntanya i amb una condició física mitja. El Redon és un exemple d’estany de gran mida i aigües molt transparents, encaixonat en un circ de parets escarpades. Ha estat objecte de recerca científica des de fa dècades, i a la vora hi ha un petit laboratori de camp i una estació meteorològica.");
-		r.setUserId("1");
-		r.setEco(ecosystem);		
+		r.setUserId("1");			
 		r.setTrack(t);
+		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");		
 		
 		try{
 			routeDataDao.create(r);			
@@ -1091,8 +1103,7 @@ public class DataContainer {
 		r.setId("ROUTE2_ECO");
 		r.setName("Estanh Redon");
 		r.setDescription("Ecosistemes aqüàtics de l'Estanh Redon");
-		r.setUserId("1");
-		r.setEcosystem(true);
+		r.setUserId("1");		
 		r.setTrack(t);
 		r.setReference(r6);
 		

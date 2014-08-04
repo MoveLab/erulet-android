@@ -56,6 +56,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
@@ -118,7 +119,7 @@ public class DetailItineraryActivity extends Activity
 
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
-	private DataBaseHelper dataBaseHelper;
+	//private DataBaseHelper dataBaseHelper;
 	private Marker bogus_location;
 	private Marker interestAreaMarker;
 	private Marker selectedMarker;
@@ -136,7 +137,7 @@ public class DetailItineraryActivity extends Activity
 	private Hashtable<Marker, Step> currentRouteMarkers;
 	private Hashtable<Marker, Step> routeInProgressMarkers;
 	private Vibrator v;
-	private String userId;
+	//private String userId;
 	private boolean tracking;
 
 	private ImageButton btn_compass;
@@ -154,12 +155,15 @@ public class DetailItineraryActivity extends Activity
 	
 	private LocationClient locationClient;
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	private EruletApp app;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_itinerary_map);
-
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
 		// Check availability of google play services
 		int status = GooglePlayServicesUtil
 				.isGooglePlayServicesAvailable(getBaseContext());
@@ -231,14 +235,7 @@ public class DetailItineraryActivity extends Activity
 			if (routeMode > 0) {
 				checkLocationServicesStatus();
 			}
-			startOrResumeTracking();
-
-			lastPositionMarker = mMap.addMarker(new MarkerOptions()
-					.title("Ets aquí!")
-					.snippet("(més o menys)")
-					.position(new LatLng(-27, 133))
-					.icon(BitmapDescriptorFactory
-							.fromResource(R.drawable.ic_erulet_new)));
+			startOrResumeTracking();			
 			
 			locationClient = new LocationClient(this, this, this);
 		}
@@ -337,14 +334,14 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private void saveHighLight(HighLight h) {
-		Step s = DataContainer.findStepById(stepBeingEditedId, dataBaseHelper);
+		Step s = DataContainer.findStepById(stepBeingEditedId, app.getDataBaseHelper());
 		if (s == null) {
 			// Something has gone very wrong
 			if (IGlobalValues.DEBUG) {
 				Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);
 			}
-		} else {
-			DataContainer.addHighLightToStep(s, h, userId, dataBaseHelper);
+		} else {			
+			DataContainer.addHighLightToStep(s, h, DataContainer.getAndroidId(getContentResolver()), app.getDataBaseHelper());
 		}
 	}
 
@@ -396,7 +393,7 @@ public class DetailItineraryActivity extends Activity
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (selectedRoute != null && !selectedRoute.isEcosystem()) {
+		if (selectedRoute != null) {
 			for (int i = 0; i < menu.size(); i++) {
 				menu.getItem(i).setVisible(false);
 			}
@@ -451,6 +448,14 @@ public class DetailItineraryActivity extends Activity
 		if(current!=null){
 			LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
 			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
+			if(lastPositionMarker==null){
+				lastPositionMarker = mMap.addMarker(new MarkerOptions()
+				.title("Ets aquí!")
+				.snippet("(més o menys)")
+				.position(new LatLng(-27, 133))
+				.icon(BitmapDescriptorFactory
+						.fromResource(R.drawable.ic_erulet_new)));
+			}
 			lastPositionMarker.setPosition(currentLatLng);
 			lastPositionMarker.showInfoWindow();
 			mMap.moveCamera(cu);			
@@ -508,7 +513,7 @@ public class DetailItineraryActivity extends Activity
 		// if(mMap!=null){
 		// mMap.clear();
 		// }
-		setUpDBIfNeeded();
+		//setUpDBIfNeeded();
 		setUpRoutes();
 		setUpMapIfNeeded();
 		drawCurrentRouteFromDB();
@@ -556,30 +561,30 @@ public class DetailItineraryActivity extends Activity
 		if (extras != null) {
 			String idRoute = extras.getString("idRoute");
 			selectedRoute = DataContainer
-					.findRouteById(idRoute, dataBaseHelper);
+					.findRouteById(idRoute, app.getDataBaseHelper());
 		}
 		// Create route entry in database
 		if (routeInProgress == null && routeMode == 2) {
-			routeInProgress = DataContainer.createEmptyRoute(dataBaseHelper,
-					userId);
+			routeInProgress = DataContainer.createEmptyRoute(app.getDataBaseHelper(),
+					DataContainer.getAndroidId(getContentResolver()));
 		}
 	}
 
-	private void setUpDBIfNeeded() {
-		if (dataBaseHelper == null) {
-			dataBaseHelper = OpenHelperManager.getHelper(this,
-					DataBaseHelper.class);
-			userId = DataContainer.getAndroidId(getContentResolver());
-		}
-	}
+//	private void setUpDBIfNeeded() {
+//		if (dataBaseHelper == null) {
+//			dataBaseHelper = OpenHelperManager.getHelper(this,
+//					DataBaseHelper.class);
+//			userId = DataContainer.getAndroidId(getContentResolver());
+//		}
+//	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (dataBaseHelper != null) {
-			OpenHelperManager.releaseHelper();
-			dataBaseHelper = null;
-		}
+//		if (dataBaseHelper != null) {
+//			OpenHelperManager.releaseHelper();
+//			dataBaseHelper = null;
+//		}
 		if (fixReceiver != null) {
 			unregisterReceiver(fixReceiver);
 			fixReceiver = null;
@@ -599,10 +604,12 @@ public class DetailItineraryActivity extends Activity
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				tileProvider = initTileProvider();
-				TileOverlay tileOverlay = mMap
-						.addTileOverlay(new TileOverlayOptions()
-								.tileProvider(tileProvider));
-				tileOverlay.setVisible(true);
+				if(tileProvider!=null){
+					TileOverlay tileOverlay = mMap
+							.addTileOverlay(new TileOverlayOptions()
+									.tileProvider(tileProvider));
+					tileOverlay.setVisible(true);
+				}
 			}
 			// if(mMap != null){
 			// if(routeMode==1){
@@ -623,13 +630,13 @@ public class DetailItineraryActivity extends Activity
 						}
 					}
 					if (s == null) {
-						Intent i = new Intent(DetailItineraryActivity.this,
-								DetailItineraryActivity.class);
-						Route r = DataContainer.getRouteEcosystem(
-								selectedRoute, dataBaseHelper);
-						i.putExtra("idRoute", r.getId());
-						i.putExtra("mode", 0);
-						startActivity(i);
+//						Intent i = new Intent(DetailItineraryActivity.this,
+//								DetailItineraryActivity.class);
+//						Route r = DataContainer.getRouteEcosystem(
+//								selectedRoute, dataBaseHelper);
+//						i.putExtra("idRoute", r.getId());
+//						i.putExtra("mode", 0);
+//						startActivity(i);
 					} else {
 						if (s.getReference() != null) {
 							Intent i = new Intent(DetailItineraryActivity.this,
@@ -647,11 +654,9 @@ public class DetailItineraryActivity extends Activity
 								i.putExtra("long",
 										Double.toString(s.getLongitude()));
 								i.putExtra("alt",
-										Double.toString(s.getAltitude()));
-								SimpleDateFormat spdf = new SimpleDateFormat(
-										"dd/MM/yyyy");
+										Double.toString(s.getAltitude()));								
 								i.putExtra("date",
-										spdf.format(s.getAbsoluteTime()));
+										app.formatDateDayMonthYear(s.getAbsoluteTime()));
 								if (s.getHighlight() != null) {
 									i.putExtra("hlname", s.getHighlight()
 											.getName());
@@ -962,7 +967,7 @@ public class DetailItineraryActivity extends Activity
 		// mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new
 		// LatLng(s.getLatitude(),s.getLongitude()) , 15));
 		Track t = selectedRoute.getTrack();
-		List<Step> steps = DataContainer.getTrackSteps(t, dataBaseHelper);
+		List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
 		LatLngBounds.Builder b = new LatLngBounds.Builder();
 		for (int i = 0; i < steps.size(); i++) {
 			Step s = steps.get(i);
@@ -1010,7 +1015,7 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private void addEcoSystemMarker(Route route) {
-		Step step = DataContainer.getRouteStarter(route, dataBaseHelper);
+		Step step = DataContainer.getRouteStarter(route, app.getDataBaseHelper());
 		Marker m = mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(step.getLatitude(), step.getLongitude()))
 				.title(route.getName())
@@ -1087,7 +1092,7 @@ public class DetailItineraryActivity extends Activity
 		}
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = selectedRoute.getTrack();
-		List<Step> steps = DataContainer.getTrackSteps(t, dataBaseHelper);
+		List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
 		for (int j = 0; j < steps.size(); j++) {
 			Step step = steps.get(j);
 			rectOptions
@@ -1097,33 +1102,33 @@ public class DetailItineraryActivity extends Activity
 		}
 		rectOptions.zIndex(1);
 		rectOptions.color(Color.GRAY);
-		Polyline polyline = mMap.addPolyline(rectOptions);
-		if (selectedRoute.getEco() != null) {
-			// addEcoSystemMarker( currentRoute.getEco() );
-			Route eco = DataContainer.getRouteEcosystem(selectedRoute,
-					dataBaseHelper);
-			addEcoSystemMarker(eco);
-		}
+		Polyline polyline = mMap.addPolyline(rectOptions);		
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
-		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
-		if (!f.exists())
-			try {
-				InputStream is = getAssets().open(
-						"OSMPublicTransport_HiRes.mbtiles");
-				int size = is.available();
-				byte[] buffer = new byte[size];
-				is.read(buffer);
-				is.close();
-				FileOutputStream fos = new FileOutputStream(f);
-				fos.write(buffer);
-				fos.close();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+		File sdcard = Environment.getExternalStorageDirectory();
+		if(selectedRoute.getLocalCarto()!=null){
+			File f = new File(sdcard,selectedRoute.getLocalCarto());
+			//File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
+			if (f.exists()){
+//				try {				
+					//InputStream is = getAssets().open(
+							//"OSMPublicTransport_HiRes.mbtiles");
+//					FileInputStream is = new FileInputStream(f);
+//					int size = is.available();
+//					byte[] buffer = new byte[size];
+//					is.read(buffer);
+//					is.close();
+//					FileOutputStream fos = new FileOutputStream(f);
+//					fos.write(buffer);
+//					fos.close();
+//				} catch (Exception e) {
+//					throw new RuntimeException(e);
+//				}
+				return new MapBoxOfflineTileProvider(f.getPath());
 			}
-
-		return new MapBoxOfflineTileProvider(f.getPath());
+		}
+		return null;
 	}
 
 	public class FixReceiver extends BroadcastReceiver {
@@ -1205,7 +1210,7 @@ public class DetailItineraryActivity extends Activity
 			double lng = intent.getExtras().getDouble("long", 0);
 			double alt = intent.getExtras().getDouble("alt", 0);
 			double accuracy = intent.getExtras().getDouble("acc", 0);
-			DateFormat df = new SimpleDateFormat("HH:mm:ss.SSSZ");
+			//DateFormat df = new SimpleDateFormat("HH:mm:ss.SSSZ");
 			long currentTime = System.currentTimeMillis();
 			Date time = new Date(currentTime);
 			LatLng location = new LatLng(lat, lng);
@@ -1213,7 +1218,7 @@ public class DetailItineraryActivity extends Activity
 			// Point is same as last, we don't add it to the track
 			if (IGlobalValues.DEBUG) {
 				Log.d("onReceive", "Received new location " + lat + " " + lng
-						+ " t " + df.format(time) + " already logged");
+						+ " t " + app.formatDateHoursMinutesSeconds(time) + " already logged");
 			}
 			if (!locationExists) {
 				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
@@ -1235,13 +1240,14 @@ public class DetailItineraryActivity extends Activity
 					int order = stepsInProgress.size() - 1;
 					s.setOrder(order);
 					DataContainer.addStepToTrack(s, routeInProgress.getTrack(),
-							userId, dataBaseHelper);
+							DataContainer.getAndroidId(getContentResolver()), 
+							app.getDataBaseHelper());
 				}
 
 				updateTrackInProgress();
 				if (IGlobalValues.DEBUG) {
 					Log.d("onReceive", "Received new location " + lat + " "
-							+ lng + " t " + df.format(time));
+							+ lng + " t " + app.formatDateHoursMinutesSeconds(time) );
 				}
 			}
 		}

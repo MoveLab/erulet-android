@@ -19,13 +19,11 @@ public class Route {
 	@DatabaseField(foreign=true, columnName="trackId")
 	private Track track;
 	@DatabaseField(foreign=true, columnName="referenceId")
-	private Reference reference;
-	@DatabaseField
-	private boolean ecosystem;
-	@DatabaseField(foreign=true, columnName="ecoId")
-	private Route eco;
+	private Reference reference;	
 	@DatabaseField
 	private boolean upLoaded;
+	@DatabaseField
+	private String localCarto;
 
 	public Route() {		
 	}
@@ -94,29 +92,21 @@ public class Route {
 	public void setIdRouteBasedOn(String idRouteBasedOn) {
 		this.idRouteBasedOn = idRouteBasedOn;
 	}
-
-	public boolean isEcosystem() {
-		return ecosystem;
-	}
-
-	public void setEcosystem(boolean ecosystem) {
-		this.ecosystem = ecosystem;
-	}
-
-	public Route getEco() {
-		return eco;
-	}
-
-	public void setEco(Route eco) {
-		this.eco = eco;
-	}
-
+	
 	public boolean isUpLoaded() {
 		return upLoaded;
 	}
 
 	public void setUpLoaded(boolean upLoaded) {
 		this.upLoaded = upLoaded;
+	}
+
+	public String getLocalCarto() {
+		return localCarto;
+	}
+
+	public void setLocalCarto(String localCarto) {
+		this.localCarto = localCarto;
 	}
 	
 }
