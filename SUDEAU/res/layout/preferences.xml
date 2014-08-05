@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_vert_sttng"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">    
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        
+        <TextView
+        android:id="@+id/tvLblSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:text="Preferències"
+        android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Idioma:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <RadioGroup
+        		android:id="@+id/radioLang"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content" >        		
+	            <RadioButton
+	                android:id="@+id/rbCatala"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="onRadioButtonClicked"
+	                android:text="Català" />
+	
+	            <RadioButton
+	                android:id="@+id/rbAranes"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="onRadioButtonClicked"
+	                android:text="Aranès" />
+	
+	            <RadioButton
+	                android:id="@+id/rbSpanish"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="onRadioButtonClicked"
+	                android:text="Castellà" />
+	
+	            <RadioButton
+	                android:id="@+id/rbEnglish"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="onRadioButtonClicked"
+	                android:text="Anglès" />
+	            
+	            <RadioButton
+	                android:id="@+id/rbFrench"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:onClick="onRadioButtonClicked"
+	                android:text="Francès" />
+			</RadioGroup>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
