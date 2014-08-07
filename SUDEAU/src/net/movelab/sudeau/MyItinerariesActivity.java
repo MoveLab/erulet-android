@@ -30,48 +30,42 @@ import android.widget.TextView;
 public class MyItinerariesActivity extends Activity {
 	
 	//TODO Add date and time of creation of the route
-	//TODO Modify layout so that it acommodates landscape orientation better
-	
-	
-	private DataBaseHelper dataBaseHelper;		
+	//TODO Modify layout so that it acommodates landscape orientation better			
 	private MyRouteArrayAdapter routeArrayAdapter;
 	private ListView listView;
+	private EruletApp app;
 	
-	private void setUpDBIfNeeded() {
-		if (dataBaseHelper == null) {
-			dataBaseHelper = OpenHelperManager.getHelper(this,
-					DataBaseHelper.class);
-		}
-	}
-
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.my_itineraries);
 		
-		setUpDBIfNeeded();
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
 
 		listView = (ListView) findViewById(R.id.lv_my_routes);
 		String android_id = DataContainer.getAndroidId(getBaseContext().getContentResolver());
 		List<Route> myRoutes = loadRoutes(android_id);
 		
-		routeArrayAdapter = new MyRouteArrayAdapter(this, myRoutes,dataBaseHelper);
+		routeArrayAdapter = new MyRouteArrayAdapter(this, myRoutes,app);
 		listView.setAdapter(routeArrayAdapter);			
 
 	}
 	
 	private List<Route> loadRoutes(String android_id){
-		List<Route> myRoutes = DataContainer.getUserRoutes(dataBaseHelper,android_id);
+		List<Route> myRoutes = DataContainer.getUserRoutes(app.getDataBaseHelper(),android_id);
 		for(Route r : myRoutes){
-			DataContainer.refreshRoute(r, dataBaseHelper);
+			DataContainer.refreshRoute(r, app.getDataBaseHelper());
 			if(r.getTrack()!=null)
-				DataContainer.getTrackSteps(r.getTrack(), dataBaseHelper);
+				DataContainer.getTrackSteps(r.getTrack(), app.getDataBaseHelper());
 		}
 		return myRoutes;
 	}
 	
 	private void refreshListView(String android_id){
 		List<Route> newRoutes = loadRoutes(android_id);
-		routeArrayAdapter = new MyRouteArrayAdapter(this, newRoutes,dataBaseHelper);
+		routeArrayAdapter = new MyRouteArrayAdapter(this, newRoutes,app);
 		listView.setAdapter(routeArrayAdapter);
 	}
 	
@@ -87,20 +81,19 @@ public class MyItinerariesActivity extends Activity {
 class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 
 	HashMap<Route, Integer> mIdMap = new HashMap<Route, Integer>();
-	private final Context context;
-	private final DataBaseHelper dataBaseHelper;
+	private final Context context;	
 	private List<Route> routes;
+	private EruletApp app;
 	//private Route currentRoute;
 
-	public MyRouteArrayAdapter(Context context, List<Route> objects, 
-			DataBaseHelper dataBaseHelper) {
+	public MyRouteArrayAdapter(Context context, List<Route> objects,EruletApp app) {
 		super(context, R.layout.local_route_list_item, objects);		
 		for (int i = 0; i < objects.size(); ++i) {
 			mIdMap.put(objects.get(i), i);
 		}
 		this.routes=objects;
 		this.context=context;
-		this.dataBaseHelper=dataBaseHelper;
+		this.app=app;
 	}		
 	
 	@Override
@@ -170,7 +163,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 	@Override
 	public void remove(Route object) { 
 		super.remove(object);
-		DataContainer.deleteRouteCascade(object, dataBaseHelper);
+		DataContainer.deleteRouteCascade(object, app.getDataBaseHelper());
 	}
 	
 	@Override

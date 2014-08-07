@@ -116,17 +116,18 @@ public class ChooseItineraryActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-//		if (dataBaseHelper != null) {
-//	        OpenHelperManager.releaseHelper();
-//	        dataBaseHelper = null;
-//	    }
 		if(tileProvider!=null){
 			tileProvider.close();
 		}
 	}
 	
-	public void showItineraryOptions(){		
-		final CharSequence[] items = {OPTION_1,OPTION_2,OPTION_3};
+	public void showItineraryOptions(){
+		CharSequence[] items = null;
+		if(app.isPrivilegedUser()){
+			items = new CharSequence[]{OPTION_1,OPTION_2,OPTION_3}; 
+		}else{
+			items = new CharSequence[]{OPTION_1,OPTION_2};
+		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(TITLE);
 		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {			
@@ -264,12 +265,13 @@ public class ChooseItineraryActivity extends Activity {
 			Route r = routes.get(i);
 			Step start = DataContainer.getRouteStarter(r, app.getDataBaseHelper());
 			if(start!=null){
-				Marker my_marker = mMap.addMarker(new MarkerOptions()
-				.position(new LatLng(start.getLatitude(), start.getLongitude()))
-				.title(r.getName())
-				.snippet(null)
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//				Marker my_marker = mMap.addMarker(new MarkerOptions()
+//				.position(new LatLng(start.getLatitude(), start.getLongitude()))
+//				.title(r.getName())
+//				.snippet(null)
+//				.icon(BitmapDescriptorFactory
+//						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+				Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
 				routeTable.put(my_marker, r);
 			}
 		}

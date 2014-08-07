@@ -119,12 +119,10 @@ public class DetailItineraryActivity extends Activity
 
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
-	//private DataBaseHelper dataBaseHelper;
-	private Marker bogus_location;
-	private Marker interestAreaMarker;
+	//private DataBaseHelper dataBaseHelper;	
+	//private Marker interestAreaMarker;
 	private Marker selectedMarker;
-	private Marker lastPositionMarker;
-	private Step interestStep;
+	private Marker lastPositionMarker;	
 	private String stepBeingEditedId;
 	private Step currentStep;
 	// Route selected in choose itinerary activity
@@ -133,7 +131,7 @@ public class DetailItineraryActivity extends Activity
 	private ArrayList<Step> highLightedSteps;
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
-	private Polyline perpPolyLine;
+	//private Polyline perpPolyLine;
 	private Hashtable<Marker, Step> currentRouteMarkers;
 	private Hashtable<Marker, Step> routeInProgressMarkers;
 	private Vibrator v;
@@ -156,6 +154,7 @@ public class DetailItineraryActivity extends Activity
 	private LocationClient locationClient;
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	private EruletApp app;
+	private MapObjectsFactory mObjFactory;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +163,7 @@ public class DetailItineraryActivity extends Activity
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		mObjFactory = new MapObjectsFactory();
 		// Check availability of google play services
 		int status = GooglePlayServicesUtil
 				.isGooglePlayServicesAvailable(getBaseContext());
@@ -280,10 +280,10 @@ public class DetailItineraryActivity extends Activity
 
 	@Override
 	public void onBackPressed() {
-		if (routeMode == 1 && tracking) {
-			stopTracking();
-		}
-		if (routeMode == 2 && tracking) {
+//		if (routeMode == 1 && tracking) {
+//			stopTracking();
+//		}
+		if ((routeMode == 1 || routeMode == 2) && tracking) {
 			new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle("Finalització de ruta")
@@ -366,27 +366,26 @@ public class DetailItineraryActivity extends Activity
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 			dialog.setMessage("La localització del dispositiu no està activada; cal activar-la.");
 			dialog.setPositiveButton("Accedir a activar localització",
-					new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(
-								DialogInterface paramDialogInterface,
-								int paramInt) {
-							Intent myIntent = new Intent(
-									Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-							startActivity(myIntent);							
-						}
-					});
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {
+						Intent myIntent = new Intent(
+								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivity(myIntent);							
+					}
+				});
 			dialog.setNegativeButton("Cancel·lar",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(
-								DialogInterface paramDialogInterface,
-								int paramInt) {
-							// TODO Auto-generated method stub
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {
+						// TODO Auto-generated method stub
 
-						}
-					});
+					}
+				});
 			dialog.show();
 		}
 	}
@@ -449,12 +448,7 @@ public class DetailItineraryActivity extends Activity
 			LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
 			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
 			if(lastPositionMarker==null){
-				lastPositionMarker = mMap.addMarker(new MarkerOptions()
-				.title("Ets aquí!")
-				.snippet("(més o menys)")
-				.position(new LatLng(-27, 133))
-				.icon(BitmapDescriptorFactory
-						.fromResource(R.drawable.ic_erulet_new)));
+				lastPositionMarker = mObjFactory.addLastPositionMarker(mMap);
 			}
 			lastPositionMarker.setPosition(currentLatLng);
 			lastPositionMarker.showInfoWindow();
@@ -464,24 +458,24 @@ public class DetailItineraryActivity extends Activity
 		}
 	}
 
-	private Route createNewRoute() {
-		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
-		String android_id = Secure.getString(getBaseContext()
-				.getContentResolver(), Secure.ANDROID_ID);
-		Track t = new Track();
-		t.setSteps(currentSteps);
-		for (int i = 0; i < currentSteps.size(); i++) {
-			Step s = currentSteps.get(i);
-			s.setTrack(t);
-		}
-		// Save route
-		Route r = new Route();
-		if (selectedRoute != null)
-			r.setIdRouteBasedOn(selectedRoute.getId());
-		r.setUserId(android_id);
-		r.setTrack(t);
-		return r;
-	}
+//	private Route createNewRoute() {
+//		ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
+//		String android_id = Secure.getString(getBaseContext()
+//				.getContentResolver(), Secure.ANDROID_ID);
+//		Track t = new Track();
+//		t.setSteps(currentSteps);
+//		for (int i = 0; i < currentSteps.size(); i++) {
+//			Step s = currentSteps.get(i);
+//			s.setTrack(t);
+//		}
+//		// Save route
+//		Route r = new Route();
+//		if (selectedRoute != null)
+//			r.setIdRouteBasedOn(selectedRoute.getId());
+//		r.setUserId(android_id);
+//		r.setTrack(t);
+//		return r;
+//	}
 
 	private void saveRoute() {
 		Intent i = new Intent(DetailItineraryActivity.this,
@@ -510,14 +504,9 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private void setupView() {
-		// if(mMap!=null){
-		// mMap.clear();
-		// }
-		//setUpDBIfNeeded();
 		setUpRoutes();
 		setUpMapIfNeeded();
 		drawCurrentRouteFromDB();
-		// drawUserRoute();
 		if (fixReceiver != null) {
 			fixReceiver.updateTrackInProgress();
 		}
@@ -530,12 +519,11 @@ public class DetailItineraryActivity extends Activity
 			Enumeration<Marker> userMarkers = routeInProgressMarkers.keys();
 			while (userMarkers.hasMoreElements()) {
 				Marker m = userMarkers.nextElement();
-				m = mMap.addMarker(new MarkerOptions()
-						.position(m.getPosition())
-						.title(m.getTitle())
-						.snippet(m.getSnippet())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+				m = MapObjectsFactory.addEmptyUserMarker(
+						mMap, 
+						m.getPosition(), 
+						m.getTitle(), 
+						m.getSnippet());				
 			}
 		}
 	}
@@ -564,7 +552,8 @@ public class DetailItineraryActivity extends Activity
 					.findRouteById(idRoute, app.getDataBaseHelper());
 		}
 		// Create route entry in database
-		if (routeInProgress == null && routeMode == 2) {
+		// We create a route also in mode 1, though we only draw the points the user hits
+		if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
 			routeInProgress = DataContainer.createEmptyRoute(app.getDataBaseHelper(),
 					DataContainer.getAndroidId(getContentResolver()));
 		}
@@ -611,11 +600,6 @@ public class DetailItineraryActivity extends Activity
 					tileOverlay.setVisible(true);
 				}
 			}
-			// if(mMap != null){
-			// if(routeMode==1){
-			// mMap.setMyLocationEnabled(true);
-			// }
-			// }
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
@@ -644,7 +628,7 @@ public class DetailItineraryActivity extends Activity
 							i.putExtra("idReference", s.getReference().getId());
 							startActivity(i);
 						} else {
-							if (routeMode == 2) {
+							if (routeMode == 1 || routeMode == 2) {
 								Intent i = new Intent(
 										DetailItineraryActivity.this,
 										EditHighLightActivity.class);
@@ -876,12 +860,18 @@ public class DetailItineraryActivity extends Activity
 
 			LatLng point = new LatLng(s.getLatitude(), s.getLongitude());
 
-			final Marker m = mMap.addMarker(new MarkerOptions()
-					.position(point)
-					.title("Marcador temporal")
-					.snippet("Afegim o no?")
-					.icon(BitmapDescriptorFactory
-							.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+//			final Marker m = mMap.addMarker(new MarkerOptions()
+//					.position(point)
+//					.title("Marcador temporal")
+//					.snippet("Afegim o no?")
+//					.icon(BitmapDescriptorFactory
+//							.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+			final Marker m = MapObjectsFactory.addEmptyUserMarker(
+					mMap, 
+					point, 
+					"Marcador temporal", 
+					"Afegim o no?");
+			
 			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,
 					mMap.getCameraPosition().zoom));
 			routeInProgressMarkers.put(m, s);
@@ -950,17 +940,17 @@ public class DetailItineraryActivity extends Activity
 		return retVal;
 	}
 
-	private void drawPerpLine(LineSegment perp) {
-		PolylineOptions rectOptions = new PolylineOptions();
-		rectOptions.zIndex(1);
-		rectOptions.color(Color.MAGENTA);
-		Point p1 = perp.getP1();
-		Point p2 = perp.getP2();
-		SphericalMercatorProjection sp = new SphericalMercatorProjection(6371);
-		rectOptions.add(sp.toLatLng(p1));
-		rectOptions.add(sp.toLatLng(p2));
-		perpPolyLine = mMap.addPolyline(rectOptions);
-	}
+//	private void drawPerpLine(LineSegment perp) {
+//		PolylineOptions rectOptions = new PolylineOptions();
+//		rectOptions.zIndex(1);
+//		rectOptions.color(Color.MAGENTA);
+//		Point p1 = perp.getP1();
+//		Point p2 = perp.getP2();
+//		SphericalMercatorProjection sp = new SphericalMercatorProjection(6371);
+//		rectOptions.add(sp.toLatLng(p1));
+//		rectOptions.add(sp.toLatLng(p2));
+//		perpPolyLine = mMap.addPolyline(rectOptions);
+//	}
 
 	private void setUpCamera() {
 		// Step s = DataContainer.getRouteStarter(currentRoute, dataBaseHelper);
@@ -978,67 +968,59 @@ public class DetailItineraryActivity extends Activity
 				20));
 	}
 
-	private void checkLocationIsWithinEffectRadius(LatLng location) {
-		boolean found = false;
-		int i = 0;
-		while (i < highLightedSteps.size() && !found) {
-			Step s = highLightedSteps.get(i);
-			float[] results = new float[3];
-			Location.distanceBetween(location.latitude, location.longitude,
-					s.getLatitude(), s.getLongitude(), results);
-			if (results[0] <= s.getHighlight().getRadius()) {
-				Log.i("HIT", "Hit interest area");
-				if (interestAreaMarker != null) {
-					interestAreaMarker.remove();
-				}
-				interestAreaMarker = mMap
-						.addMarker(new MarkerOptions()
-								.position(
-										new LatLng(s.getLatitude(), s
-												.getLongitude()))
-								.title("Interesting point")
-								.snippet("Interesting point")
-								.icon(BitmapDescriptorFactory
-										.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-				// MarkerAnimationTest.animateMarker(interestAreaMarker);
-				MarkerAnimationTest.bounceMarker(interestAreaMarker);
-				interestStep = s;
-				found = true;
-			} else {
-				if (interestAreaMarker != null) {
-					interestAreaMarker.remove();
-					interestStep = null;
-				}
-			}
-			i++;
-		}
-	}
+//	private void checkLocationIsWithinEffectRadius(LatLng location) {
+//		boolean found = false;
+//		int i = 0;
+//		while (i < highLightedSteps.size() && !found) {
+//			Step s = highLightedSteps.get(i);
+//			float[] results = new float[3];
+//			Location.distanceBetween(location.latitude, location.longitude,
+//					s.getLatitude(), s.getLongitude(), results);
+//			if (results[0] <= s.getHighlight().getRadius()) {
+//				Log.i("HIT", "Hit interest area");
+//				if (interestAreaMarker != null) {
+//					interestAreaMarker.remove();
+//				}
+//				interestAreaMarker = mMap
+//						.addMarker(new MarkerOptions()
+//								.position(
+//										new LatLng(s.getLatitude(), s
+//												.getLongitude()))
+//								.title("Interesting point")
+//								.snippet("Interesting point")
+//								.icon(BitmapDescriptorFactory
+//										.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+//				// MarkerAnimationTest.animateMarker(interestAreaMarker);
+//				MarkerAnimationTest.bounceMarker(interestAreaMarker);
+//				interestStep = s;
+//				found = true;
+//			} else {
+//				if (interestAreaMarker != null) {
+//					interestAreaMarker.remove();
+//					interestStep = null;
+//				}
+//			}
+//			i++;
+//		}
+//	}	
 
-	private void addEcoSystemMarker(Route route) {
-		Step step = DataContainer.getRouteStarter(route, app.getDataBaseHelper());
-		Marker m = mMap.addMarker(new MarkerOptions()
-				.position(new LatLng(step.getLatitude(), step.getLongitude()))
-				.title(route.getName())
-				.snippet(route.getDescription())
-				.icon(BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-		// BitmapDescriptorFactory.fromResource(R.drawable.ic_eco_pin)));
-		// .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-	}
-
-	private void addMarkerIfNeeded(Step step, float hue) {
+	private void addMarkerIfNeeded(Step step) {
 		// stepTable
 		HighLight hl;
 		if ((hl = step.getHighlight()) != null) {
-			Marker m = mMap
-					.addMarker(new MarkerOptions()
-							.position(
-									new LatLng(step.getLatitude(), step
-											.getLongitude()))
-							.title(hl.getName()).snippet(hl.getLongText())
-							.icon(BitmapDescriptorFactory.defaultMarker(hue)));
-			// BitmapDescriptorFactory.fromResource(R.drawable.ic_wp_pin)));
-			// .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+			Marker m = MapObjectsFactory.addHighLightMarker(
+					mMap, 
+					new LatLng(step.getLatitude(), step.getLongitude()), 
+					hl.getName(), 
+					hl.getLongText(),
+					hl.getType());
+//			Marker m = mMap
+//					.addMarker(new MarkerOptions()
+//							.position(
+//									new LatLng(step.getLatitude(), step
+//											.getLongitude()))
+//							.title(hl.getName()).snippet(hl.getLongText())
+//							.icon(BitmapDescriptorFactory.defaultMarker(hue)));
 			currentRouteMarkers.put(m, step);
 		}
 	}
@@ -1067,24 +1049,24 @@ public class DetailItineraryActivity extends Activity
 		// }
 	}
 
-	private void drawUserRoute() {
-		if (fixReceiver != null) {
-			PolylineOptions rectOptions = new PolylineOptions();
-			List<Step> stepsInProgress = fixReceiver.getStepsInProgress();
-			if (stepsInProgress != null) {
-				for (int i = 0; i < stepsInProgress.size(); i++) {
-					Step step = stepsInProgress.get(i);
-					rectOptions.add(new LatLng(step.getLatitude(), step
-							.getLongitude()));
-					addPrecisionRadius(step);
-					addMarkerIfNeeded(step, BitmapDescriptorFactory.HUE_CYAN);
-				}
-				rectOptions.zIndex(2);
-				rectOptions.color(Color.GREEN);
-				mMap.addPolyline(rectOptions);
-			}
-		}
-	}
+//	private void drawUserRoute() {
+//		if (fixReceiver != null) {
+//			PolylineOptions rectOptions = new PolylineOptions();
+//			List<Step> stepsInProgress = fixReceiver.getStepsInProgress();
+//			if (stepsInProgress != null) {
+//				for (int i = 0; i < stepsInProgress.size(); i++) {
+//					Step step = stepsInProgress.get(i);
+//					rectOptions.add(new LatLng(step.getLatitude(), step
+//							.getLongitude()));
+//					addPrecisionRadius(step);
+//					addMarkerIfNeeded(step, BitmapDescriptorFactory.HUE_CYAN);
+//				}
+//				rectOptions.zIndex(2);
+//				rectOptions.color(Color.GREEN);
+//				mMap.addPolyline(rectOptions);
+//			}
+//		}
+//	}
 
 	private void drawCurrentRouteFromDB() {
 		if (currentRouteMarkers == null) {
@@ -1098,7 +1080,7 @@ public class DetailItineraryActivity extends Activity
 			rectOptions
 					.add(new LatLng(step.getLatitude(), step.getLongitude()));
 			addPrecisionRadius(step);
-			addMarkerIfNeeded(step, BitmapDescriptorFactory.HUE_BLUE);
+			addMarkerIfNeeded(step);
 		}
 		rectOptions.zIndex(1);
 		rectOptions.color(Color.GRAY);
@@ -1178,10 +1160,14 @@ public class DetailItineraryActivity extends Activity
 					copt.fillColor(0x5500FFFF);
 					mMap.addCircle(copt);
 
-					rectOptions.add(new LatLng(step.getLatitude(), step
-							.getLongitude()));
+					if(routeMode == 2){
+						rectOptions.add(new LatLng(step.getLatitude(), step
+								.getLongitude()));
+					}
 				}
-				trackInProgress = mMap.addPolyline(rectOptions);
+				if(routeMode == 2){
+					trackInProgress = mMap.addPolyline(rectOptions);
+				}
 			}
 		}
 
@@ -1224,7 +1210,7 @@ public class DetailItineraryActivity extends Activity
 				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
 				mMap.moveCamera(cu);
 				// Aggressive save - save location as soon as is available
-				if (routeMode == 2) {
+				if (routeMode == 1 || routeMode == 2) {
 
 					Step s = new Step();
 					s.setId(Long.toString(currentTime));

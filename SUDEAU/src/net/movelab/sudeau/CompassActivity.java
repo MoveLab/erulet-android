@@ -42,8 +42,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     private Location currentLocation;
     private Location navLocation;
     private IntentFilter fixFilter;
-	private CompassFixReceiver fixReceiver;
-	private DataBaseHelper dataBaseHelper;
+	private CompassFixReceiver fixReceiver;	
 	private TextView tvWpName;
 	private TextView tvWpDescription;
 	private TextView tvBearing;
@@ -51,14 +50,9 @@ public class CompassActivity extends Activity implements SensorEventListener {
 	private TextView tvNav;
 	private TextView tvDist;
 	private DecimalFormat df;
+	private EruletApp app;
     
-	private void setUpDBIfNeeded() {
-		if (dataBaseHelper == null) {
-			dataBaseHelper = OpenHelperManager.getHelper(this,
-					DataBaseHelper.class);
-		}
-	}
-    
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +74,9 @@ public class CompassActivity extends Activity implements SensorEventListener {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         
         df = new DecimalFormat("0.00"); 
-        setUpDBIfNeeded();
+        if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
         checkLocationServicesStatus();
         startTracking();
         setNavPoint();
@@ -154,12 +150,12 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			String idStep = extras.getString("idStep");
-			Step s = DataContainer.findStepById(idStep, dataBaseHelper);
+			Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
 			navLocation = new Location("");//provider name is unecessary
 			navLocation.setLatitude(s.getLatitude());//your coords of course
 			navLocation.setLongitude(s.getLongitude());
 			if(s.getHighlight()!=null){
-				DataContainer.getHighLightStep(s, dataBaseHelper);
+				DataContainer.getHighLightStep(s, app.getDataBaseHelper());
 				if(s.getHighlight().getName() == null || 
 						s.getHighlight().getName().equalsIgnoreCase("")){
 					tvWpName.setText("Nom: no assignat");					

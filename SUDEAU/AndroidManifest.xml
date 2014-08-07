@@ -94,6 +94,9 @@
         <activity android:name="net.movelab.sudeau.EruletPreferencesActivity" 
             android:theme="@android:style/Theme.Holo">
         </activity>
+        <activity android:name="net.movelab.sudeau.RegistrationActivity"
+            android:theme="@android:style/Theme.Holo">
+        </activity>
         
         <receiver android:name="net.movelab.sudeau.TrackingBroadcastReceiver" >
             <intent-filter>

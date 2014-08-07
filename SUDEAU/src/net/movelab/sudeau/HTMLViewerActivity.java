@@ -20,14 +20,16 @@ import android.webkit.WebView;
 public class HTMLViewerActivity extends Activity {
 		
 	private int group1 = 1;
-	private int first_id = Menu.FIRST;
-	private DataBaseHelper dataBaseHelper;
+	private int first_id = Menu.FIRST;	
+	private EruletApp app;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.html_viewer_activity);
-		setUpDB();
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
 		loadHTML();
 	}
 	
@@ -49,18 +51,12 @@ public class HTMLViewerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	private void setUpDB() {
-		if(dataBaseHelper == null){
-			dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);			
-		}
-	}
-	
+		
 	private String getReferenceURI(){
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
 			String idReference = extras.getString("idReference");
-			Reference r = DataContainer.findReferenceById(idReference, dataBaseHelper);
+			Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
 			return "file:///android_asset/" + r.getTextContent();
 		}
 		return null;

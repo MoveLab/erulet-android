@@ -56,6 +56,11 @@ public class EruletApp extends Application{
         return EruletApp.context;
     }
 	
+	public boolean isPrivilegedUser() {
+		//@TODO Check if the user is really a privileged user (can create new routes)
+		return true;
+	}
+	
 	public SharedPreferences getPrefs() {
         if (mPrefs == null) {
             mPrefs = getSharedPreferences("EruletPreferences", MODE_PRIVATE);   

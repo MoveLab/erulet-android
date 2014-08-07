@@ -22,9 +22,8 @@ public class EditRouteActivity extends Activity {
 	
 	private Route editedRoute;
 	private EditText routeName;
-	private EditText routeDescription;
-	private DataBaseHelper dataBaseHelper;
-	private String android_id;	
+	private EditText routeDescription;		
+	private EruletApp app;
 	
 	//TODO Improve default name, allow for multiple non-colliding defaults
 	//TODO Create input validation
@@ -34,23 +33,17 @@ public class EditRouteActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_route);
-		setUpDBIfNeeded();
+		if (app == null) {
+            app = (EruletApp) getApplicationContext();
+        }
 		setEditedRoute();
 		initInterface();		
-	}
-	
-	private void setUpDBIfNeeded() {
-		if (dataBaseHelper == null) {
-			dataBaseHelper = OpenHelperManager.getHelper(this,
-					DataBaseHelper.class);
-		}
-		android_id = DataContainer.getAndroidId(getContentResolver());
-	}
+	}	
 	
 	private void save(String android_id){
 		editedRoute.setName( routeName.getText().toString() );
 		editedRoute.setDescription( routeDescription.getText().toString() );				
-		DataContainer.editRoute(editedRoute,dataBaseHelper);
+		DataContainer.editRoute(editedRoute,app.getDataBaseHelper());
 		Toast.makeText(getApplicationContext(),"Canvis desats amb èxit...", Toast.LENGTH_LONG).show();		
 	}		
 	
@@ -59,7 +52,7 @@ public class EditRouteActivity extends Activity {
 		btn_save.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {				
-				save(android_id);
+				save(DataContainer.getAndroidId(getContentResolver()));
 			}
 		});		
 		
