@@ -55,6 +55,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -135,8 +136,6 @@ public class DetailItineraryActivity extends Activity
 	private Hashtable<Marker, Step> currentRouteMarkers;
 	private Hashtable<Marker, Step> routeInProgressMarkers;
 	private Vibrator v;
-	//private String userId;
-	private boolean tracking;
 
 	private ImageButton btn_compass;
 	private ImageButton btn_stop_tracking;
@@ -155,6 +154,7 @@ public class DetailItineraryActivity extends Activity
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	private EruletApp app;
 	private MapObjectsFactory mObjFactory;
+	private CountDownTimer countDown;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -184,26 +184,49 @@ public class DetailItineraryActivity extends Activity
 			btn_compass.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (selectedMarker == null) {
-						Toast.makeText(
-								getApplicationContext(),
-								"No hi ha cap marcador seleccionat. Si us plau, tria el marcador del mapa al que vols anar...",
-								Toast.LENGTH_LONG).show();
-					} else {
+//					if (selectedMarker == null) {
+//						Toast.makeText(
+//								getApplicationContext(),
+//								"No hi ha cap marcador seleccionat. Si us plau, tria el marcador del mapa al que vols anar...",
+//								Toast.LENGTH_LONG).show();
+//					} else {
 						Intent i = new Intent(DetailItineraryActivity.this,
 								CompassActivity.class);
-						Step s = currentRouteMarkers.get(selectedMarker);
-						i.putExtra("idStep", s.getId());
+						if(selectedMarker!=null){
+							Step s = currentRouteMarkers.get(selectedMarker);
+							if(s!=null){
+								i.putExtra("idStep", s.getId());
+							}
+						}
+						i.putExtra("wasTracking", app.isTrackingServiceOn());
 						startActivity(i);
-					}
+//					}
 				}
-			});
+			});					
 
 			btn_stop_tracking = (ImageButton) findViewById(R.id.btn_stop_tracking);
 			btn_stop_tracking.setOnClickListener(new OnClickListener() {
 				@Override
-				public void onClick(View v) {
-					stopTracking();
+				public void onClick(View v) {					
+					new AlertDialog.Builder(DetailItineraryActivity.this)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle("Finalització d'itinerari")
+					.setMessage(
+							"Estàs capturant un itinerari. Si prems el botó 'Stop', es desarà i tancarà l'itinerari. Segur que vols acabar l'itinerari?")
+					.setPositiveButton("Sí",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								stopTracking();									
+							}
+						}).setNegativeButton("No", 
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {																
+							}
+						}).show();										
 				}
 			});
 
@@ -251,15 +274,15 @@ public class DetailItineraryActivity extends Activity
 			break;
 		case 1:
 			btn_compass.setVisibility(View.VISIBLE);
-			btn_stop_tracking.setVisibility(View.GONE);
-			btn_add_content.setVisibility(View.GONE);
-			btn_whereami.setVisibility(View.GONE);
+			btn_stop_tracking.setVisibility(View.VISIBLE);
+			btn_add_content.setVisibility(View.VISIBLE);
+			btn_whereami.setVisibility(View.VISIBLE);
 			break;
 		case 2:
 			btn_compass.setVisibility(View.VISIBLE);
 			btn_stop_tracking.setVisibility(View.VISIBLE);
 			btn_add_content.setVisibility(View.VISIBLE);
-			btn_whereami.setVisibility(View.GONE);
+			btn_whereami.setVisibility(View.VISIBLE);
 			break;
 		}
 	}
@@ -283,7 +306,7 @@ public class DetailItineraryActivity extends Activity
 //		if (routeMode == 1 && tracking) {
 //			stopTracking();
 //		}
-		if ((routeMode == 1 || routeMode == 2) && tracking) {
+		if ((routeMode == 1 || routeMode == 2) && app.isTrackingServiceOn()) {
 			new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle("Finalització de ruta")
@@ -429,15 +452,15 @@ public class DetailItineraryActivity extends Activity
 
 	private void startOrResumeTracking() {
 		if (routeMode > 0) {
-			Intent intent = new Intent(getString(R.string.internal_message_id)
-					+ Util.MESSAGE_SCHEDULE);
-			sendBroadcast(intent);
+//			Intent intent = new Intent(getString(R.string.internal_message_id)
+//					+ Util.MESSAGE_SCHEDULE);
+//			sendBroadcast(intent);
+			app.startTrackingService();
 			fixFilter = new IntentFilter(getResources().getString(
 					R.string.internal_message_id)
 					+ Util.MESSAGE_FIX_RECORDED);
 			fixReceiver = new FixReceiver(mMap);
-			registerReceiver(fixReceiver, fixFilter);
-			tracking = true;
+			registerReceiver(fixReceiver, fixFilter);						
 		}
 	}
 
@@ -445,17 +468,39 @@ public class DetailItineraryActivity extends Activity
 		checkLocationServicesStatus();
 		Location current = locationClient.getLastLocation();		
 		if(current!=null){
-			LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
-			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
-			if(lastPositionMarker==null){
-				lastPositionMarker = mObjFactory.addLastPositionMarker(mMap);
-			}
-			lastPositionMarker.setPosition(currentLatLng);
-			lastPositionMarker.showInfoWindow();
-			mMap.moveCamera(cu);			
+			addTemporalPositionMarker(current);
 		}else{
 			Toast.makeText(this, "No sé on som ... torna-ho a provar en una estoneta", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	private void addTemporalPositionMarker(Location current){
+		if(countDown!=null){
+			countDown.cancel();
+		}else{			
+			countDown = new CountDownTimer(2000,2000) {				
+				@Override
+				public void onTick(long millisUntilFinished) {
+					// TODO Auto-generated method stub
+					//Do nothing on tick					
+				}				
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					lastPositionMarker.remove();
+					lastPositionMarker=null;
+				}
+			};
+		}
+		LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
+		CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
+		if(lastPositionMarker==null){
+			lastPositionMarker = mObjFactory.addLastPositionMarker(mMap);
+		}
+		lastPositionMarker.setPosition(currentLatLng);
+		lastPositionMarker.showInfoWindow();
+		mMap.moveCamera(cu);
+		countDown.start();
 	}
 
 //	private Route createNewRoute() {
@@ -494,13 +539,13 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private void stopTracking() {
-		Intent intent = new Intent(getString(R.string.internal_message_id)
-				+ Util.MESSAGE_UNSCHEDULE);
-		sendBroadcast(intent);
-		if (routeMode == 2) {
+//		Intent intent = new Intent(getString(R.string.internal_message_id)
+//				+ Util.MESSAGE_UNSCHEDULE);
+//		sendBroadcast(intent);		
+		app.stopTrackingService();
+		if (routeMode == 1 || routeMode == 2) {
 			saveRoute();
 		}
-		tracking = false;
 	}
 
 	private void setupView() {
@@ -1117,7 +1162,7 @@ public class DetailItineraryActivity extends Activity
 
 		private GoogleMap mMap;
 		private ArrayList<Step> stepsInProgress;
-		private Polyline trackInProgress;
+//		private Polyline trackInProgress;
 		private CameraUpdate cu;
 
 		public FixReceiver(GoogleMap mMap) {
@@ -1135,29 +1180,16 @@ public class DetailItineraryActivity extends Activity
 		}
 
 		public void updateTrackInProgress() {
-			PolylineOptions rectOptions = new PolylineOptions();
-			rectOptions.zIndex(1);
-			rectOptions.color(Color.GREEN);
+			PolylineOptions rectOptions = MapObjectsFactory.getRouteInProgressPolyLine();			
 			if (stepsInProgress.size() > 0) {
 				for (int i = 0; i < stepsInProgress.size(); i++) {
 
 					Step step = stepsInProgress.get(i);
 
-					CircleOptions copt = new CircleOptions();
-					copt.center(new LatLng(step.getLatitude(), step
-							.getLongitude()));
-					copt.radius(step.getPrecision());
-					copt.zIndex(1);
-					copt.strokeColor(Color.BLACK);
-					copt.strokeWidth(0.1f);
-					// Fill color of the circle
-					// 0x represents, this is an hexadecimal code
-					// 55 represents percentage of transparency. For 100%
-					// transparency,
-					// specify 00.
-					// For 0% transparency ( ie, opaque ) , specify ff
-					// The remaining 6 characters(00ff00) specify the fill color
-					copt.fillColor(0x5500FFFF);
+					CircleOptions copt = MapObjectsFactory.
+							getRouteInProgressCircle(
+									new LatLng(step.getLatitude(), step.getLongitude()), 
+									step.getPrecision());
 					mMap.addCircle(copt);
 
 					if(routeMode == 2){
@@ -1165,9 +1197,9 @@ public class DetailItineraryActivity extends Activity
 								.getLongitude()));
 					}
 				}
-				if(routeMode == 2){
-					trackInProgress = mMap.addPolyline(rectOptions);
-				}
+//				if(routeMode == 2){
+//					trackInProgress = mMap.addPolyline(rectOptions);
+//				}
 			}
 		}
 

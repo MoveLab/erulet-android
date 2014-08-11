@@ -24,6 +24,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -43,8 +44,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     private Location navLocation;
     private IntentFilter fixFilter;
 	private CompassFixReceiver fixReceiver;	
-	private TextView tvWpName;
-	private TextView tvWpDescription;
+	private TextView tvWpName;	
 	private TextView tvBearing;
 	private TextView tvLocation;
 	private TextView tvNav;
@@ -67,8 +67,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
         tvLocation = (TextView) findViewById(R.id.tvCurrentLoc);
         tvNav = (TextView) findViewById(R.id.tvNavLoc);
         tvDist = (TextView) findViewById(R.id.tvDist);
-        tvWpName = (TextView) findViewById(R.id.tvWpName);
-        tvWpDescription = (TextView) findViewById(R.id.tvWpDescription);
+        tvWpName = (TextView) findViewById(R.id.tvWpName);        
 
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -78,8 +77,20 @@ public class CompassActivity extends Activity implements SensorEventListener {
             app = (EruletApp) getApplicationContext();
         }
         checkLocationServicesStatus();
-        startTracking();
         setNavPoint();
+        adjustUI();
+        startTrackingMaybe();
+    }
+    
+    private void adjustUI(){
+    	if(!userRequestedNavigation()){    		    	
+    		TextView tvCompassActivityLabel = (TextView) findViewById(R.id.tvCompassActivityLabel);
+    		tvCompassActivityLabel.setText("Brúixola");
+    		tvLocation.setVisibility(View.GONE);
+            tvNav.setVisibility(View.GONE);
+            tvDist.setVisibility(View.GONE);
+            tvWpName.setVisibility(View.GONE);
+    	}
     }
     
     public class CompassFixReceiver extends BroadcastReceiver {
@@ -150,73 +161,142 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			String idStep = extras.getString("idStep");
-			Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
-			navLocation = new Location("");//provider name is unecessary
-			navLocation.setLatitude(s.getLatitude());//your coords of course
-			navLocation.setLongitude(s.getLongitude());
-			if(s.getHighlight()!=null){
-				DataContainer.getHighLightStep(s, app.getDataBaseHelper());
-				if(s.getHighlight().getName() == null || 
-						s.getHighlight().getName().equalsIgnoreCase("")){
-					tvWpName.setText("Nom: no assignat");					
+			if(idStep != null && !idStep.equalsIgnoreCase("")){
+				Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
+				navLocation = new Location("");//provider name is unecessary
+				navLocation.setLatitude(s.getLatitude());//your coords of course
+				navLocation.setLongitude(s.getLongitude());
+				if(s.getHighlight()!=null){
+					DataContainer.getHighLightStep(s, app.getDataBaseHelper());
+					if(s.getHighlight().getName() == null || 
+							s.getHighlight().getName().equalsIgnoreCase("")){
+						tvWpName.setText("Nom: no assignat");					
+					}else{
+						tvWpName.setText("Nom: " + s.getHighlight().getName());
+					}								
 				}else{
-					tvWpName.setText("Nom: " + s.getHighlight().getName());
+					tvWpName.setText("El punt no té nom");					
 				}
-				if(s.getHighlight().getLongText() == null || 
-						s.getHighlight().getLongText().equalsIgnoreCase("")){
-					tvWpDescription.setText("Descripció: no assignat");
-				}else{
-					tvWpDescription.setText("Descripció: " + s.getHighlight().getLongText());					
-				}				
-			}else{
-				tvWpName.setText("El punt no té nom");
-				tvWpDescription.setText("El punt no té descripció");
 			}
 		}
     }
     
-    public void startTracking(){
-    	Intent intent = new Intent(getString(R.string.internal_message_id)
-				+ Util.MESSAGE_SCHEDULE);
-		sendBroadcast(intent);
-
-		fixFilter = new IntentFilter(getResources().getString(
-				R.string.internal_message_id)
-				+ Util.MESSAGE_FIX_RECORDED);
-
-		fixReceiver = new CompassFixReceiver();
+    private boolean lastActivityWasTracking(){
+    	Bundle extras = getIntent().getExtras();
+    	if(extras!=null){
+    		return extras.getBoolean("wasTracking");
+    	}
+    	return false;
+    }
+    
+    private boolean userRequestedNavigation(){
+    	if(navLocation==null){
+    		return false;
+    	}else{
+    		return true;
+    	}
+    }
+    
+    public void startTrackingMaybe(){
+    	if(lastActivityWasTracking()){
+    		if(userRequestedNavigation()){  		//Last activity was tracking and user requests nav
+    			// No need to start tracking service
+    			// Just register listeners
+    			registerLocationListeners();
+    		}else{ 									//Last activity was tracking but no nav requested
+    			// No need to start tracking service
+    			// or
+    			// Register any listener
+    			navArrow.setVisibility(View.GONE);
+    		}
+    	}else{
+			if(userRequestedNavigation()){ 			//Last activity was NOT tracking and user requests nav
+				// We need to start the tracking service (was down)
+    			app.startTrackingService();
+    			// Also register listeners
+    			// unRegisterLocationListeners();
+    			registerLocationListeners();
+    		}else{ 									//Last activity was NOT tracking and user DOES NOT request nav
+    			//No need to start location service
+    			// No need to start tracking service
+    			// or
+    			// Register any listener
+    			navArrow.setVisibility(View.GONE);
+    		}
+    	}    	    
+    }
+    
+    private void stopTrackingMaybe(){
+    	if(lastActivityWasTracking()){
+    		if(userRequestedNavigation()){  		//Last activity was tracking and user requests nav
+    			// No need to stop tracking service
+    			// Just unregister listeners    			
+				unRegisterLocationListeners();    			
+    		}else{ 									//Last activity was tracking but no nav requested
+    			// No need to start tracking service
+    			// or
+    			// Register any listener    			
+    		}
+    	}else{
+			if(userRequestedNavigation()){ 			//Last activity was NOT tracking and user requests nav    		
+    			// Unregister listeners				
+				unRegisterLocationListeners();				
+				// We stop the tracking service (we leave it down as it was before)    			
+    			app.stopTrackingService();
+    		}else{ 									//Last activity was NOT tracking and user DOES NOT request nav
+    			//No need to stop location service
+    			// or
+    			// Unregister any listener
+    		}
+    	}
+    }
+    
+    private void registerLocationListeners(){    
+    	if(fixFilter == null){
+	    	fixFilter = new IntentFilter(getResources().getString(
+					R.string.internal_message_id)
+					+ Util.MESSAGE_FIX_RECORDED);
+    	}
+    	if(fixReceiver == null){
+    		fixReceiver = new CompassFixReceiver();
+    	}
 		registerReceiver(fixReceiver, fixFilter);
     }
     
-    @Override
-    protected void onDestroy() {    
-    	super.onDestroy();
-    	mSensorManager.unregisterListener(this);
-    	Intent intent = new Intent(getString(R.string.internal_message_id)
-				+ Util.MESSAGE_UNSCHEDULE);
-		sendBroadcast(intent);
-		unregisterReceiver(fixReceiver);
+    private void unRegisterLocationListeners(){
+    	try{
+    		unregisterReceiver(fixReceiver);
+    		fixReceiver = null;
+    	}catch(RuntimeException rex){
+    		
+    	}
     }
-
+    
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();    	
+    	mSensorManager.unregisterListener(this);
+    	//stopTrackingMaybe();
+    }        
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // for the system's orientation sensor registered listeners
+        // for the system's orientation sensor registered listeners        
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_FASTEST);
+        // If user requested navigation, we resume listening for position updates
+        if(userRequestedNavigation()){
+        	registerLocationListeners();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
         // to stop the listener and save battery
         mSensorManager.unregisterListener(this);
-        Intent intent = new Intent(getString(R.string.internal_message_id)
-				+ Util.MESSAGE_UNSCHEDULE);
-		sendBroadcast(intent);
+        stopTrackingMaybe();
     }
 
     @Override

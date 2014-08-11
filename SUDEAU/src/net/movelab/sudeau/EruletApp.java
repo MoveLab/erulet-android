@@ -11,6 +11,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
@@ -23,6 +24,7 @@ public class EruletApp extends Application{
 	private static final SimpleDateFormat MEDIA_TIMESTAMP = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	private static final SimpleDateFormat DAY_MONTH_YEAR = new SimpleDateFormat("dd/MM/yyyy");
 	private DataBaseHelper dataBaseHelper;
+	private boolean trackingServiceOn = false;
 	
 	@Override
 	public void onCreate() {
@@ -87,7 +89,24 @@ public class EruletApp extends Application{
 	public String formatDateHoursMinutesSeconds(Date date) { return HOURS_MINUTES_SECONDS_FORMAT.format(date); }
 	public String formatDateMediaTimestamp(Date date) { return MEDIA_TIMESTAMP.format(date); }
 	public String formatDateDayMonthYear(Date date) { return DAY_MONTH_YEAR.format(date); }
+
+
+	public boolean isTrackingServiceOn() {
+		return trackingServiceOn;
+	}	
 	
+	public void startTrackingService(){
+		Intent intent = new Intent(getString(R.string.internal_message_id)
+				+ Util.MESSAGE_SCHEDULE);
+		sendBroadcast(intent);
+		trackingServiceOn=true;
+	}
 	
+	public void stopTrackingService(){
+		Intent intent = new Intent(getString(R.string.internal_message_id)
+				+ Util.MESSAGE_UNSCHEDULE);
+		sendBroadcast(intent);
+		trackingServiceOn=false;
+	}
 	
 }

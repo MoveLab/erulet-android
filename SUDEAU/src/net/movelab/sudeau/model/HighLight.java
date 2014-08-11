@@ -23,6 +23,7 @@ public class HighLight {
 	public static final int POINT_OF_INTEREST = 1;
 	public static final int POINT_OF_INTEREST_OFFICIAL = 2;
 	public static final int ALERT = 3;
+	public static final int POINT_OF_INTEREST_SHARED = 4;
 	
 	public HighLight() {		
 	}

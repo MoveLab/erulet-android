@@ -214,12 +214,7 @@ public class EditHighLightActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//	        Bundle extras = data.getExtras();
-//	        Bitmap imageBitmap = (Bitmap) extras.get("data");	        
-//	        btn_picture.setImageBitmap(imageBitmap);
-	    	//File file = new File(mCurrentPhotoPath);
-	    	try {	    		
-				//Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(currentPhoto));
+	    	try {	    			    		
 	    		createThumbnail();
 				btn_picture.setImageBitmap(thumbnail);
 			} catch (FileNotFoundException e) {
@@ -248,7 +243,18 @@ public class EditHighLightActivity extends Activity {
 		thumbnail = BitmapFactory.decodeStream(fis);
         thumbnail = Bitmap.createScaledBitmap(thumbnail, 96, 96, false);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();  
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);		
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);        
+        try {			
+			baos.flush();
+			baos.close();
+			fis.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			fis = null;
+			baos = null;
+		}
 	}
 	
 	private void setUpInterface(){
