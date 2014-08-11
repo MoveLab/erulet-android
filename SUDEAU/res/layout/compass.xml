@@ -25,7 +25,7 @@
         android:layout_alignParentRight="true"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Navegació a punt..."        
+        android:text="@string/nav_to_point"        
         android:textSize="30sp" />
 
     <LinearLayout
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="15sp"            
-            android:text="Nom:" />                
+            android:text="@string/name" />                
 
         <TextView
             android:id="@+id/tvDist"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
-            android:text="Distància: ????" />
+        	android:text="@string/dist_undef"/>
 
         <TextView
             android:id="@+id/tvCurrentLoc"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
-            android:text="Ubicació actual: ????" />
+            android:text="@string/current_location_undef" />
 
         <TextView
             android:id="@+id/tvNavLoc"
@@ -66,14 +66,14 @@
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
         	android:textSize="12sp"
-            android:text="Ubicació destí: ????" />
+            android:text="@string/destination_undef" />
 
         <TextView
             android:id="@+id/tvBearing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Orientació: 0.0"
+            android:text="@string/bearing"
             android:gravity="center"
             android:textSize="12sp" />
 

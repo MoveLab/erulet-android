@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Seguiment itinerari..."       
+        android:text="@string/follow_trip"       
         android:textSize="30sp" />
 
     <LinearLayout

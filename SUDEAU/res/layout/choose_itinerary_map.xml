@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Itineraris"
+        android:text="@string/trips"
         android:textColor="@color/white"
         android:textSize="30sp" />
     

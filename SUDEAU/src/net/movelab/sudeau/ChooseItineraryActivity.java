@@ -58,10 +58,11 @@ public class ChooseItineraryActivity extends Activity {
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
 	
-	private static final String TITLE = "Tria la opció de ruta que prefereixes:";
-	private static final String OPTION_1 = "Vull visualitzar la ruta, sense fer un seguiment de la meva posició.";
-	private static final String OPTION_2 = "Vull recórrer la ruta, fent un seguiment en tot moment de la meva posició.";
-	private static final String OPTION_3 = "Vull recórrer la ruta, fent un seguiment en tot moment i desar la meva pròpia versió de la ruta.";
+	//private static final String TITLE = "Tria la opció de ruta que prefereixes:";
+	private String TITLE = getString(R.string.trip_option);
+	private String OPTION_1 = getString(R.string.trip_option_1);
+	private String OPTION_2 = getString(R.string.trip_option_2);
+	private String OPTION_3 = getString(R.string.trip_option_3);
 	
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
@@ -89,8 +90,8 @@ public class ChooseItineraryActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
-		menu.add(group1,first_id,first_id,"Els meus itineraris...");		
-		menu.add(group1,second_id,second_id,"Itineraris compartits...");
+		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));		
+		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -193,7 +194,7 @@ public class ChooseItineraryActivity extends Activity {
 				@Override
 				public void onInfoWindowClick(Marker arg0) {
 					if(selectedMarker==null){
-						Toast.makeText(getApplicationContext(), "No hi ha cap ruta seleccionada; si us plau tria una ruta...", Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), getString(R.string.no_route_selected), Toast.LENGTH_LONG).show();
 					}else{
 						showItineraryOptions();										
 					}

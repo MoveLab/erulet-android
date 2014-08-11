@@ -210,17 +210,17 @@ public class DetailItineraryActivity extends Activity
 				public void onClick(View v) {					
 					new AlertDialog.Builder(DetailItineraryActivity.this)
 					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setTitle("Finalització d'itinerari")
+					.setTitle(getString(R.string.finish_trip))
 					.setMessage(
-							"Estàs capturant un itinerari. Si prems el botó 'Stop', es desarà i tancarà l'itinerari. Segur que vols acabar l'itinerari?")
-					.setPositiveButton("Sí",
+							getString(R.string.finish_trip_long))
+					.setPositiveButton(getString(R.string.yes),
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
 								stopTracking();									
 							}
-						}).setNegativeButton("No", 
+						}).setNegativeButton(getString(R.string.no), 
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
@@ -239,7 +239,7 @@ public class DetailItineraryActivity extends Activity
 					} else {
 						Toast.makeText(
 								getApplicationContext(),
-								"Encara no hi ha punts a la ruta, espera un moment...",
+								getString(R.string.no_points_in_trip),
 								Toast.LENGTH_LONG).show();
 					}
 				}
@@ -309,10 +309,10 @@ public class DetailItineraryActivity extends Activity
 		if ((routeMode == 1 || routeMode == 2) && app.isTrackingServiceOn()) {
 			new AlertDialog.Builder(this)
 					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setTitle("Finalització de ruta")
+					.setTitle(getString(R.string.finish_trip))
 					.setMessage(
-							"Estàs capturant una ruta. Si abandones la pantalla de mapa, s'aturarà la captura i es deixarà la ruta tal com està ara mateix. Confirmes que vols sortir?")
-					.setPositiveButton("Sí",
+							getString(R.string.finish_trip_leave_long))
+					.setPositiveButton(getString(R.string.yes),
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
@@ -320,7 +320,7 @@ public class DetailItineraryActivity extends Activity
 									stopTracking();
 									finish();
 								}
-							}).setNegativeButton("No", null).show();
+							}).setNegativeButton(getString(R.string.no), null).show();
 		} else {
 			finish();
 		}
@@ -351,7 +351,7 @@ public class DetailItineraryActivity extends Activity
 				}
 			} else if (resultCode == RESULT_CANCELED) {
 				Toast.makeText(getApplicationContext(),
-						"Cancel·lat per l'usuari", Toast.LENGTH_LONG).show();
+						getString(R.string.user_cancel), Toast.LENGTH_LONG).show();
 			}
 		}
 	}
@@ -387,8 +387,8 @@ public class DetailItineraryActivity extends Activity
 
 		if (!gps_enabled && !network_enabled) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setMessage("La localització del dispositiu no està activada; cal activar-la.");
-			dialog.setPositiveButton("Accedir a activar localització",
+			dialog.setMessage(getString(R.string.location_not_enabled));
+			dialog.setPositiveButton(getString(R.string.enable_location),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(
@@ -399,7 +399,7 @@ public class DetailItineraryActivity extends Activity
 						startActivity(myIntent);							
 					}
 				});
-			dialog.setNegativeButton("Cancel·lar",
+			dialog.setNegativeButton(getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(
@@ -425,8 +425,8 @@ public class DetailItineraryActivity extends Activity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(group1, first_id, first_id, "Dades ambientals");
-		menu.add(group1, second_id, second_id, "Fotografia interactiva");
+		menu.add(group1, first_id, first_id, getString(R.string.envir_data));
+		menu.add(group1, second_id, second_id, getString(R.string.interactive_pic));
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -470,7 +470,7 @@ public class DetailItineraryActivity extends Activity
 		if(current!=null){
 			addTemporalPositionMarker(current);
 		}else{
-			Toast.makeText(this, "No sé on som ... torna-ho a provar en una estoneta", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, getString(R.string.still_lost), Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -730,8 +730,8 @@ public class DetailItineraryActivity extends Activity
 					if (s != null) {
 						if (isUserMarker) {
 							if (s.getHighlight() == null) {
-								title.setText("Marcador buit");
-								snippet.setText("Fes clic per afegir dades...");
+								title.setText(getString(R.string.empty_marker));
+								snippet.setText(getString(R.string.click_add_data));
 							} else {
 								HighLight h1 = s.getHighlight();
 								title.setText(h1.getName());
@@ -914,8 +914,8 @@ public class DetailItineraryActivity extends Activity
 			final Marker m = MapObjectsFactory.addEmptyUserMarker(
 					mMap, 
 					point, 
-					"Marcador temporal", 
-					"Afegim o no?");
+					getString(R.string.temp_marker), 
+					getString(R.string.add_or_not));
 			
 			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,
 					mMap.getCameraPosition().zoom));
@@ -930,8 +930,8 @@ public class DetailItineraryActivity extends Activity
 			wmlp.gravity = Gravity.TOP | Gravity.LEFT;
 			wmlp.x = 100; // x position
 			wmlp.y = 100; // y position
-			dialog.setMessage("Vols afegir aquest marcador?");
-			dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Sí",
+			dialog.setMessage(getString(R.string.add_marker_confirm));
+			dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.yes),
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(
@@ -939,7 +939,7 @@ public class DetailItineraryActivity extends Activity
 								int paramInt) {
 						}
 					});
-			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No",
+			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no),
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -1298,7 +1298,7 @@ public class DetailItineraryActivity extends Activity
              * If no resolution is available, display a dialog to the
              * user with the error.
              */        	
-        	Toast.makeText(this, "Error en connexió a serveis de Google Play", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(this,getString(R.string.error_gplay_connect), Toast.LENGTH_SHORT).show();
         }
 	}
 

@@ -85,7 +85,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     private void adjustUI(){
     	if(!userRequestedNavigation()){    		    	
     		TextView tvCompassActivityLabel = (TextView) findViewById(R.id.tvCompassActivityLabel);
-    		tvCompassActivityLabel.setText("Brúixola");
+    		tvCompassActivityLabel.setText(getString(R.string.compass));
     		tvLocation.setVisibility(View.GONE);
             tvNav.setVisibility(View.GONE);
             tvDist.setVisibility(View.GONE);
@@ -126,8 +126,8 @@ public class CompassActivity extends Activity implements SensorEventListener {
 
 		if (!gps_enabled && !network_enabled) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setMessage("La localització del dispositiu no està activada; cal activar-la.");
-			dialog.setPositiveButton("Accedir a activar localització",
+			dialog.setMessage(getString(R.string.location_not_enabled));
+			dialog.setPositiveButton(getString(R.string.enable_location),
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -141,7 +141,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
 							// get gps
 						}
 					});
-			dialog.setNegativeButton("Cancel·lar",
+			dialog.setNegativeButton(getString(R.string.cancel),
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -170,12 +170,12 @@ public class CompassActivity extends Activity implements SensorEventListener {
 					DataContainer.getHighLightStep(s, app.getDataBaseHelper());
 					if(s.getHighlight().getName() == null || 
 							s.getHighlight().getName().equalsIgnoreCase("")){
-						tvWpName.setText("Nom: no assignat");					
+						tvWpName.setText(getString(R.string.name_null));					
 					}else{
-						tvWpName.setText("Nom: " + s.getHighlight().getName());
+						tvWpName.setText(getString(R.string.name) + " " + s.getHighlight().getName());
 					}								
 				}else{
-					tvWpName.setText("El punt no té nom");					
+					tvWpName.setText(getString(R.string.point_no_name));					
 				}
 			}
 		}
@@ -306,12 +306,12 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	float sensorDeltaDegree = Math.round(event.values[0]);    	
     	if( currentLocation!=null && navLocation!=null ){    		
     		currentBearingDegree = currentLocation.bearingTo(navLocation) - sensorDeltaDegree;
-    		tvDist.setText("Distància: " + currentLocation.distanceTo(navLocation) + " metres");
-    		tvLocation.setText("Ubicació actual: " + df.format(currentLocation.getLatitude()) + " - " + df.format(currentLocation.getLongitude()));
-    		tvNav.setText("Ubicació destí: " + df.format(navLocation.getLatitude()) + " - " + df.format(navLocation.getLongitude()));
+    		tvDist.setText(getString(R.string.distance) + currentLocation.distanceTo(navLocation) + " metres");
+    		tvLocation.setText(getString(R.string.current_location) + df.format(currentLocation.getLatitude()) + " - " + df.format(currentLocation.getLongitude()));
+    		tvNav.setText(getString(R.string.destination) + df.format(navLocation.getLatitude()) + " - " + df.format(navLocation.getLongitude()));
     	}                        
 
-        tvBearing.setText("Orientació: " + Float.toString(sensorDeltaDegree) + " graus");
+        tvBearing.setText(getString(R.string.bearing) + Float.toString(sensorDeltaDegree) + " " + getString(R.string.degrees));
         
         RotateAnimation raB = null;        
     	raB = new RotateAnimation(

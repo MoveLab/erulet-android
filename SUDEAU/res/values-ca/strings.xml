@@ -2,11 +2,11 @@
 <resources>
 
     <string name="app_name">Erulet</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Ajustos</string>
     <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
-    <string name="tracking_notification_initial">Erulet tracking!</string>
-    <string name="tracking_notification_subject">Erulet tracking</string>
-    <string name="tracking_notification">Erulet is tracking your trip.</string>
+    <string name="tracking_notification_initial">Erulet et guia!</string>
+    <string name="tracking_notification_subject">Erulet et guia</string>
+    <string name="tracking_notification">Erulet està guiant el teu trajecte.</string>
     <string name="content_provider_authority_uploadqueue">net.movelab.sudeau.content_provider.uploadqueue</string>
     <string name="content_provider_authority_fixes">net.movelab.sudeau.content_provider.fixes</string>
     
@@ -65,5 +65,5 @@
 	
 	<string name="error_gplay_connect">Error en connexió a serveis de Google Play</string>
 	<string name="follow_trip">Seguiment itinerari...</string>
-
+	
 </resources>
