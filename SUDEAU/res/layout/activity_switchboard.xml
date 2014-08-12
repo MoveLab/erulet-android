@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"            
             android:gravity="center"            
             android:layout_marginBottom="10dip"
-            android:text="Erulet"/>
+            android:text="@string/erulet"/>
 
         <TextView
             android:id="@+id/lbl_erulet_lore_l"
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"            
             android:gravity="center"
-            android:text="És un personatge de la mitologia aranesa. És un follet que viu amagat als boscos, i representa l’esperit de la Natura. Aquesta aplicació permet a Erulet introduïr-se en el vostre dispositiu, i guiar-vos al llarg de diversos itineraris en espais naturals en els que l’aigua és protagonista."
+            android:text="@string/erulet_lore"
             android:textSize="12dp" />
         
     </LinearLayout>
@@ -73,7 +73,7 @@
             android:layout_marginBottom="5dip"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_info_icon"            
-            android:text="Manual d&apos;ús" >
+            android:text="@string/user_manual" >
 
         </Button>
         
@@ -85,7 +85,7 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_info_icon"
             android:textSize="12dp"            
-            android:text="Normes de comportament i recomanacions de seguretat" >
+            android:text="@string/security_recomm" >
         </Button>
         
         <Button
@@ -95,7 +95,7 @@
             android:layout_marginBottom="5dip"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_info_icon"            
-            android:text="Crèdits" >
+            android:text="@string/credits" >
         </Button>
 
         <Button
@@ -105,7 +105,7 @@
             android:layout_marginBottom="5dip"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_itinerary_icon"            
-            android:text="Selecció d'Itineraris" >
+            android:text="@string/trip_selection" >
         </Button>
     </LinearLayout>
     

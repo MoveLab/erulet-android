@@ -29,7 +29,7 @@ public class EruletPreferencesActivity extends Activity {
 		String pref_locale = mPreferences.getString("pref_locale", "");
 		if(pref_locale.equalsIgnoreCase("ca")){
 			rbPreferredLocaleSelector.check(R.id.rbCatala);
-		}else if(pref_locale.equalsIgnoreCase("ar")){
+		}else if(pref_locale.equalsIgnoreCase("gsc")){
 			rbPreferredLocaleSelector.check(R.id.rbAranes);
 		}else if(pref_locale.equalsIgnoreCase("es")){
 			rbPreferredLocaleSelector.check(R.id.rbSpanish);
@@ -53,7 +53,7 @@ public class EruletPreferencesActivity extends Activity {
 	            break;
 	        case R.id.rbAranes:
 	            if (checked){
-	            	mPrefEditor.putString("pref_locale", "ar");
+	            	mPrefEditor.putString("pref_locale", "gsc");
 	            	mPrefEditor.commit();	            	
 	            }
 	            break;
@@ -82,6 +82,6 @@ public class EruletPreferencesActivity extends Activity {
 	        	}
 	        	break;
 	    }
-	    Toast.makeText(getApplicationContext(), "Cal reiniciar", Toast.LENGTH_LONG).show();
+	    Toast.makeText(getApplicationContext(), getString(R.string.restart_needed), Toast.LENGTH_LONG).show();
 	}
 }

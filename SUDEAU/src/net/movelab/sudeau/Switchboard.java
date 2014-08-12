@@ -80,18 +80,18 @@ public class Switchboard extends Activity {
         		Intent intent = new Intent(this, RegistrationActivity.class);
 				startActivityForResult(intent,REGISTRATION_REQUEST);
         	}else{
-        		Toast.makeText(this, "No tens accés a xarxa inalàmbrica.", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(this, getString(R.string.no_data_access), Toast.LENGTH_SHORT).show();
         	}
         }else{
-        	Toast.makeText(this, "Ja estàs registrat.", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(this, getString(R.string.already_registered), Toast.LENGTH_SHORT).show();
         }
 	}
 	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(group1, first_id, first_id, "Configuració");
-		menu.add(group1, second_id, second_id, "Registrar usuari");
+		menu.add(group1, first_id, first_id, getString(R.string.preferences));
+		menu.add(group1, second_id, second_id, getString(R.string.register_user));
 		//getMenuInflater().inflate(R.menu.switchboard, menu);
 		return true;
 	}

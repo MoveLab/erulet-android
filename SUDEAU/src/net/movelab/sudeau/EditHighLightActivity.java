@@ -115,10 +115,10 @@ public class EditHighLightActivity extends Activity {
 			TextView lattxt =  (TextView)findViewById(R.id.tvLatHl);
 			TextView longtxt =  (TextView)findViewById(R.id.tvLongHl);
 			TextView alttxt =  (TextView)findViewById(R.id.tvHlAlt);
-			datatxt.setText("Data: " + date);
-			lattxt.setText("Latitud: " + lat);
-			longtxt.setText("Longitud: " + llong);
-			alttxt.setText("Altitud: " + alt);
+			datatxt.setText(getString(R.string.date) + date);
+			lattxt.setText(getString(R.string.latitude) + lat);
+			longtxt.setText(getString(R.string.longitude) + llong);
+			alttxt.setText(getString(R.string.altitude) + alt);
 		}
 	}
 		
@@ -182,7 +182,7 @@ public class EditHighLightActivity extends Activity {
 	    		createVideoFile();
 	    	} catch (IOException ex) {
 	    		currentVideo=null;
-	    		Toast.makeText(getApplicationContext(), "Error capturant video...", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), getString(R.string.error_video_capture), Toast.LENGTH_LONG).show();
 	    	}
 	    	if (currentVideo != null) {
 	    		takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, 
@@ -200,7 +200,7 @@ public class EditHighLightActivity extends Activity {
 	        } catch (IOException ex) {
 	            // Error occurred while creating the File
 	        	currentPhoto=null;
-	        	Toast.makeText(getApplicationContext(), "Error capturant imatge...", Toast.LENGTH_LONG).show();
+	        	Toast.makeText(getApplicationContext(), getString(R.string.error_image_capture), Toast.LENGTH_LONG).show();
 	        }
 	        // Continue only if the File was successfully created
 	        if (currentPhoto != null) {

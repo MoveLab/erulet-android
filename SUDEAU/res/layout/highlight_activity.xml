@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:background="@color/dark_grey"
             android:gravity="center"
-            android:text="Afegir informació a punt..."            
+            android:text="@string/add_info_point"            
             android:textSize="25sp" />
 
         <LinearLayout
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"                
-                android:text="Data:"                
+                android:text="@string/date"                
                 android:textSize="12sp" />
 
             <TextView
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"                
-                android:text="Lat:"                
+                android:text="@string/latitude_short"                
                 android:textSize="12sp" />
 
             <TextView
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"                
-                android:text="Long:"                
+                android:text="@string/longitude_short"
                 android:textSize="12sp" />
 
             <TextView
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"                
-                android:text="Altitud:"                
+                android:text="@string/altitude"                
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -60,7 +60,7 @@
             android:id="@+id/tvHlNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nom del punt:" />
+            android:text="@string/point_name" />
 
         <EditText
             android:id="@+id/txtNameHl"
@@ -72,7 +72,7 @@
             android:id="@+id/TextView01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Descripció:" />
+            android:text="@string/description" />
 
         <EditText
             android:id="@+id/txtLongHl"
@@ -88,7 +88,7 @@
             android:id="@+id/tvImageVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Afegir imatge o capturar video:" />
+            android:text="@string/add_image_video" />
 
         <LinearLayout
             android:layout_width="match_parent"            
@@ -105,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onRadioButtonClicked"
-                    android:text="Imatge"
+                    android:text="@string/image"
                     android:textSize="12sp" />
 
                 <RadioButton
@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onRadioButtonClicked"
-                    android:text="Video"
+                    android:text="@string/video"
                     android:textSize="12sp" />
 
                 <RadioButton
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:onClick="onRadioButtonClicked"
-                    android:text="Res"
+                    android:text="@string/nothing"
                     android:textSize="12sp" />
             </RadioGroup>
 
@@ -158,13 +158,13 @@
                 android:id="@+id/btnHlSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Desar" />
+                android:text="@string/save" />
 
             <Button
                 android:id="@+id/btnHlCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel·lar" />
+                android:text="@string/cancel" />
         </LinearLayout>
     </LinearLayout>
 

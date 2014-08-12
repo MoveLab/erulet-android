@@ -27,11 +27,11 @@ public class MapObjectsFactory {
 	}
 	
 	public static Marker addLastPositionMarker(
-			GoogleMap mMap
+			GoogleMap mMap, String title, String snippet
 			){
 		return mMap.addMarker(new MarkerOptions()
-		.title("Ets aquí!")
-		.snippet("(més o menys)")
+		.title(title)
+		.snippet(snippet)
 		.position(new LatLng(-27, 133))
 		.icon(BitmapDescriptorFactory
 				.fromResource(R.drawable.ic_erulet_new)));

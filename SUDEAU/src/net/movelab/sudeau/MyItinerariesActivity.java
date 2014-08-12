@@ -129,23 +129,23 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 					AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 					 
 			        // Setting Dialog Title
-			        alertDialog.setTitle("Confirmar esborrat...");
+			        alertDialog.setTitle(app.getResources().getString(R.string.confirm_delete));
 			 
 			        // Setting Dialog Message
-			        alertDialog.setMessage("S'esborrarà la ruta:\n" + currentRoute.getName() +  "\nSegur que vols continuar?");
+			        alertDialog.setMessage( app.getResources().getString(R.string.about_to_delete) + "\n" + currentRoute.getName() +  "\n" + app.getResources().getString(R.string.really_continue));
 			 
 			        // Setting Icon to Dialog
 			        alertDialog.setIcon(R.drawable.ic_delete);
 			 
 			        // Setting Positive "Yes" Button
-			        alertDialog.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+			        alertDialog.setPositiveButton(app.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 			            public void onClick(DialogInterface dialog,int which) {
 			            	remove(currentRoute);			            	
 			            }
 			        });
 			 
 			        // Setting Negative "NO" Button
-			        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			        alertDialog.setNegativeButton(app.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
 			            public void onClick(DialogInterface dialog, int which) {
 			            	// 	Write your code here to invoke NO event			            	
 			            	dialog.cancel();

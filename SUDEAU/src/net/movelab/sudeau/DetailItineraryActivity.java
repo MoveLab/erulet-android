@@ -495,7 +495,11 @@ public class DetailItineraryActivity extends Activity
 		LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
 		CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
 		if(lastPositionMarker==null){
-			lastPositionMarker = mObjFactory.addLastPositionMarker(mMap);
+			lastPositionMarker = mObjFactory.addLastPositionMarker(
+					mMap, 
+					getString(R.string.you_are_here_exp),
+					getString(R.string.more_or_less_par)
+					);
 		}
 		lastPositionMarker.setPosition(currentLatLng);
 		lastPositionMarker.showInfoWindow();

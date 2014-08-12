@@ -44,7 +44,7 @@ public class EditRouteActivity extends Activity {
 		editedRoute.setName( routeName.getText().toString() );
 		editedRoute.setDescription( routeDescription.getText().toString() );				
 		DataContainer.editRoute(editedRoute,app.getDataBaseHelper());
-		Toast.makeText(getApplicationContext(),"Canvis desats amb èxit...", Toast.LENGTH_LONG).show();		
+		Toast.makeText(getApplicationContext(),getString(R.string.save_succesful), Toast.LENGTH_LONG).show();		
 	}		
 	
 	private void initInterface(){

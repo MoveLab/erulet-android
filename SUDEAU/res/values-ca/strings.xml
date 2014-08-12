@@ -66,4 +66,69 @@
 	<string name="error_gplay_connect">Error en connexió a serveis de Google Play</string>
 	<string name="follow_trip">Seguiment itinerari...</string>
 	
+	<string name="date">Data: </string>
+	<string name="latitude">Latitud: </string>
+	<string name="latitude_short">Lat: </string>
+	<string name="longitude">Longitud: </string>
+	<string name="longitude_short">Long: </string>
+	<string name="altitude">Altitud: </string>
+	
+	<string name="error_video_capture">Error capturant video...</string>
+	<string name="error_image_capture">Error capturant imatge...</string>
+
+	<string name="add_info_point">Afegir informació a punt...</string>
+	<string name="point_name">Nom del punt: </string>
+	<string name="description">Descripció: </string>
+	<string name="add_image_video">Afegir imatge o capturar video:</string>
+	<string name="image">Imatge</string>
+	<string name="video">Video</string>
+	<string name="nothing">Res</string>
+	<string name="save">Desar</string>
+	
+	<string name="save_succesful">Canvis desats amb èxit...</string>
+	
+	<string name="trip_data_edition">Edició de dades de la ruta...</string>
+	<string name="total_distance">Distància total</string>
+	<string name="total_time">Temps total</string>
+	<string name="points_number">Número punts</string>
+    <string name="points_of_interest_number">Número punts interès</string>
+    <string name="slope">Desnivell</string>
+    <string name="trip_name">Nom de la ruta: </string>
+    <string name="trip_name_comp">Nom de la ruta</string>
+    <string name="trip_name_hint">Un nom curt, fàcil de reconèixer</string>
+    <string name="trip_description">Descripció de la ruta: </string>
+    <string name="trip_description_comp">Descripció de la ruta</string>
+    <string name="trip_description_hint">Una descripció més llarga</string>
+    
+    <string name="restart_needed">Cal reiniciar</string>
+    
+    <string name="preferences">Preferències</string>
+    <string name="language">Idioma:</string>
+    <string name="lang_ca">Català</string>
+    <string name="lang_gsc_es">Aranès</string>
+    <string name="lang_es_es">Castellà</string>
+    <string name="lang_en">Anglès</string>
+    <string name="lang_fr">Francès</string>
+    
+    <string name="you_are_here_exp">Ets aquí!</string>
+    <string name="more_or_less_par">(més o menys)</string>
+    
+    <string name="confirm_delete">Confirmar esborrat...</string>
+    <string name="about_to_delete">S\'esborrarà la ruta:</string>
+    <string name="really_continue">Segur que vols continuar?</string>
+    
+    <string name="my_itineraries">Els meus itineraris...</string>
+    <string name="shared_itineraries">Itineraris compartits...</string>
+    
+    <string name="no_data_access">No tens accés a dades.</string>
+    <string name="already_registered">Ja estàs registrat.</string>
+    <string name="register_user">Registrar usuari</string>
+    
+    <string name="erulet">Erulet</string>
+    <string name="erulet_lore">És un personatge de la mitologia aranesa. És un follet que viu amagat als boscos, i representa l’esperit de la Natura. Aquesta aplicació permet a Erulet introduïr-se en el vostre dispositiu, i guiar-vos al llarg de diversos itineraris en espais naturals en els que l’aigua és protagonista.</string>
+    <string name="user_manual">Manual d\'ús</string>
+    <string name="security_recomm">Normes de comportament i recomanacions de seguretat</string>
+    <string name="credits">Crèdits</string>
+    <string name="trip_selection">Selecció d\'Itineraris</string>
+	
 </resources>

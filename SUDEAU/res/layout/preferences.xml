@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="Preferències"
+        android:text="@string/preferences"
         android:textSize="30sp" />
 
         <LinearLayout
@@ -27,7 +27,7 @@
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Idioma:"
+                android:text="@string/language"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <RadioGroup
@@ -39,35 +39,35 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
-	                android:text="Català" />
+	                android:text="@string/lang_ca" />
 	
 	            <RadioButton
 	                android:id="@+id/rbAranes"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
-	                android:text="Aranès" />
+	                android:text="@string/lang_gsc_es" />
 	
 	            <RadioButton
 	                android:id="@+id/rbSpanish"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
-	                android:text="Castellà" />
+	                android:text="@string/lang_es_es" />
 	
 	            <RadioButton
 	                android:id="@+id/rbEnglish"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
-	                android:text="Anglès" />
+	                android:text="@string/lang_en" />
 	            
 	            <RadioButton
 	                android:id="@+id/rbFrench"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
-	                android:text="Francès" />
+	                android:text="@string/lang_fr" />
 			</RadioGroup>
         </LinearLayout>
 
