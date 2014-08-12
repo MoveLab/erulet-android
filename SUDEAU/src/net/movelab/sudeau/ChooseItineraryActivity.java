@@ -59,10 +59,10 @@ public class ChooseItineraryActivity extends Activity {
 	private Marker selectedMarker;
 	
 	//private static final String TITLE = "Tria la opció de ruta que prefereixes:";
-	private String TITLE = getString(R.string.trip_option);
-	private String OPTION_1 = getString(R.string.trip_option_1);
-	private String OPTION_2 = getString(R.string.trip_option_2);
-	private String OPTION_3 = getString(R.string.trip_option_3);
+	private String TITLE;
+	private String OPTION_1;
+	private String OPTION_2;
+	private String OPTION_3;
 	
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
@@ -73,6 +73,10 @@ public class ChooseItineraryActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TITLE = getString(R.string.trip_option);
+		OPTION_1 = getString(R.string.trip_option_1);
+		OPTION_2 = getString(R.string.trip_option_2);
+		OPTION_3 = getString(R.string.trip_option_3);
 		setContentView(R.layout.choose_itinerary_map);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
@@ -89,7 +93,7 @@ public class ChooseItineraryActivity extends Activity {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
+	public boolean onCreateOptionsMenu(Menu menu){		
 		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));		
 		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);

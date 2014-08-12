@@ -19,7 +19,7 @@
     <string name="choose_it_shared_itineraries">Itineraris compartits...</string>
     <string name="no_route_selected">No hi ha cap ruta seleccionada; si us plau tria una ruta...</string>
     
-    <string name="trips">Trips</string>
+    <string name="trips">Itineraris</string>
     <string name="compass">Brúixola</string>
     
     <string name="location_not_enabled">La localització del dispositiu no està activada; cal activar-la.</string>
@@ -130,5 +130,12 @@
     <string name="security_recomm">Normes de comportament i recomanacions de seguretat</string>
     <string name="credits">Crèdits</string>
     <string name="trip_selection">Selecció d\'Itineraris</string>
+    
+    <string name="finish_edit_trip_leave_long">S\'han modificat les dades de l\'itinerari, vols desar els canvis?</string>
+    <string name="finish_edit_trip">Edició d\'itinerari</string>
+    <string name="point_type">Tipus de punt:</string>
+    <string name="point_type_waypoint">Punt de ruta</string>
+    <string name="point_type_poi">Punt d\'interès</string>
+    <string name="point_type_alert">Alerta</string>
 	
 </resources>

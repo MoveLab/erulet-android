@@ -76,8 +76,8 @@ public class CompassActivity extends Activity implements SensorEventListener {
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-        checkLocationServicesStatus();
         setNavPoint();
+        checkLocationServicesStatus();        
         adjustUI();
         startTrackingMaybe();
     }
@@ -108,52 +108,54 @@ public class CompassActivity extends Activity implements SensorEventListener {
     }
     
     private void checkLocationServicesStatus() {
-		LocationManager lm = null;
-		boolean gps_enabled = false;
-		boolean network_enabled = false;
-		if (lm == null)
-			lm = (LocationManager) getBaseContext().getSystemService(
-					Context.LOCATION_SERVICE);
-		try {
-			gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		} catch (Exception ex) {
-		}
-		try {
-			network_enabled = lm
-					.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-		} catch (Exception ex) {
-		}
-
-		if (!gps_enabled && !network_enabled) {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setMessage(getString(R.string.location_not_enabled));
-			dialog.setPositiveButton(getString(R.string.enable_location),
-					new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(
-								DialogInterface paramDialogInterface,
-								int paramInt) {
-							// TODO Auto-generated method stub
-							Intent myIntent = new Intent(
-									Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-							startActivity(myIntent);
-							// get gps
-						}
-					});
-			dialog.setNegativeButton(getString(R.string.cancel),
-					new DialogInterface.OnClickListener() {
-
-						@Override
-						public void onClick(
-								DialogInterface paramDialogInterface,
-								int paramInt) {
-							// TODO Auto-generated method stub
-
-						}
-					});
-			dialog.show();
-		}
+    	if(userRequestedNavigation()){
+			LocationManager lm = null;
+			boolean gps_enabled = false;
+			boolean network_enabled = false;
+			if (lm == null)
+				lm = (LocationManager) getBaseContext().getSystemService(
+						Context.LOCATION_SERVICE);
+			try {
+				gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			} catch (Exception ex) {
+			}
+			try {
+				network_enabled = lm
+						.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+			} catch (Exception ex) {
+			}
+	
+			if (!gps_enabled && !network_enabled) {
+				AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+				dialog.setMessage(getString(R.string.location_not_enabled));
+				dialog.setPositiveButton(getString(R.string.enable_location),
+						new DialogInterface.OnClickListener() {
+	
+							@Override
+							public void onClick(
+									DialogInterface paramDialogInterface,
+									int paramInt) {
+								// TODO Auto-generated method stub
+								Intent myIntent = new Intent(
+										Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+								startActivity(myIntent);
+								// get gps
+							}
+						});
+				dialog.setNegativeButton(getString(R.string.cancel),
+						new DialogInterface.OnClickListener() {
+	
+							@Override
+							public void onClick(
+									DialogInterface paramDialogInterface,
+									int paramInt) {
+								// TODO Auto-generated method stub
+	
+							}
+						});
+				dialog.show();
+			}
+    	}
 	}
     
     
@@ -286,9 +288,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_FASTEST);
         // If user requested navigation, we resume listening for position updates
-        if(userRequestedNavigation()){
-        	registerLocationListeners();
-        }
+        startTrackingMaybe();
     }
 
     @Override
