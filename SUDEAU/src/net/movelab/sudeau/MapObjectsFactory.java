@@ -51,21 +51,14 @@ public class MapObjectsFactory {
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_empty)));
 	}
 	
-	public static Marker addHighLightMarker(
-			GoogleMap mMap,
-			LatLng position,
-			String title,
-			String snippet,
-			int hlType
-			){
-						
+	public static BitmapDescriptor getUserBitmapDescriptor(int hlType){
 		BitmapDescriptor bm = null;
 		switch(hlType){
 			case HighLight.WAYPOINT:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_chart);
 				break;			
 			case HighLight.ALERT:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_warning);
 				break;
 			case HighLight.POINT_OF_INTEREST_OFFICIAL:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop);
@@ -79,9 +72,19 @@ public class MapObjectsFactory {
 			default:
 				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 				break;
-		}		
-				
-				
+		}
+		return bm;
+	}
+	
+	public static Marker addHighLightMarker(
+			GoogleMap mMap,
+			LatLng position,
+			String title,
+			String snippet,
+			int hlType
+			){
+						
+		BitmapDescriptor bm = getUserBitmapDescriptor(hlType);								
 		
 		return mMap.addMarker(new MarkerOptions()
 			.position(position)

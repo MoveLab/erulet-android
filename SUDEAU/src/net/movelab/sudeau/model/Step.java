@@ -42,6 +42,12 @@ public class Step implements Comparable<Step> {
 	private long absoluteTimeMillis;
 	@DatabaseField(foreign=true, columnName="trackId")
     private Track track;
+	/**
+	 * This is only for shared steps there is a reference to the route it is
+	 * based on
+	 */
+	@DatabaseField(foreign=true, columnName="routeId")	
+    private Route route;
 
 	public Step() {		
 	}
@@ -211,6 +217,14 @@ public class Step implements Comparable<Step> {
 					this.getLongitude() == that.getLongitude() &&
 					this.getAltitude() == that.getAltitude();
 		}
+	}
+
+	public Route getRoute() {
+		return route;
+	}
+
+	public void setRoute(Route route) {
+		this.route = route;
 	}	
 	
 }

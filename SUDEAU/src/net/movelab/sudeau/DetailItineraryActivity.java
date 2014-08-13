@@ -338,10 +338,12 @@ public class DetailItineraryActivity extends Activity
 				String hlName = data.getStringExtra("hlName");
 				String hlLongText = data.getStringExtra("hlLongText");
 				String imagePath = data.getStringExtra("imagePath");
+				int hlType = data.getIntExtra("hlType", HighLight.WAYPOINT );
 				HighLight hl = new HighLight();
 				hl.setName(hlName);
 				hl.setLongText(hlLongText);
 				hl.setMediaPath(imagePath);
+				hl.setType(hlType);
 				Step s = fixReceiver.getStepById(stepBeingEditedId);
 				hl.setRadius(s.getPrecision());
 				if (s != null) {
@@ -351,6 +353,7 @@ public class DetailItineraryActivity extends Activity
 				saveHighLight(hl);
 				// This is a cheap way to refresh the info window content
 				if (selectedMarker != null) {
+					selectedMarker.setIcon( MapObjectsFactory.getUserBitmapDescriptor(hlType) );
 					selectedMarker.hideInfoWindow();
 					selectedMarker.showInfoWindow();
 				}

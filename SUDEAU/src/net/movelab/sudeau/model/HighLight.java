@@ -18,12 +18,16 @@ public class HighLight {
 	private double radius;
 	@DatabaseField
 	private int type;
+	@DatabaseField
+	private int globalRating;
+	@DatabaseField
+	private int userRating;
 	
-	public static final int WAYPOINT = 0;
-	public static final int POINT_OF_INTEREST = 1;
-	public static final int POINT_OF_INTEREST_OFFICIAL = 2;
-	public static final int ALERT = 3;
-	public static final int POINT_OF_INTEREST_SHARED = 4;
+	public static final int WAYPOINT = 1;
+	public static final int POINT_OF_INTEREST = 2;
+	public static final int POINT_OF_INTEREST_OFFICIAL = 3;
+	public static final int ALERT = 4;
+	public static final int POINT_OF_INTEREST_SHARED = 5;
 	
 	public HighLight() {		
 	}
@@ -109,6 +113,22 @@ public class HighLight {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public int getGlobalRating() {
+		return globalRating;
+	}
+
+	public void setGlobalRating(int globalRating) {
+		this.globalRating = globalRating;
+	}
+
+	public int getUserRating() {
+		return userRating;
+	}
+
+	public void setUserRating(int userRating) {
+		this.userRating = userRating;
 	}
 
 }

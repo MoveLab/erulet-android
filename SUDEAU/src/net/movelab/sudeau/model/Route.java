@@ -1,6 +1,10 @@
 package net.movelab.sudeau.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "route")
@@ -15,7 +19,7 @@ public class Route {
 	@DatabaseField
 	private String description;
 	@DatabaseField
-	private String userId;	
+	private String userId;
 	@DatabaseField(foreign=true, columnName="trackId")
 	private Track track;
 	@DatabaseField(foreign=true, columnName="referenceId")
@@ -24,8 +28,18 @@ public class Route {
 	private boolean upLoaded;
 	@DatabaseField
 	private String localCarto;
+	@DatabaseField
+	private int globalRating;
+	@DatabaseField
+	private int userRating;
+	/**
+	 * Here we store the steps shared by other users
+	 */
+	@ForeignCollectionField
+	private Collection<Step> sharedSteps;
 
-	public Route() {		
+	public Route() {
+		setSharedSteps(new ArrayList<Step>());
 	}
 	
 	public Route(String id) {
@@ -107,6 +121,30 @@ public class Route {
 
 	public void setLocalCarto(String localCarto) {
 		this.localCarto = localCarto;
+	}
+
+	public Collection<Step> getSharedSteps() {
+		return sharedSteps;
+	}
+
+	public void setSharedSteps(Collection<Step> sharedSteps) {
+		this.sharedSteps = sharedSteps;
+	}
+
+	public int getGlobalRating() {
+		return globalRating;
+	}
+
+	public void setGlobalRating(int globalRating) {
+		this.globalRating = globalRating;
+	}
+
+	private int getUserRating() {
+		return userRating;
+	}
+
+	private void setUserRating(int userRating) {
+		this.userRating = userRating;
 	}
 	
 }

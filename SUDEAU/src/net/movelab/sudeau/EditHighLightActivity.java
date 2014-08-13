@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.Intent;
@@ -48,6 +49,10 @@ public class EditHighLightActivity extends Activity {
 	private Bitmap videoThumbnail;
 	private TextView tvName;
 	private TextView tvLongText;
+	private RadioGroup hlType;
+	private RadioButton rbWp;
+	private RadioButton rbPoi;
+	private RadioButton rbWarning;
 	private RadioGroup imageOrVideo;
 	private RadioButton rbImage;
 	private RadioButton rbVideo;
@@ -73,6 +78,10 @@ public class EditHighLightActivity extends Activity {
 			String name = extras.getString("hlname");
 			String longText = extras.getString("hllongtext");
 			String imagePath = extras.getString("hlimagepath");
+			int hlType = extras.getInt("hltype");
+			if(hlType!=0){
+				checkHighLightType(hlType);
+			}
 			if(name!=null){
 				tvName.setText(name);
 			}
@@ -122,6 +131,24 @@ public class EditHighLightActivity extends Activity {
 		}
 	}
 		
+	private void checkHighLightType(int hlType) {
+		switch(hlType){
+			case HighLight.POINT_OF_INTEREST:
+				rbPoi.setChecked(true);
+				break;
+			case HighLight.WAYPOINT:
+				rbWp.setChecked(true);
+				break;
+			case HighLight.ALERT:
+				rbWarning.setChecked(true);
+				break;
+			default:
+				rbWp.setChecked(true);
+				break;
+		}
+	}
+	
+
 	public void onRadioButtonClicked(View view){
 	    boolean checked = ((RadioButton) view).isChecked();	    
 	    switch(view.getId()) {
@@ -260,9 +287,15 @@ public class EditHighLightActivity extends Activity {
 	private void setUpInterface(){
 		btn_picture = (ImageButton)findViewById(R.id.btnPicture);
 		btn_video = (ImageButton)findViewById(R.id.btnVideo);
+		
+		rbWp = (RadioButton)findViewById(R.id.rbWayPoint);
+		rbPoi = (RadioButton)findViewById(R.id.rbPOI);
+		rbWarning = (RadioButton)findViewById(R.id.rbWarning);
+		
 		rbImage = (RadioButton)findViewById(R.id.rbImage);
 		rbVideo = (RadioButton)findViewById(R.id.rbVideo);
 		rbNone = (RadioButton)findViewById(R.id.rbImgVidNull);
+		
 		Button btn_save = (Button)findViewById(R.id.btnHlSave);
 		Button btn_cancel = (Button)findViewById(R.id.btnHlCancel);
 		tvName = (TextView)findViewById(R.id.txtNameHl);
@@ -303,7 +336,22 @@ public class EditHighLightActivity extends Activity {
 						//TODO maybe if currentVideo or currentImage aren't null, issue warning
 						returnIntent.putExtra("imagePath", "");
 						break;
-				}				
+				}
+				int selectedType = hlType.getCheckedRadioButtonId();
+				switch(selectedType){
+					case R.id.rbWayPoint:
+						returnIntent.putExtra("hlType", HighLight.WAYPOINT);
+						break;
+					case R.id.rbPOI:
+						returnIntent.putExtra("hlType", HighLight.POINT_OF_INTEREST);
+						break;
+					case R.id.rbWarning:
+						returnIntent.putExtra("hlType", HighLight.ALERT);
+						break;
+					default:
+						returnIntent.putExtra("hlType", HighLight.WAYPOINT);
+						break;
+				}
 				setResult(RESULT_OK,returnIntent);
 				finish();
 			}
@@ -316,6 +364,7 @@ public class EditHighLightActivity extends Activity {
 			}
 		});
 		imageOrVideo = (RadioGroup)findViewById(R.id.rgImageVideo);
+		hlType  = (RadioGroup)findViewById(R.id.rgHighLightType);
 		tvName.requestFocus();
 	}
 	

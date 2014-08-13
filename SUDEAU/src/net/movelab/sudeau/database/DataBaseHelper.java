@@ -70,7 +70,6 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Track.class, true);
 			TableUtils.dropTable(connectionSource, Step.class, true);
 			TableUtils.dropTable(connectionSource, HighLight.class, true);
-			//TableUtils.dropTable(connectionSource, EruMedia.class, true);
 			TableUtils.dropTable(connectionSource, Reference.class, true);
 			onCreate(db,connectionSource);
 		} catch (java.sql.SQLException e) {
@@ -134,21 +133,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 		return hlRuntimeDao;
 	}		
-	
-//	public Dao<EruMedia, String> getMediaDao() throws java.sql.SQLException {
-//		if (mediaDao == null) {
-//			mediaDao = getDao(EruMedia.class);
-//		}
-//		return mediaDao;
-//	}
-//	
-//	public RuntimeExceptionDao<EruMedia, String> getMediaDataDao() {
-//		if (mediaRuntimeDao == null) {			
-//			mediaRuntimeDao = getRuntimeExceptionDao(EruMedia.class);
-//		}
-//		return mediaRuntimeDao;
-//	}
-	
+		
 	public Dao<Reference, String> getReferenceDao() throws java.sql.SQLException {
 		if (referenceDao == null) {
 			referenceDao = getDao(Reference.class);
@@ -177,8 +162,6 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		stepRuntimeDao = null;
 		hlDao = null;
 		hlRuntimeDao = null;
-//		mediaDao = null;
-//		mediaRuntimeDao = null;
 		referenceDao = null;
 		referenceRuntimeDao = null;
 	}
