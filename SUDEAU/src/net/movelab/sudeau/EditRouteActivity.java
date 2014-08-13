@@ -12,6 +12,7 @@ import net.movelab.sudeau.model.RouteInfoFormatter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -60,13 +61,17 @@ public class EditRouteActivity extends Activity {
 						public void onClick(DialogInterface dialog,
 								int which) {
 							save(DataContainer.getAndroidId(getContentResolver()));
+							Intent returnIntent = new Intent();							
+							setResult(RESULT_OK,returnIntent);							
 							finish();
 						}
 					}).setNegativeButton(getString(R.string.no), 
 						new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog,
-								int which) {							
+								int which) {
+							Intent returnIntent = new Intent();							
+							setResult(RESULT_CANCELED,returnIntent);
 							finish();
 						}
 					}).show();
@@ -75,11 +80,12 @@ public class EditRouteActivity extends Activity {
 		}
 	}		
 	
-	private void save(String android_id){
+	private String save(String android_id){
 		editedRoute.setName( routeName.getText().toString() );
 		editedRoute.setDescription( routeDescription.getText().toString() );				
 		DataContainer.editRoute(editedRoute,app.getDataBaseHelper());
-		Toast.makeText(getApplicationContext(),getString(R.string.save_succesful), Toast.LENGTH_LONG).show();		
+		Toast.makeText(getApplicationContext(),getString(R.string.save_succesful), Toast.LENGTH_LONG).show();
+		return editedRoute.getId();
 	}		
 	
 	private void initInterface(){

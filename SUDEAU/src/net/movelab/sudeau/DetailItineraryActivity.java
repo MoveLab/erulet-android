@@ -92,6 +92,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -128,6 +129,9 @@ public class DetailItineraryActivity extends Activity
 	private Step currentStep;
 	// Route selected in choose itinerary activity
 	private Route selectedRoute;
+	private Polyline selectedRoutePolyLine;
+	private List<Circle> selectedRoutePoints;
+	
 	private Route routeInProgress;
 	private ArrayList<Step> highLightedSteps;
 	private IntentFilter fixFilter;
@@ -149,6 +153,7 @@ public class DetailItineraryActivity extends Activity
 
 	private float TAP_TOLERANCE_DIST = 100;
 	static final int HIGHLIGHT_INFO_REQUEST = 1;
+	static final int END_TRIP = 2;
 	
 	private LocationClient locationClient;
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -354,6 +359,21 @@ public class DetailItineraryActivity extends Activity
 						getString(R.string.user_cancel), Toast.LENGTH_LONG).show();
 			}
 		}
+		if (requestCode == END_TRIP){			//
+				//Clear map
+				fixReceiver.clearTrackObjects();
+				//Set working mode to map
+				routeMode = 0;
+				//Adjust interface
+				configureUI();
+				//Load saved route (not strictly necessary...)				
+				selectedRoute = routeInProgress;
+				//Free resources from fixReceiver, we don't need it anymore
+				fixReceiver.destroy();
+				fixReceiver = null;
+				//Re-display selected route
+				updateCurrentRoute();
+		}
 	}
 
 	private void saveHighLight(HighLight h) {
@@ -534,7 +554,7 @@ public class DetailItineraryActivity extends Activity
 			routeJson = JSONConverter.routeToJSONObject(routeInProgress)
 					.toString();
 			i.putExtra("routeJson", routeJson);
-			startActivity(i);
+			startActivityForResult(i,END_TRIP);			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -553,9 +573,10 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private void setupView() {
+		selectedRoutePoints = new ArrayList<Circle>();
 		setUpRoutes();
 		setUpMapIfNeeded();
-		drawCurrentRouteFromDB();
+		updateCurrentRoute();
 		if (fixReceiver != null) {
 			fixReceiver.updateTrackInProgress();
 		}
@@ -1085,7 +1106,7 @@ public class DetailItineraryActivity extends Activity
 		copt.radius(step.getPrecision());
 		copt.zIndex(1);
 		copt.strokeColor(Color.BLACK);
-		copt.strokeWidth(0.1f);
+		copt.strokeWidth(1);
 		// Fill color of the circle
 		// 0x represents, this is an hexadecimal code
 		// 55 represents percentage of transparency. For 100% transparency,
@@ -1093,7 +1114,7 @@ public class DetailItineraryActivity extends Activity
 		// For 0% transparency ( ie, opaque ) , specify ff
 		// The remaining 6 characters(00ff00) specify the fill color
 		copt.fillColor(0x556F6F6F);
-		mMap.addCircle(copt);
+		selectedRoutePoints.add(mMap.addCircle(copt));
 		// highLightedSteps.add(step);
 		// }
 	}
@@ -1116,11 +1137,26 @@ public class DetailItineraryActivity extends Activity
 //			}
 //		}
 //	}
+	
+	private void clearSelectedRoute(){		
+		if( selectedRoutePolyLine != null ){
+			selectedRoutePolyLine.remove();
+			selectedRoutePolyLine = null;
+		}
+		if( selectedRoutePoints != null ){
+			for(int i = 0; i < selectedRoutePoints.size(); i++){
+				Circle c = selectedRoutePoints.get(i);
+				c.remove();
+			}
+			selectedRoutePoints.clear();
+		}
+	}
 
-	private void drawCurrentRouteFromDB() {
+	private void updateCurrentRoute() {
 		if (currentRouteMarkers == null) {
 			currentRouteMarkers = new Hashtable<Marker, Step>();
 		}
+		clearSelectedRoute();
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = selectedRoute.getTrack();
 		List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
@@ -1133,7 +1169,7 @@ public class DetailItineraryActivity extends Activity
 		}
 		rectOptions.zIndex(1);
 		rectOptions.color(Color.GRAY);
-		Polyline polyline = mMap.addPolyline(rectOptions);		
+		selectedRoutePolyLine = mMap.addPolyline(rectOptions);		
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
@@ -1166,13 +1202,15 @@ public class DetailItineraryActivity extends Activity
 
 		private GoogleMap mMap;
 		private ArrayList<Step> stepsInProgress;
-//		private Polyline trackInProgress;
+		private Polyline trackInProgress;
+		private List<Circle> pointsInProgress;
 		private CameraUpdate cu;
 
 		public FixReceiver(GoogleMap mMap) {
 			super();
 			this.mMap = mMap;
 			stepsInProgress = new ArrayList<Step>();
+			pointsInProgress = new ArrayList<Circle>();
 		}
 
 		public ArrayList<Step> getStepsInProgress() {
@@ -1182,28 +1220,59 @@ public class DetailItineraryActivity extends Activity
 		public void setStepsInProgress(ArrayList<Step> steps) {
 			stepsInProgress = steps;
 		}
+		
+		public void clearTrackObjects(){
+			if(trackInProgress!=null){
+				trackInProgress.remove();
+				trackInProgress = null;
+			}
+			if(pointsInProgress!=null){
+				for(int i = 0; i < pointsInProgress.size(); i++){
+					Circle c = pointsInProgress.get(i);
+					c.remove();
+				}
+				pointsInProgress.clear();
+			}
+		}
+		
+		public void destroy(){
+			stepsInProgress.clear();
+			stepsInProgress = null;
+			trackInProgress = null;
+			pointsInProgress.clear();
+			pointsInProgress = null;
+			cu = null;
+			mMap = null;
+		}
 
 		public void updateTrackInProgress() {
-			PolylineOptions rectOptions = MapObjectsFactory.getRouteInProgressPolyLine();			
+			clearTrackObjects();
+			int zIndexPolyLine = stepsInProgress != null ? stepsInProgress.size() + 1 : 1;
+			PolylineOptions rectOptions = MapObjectsFactory.getRouteInProgressPolyLine(zIndexPolyLine);
 			if (stepsInProgress.size() > 0) {
 				for (int i = 0; i < stepsInProgress.size(); i++) {
 
 					Step step = stepsInProgress.get(i);
-
+					
+					boolean last = (i == stepsInProgress.size()-1);
+					
 					CircleOptions copt = MapObjectsFactory.
 							getRouteInProgressCircle(
 									new LatLng(step.getLatitude(), step.getLongitude()), 
-									step.getPrecision());
-					mMap.addCircle(copt);
+									step.getPrecision(),
+									last,
+									i);
+					
+					pointsInProgress.add(mMap.addCircle(copt));
 
-					if(routeMode == 2){
+					if(routeMode == 1 || routeMode == 2){
 						rectOptions.add(new LatLng(step.getLatitude(), step
 								.getLongitude()));
 					}
 				}
-//				if(routeMode == 2){
-//					trackInProgress = mMap.addPolyline(rectOptions);
-//				}
+				if(routeMode == 1 || routeMode == 2){
+					trackInProgress = mMap.addPolyline(rectOptions);
+				}
 			}
 		}
 
@@ -1264,14 +1333,13 @@ public class DetailItineraryActivity extends Activity
 					DataContainer.addStepToTrack(s, routeInProgress.getTrack(),
 							DataContainer.getAndroidId(getContentResolver()), 
 							app.getDataBaseHelper());
-				}
-
-				updateTrackInProgress();
+				}				
 				if (IGlobalValues.DEBUG) {
 					Log.d("onReceive", "Received new location " + lat + " "
 							+ lng + " t " + app.formatDateHoursMinutesSeconds(time) );
 				}
 			}
+			updateTrackInProgress();
 		}
 
 		public void moveCameraToLastPosition() {

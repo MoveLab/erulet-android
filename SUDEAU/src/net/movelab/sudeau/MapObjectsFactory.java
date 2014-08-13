@@ -91,14 +91,22 @@ public class MapObjectsFactory {
 		);		
 	}
 	
-	public static CircleOptions getRouteInProgressCircle(LatLng position, double radius) {
+	public static CircleOptions getRouteInProgressCircle(
+			LatLng position, 
+			double radius, 
+			boolean last,
+			int zIndex) {
 		
 		CircleOptions copt = new CircleOptions();
 		copt.center(position);
 		copt.radius(radius);
-		copt.zIndex(1);
+		copt.zIndex(zIndex);
 		copt.strokeColor(Color.BLACK);
-		copt.strokeWidth(2);
+		if(last){			
+			copt.strokeWidth(4);
+		}else{
+			copt.strokeWidth(1);
+		}
 		// Fill color of the circle
 		// 0x represents, this is an hexadecimal code
 		// 55 represents percentage of transparency. For 100%
@@ -106,14 +114,14 @@ public class MapObjectsFactory {
 		// specify 00.
 		// For 0% transparency ( ie, opaque ) , specify ff
 		// The remaining 6 characters(00ff00) specify the fill color
-		copt.fillColor(0xFF00FFFF);
+		copt.fillColor(0x8000FFFF);
 		return copt;
 		
-	}
+	}	
 	
-	public static PolylineOptions getRouteInProgressPolyLine() { 
+	public static PolylineOptions getRouteInProgressPolyLine(int zIndex) { 
 		PolylineOptions rectOptions = new PolylineOptions();
-		rectOptions.zIndex(1);
+		rectOptions.zIndex(zIndex);
 		rectOptions.color(Color.GREEN);
 		return rectOptions;
 	}
