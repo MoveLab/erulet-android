@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Erulet</string>
-    <string name="current_language">Català</string>
+    <string name="current_language">Aranès</string>
     <string name="action_settings">Ajustos</string>
     <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
     <string name="tracking_notification_initial">Erulet et guia!</string>

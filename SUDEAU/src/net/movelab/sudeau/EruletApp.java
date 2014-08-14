@@ -25,33 +25,50 @@ public class EruletApp extends Application{
 	private static final SimpleDateFormat DAY_MONTH_YEAR = new SimpleDateFormat("dd/MM/yyyy");
 	private DataBaseHelper dataBaseHelper;
 	private boolean trackingServiceOn = false;
+	private Locale deviceLocale = null;
 	
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		EruletApp.context = getApplicationContext();
-		SharedPreferences settings = getPrefs();
-		
-		Configuration config = getBaseContext().getResources().getConfiguration();
-
-		//Store language setting in preferences
-        String lang = settings.getString("pref_locale", "");
-        if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
-        {
-            locale = new Locale(lang);
-            Locale.setDefault(locale);
-            config.locale = locale;
-            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-        }
-        
+		deviceLocale = getResources().getConfiguration().locale;
+		applyLocaleSettings();
         if(dataBaseHelper == null){
     		dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
-    		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());			
-    		DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+    		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
+    		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
+    		if(!loaded){
+    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+    			getPrefs().edit().putBoolean("redon_loaded", true).apply();
+    		}
     	}
 
 	}
+	
+	public void applyLocaleSettings(){
+    	SharedPreferences settings = getPrefs();
+
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        
+        String lang = settings.getString("pref_locale", "");
+        if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
+        {
+            locale = new Locale(lang);            
+        }else{        	
+        	locale = deviceLocale;
+        }
+        Locale.setDefault(locale);
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+    }
+	
+	public void restart(){
+    	Intent i = getBaseContext().getPackageManager()
+	             .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+	    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	    startActivity(i);
+    }
 		
 	
 	public static Context getAppContext() {

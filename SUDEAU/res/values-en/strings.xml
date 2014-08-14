@@ -2,12 +2,12 @@
 <resources>
 
     <string name="app_name">Erulet</string>
-    <string name="current_language">Català</string>
-    <string name="action_settings">Ajustos</string>
+    <string name="current_language">Anglès</string>
+    <string name="action_settings">Settings</string>
     <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
-    <string name="tracking_notification_initial">Erulet et guia!</string>
-    <string name="tracking_notification_subject">Erulet et guia</string>
-    <string name="tracking_notification">Erulet està guiant el teu trajecte.</string>
+    <string name="tracking_notification_initial">Erulet tracking!</string>
+    <string name="tracking_notification_subject">Erulet tracking</string>
+    <string name="tracking_notification">Erulet is tracking your trip.</string>
     <string name="content_provider_authority_uploadqueue">net.movelab.sudeau.content_provider.uploadqueue</string>
     <string name="content_provider_authority_fixes">net.movelab.sudeau.content_provider.fixes</string>
     
@@ -133,5 +133,12 @@
     <string name="security_recomm">Normes de comportament i recomanacions de seguretat</string>
     <string name="credits">Crèdits</string>
     <string name="trip_selection">Selecció d\'Itineraris</string>
+    
+    <string name="finish_edit_trip_leave_long">S\'han modificat les dades de l\'itinerari, vols desar els canvis?</string>
+    <string name="finish_edit_trip">Edició d\'itinerari</string>
+    <string name="point_type">Tipus de punt:</string>
+    <string name="point_type_waypoint">Punt de ruta</string>
+    <string name="point_type_poi">Punt d\'interès</string>
+    <string name="point_type_alert">Alerta</string>
 	
 </resources>
