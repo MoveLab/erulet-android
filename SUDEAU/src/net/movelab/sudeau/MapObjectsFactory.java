@@ -67,7 +67,7 @@ public class MapObjectsFactory {
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_shared);
 				break;
 			case HighLight.POINT_OF_INTEREST:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop);
 				break;
 			default:
 				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -127,6 +127,35 @@ public class MapObjectsFactory {
 		rectOptions.zIndex(zIndex);
 		rectOptions.color(Color.GREEN);
 		return rectOptions;
+	}
+
+	public static Marker addStartMarker(GoogleMap mMap, LatLng position, String start_text) {
+		return mMap.addMarker(new MarkerOptions()		
+		.position(position)
+		.title(start_text)
+		.anchor(0.5f, 0.5f)
+		.flat(true)
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.red)));
+	}
+
+	public static Marker addEndMarker(GoogleMap mMap, LatLng position, String end_text) { 
+		return mMap.addMarker(new MarkerOptions()		
+		.position(position)
+		.title(end_text)
+		.anchor(0.5f, 0.5f)
+		.flat(true)
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.green)));
+	}
+
+	public static Marker addDirectionMarker(GoogleMap mMap,
+			LatLng position, double angle) {
+		Marker m = mMap.addMarker(new MarkerOptions()		
+		.position(position)		
+		.anchor(0.5f, 0.5f)
+		.rotation((float)angle)
+		.flat(true)
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.triangle_red_s)));		
+		return m;
 	}
 				 
 }

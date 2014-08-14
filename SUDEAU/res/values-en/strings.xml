@@ -140,5 +140,8 @@
     <string name="point_type_waypoint">Punt de ruta</string>
     <string name="point_type_poi">Punt d\'interès</string>
     <string name="point_type_alert">Alerta</string>
+    
+    <string name="trip_start">Inici ruta</string>
+    <string name="trip_end">Fi ruta</string>
 	
 </resources>

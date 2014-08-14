@@ -16,6 +16,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import net.movelab.sudeau.TrackingContentContract.Fixes;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,6 +66,15 @@ public class Util {
 	public static int UPLOADS_TO_PRO = 1000;
 
 	public static int MAX_FILE_STORAGE_NUMBER = 10000;
+	
+	public static double MINIMUM_POP_DISTANCE_RADIUS = 10;
+	public static double MAXIMUM_POP_DISTANCE_RADIUS = 30;
+	
+	//Global debug flag
+	public static final boolean DEBUG=true;
+	//Estanh Redon Coordinates
+	public static final LatLng ESTANH_REDON = new LatLng(42.64, 0.78);
+	//
 
 	// Min average comfortable walking speed (cm/s) from Bohannon 1997,
 	// http://ageing.oxfordjournals.org/content/26/1/15.full.pdf+html

@@ -231,10 +231,10 @@ public class ChooseItineraryActivity extends Activity {
 	}
 	
 	private void setUpCamera(){				
-		LatLngBounds bounds = new LatLngBounds.Builder().include(IGlobalValues.ESTANH_REDON).build();                
+		LatLngBounds bounds = new LatLngBounds.Builder().include(Util.ESTANH_REDON).build();                
 		if(routeTable.size()>0){
 			if(routeTable.size()==1){
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(IGlobalValues.ESTANH_REDON, 11));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Util.ESTANH_REDON, 11));
 			}else{
 				Enumeration<Marker> markers = routeTable.keys();
 				while(markers.hasMoreElements()){

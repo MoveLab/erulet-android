@@ -19,7 +19,7 @@ import com.j256.ormlite.table.TableUtils;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 102;
+	public static final int DATABASE_VERSION = 103;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		

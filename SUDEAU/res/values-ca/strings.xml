@@ -133,5 +133,8 @@
     <string name="security_recomm">Normes de comportament i recomanacions de seguretat</string>
     <string name="credits">Crèdits</string>
     <string name="trip_selection">Selecció d\'Itineraris</string>
+    
+    <string name="trip_start">Inici ruta</string>
+    <string name="trip_end">Fi ruta</string>
 	
 </resources>

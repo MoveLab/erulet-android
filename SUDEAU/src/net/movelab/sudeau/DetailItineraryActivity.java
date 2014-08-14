@@ -85,6 +85,7 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -103,9 +104,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.geometry.Point;
 import com.google.maps.android.projection.SphericalMercatorProjection;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 public class DetailItineraryActivity extends Activity 
 	implements 	GooglePlayServicesClient.ConnectionCallbacks,
@@ -128,16 +131,18 @@ public class DetailItineraryActivity extends Activity
 	private String stepBeingEditedId;
 	private Step currentStep;
 	// Route selected in choose itinerary activity
-	private Route selectedRoute;
+	private Route selectedRoute;	
 	private Polyline selectedRoutePolyLine;
 	private List<Circle> selectedRoutePoints;
+	private List<Step> selectedRouteSteps;
+	private List<Marker> directionMarkers;
 	
 	private Route routeInProgress;
 	private ArrayList<Step> highLightedSteps;
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
 	//private Polyline perpPolyLine;
-	private Hashtable<Marker, Step> currentRouteMarkers;
+	private Hashtable<Marker, Step> selectedRouteMarkers;
 	private Hashtable<Marker, Step> routeInProgressMarkers;
 	private Vibrator v;
 
@@ -159,7 +164,8 @@ public class DetailItineraryActivity extends Activity
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	private EruletApp app;
 	private MapObjectsFactory mObjFactory;
-	private CountDownTimer countDown;	
+	private CountDownTimer countDown;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +204,7 @@ public class DetailItineraryActivity extends Activity
 						Intent i = new Intent(DetailItineraryActivity.this,
 								CompassActivity.class);
 						if(selectedMarker!=null){
-							Step s = currentRouteMarkers.get(selectedMarker);
+							Step s = selectedRouteMarkers.get(selectedMarker);
 							if(s!=null){
 								i.putExtra("idStep", s.getId());
 							}
@@ -375,15 +381,24 @@ public class DetailItineraryActivity extends Activity
 				fixReceiver.destroy();
 				fixReceiver = null;
 				//Re-display selected route
-				updateCurrentRoute();
+				resetSelectedRouteMarkers();
+				updateSelectedRoute();
 		}
+	}
+	
+	private void resetSelectedRouteMarkers(){
+		Enumeration<Marker> e = selectedRouteMarkers.keys();
+		while(e.hasMoreElements()){
+			e.nextElement().remove();
+		}
+		selectedRouteMarkers.clear();
 	}
 
 	private void saveHighLight(HighLight h) {
 		Step s = DataContainer.findStepById(stepBeingEditedId, app.getDataBaseHelper());
 		if (s == null) {
 			// Something has gone very wrong
-			if (IGlobalValues.DEBUG) {
+			if (Util.DEBUG) {
 				Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);
 			}
 		} else {			
@@ -475,14 +490,11 @@ public class DetailItineraryActivity extends Activity
 
 	private void startOrResumeTracking() {
 		if (routeMode > 0) {
-//			Intent intent = new Intent(getString(R.string.internal_message_id)
-//					+ Util.MESSAGE_SCHEDULE);
-//			sendBroadcast(intent);
 			app.startTrackingService();
 			fixFilter = new IntentFilter(getResources().getString(
 					R.string.internal_message_id)
 					+ Util.MESSAGE_FIX_RECORDED);
-			fixReceiver = new FixReceiver(mMap);
+			fixReceiver = new FixReceiver(mMap,selectedRouteMarkers);
 			registerReceiver(fixReceiver, fixFilter);						
 		}
 	}
@@ -579,7 +591,7 @@ public class DetailItineraryActivity extends Activity
 		selectedRoutePoints = new ArrayList<Circle>();
 		setUpRoutes();
 		setUpMapIfNeeded();
-		updateCurrentRoute();
+		updateSelectedRoute();
 		if (fixReceiver != null) {
 			fixReceiver.updateTrackInProgress();
 		}
@@ -678,7 +690,7 @@ public class DetailItineraryActivity extends Activity
 			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 				@Override
 				public void onInfoWindowClick(Marker marker) {
-					Step s = currentRouteMarkers.get(marker);
+					Step s = selectedRouteMarkers.get(marker);
 					boolean isUserMarker = false;
 					if (s == null) {
 						if (routeInProgressMarkers != null) {
@@ -745,7 +757,7 @@ public class DetailItineraryActivity extends Activity
 							.findViewById(R.id.info_snippet);
 					TextView title = (TextView) myContentView
 							.findViewById(R.id.info_title);
-					Step s = currentRouteMarkers.get(marker);
+					Step s = selectedRouteMarkers.get(marker);
 					boolean isUserMarker = false;
 					if (s == null) {
 						if (routeInProgressMarkers == null) {
@@ -873,12 +885,14 @@ public class DetailItineraryActivity extends Activity
 			mMap.setOnMapClickListener(new OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng point) {
-					Step nearestStepToTap = getRouteInProgressNearestStep(
-							point, TAP_TOLERANCE_DIST);
-					if (nearestStepToTap == null) {
-						selectedMarker = null;
-					} else {
-						showAddMarkerOnTapDialog(nearestStepToTap);
+					if(routeMode==1 | routeMode==2){
+						Step nearestStepToTap = getRouteInProgressNearestStep(
+								point, TAP_TOLERANCE_DIST);
+						if (nearestStepToTap == null) {
+							selectedMarker = null;
+						} else {
+							showAddMarkerOnTapDialog(nearestStepToTap);
+						}
 					}
 					// if(bogus_location != null){
 					// bogus_location.remove();
@@ -905,6 +919,16 @@ public class DetailItineraryActivity extends Activity
 					// pointInTrack.longitude)
 					// .icon(BitmapDescriptorFactory
 					// .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+				}
+			});
+			mMap.setOnMarkerClickListener(new OnMarkerClickListener() {				
+				@Override
+				public boolean onMarkerClick(Marker marker) {
+					// TODO Auto-generated method stub
+					if(marker.isFlat()){
+						return true;
+					}
+					return false;
 				}
 			});
 		}
@@ -1087,14 +1111,7 @@ public class DetailItineraryActivity extends Activity
 					hl.getName(), 
 					hl.getLongText(),
 					hl.getType());
-//			Marker m = mMap
-//					.addMarker(new MarkerOptions()
-//							.position(
-//									new LatLng(step.getLatitude(), step
-//											.getLongitude()))
-//							.title(hl.getName()).snippet(hl.getLongText())
-//							.icon(BitmapDescriptorFactory.defaultMarker(hue)));
-			currentRouteMarkers.put(m, step);
+			selectedRouteMarkers.put(m, step);
 		}
 	}
 
@@ -1155,24 +1172,68 @@ public class DetailItineraryActivity extends Activity
 		}
 	}
 
-	private void updateCurrentRoute() {
-		if (currentRouteMarkers == null) {
-			currentRouteMarkers = new Hashtable<Marker, Step>();
+	private void updateSelectedRoute() {
+		if (selectedRouteMarkers == null) {
+			selectedRouteMarkers = new Hashtable<Marker, Step>();
 		}
 		clearSelectedRoute();
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = selectedRoute.getTrack();
-		List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
-		for (int j = 0; j < steps.size(); j++) {
-			Step step = steps.get(j);
+		if(selectedRouteSteps==null){
+			selectedRouteSteps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
+		}
+		refreshDecorations(selectedRouteSteps);
+		for (int j = 0; j < selectedRouteSteps.size(); j++) {
+			Step step = selectedRouteSteps.get(j);
 			rectOptions
 					.add(new LatLng(step.getLatitude(), step.getLongitude()));
-			addPrecisionRadius(step);
+			//Enable this maybe on options, obscures map too much
+			//addPrecisionRadius(step);
 			addMarkerIfNeeded(step);
 		}
 		rectOptions.zIndex(1);
 		rectOptions.color(Color.GRAY);
 		selectedRoutePolyLine = mMap.addPolyline(rectOptions);		
+	}
+	
+	private void refreshDecorations(List<Step> steps){
+		if( directionMarkers == null ){
+			directionMarkers = new ArrayList<Marker>();
+		}else{
+			for(int i = 0; i < directionMarkers.size(); i++){
+				directionMarkers.get(i).remove();
+			}
+			directionMarkers.clear();
+		}
+		LatLng lastPosition = null;
+		int freq;		
+		if(steps.size() <= 10){
+			freq = 1;
+		}else{
+			freq = 3;
+		}
+		for(int i = 0; i < steps.size(); i++){
+			Step current = steps.get(i);			
+			LatLng currentPosition = new LatLng(
+					current.getLatitude(), 
+					current.getLongitude()
+					);
+			if(i % freq == 0){
+				if(currentPosition!=null && lastPosition !=null && !currentPosition.equals(lastPosition) ){
+					double angle = SphericalUtil.computeHeading(lastPosition, currentPosition);
+					double dist = SphericalUtil.computeDistanceBetween(lastPosition, currentPosition);
+					LatLng markerPosition = SphericalUtil.computeOffset(lastPosition, dist/2, angle);
+					directionMarkers.add(MapObjectsFactory.addDirectionMarker(mMap,markerPosition,angle));
+				}
+			}
+			if(i == 0){
+				MapObjectsFactory.addStartMarker(mMap, currentPosition, getString(R.string.trip_start));
+			}
+			if(i == (steps.size() - 1)){
+				MapObjectsFactory.addEndMarker(mMap, currentPosition, getString(R.string.trip_end));
+			}
+			lastPosition = new LatLng(currentPosition.latitude,currentPosition.longitude);			
+		}
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
@@ -1207,11 +1268,13 @@ public class DetailItineraryActivity extends Activity
 		private ArrayList<Step> stepsInProgress;
 		private Polyline trackInProgress;
 		private List<Circle> pointsInProgress;
+		private Hashtable<Marker, Step> selectedRouteMarkers;
 		private CameraUpdate cu;
 
-		public FixReceiver(GoogleMap mMap) {
+		public FixReceiver(GoogleMap mMap,Hashtable<Marker, Step> selectedRouteMarkers) {
 			super();
 			this.mMap = mMap;
+			this.selectedRouteMarkers=selectedRouteMarkers;
 			stepsInProgress = new ArrayList<Step>();
 			pointsInProgress = new ArrayList<Circle>();
 		}
@@ -1297,6 +1360,35 @@ public class DetailItineraryActivity extends Activity
 			}
 			return false;
 		}
+		
+		private void checkNearbyMarkers(LatLng receivedLocation){
+			//Enumeration<Step> e = selectedRouteMarkers.elements();
+			Enumeration<Marker> eM = selectedRouteMarkers.keys();
+			boolean found = false;
+			while(eM.hasMoreElements() && !found){
+				Marker m = eM.nextElement();
+				Step s = selectedRouteMarkers.get(m);
+				float[] results = new float[3];
+				Location.distanceBetween(
+						receivedLocation.latitude, 
+						receivedLocation.longitude,
+						s.getLatitude(), 
+						s.getLongitude(), 
+						results);
+				double effectivePopRadius = s.getPrecision();
+				if(effectivePopRadius < Util.MINIMUM_POP_DISTANCE_RADIUS){
+					effectivePopRadius = Util.MINIMUM_POP_DISTANCE_RADIUS;
+				}
+				if(effectivePopRadius > Util.MAXIMUM_POP_DISTANCE_RADIUS){
+					effectivePopRadius = Util.MAXIMUM_POP_DISTANCE_RADIUS;
+				}
+				if (results[0] <= effectivePopRadius) {
+					Log.i("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
+					found = true;
+					m.showInfoWindow();
+				}
+			}
+		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -1310,7 +1402,7 @@ public class DetailItineraryActivity extends Activity
 			LatLng location = new LatLng(lat, lng);
 			boolean locationExists = locationExists(location, stepsInProgress);
 			// Point is same as last, we don't add it to the track
-			if (IGlobalValues.DEBUG) {
+			if (Util.DEBUG) {
 				Log.d("onReceive", "Received new location " + lat + " " + lng
 						+ " t " + app.formatDateHoursMinutesSeconds(time) + " already logged");
 			}
@@ -1337,10 +1429,13 @@ public class DetailItineraryActivity extends Activity
 							DataContainer.getAndroidId(getContentResolver()), 
 							app.getDataBaseHelper());
 				}				
-				if (IGlobalValues.DEBUG) {
+				if (Util.DEBUG) {
 					Log.d("onReceive", "Received new location " + lat + " "
 							+ lng + " t " + app.formatDateHoursMinutesSeconds(time) );
 				}
+			}
+			if(routeMode==1){
+				checkNearbyMarkers(location);
 			}
 			updateTrackInProgress();
 		}
@@ -1380,7 +1475,7 @@ public class DetailItineraryActivity extends Activity
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		//Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-		if (IGlobalValues.DEBUG) {
+		if (Util.DEBUG) {
 			Log.d("onConnected", "Google play services connected");
 		}
 	}
@@ -1388,7 +1483,7 @@ public class DetailItineraryActivity extends Activity
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-		if (IGlobalValues.DEBUG) {
+		if (Util.DEBUG) {
 			Log.d("onDisconnected", "Google play services disconnected");
 		}
 	}

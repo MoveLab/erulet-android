@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.movelab.sudeau.IGlobalValues;
 import net.movelab.sudeau.Util;
 //import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.HighLight;
@@ -50,7 +49,7 @@ public class DataContainer {
 			}else{
 				retVal = "R_" + userId + "_1";
 			}
-			if(IGlobalValues.DEBUG){
+			if(Util.DEBUG){
 				Log.d("getRouteId","Returning route id" + retVal);
 			}
 			return retVal;
@@ -85,7 +84,7 @@ public class DataContainer {
 			}else{
 				retVal = "H_" + userId + "_1";
 			}
-			if(IGlobalValues.DEBUG){
+			if(Util.DEBUG){
 				Log.d("getHighLightId","Returning higlight id" + retVal);
 			}
 			return retVal;
@@ -117,14 +116,14 @@ public class DataContainer {
 	 */
 	public static Route createEmptyRoute(DataBaseHelper db, String userId){		
 		String idTrack = getTrackId(db, userId);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("createEmptyRoute","Getting track id " + idTrack);
 		}
 		Track t = new Track();
 		t.setId(idTrack);		
 		db.getTrackDataDao().create(t);
 		String idRoute = getRouteId(db, userId);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("createEmptyRoute","Getting route id " + idRoute);
 		}
 		Route r = new Route();
@@ -134,7 +133,7 @@ public class DataContainer {
 		r.setUserId(userId);
 		r.setTrack(t);
 		db.getRouteDataDao().create(r);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("createEmptyRoute","Route " + idRoute + " saved");
 		}
 		return r;
@@ -144,12 +143,12 @@ public class DataContainer {
 		//Track is already created
 		s.setTrack(t);		
 		String stepId = getStepId(db, userId);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("addStepToTrack","Getting step id " + stepId);
 		}
 		s.setId(stepId);
 		db.getStepDataDao().create(s);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("addStepToTrack","step " + stepId + " saved");
 		}
 		t.getSteps().add(s);		
@@ -160,12 +159,12 @@ public class DataContainer {
 		String hlId = getHighLightId(db, userId);
 		h.setId(hlId);		
 		db.getHlDataDao().create(h);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("addHighLightToStep","highlight " + hlId + " saved");
 		}
 		s.setHighlight(h);
 		db.getStepDataDao().update(s);
-		if(IGlobalValues.DEBUG){
+		if(Util.DEBUG){
 			Log.d("addHighLightToStep","step " + s.getId() + " updated (added highlight)");
 		}
 	}
@@ -226,7 +225,7 @@ public class DataContainer {
 			}else{
 				retVal = "T_" + userId + "_1";
 			}
-			if(IGlobalValues.DEBUG){
+			if(Util.DEBUG){
 				Log.d("getTrackId","Returning track id" + retVal);
 			}			
 			return retVal;
@@ -278,7 +277,7 @@ public class DataContainer {
 			}else{
 				retVal = "S_" + userId + "_1";
 			}
-			if(IGlobalValues.DEBUG){
+			if(Util.DEBUG){
 				Log.d("getTrackId","Returning step id" + retVal);
 			}			
 			return retVal;
@@ -1123,7 +1122,7 @@ public class DataContainer {
 		if(editedRoute.getTrack()!=null){
 			Track t = editedRoute.getTrack();
 			editedRoute.getTrack().setId(DataContainer.getTrackId(dataBaseHelper, android_id));
-			if (IGlobalValues.DEBUG) {
+			if (Util.DEBUG) {
 				Log.d("insertRoute", "Adding track - id " + t.getId());
 			}
 			try {
@@ -1141,7 +1140,7 @@ public class DataContainer {
 					if(s.getHighlight()!=null){
 						HighLight h = s.getHighlight();
 						h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
-						if (IGlobalValues.DEBUG) {
+						if (Util.DEBUG) {
 							Log.d("insertRoute", "Adding highlight - id " + h.getId());
 						}
 						try {
@@ -1150,7 +1149,7 @@ public class DataContainer {
 							Log.e("Inserting step", "Insert error " + ex.toString());
 						}
 					}
-					if (IGlobalValues.DEBUG) {
+					if (Util.DEBUG) {
 						Log.d("insertRoute", "Adding step - id " + s.getId() + " order "
 								+ s.getOrder());
 					}
