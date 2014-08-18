@@ -139,11 +139,11 @@ public class Route {
 		this.globalRating = globalRating;
 	}
 
-	private int getUserRating() {
+	public int getUserRating() {
 		return userRating;
 	}
 
-	private void setUserRating(int userRating) {
+	public void setUserRating(int userRating) {
 		this.userRating = userRating;
 	}
 	

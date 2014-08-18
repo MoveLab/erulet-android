@@ -51,6 +51,12 @@ public class JSONConverter {
 		if(j.has("localcarto")){
 			r.setLocalCarto(j.getString("localcarto"));
 		}
+		if(j.has("userrating")){
+			r.setUserRating(j.getInt("userrating"));
+		}
+		if(j.has("globalrating")){
+			r.setGlobalRating(j.getInt("globalrating"));
+		}
 		return r;
 	}
 	
@@ -162,6 +168,12 @@ public class JSONConverter {
 		if(j.has("type")){
 			h.setType(j.getInt("type"));
 		}
+		if(j.has("userrating")){
+			h.setUserRating(j.getInt("userrating"));
+		}
+		if(j.has("globalrating")){
+			h.setGlobalRating(j.getInt("globalrating"));
+		}
 		return h;
 	}
 	
@@ -189,6 +201,8 @@ public class JSONConverter {
 		j.put("name", h.getName());
 		j.put("radius", h.getRadius());
 		j.put("type", h.getType());
+		j.put("userrating", h.getUserRating());
+		j.put("globalrating", h.getGlobalRating());
 		return j;
 	}
 	
@@ -217,6 +231,8 @@ public class JSONConverter {
 		j.put("userid", r.getUserId());		
 		j.put("isuploaded", r.isUpLoaded());
 		j.put("localcarto", r.getLocalCarto());
+		j.put("userrating", r.getUserRating());
+		j.put("globalrating", r.getGlobalRating());
 		return j;
 	}
 	

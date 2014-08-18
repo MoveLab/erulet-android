@@ -134,7 +134,8 @@ public class MapObjectsFactory {
 		.position(position)
 		.title(start_text)
 		.anchor(0.5f, 0.5f)
-		.flat(true)
+		//Allow navigation to start and end markers
+		//.flat(true)
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.red)));
 	}
 
@@ -143,7 +144,8 @@ public class MapObjectsFactory {
 		.position(position)
 		.title(end_text)
 		.anchor(0.5f, 0.5f)
-		.flat(true)
+		//Allow navigation to start and end markers
+		//.flat(true)
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.green)));
 	}
 

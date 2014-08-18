@@ -30,6 +30,7 @@
 	<string name="name_null">Nom: no assignat</string>
 	<string name="name">Nom:</string>
 	<string name="point_no_name">El punt no té nom</string>
+	<string name="point_no_description">El punt no té descripció</string>
 	
 	<string name="distance">Distància:  </string>
 	<string name="current_location">Ubicació actual: </string>
@@ -136,5 +137,8 @@
     
     <string name="trip_start">Inici ruta</string>
     <string name="trip_end">Fi ruta</string>
+    
+    <string name="your_rating">La teva valoració</string>
+    <string name="global_rating">Valoració global</string>
 	
 </resources>

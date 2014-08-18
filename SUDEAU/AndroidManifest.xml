@@ -96,6 +96,9 @@
         </activity>
         <activity android:name="net.movelab.sudeau.RegistrationActivity"
             android:theme="@android:style/Theme.Holo">
+        </activity>        
+        <activity android:name="net.movelab.sudeau.DetailHighLightActivity"
+            android:theme="@android:style/Theme.Holo">
         </activity>
         
         <receiver android:name="net.movelab.sudeau.TrackingBroadcastReceiver" >

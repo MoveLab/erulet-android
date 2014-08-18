@@ -34,7 +34,6 @@ import android.widget.Toast;
 public class EditHighLightActivity extends Activity {	
 	
 	//TODO Enable default name for highlight
-	//TODO Allow adding video/pictures from album
 	//TODO Correctly scale image thumbnail (especially on edit)	
 	//TODO Create input validation
 	
@@ -265,23 +264,24 @@ public class EditHighLightActivity extends Activity {
     }
 	
 	private void createThumbnail() throws FileNotFoundException{		                        
-        FileInputStream fis;		
-		fis = new FileInputStream(currentPhoto);
-		thumbnail = BitmapFactory.decodeStream(fis);
-        thumbnail = Bitmap.createScaledBitmap(thumbnail, 96, 96, false);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);        
-        try {			
-			baos.flush();
-			baos.close();
-			fis.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			fis = null;
-			baos = null;
-		}
+//        FileInputStream fis;		
+//		fis = new FileInputStream(currentPhoto);
+//		thumbnail = BitmapFactory.decodeStream(fis);
+//        thumbnail = Bitmap.createScaledBitmap(thumbnail, 96, 96, false);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+//        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);        
+//        try {			
+//			baos.flush();
+//			baos.close();
+//			fis.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} finally {
+//			fis = null;
+//			baos = null;
+//		}        
+        thumbnail = Util.decodeSampledBitmapFromFile(currentPhoto.getAbsolutePath(), 96, 96);
 	}
 	
 	private void setUpInterface(){

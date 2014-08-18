@@ -19,7 +19,7 @@
         android:src="@drawable/nav_arrow" />
 
     <TextView
-        android:id="@+id/tvCompassActivityLabel"
+        android:id="@+id/tvHighLightDetailLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -32,12 +32,12 @@
         android:id="@+id/route_text_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvCompassActivityLabel"
+        android:layout_below="@+id/tvHighLightDetailLabel"
         android:layout_alignParentLeft="true"                       
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/tvWpName"
+            android:id="@+id/tvUserRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"

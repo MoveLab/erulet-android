@@ -21,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng;
 import net.movelab.sudeau.TrackingContentContract.Fixes;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -832,6 +834,80 @@ public class Util {
         } finally {
             f.close();
         }
+    }
+    
+    /**
+     * Image/picture stuff 
+     */
+    
+    /**
+     * Read bitmap dimensions and type
+     * @param pathName
+     * @return
+     */
+    public static BitmapFactory.Options getImageOptions(String pathName){
+    	BitmapFactory.Options options = new BitmapFactory.Options();
+    	options.inJustDecodeBounds = true;    	
+    	BitmapFactory.decodeFile(pathName, options);
+//    	int imageHeight = options.outHeight;
+//    	int imageWidth = options.outWidth;
+//    	String imageType = options.outMimeType;
+    	return options;
+    }
+
+    /**
+     * Computes inSampleSize, which is a reduction factor:
+     * i.e a 2048x1536 with inSampleSize 4 scales to 512x384
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    // Raw height and width of image
+    final int height = options.outHeight;
+    final int width = options.outWidth;
+    int inSampleSize = 1;
+
+    if (height > reqHeight || width > reqWidth) {
+
+        final int halfHeight = height / 2;
+        final int halfWidth = width / 2;
+
+        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+        // height and width larger than the requested height and width.
+        while ((halfHeight / inSampleSize) > reqHeight
+                && (halfWidth / inSampleSize) > reqWidth) {
+            inSampleSize *= 2;
+        }
+    }
+
+    	return inSampleSize;
+    }
+    
+    /**
+     * Return scaled down bitmap to load into limited size ImageView
+     * 
+     * @param pathName
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static Bitmap decodeSampledBitmapFromFile(String pathName,
+            int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(pathName,options);        
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(pathName,options);
     }
 
 }

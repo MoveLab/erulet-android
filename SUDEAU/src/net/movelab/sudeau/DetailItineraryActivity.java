@@ -1,18 +1,7 @@
 package net.movelab.sudeau;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -21,13 +10,9 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.geometry.LineSegment;
-import net.movelab.sudeau.geometry.SnapCalculatorV2;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
@@ -114,13 +99,7 @@ public class DetailItineraryActivity extends Activity
 	implements 	GooglePlayServicesClient.ConnectionCallbacks,
 				GooglePlayServicesClient.OnConnectionFailedListener {
 
-	// TODO Unify geometry and marker drawing functions
 	// TODO Enable pop-ups while tracking
-	// TODO Use different markers for edited/empty waypoints
-	// TODO Use numbered markers
-	// TODO allow navigation (compass) without markers
-	// TODO find way to mark clearly last recorded user position (not with a
-	// marker)
 
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
@@ -136,6 +115,8 @@ public class DetailItineraryActivity extends Activity
 	private List<Circle> selectedRoutePoints;
 	private List<Step> selectedRouteSteps;
 	private List<Marker> directionMarkers;
+	private Marker arrivalMarker;
+	private Marker startMarker;
 	
 	private Route routeInProgress;
 	private ArrayList<Step> highLightedSteps;
@@ -159,6 +140,9 @@ public class DetailItineraryActivity extends Activity
 	private float TAP_TOLERANCE_DIST = 100;
 	static final int HIGHLIGHT_INFO_REQUEST = 1;
 	static final int END_TRIP = 2;
+	//MINI_KIND
+	static final int IMAGE_THUMBNAIL_WIDTH = 384;
+	static final int IMAGE_THUMBNAIL_HEIGTH = 512;
 	
 	private LocationClient locationClient;
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -207,6 +191,16 @@ public class DetailItineraryActivity extends Activity
 							Step s = selectedRouteMarkers.get(selectedMarker);
 							if(s!=null){
 								i.putExtra("idStep", s.getId());
+							}
+							if(selectedMarker.equals(startMarker)){
+								if(selectedRouteSteps!=null){
+									i.putExtra("idStep", selectedRouteSteps.get(0).getId());
+								}
+							}
+							if(selectedMarker.equals(arrivalMarker)){
+								if(selectedRouteSteps!=null){
+									i.putExtra("idStep", selectedRouteSteps.get(selectedRouteSteps.size()-1).getId());
+								}
 							}
 						}
 						i.putExtra("wasTracking", app.isTrackingServiceOn());
@@ -698,44 +692,52 @@ public class DetailItineraryActivity extends Activity
 							isUserMarker = true;
 						}
 					}
-					if (s == null) {
-//						Intent i = new Intent(DetailItineraryActivity.this,
-//								DetailItineraryActivity.class);
-//						Route r = DataContainer.getRouteEcosystem(
-//								selectedRoute, dataBaseHelper);
-//						i.putExtra("idRoute", r.getId());
-//						i.putExtra("mode", 0);
-//						startActivity(i);
+					if (s.getReference() != null) {
+						Intent i = new Intent(DetailItineraryActivity.this,
+								HTMLViewerActivity.class);
+						i.putExtra("idReference", s.getReference().getId());
+						startActivity(i);
 					} else {
-						if (s.getReference() != null) {
-							Intent i = new Intent(DetailItineraryActivity.this,
-									HTMLViewerActivity.class);
-							i.putExtra("idReference", s.getReference().getId());
-							startActivity(i);
-						} else {
-							if (routeMode == 1 || routeMode == 2) {
-								Intent i = new Intent(
-										DetailItineraryActivity.this,
-										EditHighLightActivity.class);
-								stepBeingEditedId = s.getId();
-								i.putExtra("lat",
-										Double.toString(s.getLatitude()));
-								i.putExtra("long",
-										Double.toString(s.getLongitude()));
-								i.putExtra("alt",
-										Double.toString(s.getAltitude()));								
-								i.putExtra("date",
-										app.formatDateDayMonthYear(s.getAbsoluteTime()));
-								if (s.getHighlight() != null) {
-									i.putExtra("hlname", s.getHighlight()
-											.getName());
-									i.putExtra("hllongtext", s.getHighlight()
-											.getLongText());
-									i.putExtra("hlimagepath", s.getHighlight()
-											.getMediaPath());
-								}
-								startActivityForResult(i,
-										HIGHLIGHT_INFO_REQUEST);
+						//We are editing. On click, if it's an user marker we go to
+						//Edit highlight activity
+						if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
+							Intent i = new Intent(
+									DetailItineraryActivity.this,
+									EditHighLightActivity.class);
+							stepBeingEditedId = s.getId();
+							i.putExtra("lat",
+									Double.toString(s.getLatitude()));
+							i.putExtra("long",
+									Double.toString(s.getLongitude()));
+							i.putExtra("alt",
+									Double.toString(s.getAltitude()));								
+							i.putExtra("date",
+									app.formatDateDayMonthYear(s.getAbsoluteTime()));
+							if (s.getHighlight() != null) {
+								i.putExtra("hlname", s.getHighlight()
+										.getName());
+								i.putExtra("hllongtext", s.getHighlight()
+										.getLongText());
+								i.putExtra("hlimagepath", s.getHighlight()
+										.getMediaPath());
+							}
+							startActivityForResult(i,
+									HIGHLIGHT_INFO_REQUEST);
+						}else{ //Go to highlight detail (if there's some media to show)
+							if(s.getHighlight()!=null && s.getHighlight().getMediaPath() != null){
+								JSONObject hl_s;
+								try {
+									hl_s = JSONConverter.stepToJSONObject(s);
+									if(hl_s != null){
+										String s_j_string = hl_s.toString();  
+										Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
+										i.putExtra("step_j", s_j_string);
+										startActivity(i);
+									}
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}								
 							}
 						}
 					}
@@ -787,10 +789,15 @@ public class DetailItineraryActivity extends Activity
 										Bitmap bm = ThumbnailUtils
 												.createVideoThumbnail(
 														file,
-														android.provider.MediaStore.Video.Thumbnails.MICRO_KIND);
+														android.provider.MediaStore.Video.Thumbnails.MINI_KIND);
 										picture.setImageBitmap(bm);
 									} else {
-										picture.setImageURI(Uri.parse(file));
+										file = file.replace("file://", "");
+										//loadBitmapThumbnailToImageView(file, IMAGE_THUMBNAIL_WIDTH, IMAGE_THUMBNAIL_HEIGTH, picture);
+										picture.setImageBitmap(Util.decodeSampledBitmapFromFile(
+												file, 
+												IMAGE_THUMBNAIL_WIDTH, 
+												IMAGE_THUMBNAIL_HEIGTH));										//
 									}
 								} else {
 									picture.setImageResource(R.drawable.ic_itinerary_icon);
@@ -814,50 +821,12 @@ public class DetailItineraryActivity extends Activity
 													android.provider.MediaStore.Video.Thumbnails.MINI_KIND);
 									picture.setImageBitmap(bm);
 								} else {
-									FileInputStream fis = null;
-									ByteArrayOutputStream baos = null;
-									try {
-										file = file.replace("file://", "");
-										fis = new FileInputStream(
-												new File(file));
-										Bitmap thumbnail = BitmapFactory
-												.decodeStream(fis);
-										thumbnail = Bitmap.createScaledBitmap(
-												thumbnail, 96, 96, false);
-										baos = new ByteArrayOutputStream();
-										thumbnail.compress(
-												Bitmap.CompressFormat.JPEG,
-												100, baos);
-										picture.setImageBitmap(thumbnail);
-										// picture.setImageURI( Uri.parse(file)
-										// );
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} finally {
-										if (fis != null) {
-											try {
-												fis.close();
-											} catch (IOException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											} finally {
-												fis = null;
-											}
-										}
-										if (baos != null) {
-											try {
-												baos.close();
-											} catch (IOException e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											} finally {
-												baos = null;
-											}
-										}
-									}
+									file = file.replace("file://", "");
+									//loadBitmapThumbnailToImageView(file, IMAGE_THUMBNAIL_WIDTH, IMAGE_THUMBNAIL_HEIGTH, picture);
+									picture.setImageBitmap(Util.decodeSampledBitmapFromFile(
+											file, 
+											IMAGE_THUMBNAIL_WIDTH, 
+											IMAGE_THUMBNAIL_HEIGTH));
 								}
 							} else {
 								picture.setImageResource(R.drawable.ic_itinerary_icon);
@@ -870,14 +839,6 @@ public class DetailItineraryActivity extends Activity
 						// Is the current position marker
 						title.setText(marker.getTitle());
 						snippet.setText(marker.getSnippet());
-						// Is ecosystem
-						// Route ecosystem = DataContainer.getRouteEcosystem(
-						// selectedRoute, dataBaseHelper);
-						// title.setText(ecosystem.getName());
-						// snippet.setText(ecosystem.getDescription());
-						// ImageView picture = (ImageView) myContentView
-						// .findViewById(R.id.info_pic);
-						// picture.setImageResource(R.drawable.ic_launcher);
 					}
 					return myContentView;
 				}
@@ -932,6 +893,16 @@ public class DetailItineraryActivity extends Activity
 				}
 			});
 		}
+	}
+	
+	private void loadBitmapThumbnailToImageView(
+			String path, 
+			int width, 
+			int height, 
+			ImageView imageView){
+		BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+		task.execute(path, Integer.toString(width),Integer.toString(height));
+		
 	}
 
 	private boolean markerAlreadyOnStep(Step s) {
@@ -1179,9 +1150,7 @@ public class DetailItineraryActivity extends Activity
 		clearSelectedRoute();
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = selectedRoute.getTrack();
-		if(selectedRouteSteps==null){
-			selectedRouteSteps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
-		}
+		selectedRouteSteps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
 		refreshDecorations(selectedRouteSteps);
 		for (int j = 0; j < selectedRouteSteps.size(); j++) {
 			Step step = selectedRouteSteps.get(j);
@@ -1206,33 +1175,35 @@ public class DetailItineraryActivity extends Activity
 			directionMarkers.clear();
 		}
 		LatLng lastPosition = null;
-		int freq;		
-		if(steps.size() <= 10){
-			freq = 1;
-		}else{
-			freq = 3;
-		}
-		for(int i = 0; i < steps.size(); i++){
-			Step current = steps.get(i);			
-			LatLng currentPosition = new LatLng(
-					current.getLatitude(), 
-					current.getLongitude()
-					);
-			if(i % freq == 0){
-				if(currentPosition!=null && lastPosition !=null && !currentPosition.equals(lastPosition) ){
-					double angle = SphericalUtil.computeHeading(lastPosition, currentPosition);
-					double dist = SphericalUtil.computeDistanceBetween(lastPosition, currentPosition);
-					LatLng markerPosition = SphericalUtil.computeOffset(lastPosition, dist/2, angle);
-					directionMarkers.add(MapObjectsFactory.addDirectionMarker(mMap,markerPosition,angle));
+		if(steps != null){
+			int freq;		
+			if(steps.size() <= 10){
+				freq = 1;
+			}else{
+				freq = 3;
+			}
+			for(int i = 0; i < steps.size(); i++){
+				Step current = steps.get(i);			
+				LatLng currentPosition = new LatLng(
+						current.getLatitude(), 
+						current.getLongitude()
+						);
+				if(i % freq == 0){
+					if(currentPosition!=null && lastPosition !=null && !currentPosition.equals(lastPosition) ){
+						double angle = SphericalUtil.computeHeading(lastPosition, currentPosition);
+						double dist = SphericalUtil.computeDistanceBetween(lastPosition, currentPosition);
+						LatLng markerPosition = SphericalUtil.computeOffset(lastPosition, dist/2, angle);
+						directionMarkers.add(MapObjectsFactory.addDirectionMarker(mMap,markerPosition,angle));
+					}
 				}
+				if(i == 0){
+					startMarker = MapObjectsFactory.addStartMarker(mMap, currentPosition, getString(R.string.trip_start));
+				}
+				if(i == (steps.size() - 1)){
+					arrivalMarker = MapObjectsFactory.addEndMarker(mMap, currentPosition, getString(R.string.trip_end));
+				}
+				lastPosition = new LatLng(currentPosition.latitude,currentPosition.longitude);			
 			}
-			if(i == 0){
-				MapObjectsFactory.addStartMarker(mMap, currentPosition, getString(R.string.trip_start));
-			}
-			if(i == (steps.size() - 1)){
-				MapObjectsFactory.addEndMarker(mMap, currentPosition, getString(R.string.trip_end));
-			}
-			lastPosition = new LatLng(currentPosition.latitude,currentPosition.longitude);			
 		}
 	}
 
