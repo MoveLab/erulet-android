@@ -895,15 +895,15 @@ public class DetailItineraryActivity extends Activity
 		}
 	}
 	
-	private void loadBitmapThumbnailToImageView(
-			String path, 
-			int width, 
-			int height, 
-			ImageView imageView){
-		BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-		task.execute(path, Integer.toString(width),Integer.toString(height));
-		
-	}
+//	private void loadBitmapThumbnailToImageView(
+//			String path, 
+//			int width, 
+//			int height, 
+//			ImageView imageView){
+//		BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+//		task.execute(path, Integer.toString(width),Integer.toString(height));
+//		
+//	}
 
 	private boolean markerAlreadyOnStep(Step s) {
 		if (routeInProgressMarkers == null

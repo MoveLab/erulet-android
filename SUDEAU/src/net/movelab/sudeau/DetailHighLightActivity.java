@@ -10,14 +10,18 @@ import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.graphics.Point;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class DetailHighLightActivity extends Activity {
 	
 	private EruletApp app;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,9 @@ public class DetailHighLightActivity extends Activity {
 		TextView alttxt =  (TextView)findViewById(R.id.tvHlAlt);
 		TextView nameTxt =  (TextView)findViewById(R.id.tvHlNameLabel);
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
+		progressBar = (ProgressBar)findViewById(R.id.pbImageLoad);
+		progressBar.setIndeterminate(true);
+		progressBar.setVisibility(View.VISIBLE);
 		
 		ImageView ivType = (ImageView)findViewById(R.id.highLightTypeIv);
 		if(s.getHighlight()!=null){
@@ -74,7 +81,8 @@ public class DetailHighLightActivity extends Activity {
 //			display.getSize(size);
 //			int width = size.x;
 //			int height = size.y;
-			ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));
+			//ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));
+			loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
 		}
 		
 		String date = app.formatDateDayMonthYear(s.getAbsoluteTime()) + " " + app.formatDateHoursMinutesSeconds(new Date(s.getAbsoluteTimeMillis()));
@@ -94,6 +102,16 @@ public class DetailHighLightActivity extends Activity {
 		lattxt.setText(getString(R.string.latitude) + " " +  lat);
 		longtxt.setText(getString(R.string.longitude) + " " +  llong);
 		alttxt.setText(getString(R.string.altitude) + " " +  alt);
+	}
+	
+	private void loadBitmapThumbnailToImageView(
+			String path, 
+			int width, 
+			int height, 
+			ImageView imageView, ProgressBar progressBar){
+		BitmapWorkerTask task = new BitmapWorkerTask(imageView,progressBar);
+		task.execute(path, Integer.toString(width),Integer.toString(height));
+		
 	}
 
 }
