@@ -9,6 +9,7 @@ import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -20,6 +21,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -27,6 +30,9 @@ public class DetailHighLightActivity extends Activity {
 	
 	private EruletApp app;
 	private ProgressBar progressBar;
+	private SharedPreferences.Editor mPrefEditor;
+	private RatingBar myRating;
+	private Step step;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +42,19 @@ public class DetailHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		Bundle extras = getIntent().getExtras();
-		Step s = null;
+		mPrefEditor = app.getPrefs().edit();
+		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
 			String step_json = extras.getString("step_j");
 			try {
-				s = JSONConverter.jsonObjectToStep(new JSONObject(step_json));
+				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		if(s!=null){
-			setupUI(s);
+		if(step!=null){
+			setupUI(step);
 		}
 	}
 	
@@ -59,6 +65,23 @@ public class DetailHighLightActivity extends Activity {
 		TextView alttxt =  (TextView)findViewById(R.id.tvHlAlt);
 		TextView nameTxt =  (TextView)findViewById(R.id.tvHlNameLabel);
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
+		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
+		globalRating.setStepSize(1.0f);
+		
+		myRating = (RatingBar)findViewById(R.id.ratBarUser);
+		myRating.setStepSize(1.0f);
+		float userRating = app.getPrefs().getInt(s.getId(), 0);
+		myRating.setRating(userRating);
+		
+		myRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
+			@Override
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+					boolean fromUser) {				
+				mPrefEditor.putInt(step.getId(), (int)rating);				
+            	mPrefEditor.commit();            	
+			}
+		});
+		
 		progressBar = (ProgressBar)findViewById(R.id.pbImageLoad);
 		progressBar.setIndeterminate(true);
 		progressBar.setVisibility(View.VISIBLE);
@@ -113,8 +136,11 @@ public class DetailHighLightActivity extends Activity {
 		String alt = Double.toString(s.getAltitude());
 		
 		String name = getString(R.string.point_no_name);
-		if(s.getHighlight()!=null && s.getHighlight().getName()!=null && !s.getHighlight().getName().trim().equalsIgnoreCase("")){
-			name = s.getHighlight().getName();
+		if(s.getHighlight()!=null && s.getHighlight().getName()!=null){
+			if(!s.getHighlight().getName().trim().equalsIgnoreCase("")){
+				name = s.getHighlight().getName();
+			}
+			globalRating.setRating( s.getHighlight().getGlobalRating() );
 		}
 		String description = getString(R.string.point_no_description);		
 		
@@ -123,7 +149,7 @@ public class DetailHighLightActivity extends Activity {
 		datatxt.setText(getString(R.string.date) + " " + date);
 		lattxt.setText(getString(R.string.latitude) + " " +  lat);
 		longtxt.setText(getString(R.string.longitude) + " " +  llong);
-		alttxt.setText(getString(R.string.altitude) + " " +  alt);
+		alttxt.setText(getString(R.string.altitude) + " " +  alt);		
 	}
 	
 	private void loadBitmapThumbnailToImageView(
