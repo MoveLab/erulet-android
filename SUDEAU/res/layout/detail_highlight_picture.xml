@@ -33,11 +33,18 @@
     
     </LinearLayout>
     
+    <View
+    android:layout_width="fill_parent"
+    android:layout_height="1dp"
+    android:background="@android:color/darker_gray"/>
+    
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical" >
 
         <ProgressBar
             android:id="@+id/pbImageLoad"
@@ -50,8 +57,18 @@
 	    android:layout_width="wrap_content"        
 	    android:layout_height="wrap_content"           
 	    android:contentDescription="@string/app_name"/>
+
+	    <VideoView
+	        android:id="@+id/highLightVideo"
+	        android:layout_width="200dp"
+	        android:layout_height="200dp" />
 	    
     </LinearLayout>
+    
+    <View
+    android:layout_width="fill_parent"
+    android:layout_height="1dp"
+    android:background="@android:color/darker_gray"/>
 
     <TextView
         android:id="@+id/tvHlNameLabel"
@@ -103,6 +120,11 @@
             android:textSize="12sp" />
     </LinearLayout>
 
+    <View
+    android:layout_width="fill_parent"
+    android:layout_height="1dp"
+    android:background="@android:color/darker_gray"/>
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,8 +136,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/your_rating"
-            android:textSize="15sp" />
+            android:text="@string/your_rating"/>
 
         <RatingBar
             android:id="@+id/ratBarUser"
@@ -135,8 +156,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/global_rating"
-            android:textSize="15sp" />
+            android:text="@string/global_rating"/>
         <RatingBar
             android:id="@+id/ratBarGlobal"
             android:layout_width="wrap_content"

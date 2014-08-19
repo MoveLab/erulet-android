@@ -70,7 +70,8 @@ public class MapObjectsFactory {
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop);
 				break;
 			default:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_empty);
 				break;
 		}
 		return bm;

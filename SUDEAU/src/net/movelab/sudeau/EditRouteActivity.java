@@ -1,5 +1,7 @@
 package net.movelab.sudeau;
 
+import java.util.Hashtable;
+
 import org.json.JSONException;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -141,18 +143,22 @@ public class EditRouteActivity extends Activity {
 				// TODO Auto-generated method stub
 				changed = true;
 			}
-		});
+		});						
 		
-		RouteInfoFormatter rif = new RouteInfoFormatter(editedRoute);
+		RouteInfoFormatter rif = new RouteInfoFormatter(editedRoute,app.getApplicationContext());
 		
 		TextView tvTotalDist = (TextView)findViewById(R.id.tvTotalDist);
 		TextView tvTotalTime = (TextView)findViewById(R.id.tvTotalTime);
+		TextView tvAvgSpeed = (TextView)findViewById(R.id.tvAvgSpeed);
+		TextView tvAvgSampleDistance = (TextView)findViewById(R.id.tvAvgSampleDistance);
 		TextView tvPointsNumber = (TextView)findViewById(R.id.tvPointsNumber);
 		TextView tvHighLightsNumber = (TextView)findViewById(R.id.tvHighLightsNumber);
 		TextView tvRamp = (TextView)findViewById(R.id.tvRamp);
 		
 		tvTotalDist.setText(rif.getFormattedTotalDistance());
 		tvTotalTime.setText(rif.getFormattedTotalTime());
+		tvAvgSpeed.setText(rif.getFormattedAverageSpeedKmH());
+		tvAvgSampleDistance.setText(rif.getFormattedAverageSampleDistanceMeters());
 		tvPointsNumber.setText(rif.getFormattedNumberPointsInTrack());
 		tvHighLightsNumber.setText(rif.getFormattedNumberHighlights());
 		tvRamp.setText(rif.getFormattedRamp());

@@ -87,7 +87,7 @@ public class EditHighLightActivity extends Activity {
 			if(longText!=null){
 				tvLongText.setText(longText);
 			}
-			if(imagePath!=null){
+			if(imagePath!=null && !imagePath.trim().equalsIgnoreCase("")){
 				Uri uri = Uri.parse(imagePath);
 				if(imagePath.contains("mp4")){					
 					currentVideo = new File(uri.getPath());

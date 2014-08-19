@@ -12,7 +12,7 @@ public class VideoPlayActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.video_activity);	
-		VideoView view = (VideoView)findViewById(R.id.videoView1);		
+		VideoView view = (VideoView)findViewById(R.id.highLightVideo);		
 		String path = "file:///sdcard/test_n.mp4";
 		view.setVideoURI(Uri.parse(path));
 		view.start();

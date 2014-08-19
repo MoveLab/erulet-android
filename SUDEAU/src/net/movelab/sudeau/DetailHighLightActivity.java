@@ -10,13 +10,18 @@ import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.graphics.Point;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 public class DetailHighLightActivity extends Activity {
 	
@@ -74,15 +79,32 @@ public class DetailHighLightActivity extends Activity {
 		}
 		
 		ImageView ivPicture = (ImageView)findViewById(R.id.highLightPicture);
+		VideoView ivVideo = (VideoView)findViewById(R.id.highLightVideo);
 		if(s.getHighlight()!=null && s.getHighlight().getMediaPath()!=null && !s.getHighlight().getMediaPath().trim().equalsIgnoreCase("")){
 			String pathName = s.getHighlight().getMediaPath().replace("file://", "");
+			if(pathName.contains("mp4")){
+				progressBar.setVisibility(View.GONE);
+				ivPicture.setVisibility(View.GONE);
+				ivVideo.setVideoURI(Uri.parse(pathName));
+				ivVideo.setMediaController(new MediaController(this));
+				ivVideo.setOnPreparedListener(new OnPreparedListener() {					
+					@Override
+					public void onPrepared(MediaPlayer mp) {
+						mp.setLooping(true);
+					}
+				});
+				ivVideo.requestFocus();
+				ivVideo.start();
+			}else{
+				ivVideo.setVisibility(View.GONE);
+				loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
+			}
 //			Display display = getWindowManager().getDefaultDisplay();
 //			Point size = new Point();
 //			display.getSize(size);
 //			int width = size.x;
 //			int height = size.y;
-			//ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));
-			loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
+			//ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));			
 		}
 		
 		String date = app.formatDateDayMonthYear(s.getAbsoluteTime()) + " " + app.formatDateHoursMinutesSeconds(new Date(s.getAbsoluteTimeMillis()));

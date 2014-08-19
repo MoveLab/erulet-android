@@ -99,12 +99,8 @@ public class DetailItineraryActivity extends Activity
 	implements 	GooglePlayServicesClient.ConnectionCallbacks,
 				GooglePlayServicesClient.OnConnectionFailedListener {
 
-	// TODO Enable pop-ups while tracking
-
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
-	//private DataBaseHelper dataBaseHelper;	
-	//private Marker interestAreaMarker;
 	private Marker selectedMarker;
 	private Marker lastPositionMarker;	
 	private String stepBeingEditedId;
@@ -122,10 +118,8 @@ public class DetailItineraryActivity extends Activity
 	private ArrayList<Step> highLightedSteps;
 	private IntentFilter fixFilter;
 	private FixReceiver fixReceiver;
-	//private Polyline perpPolyLine;
 	private Hashtable<Marker, Step> selectedRouteMarkers;
-	private Hashtable<Marker, Step> routeInProgressMarkers;
-	private Vibrator v;
+	private Hashtable<Marker, Step> routeInProgressMarkers;	
 
 	private ImageButton btn_compass;
 	private ImageButton btn_stop_tracking;
@@ -138,7 +132,7 @@ public class DetailItineraryActivity extends Activity
 	private int second_id = Menu.FIRST + 1;
 
 	private float TAP_TOLERANCE_DIST = 100;
-	static final int HIGHLIGHT_INFO_REQUEST = 1;
+	static final int HIGHLIGHT_EDIT_REQUEST = 1;
 	static final int END_TRIP = 2;
 	//MINI_KIND
 	static final int IMAGE_THUMBNAIL_WIDTH = 384;
@@ -167,10 +161,7 @@ public class DetailItineraryActivity extends Activity
 			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this,
 					requestCode);
 			dialog.show();
-		} else { //Proceed normally
-
-			v = (Vibrator) getBaseContext().getSystemService(
-					Context.VIBRATOR_SERVICE);
+		} else { //Proceed normally			
 
 			setWorkingMode();
 			setupView();
@@ -333,7 +324,7 @@ public class DetailItineraryActivity extends Activity
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == HIGHLIGHT_INFO_REQUEST) {
+		if (requestCode == HIGHLIGHT_EDIT_REQUEST) {
 			if (resultCode == RESULT_OK) {
 				String hlName = data.getStringExtra("hlName");
 				String hlLongText = data.getStringExtra("hlLongText");
@@ -598,11 +589,15 @@ public class DetailItineraryActivity extends Activity
 			Enumeration<Marker> userMarkers = routeInProgressMarkers.keys();
 			while (userMarkers.hasMoreElements()) {
 				Marker m = userMarkers.nextElement();
-				m = MapObjectsFactory.addEmptyUserMarker(
+				Step s = routeInProgressMarkers.get(m);
+				int hlType = -1;
+				if(s.getHighlight()!=null) hlType = s.getHighlight().getType();
+				m = MapObjectsFactory.addHighLightMarker(
 						mMap, 
 						m.getPosition(), 
 						m.getTitle(), 
-						m.getSnippet());				
+						m.getSnippet(), 
+						hlType);							
 			}
 		}
 	}
@@ -692,52 +687,36 @@ public class DetailItineraryActivity extends Activity
 							isUserMarker = true;
 						}
 					}
-					if (s.getReference() != null) {
+					if (s != null && s.getReference() != null) {
 						Intent i = new Intent(DetailItineraryActivity.this,
 								HTMLViewerActivity.class);
 						i.putExtra("idReference", s.getReference().getId());
 						startActivity(i);
 					} else {
-						//We are editing. On click, if it's an user marker we go to
-						//Edit highlight activity
-						if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
-							Intent i = new Intent(
-									DetailItineraryActivity.this,
-									EditHighLightActivity.class);
-							stepBeingEditedId = s.getId();
-							i.putExtra("lat",
-									Double.toString(s.getLatitude()));
-							i.putExtra("long",
-									Double.toString(s.getLongitude()));
-							i.putExtra("alt",
-									Double.toString(s.getAltitude()));								
-							i.putExtra("date",
-									app.formatDateDayMonthYear(s.getAbsoluteTime()));
-							if (s.getHighlight() != null) {
-								i.putExtra("hlname", s.getHighlight()
-										.getName());
-								i.putExtra("hllongtext", s.getHighlight()
-										.getLongText());
-								i.putExtra("hlimagepath", s.getHighlight()
-										.getMediaPath());
-							}
-							startActivityForResult(i,
-									HIGHLIGHT_INFO_REQUEST);
-						}else{ //Go to highlight detail (if there's some media to show)
-							if(s.getHighlight()!=null && s.getHighlight().getMediaPath() != null){
-								JSONObject hl_s;
-								try {
-									hl_s = JSONConverter.stepToJSONObject(s);
-									if(hl_s != null){
-										String s_j_string = hl_s.toString();  
-										Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
-										i.putExtra("step_j", s_j_string);
-										startActivity(i);
-									}
-								} catch (JSONException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}								
+						//Might be start/end markers
+						if(marker.equals(startMarker) || marker.equals(arrivalMarker)){
+							//Do nothing in special
+						}else{
+							//We are editing. On click, if it's an user marker we go to
+							//Edit highlight activity
+							if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
+								launchHighLightEditIntent(s);								
+							}else{ //Go to highlight detail (if there's some media to show)
+								if(s.getHighlight()!=null && s.getHighlight().getMediaPath() != null){
+									JSONObject hl_s;
+									try {
+										hl_s = JSONConverter.stepToJSONObject(s);
+										if(hl_s != null){
+											String s_j_string = hl_s.toString();  
+											Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
+											i.putExtra("step_j", s_j_string);
+											startActivity(i);
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}								
+								}
 							}
 						}
 					}
@@ -831,9 +810,7 @@ public class DetailItineraryActivity extends Activity
 							} else {
 								picture.setImageResource(R.drawable.ic_itinerary_icon);
 							}
-						}
-
-						v.vibrate(125);
+						}						
 
 					} else {
 						// Is the current position marker
@@ -895,16 +872,31 @@ public class DetailItineraryActivity extends Activity
 		}
 	}
 	
-//	private void loadBitmapThumbnailToImageView(
-//			String path, 
-//			int width, 
-//			int height, 
-//			ImageView imageView){
-//		BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-//		task.execute(path, Integer.toString(width),Integer.toString(height));
-//		
-//	}
-
+	private void launchHighLightEditIntent(Step s){
+		Intent i = new Intent(
+				DetailItineraryActivity.this,
+				EditHighLightActivity.class);
+		stepBeingEditedId = s.getId();
+		i.putExtra("lat",
+				Double.toString(s.getLatitude()));
+		i.putExtra("long",
+				Double.toString(s.getLongitude()));
+		i.putExtra("alt",
+				Double.toString(s.getAltitude()));								
+		i.putExtra("date",
+				app.formatDateDayMonthYear(s.getAbsoluteTime()));
+		if (s.getHighlight() != null) {
+			i.putExtra("hlname", s.getHighlight()
+					.getName());
+			i.putExtra("hllongtext", s.getHighlight()
+					.getLongText());
+			i.putExtra("hlimagepath", s.getHighlight()
+					.getMediaPath());
+		}
+		startActivityForResult(i,
+				HIGHLIGHT_EDIT_REQUEST);
+	}
+	
 	private boolean markerAlreadyOnStep(Step s) {
 		if (routeInProgressMarkers == null
 				|| routeInProgressMarkers.size() == 0) {
@@ -960,6 +952,8 @@ public class DetailItineraryActivity extends Activity
 						public void onClick(
 								DialogInterface paramDialogInterface,
 								int paramInt) {
+							selectedMarker = m;
+							launchHighLightEditIntent(s);
 						}
 					});
 			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no),
@@ -1241,11 +1235,14 @@ public class DetailItineraryActivity extends Activity
 		private List<Circle> pointsInProgress;
 		private Hashtable<Marker, Step> selectedRouteMarkers;
 		private CameraUpdate cu;
+		private Vibrator vibrator;
 
 		public FixReceiver(GoogleMap mMap,Hashtable<Marker, Step> selectedRouteMarkers) {
 			super();
 			this.mMap = mMap;
 			this.selectedRouteMarkers=selectedRouteMarkers;
+			vibrator = (Vibrator) getBaseContext().getSystemService(
+					Context.VIBRATOR_SERVICE);
 			stepsInProgress = new ArrayList<Step>();
 			pointsInProgress = new ArrayList<Circle>();
 		}
@@ -1356,6 +1353,7 @@ public class DetailItineraryActivity extends Activity
 				if (results[0] <= effectivePopRadius) {
 					Log.i("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
 					found = true;
+					vibrator.vibrate(250);
 					m.showInfoWindow();
 				}
 			}

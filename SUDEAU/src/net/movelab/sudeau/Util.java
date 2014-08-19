@@ -70,7 +70,7 @@ public class Util {
 	public static int MAX_FILE_STORAGE_NUMBER = 10000;
 	
 	public static double MINIMUM_POP_DISTANCE_RADIUS = 10;
-	public static double MAXIMUM_POP_DISTANCE_RADIUS = 30;
+	public static double MAXIMUM_POP_DISTANCE_RADIUS = 50;
 	
 	//Global debug flag
 	public static final boolean DEBUG=true;

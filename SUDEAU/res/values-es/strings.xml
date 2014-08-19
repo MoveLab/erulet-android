@@ -140,4 +140,15 @@
 	
     <string name="your_rating">La teva valoració</string>
     <string name="global_rating">Valoració global</string>
+    <string name="detail_highlight">Vista de detall</string>
+    
+    <string name="meters">metres</string>
+    <string name="kilometers">kilòmetres</string>
+    <string name="hour">hora</string>
+    <string name="hours">hores</string>
+    <string name="minutes">minuts</string>
+    <string name="seconds">segons</string>
+    <string name="avg_speed">Velocitat mitjana</string>
+    <string name="avg_distance_samples">Distància mitjana entre mostres</string>
+    
 </resources>

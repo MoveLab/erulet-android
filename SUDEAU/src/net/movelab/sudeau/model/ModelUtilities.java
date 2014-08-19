@@ -8,6 +8,59 @@ import android.location.Location;
 public class ModelUtilities {
 	
 	/**
+	 * Computes average distance between steps of a route taken in pairs
+	 * @param r The route which contains the track
+	 * @return Average distance in meters between gps fixes
+	 */
+	public static float getAverageDistanceBetweenSamples(Route r){
+		float retVal = 0;
+		List<Step> steps = getStepsIfAvailable(r);
+		if(steps != null && steps.size() > 1){
+			float[] distances = new float[steps.size()-1];			
+			boolean finished = false;
+			int i = 0;
+			do{
+				Step s0 = steps.get(i);
+				Step s1 = steps.get(i + 1);
+				
+				Location location1 = new Location("");
+				location1.setLatitude(s0.getLatitude());
+				location1.setLongitude(s0.getLongitude());
+				
+				Location location2 = new Location("");
+				location2.setLatitude(s1.getLatitude());
+				location2.setLongitude(s1.getLongitude());
+				
+				distances[i] = location1.distanceTo(location2);
+				
+				if (i == steps.size() - 2) {
+					finished = true;
+				}
+				i++;
+				
+			}while(!finished);
+			retVal = getFloatAverage(distances);
+		}
+		return retVal;
+	}
+	
+	/**
+	 * Computes average of values in vector
+	 * @param values Vector of float values
+	 * @return sum of elements in vector divided by number of elements
+	 */
+	private static float getFloatAverage(float[] values){
+		float retVal = 0;
+		if(values.length > 0){
+			for(int i = 0; i < values.length; i++){
+				retVal += values[i];
+			}
+			retVal = retVal/values.length;
+		}
+		return retVal;
+	}
+	
+	/**
 	 * Computes distance between start and finish. The distance is equal to the sum
 	 * of the distance between the waypoints taken by pairs.
 	 * 
@@ -134,6 +187,8 @@ public class ModelUtilities {
 		}
 		return retVal;
 	}
+	
+	
 		
 
 }
