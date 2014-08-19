@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -43,6 +44,8 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Debug;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
@@ -1250,6 +1253,21 @@ public class DetailItineraryActivity extends Activity
 		public ArrayList<Step> getStepsInProgress() {
 			return stepsInProgress;
 		}
+		
+		private boolean isScreenLocked(){
+			KeyguardManager myKM = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+			if( myKM.inKeyguardRestrictedInputMode()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		private void wakeUpPhone(){
+			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "bbbb");
+			wl.acquire();
+		}
 
 		public void setStepsInProgress(ArrayList<Step> steps) {
 			stepsInProgress = steps;
@@ -1354,6 +1372,9 @@ public class DetailItineraryActivity extends Activity
 					Log.i("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
 					found = true;
 					vibrator.vibrate(250);
+//					if(isScreenLocked()){
+//						wakeUpPhone();
+//					}
 					m.showInfoWindow();
 				}
 			}
