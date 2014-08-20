@@ -40,7 +40,7 @@
          android:src="@drawable/ic_download" />
 
      <RatingBar
-         android:id="@+id/ratBarUser"
+         android:id="@+id/ratBarUserRoute"
          android:layout_width="50dip"
          android:layout_height="wrap_content"
          android:layout_toRightOf="@id/sh_route_upload"

@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,8 +23,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 
 public class EditRouteActivity extends Activity {
 	
@@ -31,6 +34,8 @@ public class EditRouteActivity extends Activity {
 	private EditText routeName;
 	private EditText routeDescription;		
 	private EruletApp app;
+	private RatingBar myRating;
+	private SharedPreferences.Editor mPrefEditor;
 	private boolean changed;
 	
 	//TODO Improve default name, allow for multiple non-colliding defaults
@@ -45,8 +50,9 @@ public class EditRouteActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		mPrefEditor = app.getPrefs().edit();
 		setEditedRoute();
-		initInterface();		
+		initInterface();
 	}
 	
 	@Override
@@ -91,18 +97,35 @@ public class EditRouteActivity extends Activity {
 	}		
 	
 	private void initInterface(){
-//		Button btn_save = (Button)findViewById(R.id.btn_editRoute_save);
-//		btn_save.setOnClickListener(new OnClickListener() {			
-//			@Override
-//			public void onClick(View arg0) {				
-//				save(DataContainer.getAndroidId(getContentResolver()));
-//			}
-//		});		
 		
 		routeName = (EditText)findViewById(R.id.et_RouteName);
 		routeDescription = (EditText)findViewById(R.id.et_RouteDescription);
 		routeName.setText(editedRoute.getName());
 		routeDescription.setText(editedRoute.getDescription());
+		
+		myRating = (RatingBar)findViewById(R.id.ratBarUserRoute);
+		myRating.setStepSize(1.0f);
+		float userRating = 0;
+		if(editedRoute.getIdRouteBasedOn()!=null){
+			userRating = app.getPrefs().getInt(editedRoute.getIdRouteBasedOn(), 0);
+		}
+		myRating.setRating(userRating);
+		
+		myRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
+			@Override
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+					boolean fromUser) {				
+				mPrefEditor.putInt(editedRoute.getIdRouteBasedOn(), (int)rating);				
+            	mPrefEditor.commit();            	
+			}
+		});
+		
+		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobalRoute);
+		globalRating.setStepSize(1.0f);
+		if(editedRoute.getIdRouteBasedOn() != null){
+			Route basedOn = DataContainer.findRouteById(editedRoute.getIdRouteBasedOn(), app.getDataBaseHelper());			
+			globalRating.setRating( basedOn.getGlobalRating() );
+		}
 		
 		routeName.addTextChangedListener(new TextWatcher() {			
 			@Override

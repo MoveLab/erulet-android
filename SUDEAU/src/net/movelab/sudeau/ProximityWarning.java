@@ -104,10 +104,8 @@ public class ProximityWarning {
 	}
 	
 	public void issueWarning(Marker m){
-		warnedMarker = m;
-		if(!isScreenOn()){
-			wakeUpPhone();
-		}
+		warnedMarker = m;		
+		wakeUpPhone();		
 		vibrator.vibrate(VIBRATION_TIME);
 		playWarningTone();
 	}

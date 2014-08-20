@@ -152,9 +152,8 @@ public class DetailItineraryActivity extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		 getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-				    | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-				    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+//		 getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//				    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 		setContentView(R.layout.detail_itinerary_map);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
@@ -636,8 +635,13 @@ public class DetailItineraryActivity extends Activity
 		// Create route entry in database
 		// We create a route also in mode 1, though we only draw the points the user hits
 		if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
-			routeInProgress = DataContainer.createEmptyRoute(app.getDataBaseHelper(),
-					DataContainer.getAndroidId(getContentResolver()));
+			//This is very important for the ratings system
+			String idRouteBasedOn = selectedRoute!=null ? selectedRoute.getId() : null;
+			routeInProgress = DataContainer.createEmptyRoute(
+					app.getDataBaseHelper(),
+					DataContainer.getAndroidId(getContentResolver()),
+					idRouteBasedOn
+					);
 		}
 	}
 

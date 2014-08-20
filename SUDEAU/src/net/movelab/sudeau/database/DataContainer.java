@@ -114,7 +114,7 @@ public class DataContainer {
 	/**
 	 * Creates an empty route/track entry to the database, and returns the route object 
 	 */
-	public static Route createEmptyRoute(DataBaseHelper db, String userId){		
+	public static Route createEmptyRoute(DataBaseHelper db, String userId, String routeBasedOnId){		
 		String idTrack = getTrackId(db, userId);
 		if(Util.DEBUG){
 			Log.d("createEmptyRoute","Getting track id " + idTrack);
@@ -128,6 +128,7 @@ public class DataContainer {
 		}
 		Route r = new Route();
 		r.setId(idRoute);
+		r.setIdRouteBasedOn(routeBasedOnId);
 		r.setName("La meva ruta");
 		r.setDescription("La meva descripcio");
 		r.setUserId(userId);

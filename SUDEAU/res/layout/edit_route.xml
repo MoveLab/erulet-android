@@ -8,7 +8,7 @@
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"    
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
     <TextView
@@ -18,14 +18,14 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="@string/trip_data_edition"
-        android:textAppearance="?android:attr/textAppearanceLarge"        
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="24sp" />
 
     <LinearLayout
         android:id="@+id/route_text_container"
-        android:layout_marginTop="20dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"        
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:orientation="vertical" >
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="@string/total_distance"            
+            android:text="@string/total_distance"
             android:textSize="12sp" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/total_time"            
+            android:text="@string/total_time"
             android:textSize="12sp" />
 
         <TextView
@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/points_number"            
+            android:text="@string/points_number"
             android:textSize="12sp" />
 
         <TextView
@@ -80,33 +80,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/points_of_interest_number"            
+            android:text="@string/points_of_interest_number"
             android:textSize="12sp" />
-        
+
         <TextView
             android:id="@+id/tvRamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="@string/slope"            
+            android:text="@string/slope"
             android:textSize="12sp" />
     </LinearLayout>
-    
+
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dp"
-    android:background="@android:color/darker_gray"/>
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"        
-        android:layout_marginTop="20dp"        
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/tvHlNameLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"            
+            android:layout_height="wrap_content"
             android:text="@string/trip_name" />
 
         <EditText
@@ -119,7 +119,7 @@
         <TextView
             android:id="@+id/tvEditRouteDescriptionLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"            
+            android:layout_height="wrap_content"
             android:text="@string/trip_description" />
 
         <EditText
@@ -129,28 +129,68 @@
             android:ems="10"
             android:hint="@string/trip_description_hint"
             android:inputType="textMultiLine" />
-
     </LinearLayout>
-    
+
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dp"
-    android:background="@android:color/darker_gray"/>
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
-<!--     <LinearLayout -->
-<!--         android:layout_width="match_parent" -->
-<!--         android:layout_height="wrap_content" -->
-<!--         android:gravity="center"         -->
-<!--         android:orientation="horizontal" > -->
+    <!-- <LinearLayout -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:gravity="center" -->
+    <!-- android:orientation="horizontal" > -->
 
-<!--         <Button -->
-<!--             android:id="@+id/btn_editRoute_save" -->
-<!--             style="?android:attr/buttonStyleSmall" -->
-<!--             android:layout_width="wrap_content" -->
-<!--             android:layout_height="wrap_content"                        -->
-<!--             android:text="@string/save" /> -->
 
-<!--     </LinearLayout> -->
+    <!-- <Button -->
+    <!-- android:id="@+id/btn_editRoute_save" -->
+    <!-- style="?android:attr/buttonStyleSmall" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:text="@string/save" /> -->
 
+
+    <!-- </LinearLayout> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvUserRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/your_rating" />
+
+        <RatingBar
+            android:id="@+id/ratBarUserRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvGlobalRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/global_rating" />
+
+        <RatingBar
+            android:id="@+id/ratBarGlobalRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>
+
 </ScrollView>
