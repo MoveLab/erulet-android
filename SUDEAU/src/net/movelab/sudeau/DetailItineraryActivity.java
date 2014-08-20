@@ -146,15 +146,20 @@ public class DetailItineraryActivity extends Activity
 	private EruletApp app;
 	private MapObjectsFactory mObjFactory;
 	private CountDownTimer countDown;
+	private ProximityWarning proximityWarning;
 	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		 getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
+				    | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+				    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 		setContentView(R.layout.detail_itinerary_map);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		proximityWarning = new ProximityWarning(app);
 		mObjFactory = new MapObjectsFactory();
 		// Check availability of google play services
 		int status = GooglePlayServicesUtil
@@ -473,7 +478,7 @@ public class DetailItineraryActivity extends Activity
 		default:
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected(item);		
 	}
 
 	private void startOrResumeTracking() {
@@ -482,8 +487,8 @@ public class DetailItineraryActivity extends Activity
 			fixFilter = new IntentFilter(getResources().getString(
 					R.string.internal_message_id)
 					+ Util.MESSAGE_FIX_RECORDED);
-			fixReceiver = new FixReceiver(mMap,selectedRouteMarkers);
-			registerReceiver(fixReceiver, fixFilter);						
+			fixReceiver = new FixReceiver(mMap,proximityWarning,selectedRouteMarkers);
+			registerReceiver(fixReceiver, fixFilter);
 		}
 	}
 
@@ -710,7 +715,11 @@ public class DetailItineraryActivity extends Activity
 									try {
 										hl_s = JSONConverter.stepToJSONObject(s);
 										if(hl_s != null){
-											String s_j_string = hl_s.toString();  
+											String s_j_string = hl_s.toString();
+											//Check if it's a warned marker. If it is, we consider the warning acknowledged
+											if(proximityWarning != null && proximityWarning.markerIsBeingWarned(marker) ){
+												proximityWarning.acknowledgeWarning();
+											}
 											Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
 											startActivity(i);
@@ -1238,37 +1247,23 @@ public class DetailItineraryActivity extends Activity
 		private List<Circle> pointsInProgress;
 		private Hashtable<Marker, Step> selectedRouteMarkers;
 		private CameraUpdate cu;
-		private Vibrator vibrator;
+		private List<Step> warningList;
+		private ProximityWarning proximityWarning;		
 
-		public FixReceiver(GoogleMap mMap,Hashtable<Marker, Step> selectedRouteMarkers) {
+		public FixReceiver(GoogleMap mMap,ProximityWarning proximityWarning,Hashtable<Marker, Step> selectedRouteMarkers) {
 			super();
 			this.mMap = mMap;
 			this.selectedRouteMarkers=selectedRouteMarkers;
-			vibrator = (Vibrator) getBaseContext().getSystemService(
-					Context.VIBRATOR_SERVICE);
+			this.proximityWarning = proximityWarning;
 			stepsInProgress = new ArrayList<Step>();
 			pointsInProgress = new ArrayList<Circle>();
+			warningList = new ArrayList<Step>();
 		}
 
 		public ArrayList<Step> getStepsInProgress() {
 			return stepsInProgress;
 		}
-		
-		private boolean isScreenLocked(){
-			KeyguardManager myKM = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-			if( myKM.inKeyguardRestrictedInputMode()) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		
-		private void wakeUpPhone(){
-			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "bbbb");
-			wl.acquire();
-		}
-
+				
 		public void setStepsInProgress(ArrayList<Step> steps) {
 			stepsInProgress = steps;
 		}
@@ -1348,38 +1343,37 @@ public class DetailItineraryActivity extends Activity
 		}
 		
 		private void checkNearbyMarkers(LatLng receivedLocation){
-			//Enumeration<Step> e = selectedRouteMarkers.elements();
 			Enumeration<Marker> eM = selectedRouteMarkers.keys();
 			boolean found = false;
 			while(eM.hasMoreElements() && !found){
 				Marker m = eM.nextElement();
 				Step s = selectedRouteMarkers.get(m);
-				float[] results = new float[3];
-				Location.distanceBetween(
-						receivedLocation.latitude, 
-						receivedLocation.longitude,
-						s.getLatitude(), 
-						s.getLongitude(), 
-						results);
-				double effectivePopRadius = s.getPrecision();
-				if(effectivePopRadius < Util.MINIMUM_POP_DISTANCE_RADIUS){
-					effectivePopRadius = Util.MINIMUM_POP_DISTANCE_RADIUS;
-				}
-				if(effectivePopRadius > Util.MAXIMUM_POP_DISTANCE_RADIUS){
-					effectivePopRadius = Util.MAXIMUM_POP_DISTANCE_RADIUS;
-				}
-				if (results[0] <= effectivePopRadius) {
-					Log.i("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
-					found = true;
-					vibrator.vibrate(250);
-//					if(isScreenLocked()){
-//						wakeUpPhone();
-//					}
-					m.showInfoWindow();
+				if(!warningList.contains(s)){
+					float[] results = new float[3];
+					Location.distanceBetween(
+							receivedLocation.latitude, 
+							receivedLocation.longitude,
+							s.getLatitude(), 
+							s.getLongitude(), 
+							results);
+					double effectivePopRadius = s.getPrecision();
+					if(effectivePopRadius < Util.MINIMUM_POP_DISTANCE_RADIUS){
+						effectivePopRadius = Util.MINIMUM_POP_DISTANCE_RADIUS;
+					}
+					if(effectivePopRadius > Util.MAXIMUM_POP_DISTANCE_RADIUS){
+						effectivePopRadius = Util.MAXIMUM_POP_DISTANCE_RADIUS;
+					}
+					if (results[0] <= effectivePopRadius) {					
+							Log.d("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
+							found = true;
+							proximityWarning.issueWarning(m);
+							warningList.add(s);							
+							m.showInfoWindow();
+					}
 				}
 			}
 		}
-
+				
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			double lat = intent.getExtras().getDouble("lat", 0);
@@ -1435,6 +1429,7 @@ public class DetailItineraryActivity extends Activity
 				mMap.moveCamera(cu);
 			}
 		}
+		
 	}
 
 	@Override
