@@ -8,14 +8,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.movelab.sudeau.Util;
+import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Color;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
@@ -306,6 +309,11 @@ public class DataContainer {
 		db.getRouteDataDao().update(editedRoute);
 	}
 	
+	public static InteractiveImage findInteractiveImageById(String idImage, DataBaseHelper db){
+		InteractiveImage i = db.getInteractiveImageDataDao().queryForId(idImage);
+		return i;
+	}
+	
 	public static Route findRouteById(String idRoute, DataBaseHelper db){
 		Route r = db.getRouteDataDao().queryForId(idRoute);
 		return r;
@@ -380,6 +388,17 @@ public class DataContainer {
 		return getTrackSteps(t, db);
 	}
 	
+	public static List<Box> getInteractiveImageBoxes(InteractiveImage img, DataBaseHelper db) {
+		db.getInteractiveImageDataDao().refresh(img);
+		ArrayList<Box> retVal = new ArrayList<Box>();
+		Iterator<Box> boxIt = img.getBoxes().iterator();
+		while(boxIt.hasNext()){
+			Box b = boxIt.next();			
+			retVal.add(b);
+		}		
+		return retVal;
+	}
+	
 	public static List<Step> getTrackSteps(Track track, DataBaseHelper db) {
 		db.getTrackDataDao().refresh(track);
 		ArrayList<Step> retVal = new ArrayList<Step>();
@@ -414,6 +433,8 @@ public class DataContainer {
 		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
 		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
 		RuntimeExceptionDao<Reference, String> referenceDataDao = db.getReferenceDataDao();		
+		RuntimeExceptionDao<InteractiveImage, String> interactiveImageDataDao = db.getInteractiveImageDataDao();
+		RuntimeExceptionDao<Box, String> boxDataDao = db.getBoxDataDao();
 		//RuntimeExceptionDao<EruMedia, String> mediaDataDao = db.getMediaDataDao();
 		
 		//Route ecosystem = loadSampleEcosystem(db, context);
@@ -731,12 +752,70 @@ public class DataContainer {
 			Log.e("Inserting step","Insert error " + ex.toString());
 		}
 		
+		//Interactive image
+		//Create image
+		InteractiveImage img = new InteractiveImage("intimg_redon");
+		img.setMediaPath("redon_panorama.jpg");
+		try{
+			interactiveImageDataDao.create(img);
+		}catch(Exception ex){
+			Log.e("Inserting interact img","Insert error " + ex.toString());
+		}
+		
+		//Create boxes
+		//Box tuc = new Box("b_redon_tuc",251,231,357,45,img);
+		//ORANGE
+		Box tuc = new Box("b_redon_tuc",Color.argb(255, 255, 127, 0) ,img);
+		tuc.setMessage("Tuc deth Pòrt de Vielha, 2605m");
+		//Box tartera = new Box("b_redon_tartera",176,352,282,285,img);
+		//RED
+		Box tartera = new Box("b_redon_tartera",Color.argb(255, 255, 0, 0) ,img);
+		tartera.setMessage("TARTERA: és una extensió de roca fragmentada. La fragmentació augmenta la " + 
+				"superfície de roca exposada a l'intemperie. Per tant, facilita la dissolució de les sals minerals de les " + 
+				"roques, que van a parar a l'aigua de l'estany. Les tarteres ocupen un 36% de la conca del Redon.");
+		//Box serra = new Box("b_redon_serra",1165,198,1265,117,img);
+		//YELLOW
+		Box serra = new Box("b_redon_serra",Color.argb(255, 255, 255, 0),img);
+		serra.setMessage("Serra de Fontfreda");
+		//Box prats = new Box("b_redon_prats",1841,467,1981,336,img);
+		//GREEN
+		Box prats = new Box("b_redon_prats",Color.argb(255, 0, 255, 0),img);
+		prats.setMessage("PRATS ALPINS: Formats per herbes de port baix. Depenent de l'orientació dominen gramínies (Festuco) " + 
+				"o ciperàcies (Corex). Poden ocupar zones amb fort pendent, on les seves arrels ajuden a fixar un sòl molt " + 
+				"orgànic i poc profund, sovint de menys de 30 cm. Les plantes i microbis que viuen al sòl tenen una forta " + 
+				"influència sobre l'aigua que s'escorre. Els prats ocupen el 45% de la conca del Redon.");
+		//Box roca = new Box("b_redon_roca",2350,464,2468,339,img);
+		//BLUE
+		Box roca = new Box("b_redon_roca",Color.argb(255, 0, 0, 255),img);
+		roca.setMessage("ROCA EXPOSADA: La roca mare de la conca queda en superfície en afloraments i escarpaments. " + 
+				"L'aigua circula ràpidament i el temps de contacte en aquestes zones és curt. Les zones de roca nua ocupen el " + 
+				"19% de la conca del Redon.");
+		//Box sarra = new Box("b_redon_sarra",2393,123,2748,50,img);
+		//MAGENTA
+		Box sarra = new Box("b_redon_sarra",Color.argb(255, 75, 0, 130),img);
+		sarra.setMessage("Tuc de Sarrahèra, 2630m");
+		
+		try{
+			boxDataDao.create(tuc);
+			boxDataDao.create(tartera);
+			boxDataDao.create(serra);
+			boxDataDao.create(prats);
+			boxDataDao.create(roca);
+			boxDataDao.create(sarra);
+		}catch(Exception ex){
+			Log.e("Inserting box","Insert error " + ex.toString());
+		}
+		
 		Route r = new Route();
 		r.setId("ROUTE_REDON");
 		r.setName("Estanh Redon");		
 		r.setDescription("Itinerari de 3.6 km amb 600 m de desnivell (1.5 - 2 h a peu), per visitar l’Estanh Redon.\nSortida des de l’Espitau de Vielha, a la boca sud del túnel. El camí és al començament una pista forestal, i després un corriol ben fresat per on es pot caminar amb poca dificultat. Segueix inicialment la ruta GR-11, però cap a l’útim terç el camí pren una variant. L’itinerari és adequat per a persones a partir de 10 anys, acostumades a caminar per la muntanya i amb una condició física mitja. El Redon és un exemple d’estany de gran mida i aigües molt transparents, encaixonat en un circ de parets escarpades. Ha estat objecte de recerca científica des de fa dècades, i a la vora hi ha un petit laboratori de camp i una estació meteorològica.");
 		r.setUserId("1");
-		r.setTrack(t);
+		//Ph_ch parameters
+		r.setReference(r6);
+		//Interactive image
+		r.setInteractiveImage(img);
+		r.setTrack(t);		
 		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
 		
 		try{

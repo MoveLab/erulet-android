@@ -21,7 +21,6 @@ public class Step implements Comparable<Step> {
 	private String id;
 	@DatabaseField
 	private String name;
-	//private Location location;
 	@DatabaseField
 	private double latitude;
 	@DatabaseField
@@ -46,7 +45,7 @@ public class Step implements Comparable<Step> {
 	 * This is only for shared steps there is a reference to the route it is
 	 * based on
 	 */
-	@DatabaseField(foreign=true, columnName="routeId")	
+	@DatabaseField(foreign=true, columnName="routeId")
     private Route route;
 
 	public Step() {		

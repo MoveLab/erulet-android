@@ -22,8 +22,10 @@ public class Route {
 	private String userId;
 	@DatabaseField(foreign=true, columnName="trackId")
 	private Track track;
+	@DatabaseField(foreign=true, columnName="intImgId")
+	private InteractiveImage interactiveImage;
 	@DatabaseField(foreign=true, columnName="referenceId")
-	private Reference reference;	
+	private Reference reference;
 	@DatabaseField
 	private boolean upLoaded;
 	@DatabaseField
@@ -145,6 +147,14 @@ public class Route {
 
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
+	}
+
+	public InteractiveImage getInteractiveImage() {
+		return interactiveImage;
+	}
+
+	public void setInteractiveImage(InteractiveImage interactiveImage) {
+		this.interactiveImage = interactiveImage;
 	}
 	
 }

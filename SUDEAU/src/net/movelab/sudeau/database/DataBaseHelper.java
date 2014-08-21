@@ -1,6 +1,8 @@
 package net.movelab.sudeau.database;
 
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
+import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
@@ -19,7 +21,7 @@ import com.j256.ormlite.table.TableUtils;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 103;
+	public static final int DATABASE_VERSION = 106;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		
@@ -34,12 +36,15 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	private Dao<HighLight, String> hlDao;
 	private RuntimeExceptionDao<HighLight, String> hlRuntimeDao;
-	
-//	private Dao<EruMedia, String> mediaDao;
-//	private RuntimeExceptionDao<EruMedia, String> mediaRuntimeDao;
-	
+		
 	private Dao<Reference, String> referenceDao;
 	private RuntimeExceptionDao<Reference, String> referenceRuntimeDao;
+	
+	private Dao<InteractiveImage, String> interactiveImageDao;
+	private RuntimeExceptionDao<InteractiveImage, String> interactiveImageRuntimeDao;
+	
+	private Dao<Box, String> boxDao;
+	private RuntimeExceptionDao<Box, String> boxRuntimeDao;
            
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -53,8 +58,9 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Route.class);
 			TableUtils.createTable(connectionSource, Step.class);
 			TableUtils.createTable(connectionSource, HighLight.class);
-			//TableUtils.createTable(connectionSource, EruMedia.class);
 			TableUtils.createTable(connectionSource, Reference.class);
+			TableUtils.createTable(connectionSource, InteractiveImage.class);
+			TableUtils.createTable(connectionSource, Box.class);
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
@@ -71,11 +77,41 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Step.class, true);
 			TableUtils.dropTable(connectionSource, HighLight.class, true);
 			TableUtils.dropTable(connectionSource, Reference.class, true);
+			TableUtils.dropTable(connectionSource, InteractiveImage.class, true);
+			TableUtils.dropTable(connectionSource, Box.class, true);
 			onCreate(db,connectionSource);
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't drop databases", e);
 			throw new RuntimeException(e);
 		}		
+	}
+	
+	public Dao<Box, String> getBoxDao() throws java.sql.SQLException {
+		if (boxDao == null) {
+			boxDao = getDao(Box.class);
+		}
+		return boxDao;
+	}
+	
+	public RuntimeExceptionDao<Box, String> getBoxDataDao() {
+		if (boxRuntimeDao == null) {			
+			boxRuntimeDao = getRuntimeExceptionDao(Box.class);
+		}
+		return boxRuntimeDao;
+	}
+	
+	public Dao<InteractiveImage, String> getInteractiveImageDao() throws java.sql.SQLException {
+		if (interactiveImageDao == null) {
+			interactiveImageDao = getDao(InteractiveImage.class);
+		}
+		return interactiveImageDao;
+	}
+	
+	public RuntimeExceptionDao<InteractiveImage, String> getInteractiveImageDataDao() {
+		if (interactiveImageRuntimeDao == null) {			
+			interactiveImageRuntimeDao = getRuntimeExceptionDao(InteractiveImage.class);
+		}
+		return interactiveImageRuntimeDao;
 	}
 	
 	public Dao<Route, String> getRouteDao() throws java.sql.SQLException {
@@ -164,6 +200,10 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		hlRuntimeDao = null;
 		referenceDao = null;
 		referenceRuntimeDao = null;
+		interactiveImageDao = null;
+		interactiveImageRuntimeDao = null;
+		boxDao = null;
+		boxRuntimeDao = null;
 	}
 	
 	

@@ -440,9 +440,15 @@ public class DetailItineraryActivity extends Activity
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (selectedRoute != null) {
-			for (int i = 0; i < menu.size(); i++) {
-				menu.getItem(i).setVisible(false);
+			if(selectedRoute.getReference()==null){
+				menu.getItem(0).setVisible(false);
 			}
+			if(selectedRoute.getInteractiveImage()==null){
+				menu.getItem(1).setVisible(false);
+			}
+//			for (int i = 0; i < menu.size(); i++) {
+//				menu.getItem(i).setVisible(false);
+//			}
 		}
 		return true;
 	}
@@ -465,7 +471,8 @@ public class DetailItineraryActivity extends Activity
 			return true;
 		case 2:
 			Intent i = new Intent(DetailItineraryActivity.this,
-					InteractiveImageActivity.class);
+					InteractiveImageActivity.class);			
+			i.putExtra("int_image_id", selectedRoute.getInteractiveImage().getId());			
 			startActivity(i);
 			return true;
 		default:
