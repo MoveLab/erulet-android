@@ -177,12 +177,6 @@ public class DetailItineraryActivity extends Activity
 			btn_compass.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-//					if (selectedMarker == null) {
-//						Toast.makeText(
-//								getApplicationContext(),
-//								"No hi ha cap marcador seleccionat. Si us plau, tria el marcador del mapa al que vols anar...",
-//								Toast.LENGTH_LONG).show();
-//					} else {
 						Intent i = new Intent(DetailItineraryActivity.this,
 								CompassActivity.class);
 						if(selectedMarker!=null){
@@ -721,9 +715,9 @@ public class DetailItineraryActivity extends Activity
 										if(hl_s != null){
 											String s_j_string = hl_s.toString();
 											//Check if it's a warned marker. If it is, we consider the warning acknowledged
-											if(proximityWarning != null && proximityWarning.markerIsBeingWarned(marker) ){
-												proximityWarning.acknowledgeWarning();
-											}
+//											if(proximityWarning != null && proximityWarning.markerIsBeingWarned(marker) ){
+//												proximityWarning.acknowledgeWarning();
+//											}
 											Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
 											startActivity(i);
@@ -1144,6 +1138,12 @@ public class DetailItineraryActivity extends Activity
 			selectedRoutePolyLine.remove();
 			selectedRoutePolyLine = null;
 		}
+		if(startMarker!=null){
+			startMarker.remove();
+		}
+		if(arrivalMarker!=null){
+			arrivalMarker.remove();
+		}
 		if( selectedRoutePoints != null ){
 			for(int i = 0; i < selectedRoutePoints.size(); i++){
 				Circle c = selectedRoutePoints.get(i);
@@ -1291,6 +1291,8 @@ public class DetailItineraryActivity extends Activity
 			stepsInProgress = null;
 			trackInProgress = null;
 			pointsInProgress.clear();
+			warningList.clear();
+			warningList = null;
 			pointsInProgress = null;
 			cu = null;
 			mMap = null;
@@ -1363,10 +1365,7 @@ public class DetailItineraryActivity extends Activity
 					double effectivePopRadius = s.getPrecision();
 					if(effectivePopRadius < Util.MINIMUM_POP_DISTANCE_RADIUS){
 						effectivePopRadius = Util.MINIMUM_POP_DISTANCE_RADIUS;
-					}
-					if(effectivePopRadius > Util.MAXIMUM_POP_DISTANCE_RADIUS){
-						effectivePopRadius = Util.MAXIMUM_POP_DISTANCE_RADIUS;
-					}
+					}					
 					if (results[0] <= effectivePopRadius) {					
 							Log.d("HIT", "Hit interest area - distance: " + results[0] + " radius: " + effectivePopRadius);
 							found = true;

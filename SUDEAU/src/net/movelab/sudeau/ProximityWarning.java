@@ -21,9 +21,9 @@ public class ProximityWarning {
 	
 	private EruletApp app;
 	private Vibrator vibrator;
-	private WakeLock wl;
+//	private WakeLock wl;
 	CountDownTimer countDown;
-	private Marker warnedMarker;
+//	private Marker signaledMarker;
 	private MediaPlayer mediaPlayer;
 	//10 seconds before automatic lock release
 	private static long LOCK_RELEASE_INTERVAL = 10000;
@@ -31,32 +31,31 @@ public class ProximityWarning {
 	private static String TAG = "ProximityWarning";
 	
 	public ProximityWarning(EruletApp app){
-		this.app = app;
-		vibrator = (Vibrator) app.getBaseContext().getSystemService(
-				Context.VIBRATOR_SERVICE);
+		this.app = app;		
 	}
 	
-	private boolean isScreenLocked(){
-		KeyguardManager myKM = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-		if( myKM.inKeyguardRestrictedInputMode()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+//	private boolean isScreenLocked(){
+//		KeyguardManager myKM = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+//		if( myKM.inKeyguardRestrictedInputMode()) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+//	
+//	private boolean isScreenOn(){
+//		PowerManager pm = (PowerManager) app.getSystemService(Context.POWER_SERVICE);
+//		return pm.isScreenOn();
+//	}
 	
-	private boolean isScreenOn(){
-		PowerManager pm = (PowerManager) app.getSystemService(Context.POWER_SERVICE);
-		return pm.isScreenOn();
-	}
-	
-	private void wakeUpPhone(){
-		PowerManager pm = (PowerManager) app.getSystemService(Context.POWER_SERVICE);		
-		wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "WAKE_UP_CALL");
-		wl.acquire();
-		if (Util.DEBUG) {
-			Log.d(TAG, "WakeLock acquired!");
-		}
+	private void startAlert(){
+		// This works perfectly, but field test proved me that it's not a good idea
+//		PowerManager pm = (PowerManager) app.getSystemService(Context.POWER_SERVICE);		
+//		wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "WAKE_UP_CALL");
+//		wl.acquire();
+//		if (Util.DEBUG) {
+//			Log.d(TAG, "WakeLock acquired!");
+//		}
 		if(countDown!=null){
 			countDown.cancel();
 		}else{			
@@ -65,9 +64,9 @@ public class ProximityWarning {
 				public void onTick(long millisUntilFinished) {
 					// TODO Auto-generated method stub
 					//Do nothing on tick
-					if(Util.DEBUG){
-						Log.d(TAG, millisUntilFinished + " remaining");
-					}
+//					if(Util.DEBUG){
+//						Log.d(TAG, millisUntilFinished + " remaining");
+//					}
 				}				
 				@Override
 				public void onFinish() {
@@ -86,42 +85,57 @@ public class ProximityWarning {
 		mediaPlayer.start();		
 	}
 	
-	public void acknowledgeWarning(){		
-		if(wl!=null && wl.isHeld()){
-			wl.release();
-			if (Util.DEBUG) {
-				Log.d("ProximityWarning", "WakeLock released!");
-			}
+	private void vibrate(){
+		if(vibrator == null){
+			vibrator = (Vibrator) app.getBaseContext().getSystemService(
+					Context.VIBRATOR_SERVICE);
 		}
+		vibrator.vibrate(VIBRATION_TIME);
+	}
+	
+	/**
+	 * Release resources
+	 */
+	public void acknowledgeWarning(){		
+//		if(wl!=null && wl.isHeld()){
+//			wl.release();
+//			if (Util.DEBUG) {
+//				Log.d("ProximityWarning", "WakeLock released!");
+//			}
+//		}
 		if(mediaPlayer!=null){
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
-		if(warnedMarker!=null){
-			warnedMarker.hideInfoWindow();
+		if(vibrator!=null){
+			vibrator = null;
 		}
-		warnedMarker = null;
+//		if(signaledMarker!=null){
+//			signaledMarker.hideInfoWindow();
+//		}
+//		signaledMarker = null;
 	}
 	
 	public void issueWarning(Marker m){
-		warnedMarker = m;		
-		wakeUpPhone();		
-		vibrator.vibrate(VIBRATION_TIME);
+//		signaledMarker = m;		
+		startAlert();				
 		playWarningTone();
+		vibrate();
 	}
 	
-	public boolean markerIsBeingWarned(Marker m){
-		if(warnedMarker != null && warnedMarker.equals(m))
-			return true;
-		return false;
-	}
-
-	public Marker getWarnedMarker() {
-		return warnedMarker;
-	}
-
-	public void setWarnedMarker(Marker warnedMarker) {
-		this.warnedMarker = warnedMarker;
-	}
+	
+//	public boolean markerIsBeingWarned(Marker m){
+//		if(signaledMarker != null && signaledMarker.equals(m))
+//			return true;
+//		return false;
+//	}
+//
+//	public Marker getWarnedMarker() {
+//		return signaledMarker;
+//	}
+//
+//	public void setWarnedMarker(Marker warnedMarker) {
+//		this.signaledMarker = warnedMarker;
+//	}
 
 }
