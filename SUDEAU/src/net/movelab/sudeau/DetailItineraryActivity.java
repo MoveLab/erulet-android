@@ -74,6 +74,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -140,6 +141,7 @@ public class DetailItineraryActivity extends Activity
 	//MINI_KIND
 	static final int IMAGE_THUMBNAIL_WIDTH = 384;
 	static final int IMAGE_THUMBNAIL_HEIGTH = 512;
+	static final String TAG = "DetailItineraryActivity";
 	
 	private LocationClient locationClient;
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -348,7 +350,8 @@ public class DetailItineraryActivity extends Activity
 					selectedMarker.setIcon( MapObjectsFactory.getUserBitmapDescriptor(hlType) );
 					selectedMarker.hideInfoWindow();
 					selectedMarker.showInfoWindow();
-				}
+					removeTemporalMarkers(selectedMarker);
+				}				
 			} else if (resultCode == RESULT_CANCELED) {
 				Toast.makeText(getApplicationContext(),
 						getString(R.string.user_cancel), Toast.LENGTH_LONG).show();
@@ -368,10 +371,28 @@ public class DetailItineraryActivity extends Activity
 				fixReceiver = null;
 				//Re-display selected route
 				resetSelectedRouteMarkers();
-				updateSelectedRoute();
+				updateSelectedRoute();				
 		}
 	}
 	
+	//Clears unused temporal markers after succesfully adding highlight
+	private void removeTemporalMarkers(Marker selectedMarker){
+		Enumeration<Marker> e = routeInProgressMarkers.keys();
+		ArrayList<Marker> removeThese = new ArrayList<Marker>();
+		LatLng selectedMarkerPosition = selectedMarker.getPosition();		
+		while(e.hasMoreElements()){
+			Marker m = e.nextElement();
+			LatLng currentMarkerPosition = m.getPosition();
+			if(!m.equals(selectedMarker) && currentMarkerPosition.equals(selectedMarkerPosition) ){
+				removeThese.add(m);
+				m.remove();				
+			}
+		}
+		for(int i = 0; i < removeThese.size(); i++){
+			routeInProgressMarkers.remove(removeThese.get(i));
+		}
+	}
+		
 	private void resetSelectedRouteMarkers(){
 		Enumeration<Marker> e = selectedRouteMarkers.keys();
 		while(e.hasMoreElements()){
@@ -471,8 +492,8 @@ public class DetailItineraryActivity extends Activity
 			return true;
 		case 2:
 			Intent i = new Intent(DetailItineraryActivity.this,
-					InteractiveImageActivity.class);			
-			i.putExtra("int_image_id", selectedRoute.getInteractiveImage().getId());			
+					InteractiveImageActivityHeatMap.class);			
+			i.putExtra("int_image_id", selectedRoute.getInteractiveImage().getId());
 			startActivity(i);
 			return true;
 		default:
@@ -599,13 +620,16 @@ public class DetailItineraryActivity extends Activity
 				Marker m = userMarkers.nextElement();
 				Step s = routeInProgressMarkers.get(m);
 				int hlType = -1;
-				if(s.getHighlight()!=null) hlType = s.getHighlight().getType();
-				m = MapObjectsFactory.addHighLightMarker(
-						mMap, 
-						m.getPosition(), 
-						m.getTitle(), 
-						m.getSnippet(), 
-						hlType);							
+				if(s.getHighlight()!=null){
+					hlType = s.getHighlight().getType();
+					m = MapObjectsFactory.addHighLightMarker(
+							mMap, 
+							m.getPosition(), 
+							m.getTitle(), 
+							m.getSnippet(), 
+							hlType);
+				}				
+				Log.d(TAG,"refresh markers added " + hlType);
 			}
 		}
 	}
@@ -675,8 +699,7 @@ public class DetailItineraryActivity extends Activity
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (mMap == null) {
-			mMap = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.mapDetail)).getMap();
+			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapDetail)).getMap();			
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				tileProvider = initTileProvider();
@@ -840,6 +863,7 @@ public class DetailItineraryActivity extends Activity
 			mMap.setOnMapClickListener(new OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng point) {
+					
 					if(routeMode==1 | routeMode==2){
 						Step nearestStepToTap = getRouteInProgressNearestStep(
 								point, TAP_TOLERANCE_DIST);
@@ -849,6 +873,7 @@ public class DetailItineraryActivity extends Activity
 							showAddMarkerOnTapDialog(nearestStepToTap);
 						}
 					}
+					
 					// if(bogus_location != null){
 					// bogus_location.remove();
 					// }
@@ -948,7 +973,6 @@ public class DetailItineraryActivity extends Activity
 					point, 
 					getString(R.string.temp_marker), 
 					getString(R.string.add_or_not));
-			
 			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,
 					mMap.getCameraPosition().zoom));
 			routeInProgressMarkers.put(m, s);
@@ -969,7 +993,10 @@ public class DetailItineraryActivity extends Activity
 						public void onClick(
 								DialogInterface paramDialogInterface,
 								int paramInt) {
-							selectedMarker = m;
+							if(selectedMarker!=null){
+								selectedMarker.remove();
+							}
+							selectedMarker = m;							
 							launchHighLightEditIntent(s);
 						}
 					});
@@ -1345,11 +1372,13 @@ public class DetailItineraryActivity extends Activity
 		}
 
 		private boolean locationExists(LatLng current, List<Step> steps) {
-			for (int i = 0; i < steps.size(); i++) {
-				Step thisStep = steps.get(i);
-				if (thisStep.getLatitude() == current.latitude
-						&& thisStep.getLongitude() == current.longitude) {
-					return true;
+			if(steps!=null){
+				for (int i = 0; i < steps.size(); i++) {
+					Step thisStep = steps.get(i);
+					if (thisStep.getLatitude() == current.latitude
+							&& thisStep.getLongitude() == current.longitude) {
+						return true;
+					}
 				}
 			}
 			return false;

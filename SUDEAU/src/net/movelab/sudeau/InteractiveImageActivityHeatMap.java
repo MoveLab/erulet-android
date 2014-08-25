@@ -20,7 +20,7 @@ import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
-public class InteractiveImageActivityHeatMap extends Activity{
+public class InteractiveImageActivityHeatMap extends Activity implements View.OnTouchListener{
 	
 	private ImageView heatMap;
 	private ImageView image;
@@ -33,7 +33,7 @@ public class InteractiveImageActivityHeatMap extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);		
-		setContentView(R.layout.interactive_image_activity);
+		setContentView(R.layout.interactive_image_activity_heatmap);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
@@ -48,6 +48,7 @@ public class InteractiveImageActivityHeatMap extends Activity{
 				interactiveImage = DataContainer.findInteractiveImageById(imgId, app.getDataBaseHelper());
 			}
 		}
+		//image.setImageResource(R.drawable.redon_panorama);
 		if(interactiveImage!=null && 
 				interactiveImage.getMediaPath()!= null && 
 				!interactiveImage.getMediaPath().equalsIgnoreCase("")){
@@ -78,32 +79,45 @@ public class InteractiveImageActivityHeatMap extends Activity{
 		if(interactiveImage!=null){
 			initBoxes(interactiveImage);
 		}
-		heatMap.setOnTouchListener( new OnTouchListener() {			
-			@Override
-			public boolean onTouch(View arg0, MotionEvent event) {
-				// TODO Auto-generated method stub
-				Log.d(TAG,"Imageview widthxheight " + heatMap.getDrawable().getIntrinsicWidth() + "x" + heatMap.getDrawable().getIntrinsicHeight() );
-				int x = (int) event.getX();
-				int y = (int) event.getY();
-				Log.d(TAG,"Clicked on " + "x:" + x + " y:" + y );
-				switch(event.getAction()){				
-				case MotionEvent.ACTION_DOWN:
-					Box b = checkBoxes(x, y);
-					if(b != null)
-						showBubble(b);  
-			        break;
-			    case MotionEvent.ACTION_MOVE:
-			        if(dialog!=null)
-			          dialog.dismiss(); 
-			         // do something
-			        break;
-			    case MotionEvent.ACTION_UP:
-			        // do something else
-			        break;
-				}				
-				return false;
-			}
-		});
+		image.setOnTouchListener(this);
+//		image.setOnTouchListener(new OnTouchListener() {
+//			
+//			@Override
+//			public boolean onTouch(View arg0, MotionEvent arg1) {
+//				//Log.d(TAG,"Imageview widthxheight " + image.getDrawable().getIntrinsicWidth() + "x" + image.getDrawable().getIntrinsicHeight() );
+//				Log.d(TAG,"Touch on image");
+//				return false;
+//			}
+//		});
+//		
+//		heatMap.setOnTouchListener( new OnTouchListener() {			
+//			@Override
+//			public boolean onTouch(View arg0, MotionEvent event) {
+//				// TODO Auto-generated method stub
+//				//Log.d(TAG,"Imageview widthxheight " + heatMap.getDrawable().getIntrinsicWidth() + "x" + heatMap.getDrawable().getIntrinsicHeight() );
+//				Log.d(TAG,"Touch on heatmap");
+//				return false;
+////				int x = (int) event.getX();
+////				int y = (int) event.getY();
+////				Log.d(TAG,"Clicked on " + "x:" + x + " y:" + y );
+////				switch(event.getAction()){				
+////				case MotionEvent.ACTION_DOWN:
+////					Box b = checkBoxes(x, y);
+////					if(b != null)
+////						showBubble(b);  
+////			        break;
+////			    case MotionEvent.ACTION_MOVE:
+////			        if(dialog!=null)
+////			          dialog.dismiss(); 
+////			         // do something
+////			        break;
+////			    case MotionEvent.ACTION_UP:
+////			        // do something else
+////			        break;
+////				}				
+////				return false;
+//			}
+//		});
 	}
 	
 	private int getImageColor(int x, int y){
@@ -137,5 +151,14 @@ public class InteractiveImageActivityHeatMap extends Activity{
         wmlp.x = 50;   //x position
         wmlp.y = 200;   //y position
         dialog.show();
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		// TODO Auto-generated method stub
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+		Log.d(TAG,"Heat image color " + getImageColor(x, y));
+		return false;
 	}
 }

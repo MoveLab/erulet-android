@@ -756,6 +756,9 @@ public class DataContainer {
 		//Create image
 		InteractiveImage img = new InteractiveImage("intimg_redon");
 		img.setMediaPath("redon_panorama.jpg");
+		img.setHeatPath("redon_panorama_heat.jpg");
+		img.setOriginalWidth(1500);
+		img.setOriginalHeight(479);
 		try{
 			interactiveImageDataDao.create(img);
 		}catch(Exception ex){

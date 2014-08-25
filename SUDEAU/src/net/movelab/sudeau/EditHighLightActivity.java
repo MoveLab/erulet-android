@@ -13,6 +13,7 @@ import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
@@ -56,6 +57,9 @@ public class EditHighLightActivity extends Activity {
 	private RadioButton rbImage;
 	private RadioButton rbVideo;
 	private RadioButton rbNone;
+	
+	//State values
+	private int selectedHlType = HighLight.POINT_OF_INTEREST;	
 	
 	private EruletApp app;
 	
@@ -129,6 +133,30 @@ public class EditHighLightActivity extends Activity {
 			alttxt.setText(getString(R.string.altitude) + alt);
 		}
 	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		super.onConfigurationChanged(newConfig);
+		checkHighLightType(selectedHlType);
+		if(currentVideo!=null){
+			if(videoThumbnail!=null){
+				rbVideo.setChecked(true);
+				btn_picture.setVisibility(View.GONE);
+	    		btn_video.setVisibility(View.VISIBLE);
+			}
+		}else if(currentPhoto!=null){
+			if(thumbnail!=null){
+				rbImage.setChecked(true);
+				btn_picture.setVisibility(View.VISIBLE);
+	    		btn_video.setVisibility(View.GONE);
+			}
+		}else{
+			rbNone.setChecked(true);
+			btn_picture.setVisibility(View.GONE);
+    		btn_video.setVisibility(View.GONE);
+		}
+	}
 		
 	private void checkHighLightType(int hlType) {
 		switch(hlType){
@@ -147,6 +175,20 @@ public class EditHighLightActivity extends Activity {
 		}
 	}
 	
+	public void onRadioButtonHlClicked(View view){
+		boolean checked = ((RadioButton) view).isChecked();
+		switch(view.getId()) {
+			case R.id.rbPOI:
+				selectedHlType = HighLight.POINT_OF_INTEREST;
+				break;
+			case R.id.rbWarning:
+				selectedHlType = HighLight.ALERT;
+				break;
+			case R.id.rbWayPoint:
+				selectedHlType = HighLight.WAYPOINT;
+				break;
+		}
+	}
 
 	public void onRadioButtonClicked(View view){
 	    boolean checked = ((RadioButton) view).isChecked();	    

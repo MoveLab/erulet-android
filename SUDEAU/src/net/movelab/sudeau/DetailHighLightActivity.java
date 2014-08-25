@@ -10,6 +10,7 @@ import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -56,7 +57,7 @@ public class DetailHighLightActivity extends Activity {
 		if(step!=null){
 			setupUI(step);
 		}
-	}
+	}		
 	
 	private void setupUI(Step s){
 		TextView datatxt =  (TextView)findViewById(R.id.tvHlData);
