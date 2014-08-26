@@ -159,5 +159,7 @@
     <string name="avg_distance_samples">Distància mitjana entre mostres</string>
     <string name="trip_statistics">Estadístiques de la ruta</string>
     <string name="info">Informació</string>
+    
+    <string name="location">Ubicació:</string>
 	
 </resources>

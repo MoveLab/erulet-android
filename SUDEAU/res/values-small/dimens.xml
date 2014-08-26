@@ -12,5 +12,7 @@
     
     <dimen name="label_infoblock_highlighted">14sp</dimen>
     <dimen name="label_infoblock_normal">12sp</dimen>
+    
+    <dimen name="block_margin_top_separator">16dp</dimen> 
 	
 </resources>

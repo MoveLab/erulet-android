@@ -151,4 +151,6 @@
     <string name="avg_speed">Velocitat mitjana</string>
     <string name="avg_distance_samples">Distància mitjana entre mostres</string>
     <string name="info">Informació</string>
+    
+    <string name="location">Ubicació:</string>
 </resources>

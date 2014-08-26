@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content"        
         android:orientation="vertical" >
 
         <TextView
@@ -20,8 +20,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"            
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_margin_top_separator"            
             android:orientation="vertical" >
+            
+            <TextView
+                android:id="@+id/tvHlLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"                
+                android:text="@string/location"                
+                android:textSize="@dimen/label_infoblock_highlighted" />
 
             <TextView
                 android:id="@+id/tvHlData"
@@ -56,10 +65,16 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+        
         <TextView
             android:id="@+id/tvTipusPunt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_margin_top_separator"
             android:text="@string/point_type" />
 
         <LinearLayout
@@ -124,11 +139,16 @@
 
         </LinearLayout>
                
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
         <TextView
             android:id="@+id/tvHlNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_margin_top_separator"
             android:text="@string/point_name" />
 
         <EditText
@@ -152,11 +172,17 @@
 
             <requestFocus />
         </EditText>
+        
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
         <TextView
             android:id="@+id/tvImageVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/block_margin_top_separator"
             android:text="@string/add_image_video" />
 
         <LinearLayout
@@ -218,23 +244,31 @@
             </LinearLayout>
 
         </LinearLayout>
+        
+        <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/block_margin_top_separator"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/btnHlSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/label_button"
                 android:text="@string/save" />
 
             <Button
                 android:id="@+id/btnHlCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/label_button"
                 android:text="@string/cancel" />
         </LinearLayout>
     </LinearLayout>
