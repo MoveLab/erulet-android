@@ -14,7 +14,7 @@
         android:layout_marginBottom="10dip"
         android:gravity="center"
         android:text="@string/shared_itineraries"        
-        android:textSize="30sp" />
+        android:textSize="@dimen/activity_label_title" />
         
     <ListView
         android:id="@+id/lv_other_routes"

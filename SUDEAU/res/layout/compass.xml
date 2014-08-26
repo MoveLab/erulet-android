@@ -26,7 +26,7 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="@string/nav_to_point"        
-        android:textSize="30sp" />
+        android:textSize="@dimen/activity_label_title" />
 
     <LinearLayout
         android:id="@+id/route_text_container"
@@ -37,11 +37,11 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/tvUserRating"
+            android:id="@+id/tvCompassName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
-            android:layout_marginLeft="5dp"
-        	android:textSize="15sp"            
+            android:layout_marginLeft="5dp"        	
+        	android:textSize="@dimen/label_infoblock_highlighted"            
             android:text="@string/name" />                
 
         <TextView
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
-        	android:textSize="12sp"
+        	android:textSize="@dimen/label_infoblock_normal"
         	android:text="@string/dist_undef"/>
 
         <TextView
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
-        	android:textSize="12sp"
+        	android:textSize="@dimen/label_infoblock_normal"
             android:text="@string/current_location_undef" />
 
         <TextView
@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"            
             android:layout_marginLeft="5dp"
-        	android:textSize="12sp"
+        	android:textSize="@dimen/label_infoblock_normal"
             android:text="@string/destination_undef" />
 
         <TextView
@@ -75,7 +75,7 @@
             android:layout_marginLeft="5dp"
             android:text="@string/bearing"
             android:gravity="center"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
 
     </LinearLayout>
 

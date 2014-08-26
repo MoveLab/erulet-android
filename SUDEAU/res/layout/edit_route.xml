@@ -17,9 +17,8 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_grey"
         android:gravity="center"
-        android:text="@string/trip_data_edition"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="24sp" />
+        android:text="@string/trip_data_edition"        
+        android:textSize="@dimen/activity_label_title" />
 
     <LinearLayout
         android:id="@+id/route_text_container"
@@ -32,6 +31,7 @@
             android:id="@+id/tvTripStatistics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/trip_statistics" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:text="@string/total_distance"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
 
         <TextView
             android:id="@+id/tvTotalTime"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/total_time"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
 
         <TextView
             android:id="@+id/tvAvgSpeed"
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/avg_speed"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
 
         <TextView
             android:id="@+id/tvAvgSampleDistance"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/avg_distance_samples"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
 
         <TextView
             android:id="@+id/tvPointsNumber"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/points_number"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
 
         <TextView
             android:id="@+id/tvHighLightsNumber"
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/points_of_interest_number"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
 
         <TextView
             android:id="@+id/tvRamp"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/slope"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal"  />
     </LinearLayout>
 
     <View
@@ -107,7 +107,8 @@
             android:id="@+id/tvHlNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/trip_name" />
+            android:text="@string/trip_name" 
+            android:textSize="@dimen/label_infoblock_highlighted" />
 
         <EditText
             android:id="@+id/et_RouteName"
@@ -120,7 +121,8 @@
             android:id="@+id/tvEditRouteDescriptionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/trip_description" />
+            android:text="@string/trip_description" 
+            android:textSize="@dimen/label_infoblock_highlighted"/>
 
         <EditText
             android:id="@+id/et_RouteDescription"
@@ -165,6 +167,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/your_rating" />
 
         <RatingBar
@@ -184,6 +187,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/global_rating" />
 
         <RatingBar

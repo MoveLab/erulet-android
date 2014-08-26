@@ -16,7 +16,7 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="@string/preferences"
-        android:textSize="30sp" />
+        android:textSize="@dimen/activity_label_title" />
 
         <LinearLayout
             android:layout_width="wrap_content"

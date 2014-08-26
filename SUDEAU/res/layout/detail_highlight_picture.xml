@@ -17,7 +17,7 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="@string/detail_highlight"
-        android:textSize="30sp" />
+        android:textSize="@dimen/activity_label_title" />
     
     <LinearLayout
         android:layout_width="wrap_content"
@@ -74,13 +74,15 @@
         android:id="@+id/tvHlNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/point_name" />
+        android:text="@string/point_name"
+        android:textSize="@dimen/label_infoblock_highlighted" />
 
     <TextView
         android:id="@+id/tvHlDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/description" />
+        android:text="@string/description"
+        android:textSize="@dimen/label_infoblock_highlighted" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -93,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/date"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
 
         <TextView
             android:id="@+id/tvLatHl"
@@ -101,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/latitude_short"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
 
         <TextView
             android:id="@+id/tvLongHl"
@@ -109,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/longitude_short"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
 
         <TextView
             android:id="@+id/tvHlAlt"
@@ -117,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="@string/altitude"
-            android:textSize="12sp" />
+            android:textSize="@dimen/label_infoblock_normal" />
     </LinearLayout>
 
     <View
@@ -136,6 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/your_rating"/>
 
         <RatingBar
@@ -156,6 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/global_rating"/>
         <RatingBar
             android:id="@+id/ratBarGlobal"

@@ -350,7 +350,7 @@ public class DetailItineraryActivity extends Activity
 					selectedMarker.setIcon( MapObjectsFactory.getUserBitmapDescriptor(hlType) );
 					selectedMarker.hideInfoWindow();
 					selectedMarker.showInfoWindow();
-					removeTemporalMarkers(selectedMarker);
+					//removeTemporalMarkers(selectedMarker);
 				}				
 			} else if (resultCode == RESULT_CANCELED) {
 				Toast.makeText(getApplicationContext(),
@@ -863,17 +863,17 @@ public class DetailItineraryActivity extends Activity
 			mMap.setOnMapClickListener(new OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng point) {
-					
-					if(routeMode==1 | routeMode==2){
-						Step nearestStepToTap = getRouteInProgressNearestStep(
-								point, TAP_TOLERANCE_DIST);
-						if (nearestStepToTap == null) {
-							selectedMarker = null;
-						} else {
+					Step nearestStepToTap = getRouteInProgressNearestStep(
+							point, TAP_TOLERANCE_DIST);
+					if (nearestStepToTap == null) {
+						selectedMarker = null;
+					}											
+					if(routeMode==1 || routeMode==2){
+						if(selectedMarker!=null){
 							showAddMarkerOnTapDialog(nearestStepToTap);
 						}
 					}
-					
+										
 					// if(bogus_location != null){
 					// bogus_location.remove();
 					// }
