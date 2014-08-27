@@ -1070,7 +1070,7 @@ public class DetailItineraryActivity extends Activity
 			b.include(new LatLng(s.getLatitude(), s.getLongitude()));
 		}
 		LatLngBounds bounds = b.build();
-		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 400, 400,
+		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200, 200,
 				20));
 	}
 

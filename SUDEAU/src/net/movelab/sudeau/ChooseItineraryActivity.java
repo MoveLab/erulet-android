@@ -83,7 +83,7 @@ public class ChooseItineraryActivity extends Activity {
         }
 		//setUpDBIfNeeded();
 		setUpMapIfNeeded();
-		setUpCamera();		
+		setUpCamera();
 	}
 	
 	@Override
@@ -225,7 +225,7 @@ public class ChooseItineraryActivity extends Activity {
 		            picture.setImageResource(R.drawable.ic_itinerary_icon);		            
 		            return myContentView;
 				}
-			});
+			});						
 						
 		}
 	}
@@ -240,7 +240,9 @@ public class ChooseItineraryActivity extends Activity {
 				while(markers.hasMoreElements()){
 					Marker m = markers.nextElement();
 					bounds = bounds.including(m.getPosition());
-					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,400,400,20));
+					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,200,200,20));
+					//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,0));
+					//mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 10));
 				}
 			}									
 		}		
@@ -283,11 +285,11 @@ public class ChooseItineraryActivity extends Activity {
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {		
-		File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
+		File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
 		if (!f.exists())
 			try {
 				InputStream is = getAssets().open(
-						"OSMPublicTransport_HiRes.mbtiles");
+						"Vista_general_vielha.mbtiles");
 				int size = is.available();
 				byte[] buffer = new byte[size];
 				is.read(buffer);
