@@ -48,7 +48,7 @@ public class MapObjectsFactory {
 		.position(position)
 		.title(title)
 		.snippet(snippet)
-		.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_empty)));
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_empty_bw)));
 	}
 	
 	public static BitmapDescriptor getUserBitmapDescriptor(int hlType){
@@ -77,7 +77,33 @@ public class MapObjectsFactory {
 		return bm;
 	}
 	
-	public static Marker addHighLightMarker(
+	public static BitmapDescriptor getBWUserBitmapDescriptor(int hlType){
+		BitmapDescriptor bm = null;
+		switch(hlType){
+			case HighLight.WAYPOINT:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_chart_bw);
+				break;			
+			case HighLight.ALERT:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_warning_bw);
+				break;
+			case HighLight.POINT_OF_INTEREST_OFFICIAL:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop_bw);
+				break;
+			case HighLight.POINT_OF_INTEREST_SHARED:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_shared);
+				break;
+			case HighLight.POINT_OF_INTEREST:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop_bw);
+				break;
+			default:
+				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_empty_bw);
+				break;
+		}
+		return bm;
+	}
+	
+	public static Marker addOfficialHighLightMarker(
 			GoogleMap mMap,
 			LatLng position,
 			String title,
@@ -86,6 +112,24 @@ public class MapObjectsFactory {
 			){
 						
 		BitmapDescriptor bm = getUserBitmapDescriptor(hlType);								
+		
+		return mMap.addMarker(new MarkerOptions()
+			.position(position)
+			.title(title)
+			.snippet(snippet)
+			.icon(bm)
+		);		
+	}
+	
+	public static Marker addUserHighLightMarker(
+			GoogleMap mMap,
+			LatLng position,
+			String title,
+			String snippet,
+			int hlType
+			){
+						
+		BitmapDescriptor bm = getBWUserBitmapDescriptor(hlType);		
 		
 		return mMap.addMarker(new MarkerOptions()
 			.position(position)

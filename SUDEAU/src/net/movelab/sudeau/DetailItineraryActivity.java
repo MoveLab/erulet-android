@@ -97,6 +97,7 @@ import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.geometry.Point;
 import com.google.maps.android.projection.SphericalMercatorProjection;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.LazyForeignCollection;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 public class DetailItineraryActivity extends Activity 
@@ -347,7 +348,7 @@ public class DetailItineraryActivity extends Activity
 				saveHighLight(hl);
 				// This is a cheap way to refresh the info window content
 				if (selectedMarker != null) {
-					selectedMarker.setIcon( MapObjectsFactory.getUserBitmapDescriptor(hlType) );
+					selectedMarker.setIcon( MapObjectsFactory.getBWUserBitmapDescriptor(hlType) );
 					selectedMarker.hideInfoWindow();
 					selectedMarker.showInfoWindow();
 					//removeTemporalMarkers(selectedMarker);
@@ -373,25 +374,7 @@ public class DetailItineraryActivity extends Activity
 				resetSelectedRouteMarkers();
 				updateSelectedRoute();				
 		}
-	}
-	
-	//Clears unused temporal markers after succesfully adding highlight
-	private void removeTemporalMarkers(Marker selectedMarker){
-		Enumeration<Marker> e = routeInProgressMarkers.keys();
-		ArrayList<Marker> removeThese = new ArrayList<Marker>();
-		LatLng selectedMarkerPosition = selectedMarker.getPosition();		
-		while(e.hasMoreElements()){
-			Marker m = e.nextElement();
-			LatLng currentMarkerPosition = m.getPosition();
-			if(!m.equals(selectedMarker) && currentMarkerPosition.equals(selectedMarkerPosition) ){
-				removeThese.add(m);
-				m.remove();				
-			}
-		}
-		for(int i = 0; i < removeThese.size(); i++){
-			routeInProgressMarkers.remove(removeThese.get(i));
-		}
-	}
+	}	
 		
 	private void resetSelectedRouteMarkers(){
 		Enumeration<Marker> e = selectedRouteMarkers.keys();
@@ -622,7 +605,8 @@ public class DetailItineraryActivity extends Activity
 				int hlType = -1;
 				if(s.getHighlight()!=null){
 					hlType = s.getHighlight().getType();
-					m = MapObjectsFactory.addHighLightMarker(
+					//m = MapObjectsFactory.addHighLightMarker(
+					m = MapObjectsFactory.addUserHighLightMarker(
 							mMap, 
 							m.getPosition(), 
 							m.getTitle(), 
@@ -863,8 +847,12 @@ public class DetailItineraryActivity extends Activity
 			mMap.setOnMapClickListener(new OnMapClickListener() {
 				@Override
 				public void onMapClick(LatLng point) {
-					Step nearestStepToTap = getRouteInProgressNearestStep(
+					Step nearestStepToTap = null;
+					//If route mode == 0, there's no route in progress
+					if(routeMode==1 || routeMode==2){
+						nearestStepToTap = getRouteInProgressNearestStep(
 							point, TAP_TOLERANCE_DIST);
+					}
 					if (nearestStepToTap == null) {
 						selectedMarker = null;
 					}											
@@ -1021,8 +1009,8 @@ public class DetailItineraryActivity extends Activity
 			if (routeInProgress.getTrack() != null
 					&& routeInProgress.getTrack().getSteps() != null
 					&& routeInProgress.getTrack().getSteps().size() > 0) {
-				ArrayList<Step> steps = (ArrayList<Step>) routeInProgress
-						.getTrack().getSteps();
+				//Check if steps is initialized - strange condition right after stopping track				
+				ArrayList<Step> steps = (ArrayList<Step>) routeInProgress.getTrack().getSteps();
 				float minDist = Float.MAX_VALUE;
 				for (int i = 0; i < steps.size(); i++) {
 					Step s = steps.get(i);
@@ -1114,7 +1102,8 @@ public class DetailItineraryActivity extends Activity
 		// stepTable
 		HighLight hl;
 		if ((hl = step.getHighlight()) != null) {
-			Marker m = MapObjectsFactory.addHighLightMarker(
+			//Marker m = MapObjectsFactory.addHighLightMarker(
+			Marker m = MapObjectsFactory.addOfficialHighLightMarker(
 					mMap, 
 					new LatLng(step.getLatitude(), step.getLongitude()), 
 					hl.getName(), 

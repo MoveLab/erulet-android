@@ -65,6 +65,7 @@ public class DetailHighLightActivity extends Activity {
 		TextView longtxt =  (TextView)findViewById(R.id.tvLongHl);
 		TextView alttxt =  (TextView)findViewById(R.id.tvHlAlt);
 		TextView nameTxt =  (TextView)findViewById(R.id.tvHlNameLabel);
+		View picSeparator = findViewById(R.id.picture_separator);
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
 		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
 		globalRating.setStepSize(1.0f);
@@ -129,6 +130,11 @@ public class DetailHighLightActivity extends Activity {
 //			int width = size.x;
 //			int height = size.y;
 			//ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));			
+		}else{
+			progressBar.setVisibility(View.GONE);
+			ivVideo.setVisibility(View.GONE);
+			ivPicture.setVisibility(View.GONE);
+			picSeparator.setVisibility(View.GONE);
 		}
 		
 		String date = app.formatDateDayMonthYear(s.getAbsoluteTime()) + " " + app.formatDateHoursMinutesSeconds(new Date(s.getAbsoluteTimeMillis()));

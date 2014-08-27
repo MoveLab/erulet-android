@@ -66,9 +66,10 @@
     </LinearLayout>
     
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dp"
-    android:background="@android:color/darker_gray"/>
+        android:id="@+id/picture_separator"
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="@android:color/darker_gray"/>
 
     <TextView
         android:id="@+id/tvHlNameLabel"
