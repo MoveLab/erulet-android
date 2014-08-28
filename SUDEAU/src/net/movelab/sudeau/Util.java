@@ -897,7 +897,7 @@ public class Util {
      * @param pathName
      * @param reqWidth
      * @param reqHeight
-     * @return
+     * @return Bitmap scaled down to reqWidth x reqHeight dimensions 
      */
     public static Bitmap decodeSampledBitmapFromFile(String pathName,
             int reqWidth, int reqHeight) {
@@ -915,6 +915,12 @@ public class Util {
         return BitmapFactory.decodeFile(pathName,options);
     }
     
+    /**
+     * Returns screen size of current device, in pixels
+     * 
+     * @param context Application context
+     * @return int[] that contains width at index 0 and height at index 1
+     */
     public static int[] getScreenSize(Context context){
     	int[] retVal = new int[2];
     	WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -926,7 +932,13 @@ public class Util {
     	return retVal;
     }
     
-    public static int getBiggerDimension(int[] dimensions){
+    /**
+     * Returns biggest integer in int[]
+     * 
+     * @param dimensions Usually screen sizes in pixels
+     * @return The biggest integer in the int array
+     */
+    public static int getBiggestDimension(int[] dimensions){
     	int retVal = Integer.MIN_VALUE;
     	for(int i = 0; i < dimensions.length; i++){
     		if(dimensions[i] > retVal){
@@ -936,7 +948,13 @@ public class Util {
     	return retVal;
     }
     
-    public static int getSmallerDimension(int[] dimensions){
+    /**
+     * Returns smallest integer in int[]
+     * 
+     * @param dimensions Usually screen sizes in pixels
+     * @return The smallest integer in the int array
+     */
+    public static int getSmallestDimension(int[] dimensions){
     	int retVal = Integer.MAX_VALUE;
     	for(int i = 0; i < dimensions.length; i++){
     		if(dimensions[i] < retVal){
@@ -946,10 +964,18 @@ public class Util {
     	return retVal;
     }
     
+    /**
+     * Zooms map to a certain extent
+     * 
+     * @param map The map on which zoom will be performed
+     * @param context The application context
+     * @param bounds The bounds which will be centered on screen
+     * @param padding Padding in pixels around the centered window
+     */
     public static void fitMapViewToBounds(GoogleMap map, Context context, 
     		LatLngBounds bounds, int padding){
     	int[] screen_sizes = Util.getScreenSize(context);
-		int wsize = Util.getSmallerDimension(screen_sizes);
+		int wsize = Util.getSmallestDimension(screen_sizes);
 		double adj_wsize = (double)wsize * 0.75;
 		map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,wsize,(int)adj_wsize,padding));
     }
@@ -968,6 +994,14 @@ public class Util {
     	float retVal = 0;    	
     	float factor = (float)originalW/(float)originalH;    	
     	retVal = fitToW/factor;
+    	return (int)retVal;
+    }
+    
+    
+    public static int getScaledImageWidth(int originalW, int originalH, float fitToH){
+    	float retVal = 0;    	
+    	float factor = (float)originalW/(float)originalH;    	
+    	retVal = fitToH*factor;
     	return (int)retVal;
     }
 

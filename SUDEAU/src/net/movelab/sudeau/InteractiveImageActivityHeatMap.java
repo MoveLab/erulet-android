@@ -9,7 +9,10 @@ import net.movelab.sudeau.model.InteractiveImage;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -24,12 +27,15 @@ import android.widget.ImageView;
 
 public class InteractiveImageActivityHeatMap extends Activity implements View.OnTouchListener{
 	
-	private ImageView heatMap;
 	private ImageView image;
 	private AlertDialog dialog;
 	private List<Box> envelopes;
 	private EruletApp app;
 	private static String TAG = "InteractiveImageViewHeatMap";
+	private int scaledHeight;
+	private int scaledWidth;
+	private int originalHeight;
+	private int originalWidth;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,6 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		heatMap = (ImageView)findViewById(R.id.int_image_areas);
 		image = (ImageView)findViewById(R.id.int_image);
 		
 		InteractiveImage interactiveImage = null;
@@ -48,39 +53,23 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 			String imgId = extras.getString("int_image_id");
 			if(imgId!=null){
 				interactiveImage = DataContainer.findInteractiveImageById(imgId, app.getDataBaseHelper());
+				initBoxes(interactiveImage);
 			}
 		}
-		//image.setImageResource(R.drawable.redon_panorama);
 		if(interactiveImage!=null && 
 				interactiveImage.getMediaPath()!= null && 
 				!interactiveImage.getMediaPath().equalsIgnoreCase("")){
 			File sdcard = Environment.getExternalStorageDirectory();
 			File f = new File(sdcard,interactiveImage.getMediaPath());
 			if(f.exists()){
-				image.setImageBitmap( 
-				Util.decodeSampledBitmapFromFile(
-						f.getAbsolutePath(), 
-						interactiveImage.getOriginalWidth(), 
-						interactiveImage.getOriginalHeight())
-				);
-			}						
-		}		
-		if(interactiveImage!=null && 
-				interactiveImage.getHeatPath()!= null && 
-				!interactiveImage.getHeatPath().equalsIgnoreCase("")){
-			File sdcard = Environment.getExternalStorageDirectory();
-			File f = new File(sdcard,interactiveImage.getHeatPath());
-			if(f.exists()){
-				heatMap.setImageBitmap( 
-				Util.decodeSampledBitmapFromFile(f.getAbsolutePath(), 
-						interactiveImage.getOriginalWidth(), 
-						interactiveImage.getOriginalHeight())
-				);
-			}						
-		}
-		if(interactiveImage!=null){
-			initBoxes(interactiveImage);
-		}
+				int[] screenSize = Util.getScreenSize(getBaseContext());
+				originalHeight = interactiveImage.getOriginalHeight();
+				originalWidth = interactiveImage.getOriginalWidth();
+				scaledHeight = screenSize[1];
+				scaledWidth = Util.getScaledImageWidth(originalWidth, originalHeight, (float)scaledHeight);
+				image.setImageBitmap( Bitmap.createScaledBitmap(BitmapFactory.decodeFile(f.getAbsolutePath()), scaledWidth, scaledHeight, false) );
+			}
+		}				
 		image.setOnTouchListener(this);
 //		image.setOnTouchListener(new OnTouchListener() {
 //			
@@ -122,27 +111,25 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 //		});
 	}
 	
-	private int getImageColor(int x, int y){
-		heatMap.setDrawingCacheEnabled(true);
-		heatMap.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
-	            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		heatMap.layout(0, 0, heatMap.getMeasuredWidth(), heatMap.getMeasuredHeight());
-		heatMap.buildDrawingCache(true);
-		Bitmap b = Bitmap.createBitmap(heatMap.getDrawingCache());
-		Log.d("TAG","Click on x " + x + " y " + y);
-		Log.d("TAG","Image size x " + b.getWidth() + " y " + b.getHeight());
-		return b.getPixel(x, y);
+	private int getBitmapXCoord(int screenXCoord){
+		float result;
+		result = (originalWidth * screenXCoord)/scaledWidth;
+		return (int)result; 
 	}
 	
+	private int getBitmapYCoord(int screenYCoord){
+		float result;
+		result = (originalHeight * screenYCoord)/scaledHeight;
+		return (int)result;
+	}
+			
 	private void initBoxes(InteractiveImage img){
 		envelopes = DataContainer.getInteractiveImageBoxes(img, app.getDataBaseHelper());
 	}
 	
-	private Box checkBoxes(int x, int y){
-		int clickedColor = getImageColor(x, y);
+	private Box checkBoxes(int x, int y){		
 		for(int i = 0; i < envelopes.size(); i++){
-			Box b = envelopes.get(i);
-			Log.d("TAG","Clicked color - " + clickedColor + " box color - " + b.getColor());
+			Box b = envelopes.get(i);			
 		}
 		return null;
 	}
@@ -165,7 +152,8 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		// TODO Auto-generated method stub
 		int x = (int) event.getX();
 		int y = (int) event.getY();
-		Log.d(TAG,"Heat image color " + getImageColor(x, y));
+		//Log.d(TAG,"Heat image color " + getImageColor(x, y));		
+		Log.d(TAG,"Clicked on x " + x + " y " + y);
 		return false;
 	}
 }

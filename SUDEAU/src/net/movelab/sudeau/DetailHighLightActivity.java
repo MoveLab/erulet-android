@@ -112,7 +112,7 @@ public class DetailHighLightActivity extends Activity {
 			String pathName = s.getHighlight().getMediaPath().replace("file://", "");
 			if(pathName.contains("mp4")){
 				progressBar.setVisibility(View.GONE);
-				ivPicture.setVisibility(View.GONE);
+				ivPicture.setVisibility(View.GONE);				
 				ivVideo.setVideoURI(Uri.parse(pathName));
 				ivVideo.setMediaController(new MediaController(this));
 				ivVideo.setOnPreparedListener(new OnPreparedListener() {					
