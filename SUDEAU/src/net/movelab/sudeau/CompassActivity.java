@@ -67,7 +67,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
         tvLocation = (TextView) findViewById(R.id.tvCurrentLoc);
         tvNav = (TextView) findViewById(R.id.tvNavLoc);
         tvDist = (TextView) findViewById(R.id.tvDist);
-        tvWpName = (TextView) findViewById(R.id.tvUserRating);        
+        tvWpName = (TextView) findViewById(R.id.tvCompassName);        
 
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);

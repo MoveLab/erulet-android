@@ -16,19 +16,25 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import net.movelab.sudeau.TrackingContentContract.Fixes;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
@@ -907,6 +913,62 @@ public class Util {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(pathName,options);
+    }
+    
+    public static int[] getScreenSize(Context context){
+    	int[] retVal = new int[2];
+    	WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    	Display display = wm.getDefaultDisplay();
+    	Point size = new Point();
+    	display.getSize(size);
+    	retVal[0] = size.x;
+    	retVal[1] = size.y;
+    	return retVal;
+    }
+    
+    public static int getBiggerDimension(int[] dimensions){
+    	int retVal = Integer.MIN_VALUE;
+    	for(int i = 0; i < dimensions.length; i++){
+    		if(dimensions[i] > retVal){
+    			retVal = dimensions[i];
+    		}
+    	}
+    	return retVal;
+    }
+    
+    public static int getSmallerDimension(int[] dimensions){
+    	int retVal = Integer.MAX_VALUE;
+    	for(int i = 0; i < dimensions.length; i++){
+    		if(dimensions[i] < retVal){
+    			retVal = dimensions[i];
+    		}
+    	}
+    	return retVal;
+    }
+    
+    public static void fitMapViewToBounds(GoogleMap map, Context context, 
+    		LatLngBounds bounds, int padding){
+    	int[] screen_sizes = Util.getScreenSize(context);
+		int wsize = Util.getSmallerDimension(screen_sizes);
+		double adj_wsize = (double)wsize * 0.75;
+		map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,wsize,(int)adj_wsize,padding));
+    }
+    
+    /**
+     * We want to fit an image to a maximum screen width. Given the full image
+     * size, and knowing the screen width in pixels, we want to know the height
+     * of the scaled image in pixels. 
+     * 
+     * @param originalW
+     * @param originalH
+     * @param fitToW The screen width in pixels
+     * @return The height of a image with the same aspect ratio that the original
+     */
+    public static int getScaledImageHeight(int originalW, int originalH, float fitToW){
+    	float retVal = 0;    	
+    	float factor = (float)originalW/(float)originalH;    	
+    	retVal = fitToW/factor;
+    	return (int)retVal;
     }
 
 }

@@ -11,6 +11,7 @@ import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -34,6 +35,7 @@ public class DetailHighLightActivity extends Activity {
 	private SharedPreferences.Editor mPrefEditor;
 	private RatingBar myRating;
 	private Step step;
+	private int screenWidth;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class DetailHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		screenWidth = Util.getScreenSize(getBaseContext())[0];		
 		mPrefEditor = app.getPrefs().edit();
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
@@ -122,7 +125,11 @@ public class DetailHighLightActivity extends Activity {
 				ivVideo.start();
 			}else{
 				ivVideo.setVisibility(View.GONE);
-				loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
+				Options options = Util.getImageOptions(pathName);
+				float adjustedW = (float)screenWidth*0.75f;
+				int bitmapHeight = Util.getScaledImageHeight(options.outWidth, options.outHeight, adjustedW);
+				loadBitmapThumbnailToImageView(pathName, (int)adjustedW, bitmapHeight, ivPicture,progressBar);
+				//loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
 			}
 //			Display display = getWindowManager().getDefaultDisplay();
 //			Point size = new Point();

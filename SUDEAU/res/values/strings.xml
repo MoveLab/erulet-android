@@ -161,5 +161,7 @@
     <string name="info">Informació</string>
     
     <string name="location">Ubicació:</string>
+    <string name="trip_with_less_than_2_steps">La ruta que has enregistrat té menys de 2 punts. Estàs segur de que vols desar-la, o vols descartar-la?</string>
+    <string name="discard_trip">Eliminar ruta</string>
 	
 </resources>

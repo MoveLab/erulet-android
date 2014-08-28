@@ -558,7 +558,44 @@ public class DetailItineraryActivity extends Activity
 //		return r;
 //	}
 
-	private void saveRoute() {
+	private void saveRoute() {		
+		if(routeInProgress.getTrack() != null && routeInProgress.getTrack().getSteps() != null && 
+				routeInProgress.getTrack().getSteps().size() < 2 ){
+			
+			//Route has less than 2 steps - offer the chance to directly delete
+			
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+			dialog.setMessage(getString(R.string.trip_with_less_than_2_steps));
+			dialog.setPositiveButton(getString(R.string.discard_trip),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {
+						//Delete route and go to itinerary selection
+						DataContainer.deleteRouteCascade(routeInProgress, app.getDataBaseHelper());
+						finish();
+					}
+				});
+			dialog.setNegativeButton(getString(R.string.save),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(
+							DialogInterface paramDialogInterface,
+							int paramInt) {
+						//Go to save route
+						startSaveRouteInProgressIntent();
+					}
+				});
+			dialog.show();
+			
+			
+		}else{
+			startSaveRouteInProgressIntent();
+		}
+	}
+	
+	private void startSaveRouteInProgressIntent(){
 		Intent i = new Intent(DetailItineraryActivity.this,
 				EditRouteActivity.class);
 		String routeJson;
@@ -571,7 +608,6 @@ public class DetailItineraryActivity extends Activity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	private void stopTracking() {
@@ -722,7 +758,8 @@ public class DetailItineraryActivity extends Activity
 							if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
 								launchHighLightEditIntent(s);								
 							}else{ //Go to highlight detail (if there's some media to show)
-								if(s.getHighlight()!=null && s.getHighlight().getMediaPath() != null){
+								if(s != null && s.getHighlight()!=null && 
+										s.getHighlight().getMediaPath() != null){
 									JSONObject hl_s;
 									try {
 										hl_s = JSONConverter.stepToJSONObject(s);
@@ -1058,8 +1095,8 @@ public class DetailItineraryActivity extends Activity
 			b.include(new LatLng(s.getLatitude(), s.getLongitude()));
 		}
 		LatLngBounds bounds = b.build();
-		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200, 200,
-				20));
+		Util.fitMapViewToBounds(mMap, getBaseContext(), bounds, 20);
+		//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200, 200, 20));
 	}
 
 //	private void checkLocationIsWithinEffectRadius(LatLng location) {
@@ -1325,7 +1362,7 @@ public class DetailItineraryActivity extends Activity
 			clearTrackObjects();
 			int zIndexPolyLine = stepsInProgress != null ? stepsInProgress.size() + 1 : 1;
 			PolylineOptions rectOptions = MapObjectsFactory.getRouteInProgressPolyLine(zIndexPolyLine);
-			if (stepsInProgress.size() > 0) {
+			if (stepsInProgress != null && stepsInProgress.size() > 0) {
 				for (int i = 0; i < stepsInProgress.size(); i++) {
 
 					Step step = stepsInProgress.get(i);
@@ -1420,7 +1457,9 @@ public class DetailItineraryActivity extends Activity
 			}
 			if (!locationExists) {
 				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
-				mMap.moveCamera(cu);
+				if(mMap!=null && cu!=null){
+					mMap.moveCamera(cu);
+				}
 				// Aggressive save - save location as soon as is available
 				if (routeMode == 1 || routeMode == 2) {
 

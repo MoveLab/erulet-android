@@ -9,12 +9,14 @@ import net.movelab.sudeau.model.InteractiveImage;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
@@ -122,9 +124,14 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 	
 	private int getImageColor(int x, int y){
 		heatMap.setDrawingCacheEnabled(true);
-		Bitmap bm = Bitmap.createBitmap(heatMap.getDrawingCache());
-		heatMap.setDrawingCacheEnabled(false);
-		return bm.getPixel(x, y);
+		heatMap.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+	            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		heatMap.layout(0, 0, heatMap.getMeasuredWidth(), heatMap.getMeasuredHeight());
+		heatMap.buildDrawingCache(true);
+		Bitmap b = Bitmap.createBitmap(heatMap.getDrawingCache());
+		Log.d("TAG","Click on x " + x + " y " + y);
+		Log.d("TAG","Image size x " + b.getWidth() + " y " + b.getHeight());
+		return b.getPixel(x, y);
 	}
 	
 	private void initBoxes(InteractiveImage img){

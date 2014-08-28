@@ -240,7 +240,11 @@ public class ChooseItineraryActivity extends Activity {
 				while(markers.hasMoreElements()){
 					Marker m = markers.nextElement();
 					bounds = bounds.including(m.getPosition());
-					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,200,200,20));
+					Util.fitMapViewToBounds(mMap, getBaseContext(), bounds, 20);
+//					int[] screen_sizes = Util.getScreenSize(getBaseContext());
+//					int wsize = Util.getSmallerDimension(screen_sizes);
+//					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,wsize,wsize,20));
+					//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,200,200,20));
 					//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,0));
 					//mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 10));
 				}
