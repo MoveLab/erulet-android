@@ -12,9 +12,7 @@ public class InteractiveImage {
 	@DatabaseField(id=true)
 	private String id;
 	@DatabaseField
-	private String mediaPath;
-	@DatabaseField
-	private String heatPath;
+	private String mediaPath;	
 	@DatabaseField
 	private int originalWidth;
 	@DatabaseField
@@ -53,15 +51,7 @@ public class InteractiveImage {
 	public void setBoxes(Collection<Box> boxes) {
 		this.boxes = boxes;
 	}
-
-	public String getHeatPath() {
-		return heatPath;
-	}
-
-	public void setHeatPath(String heatPath) {
-		this.heatPath = heatPath;
-	}
-
+	
 	public int getOriginalWidth() {
 		return originalWidth;
 	}

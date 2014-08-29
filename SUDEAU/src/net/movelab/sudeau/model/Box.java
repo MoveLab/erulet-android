@@ -8,16 +8,14 @@ public class Box {
 		
 	@DatabaseField(id=true)
 	private String id;
-//	@DatabaseField
-//	private int minX;
-//	@DatabaseField
-//	private int minY;
-//	@DatabaseField
-//	private int maxX;
-//	@DatabaseField
-//	private int maxY;
-//	@DatabaseField
-	private int color;
+	@DatabaseField
+	private int minX;
+	@DatabaseField
+	private int minY;
+	@DatabaseField
+	private int maxX;
+	@DatabaseField
+	private int maxY;	
 	@DatabaseField
 	private String message;
 	@DatabaseField(foreign=true, columnName="interactiveImageId")
@@ -30,29 +28,23 @@ public class Box {
 		this.id=id;
 	}
 	
-//	public Box(String id, int minX, int minY, int maxX,int maxY){
-//		this.id=id;
-//		this.minX=minX;
-//		this.minY=minY;
-//		this.maxX=maxX;
-//		this.maxY=maxY;
-//	}
-	
-//	public Box(String id, int minX, int minY, int maxX,int maxY, InteractiveImage img){
-//		this.id=id;
-//		this.minX=minX;
-//		this.minY=minY;
-//		this.maxX=maxX;
-//		this.maxY=maxY;
-//		this.interactiveImage = img;
-//	}
-	
-	public Box(String id, int color, InteractiveImage img){
+	public Box(String id, int minX, int minY, int maxX,int maxY){
 		this.id=id;
-		this.color=color;
-		this.interactiveImage = img;
+		this.minX=minX;
+		this.minY=minY;
+		this.maxX=maxX;
+		this.maxY=maxY;
 	}
 	
+	public Box(String id, int minX, int minY, int maxX,int maxY, InteractiveImage img){
+		this.id=id;
+		this.minX=minX;
+		this.minY=minY;
+		this.maxX=maxX;
+		this.maxY=maxY;
+		this.interactiveImage = img;
+	}
+		
 	public String getMessage(){
 		return message;
 	}
@@ -61,11 +53,11 @@ public class Box {
 		this.message=message;
 	}
 	
-//	public boolean isInside(int x, int y){
-//		if( x <= maxX && x >= minX && y >= maxY && y <= minY )
-//			return true;
-//		return false;
-//	}
+	public boolean isInside(int x, int y){
+		if( x <= maxX && x >= minX && y <= maxY && y >= minY )
+			return true;
+		return false;
+	}
 
 	public String getId() {
 		return id;
@@ -74,13 +66,5 @@ public class Box {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public int getColor() {
-		return color;
-	}
-
-	public void setColor(int color) {
-		this.color = color;
-	}	
 	
 }

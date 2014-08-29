@@ -756,7 +756,6 @@ public class DataContainer {
 		//Create image
 		InteractiveImage img = new InteractiveImage("intimg_redon");
 		img.setMediaPath("redon_panorama.jpg");
-		img.setHeatPath("redon_panorama_heat.jpg");
 		img.setOriginalWidth(1500);
 		img.setOriginalHeight(479);
 		try{
@@ -766,36 +765,36 @@ public class DataContainer {
 		}
 		
 		//Create boxes
-		//Box tuc = new Box("b_redon_tuc",132,42,178,78,img);
+		Box tuc = new Box("b_redon_tuc",132,42,178,78,img);
 		//ORANGE
-		Box tuc = new Box("b_redon_tuc",Color.argb(255, 255, 127, 0) ,img);
+		//Box tuc = new Box("b_redon_tuc",Color.argb(255, 255, 127, 0) ,img);
 		tuc.setMessage("Tuc deth Pòrt de Vielha, 2605m");
-		//Box tartera = new Box("b_redon_tartera",113,106,155,137,img);
+		Box tartera = new Box("b_redon_tartera",113,106,155,137,img);
 		//RED
-		Box tartera = new Box("b_redon_tartera",Color.argb(255, 255, 0, 0) ,img);
+		//Box tartera = new Box("b_redon_tartera",Color.argb(255, 255, 0, 0) ,img);
 		tartera.setMessage("TARTERA: és una extensió de roca fragmentada. La fragmentació augmenta la " + 
 				"superfície de roca exposada a l'intemperie. Per tant, facilita la dissolució de les sals minerals de les " + 
 				"roques, que van a parar a l'aigua de l'estany. Les tarteres ocupen un 36% de la conca del Redon.");
-		//Box serra = new Box("b_redon_serra",598,43,629,64,img);
+		Box serra = new Box("b_redon_serra",598,43,629,64,img);
 		//YELLOW
-		Box serra = new Box("b_redon_serra",Color.argb(255, 255, 255, 0),img);
+		//Box serra = new Box("b_redon_serra",Color.argb(255, 255, 255, 0),img);
 		serra.setMessage("Serra de Fontfreda");
-		//Box prats = new Box("b_redon_prats",937,162,971,190,img);
+		Box prats = new Box("b_redon_prats",937,162,971,190,img);
 		//GREEN
-		Box prats = new Box("b_redon_prats",Color.argb(255, 0, 255, 0),img);
+		//Box prats = new Box("b_redon_prats",Color.argb(255, 0, 255, 0),img);
 		prats.setMessage("PRATS ALPINS: Formats per herbes de port baix. Depenent de l'orientació dominen gramínies (Festuco) " + 
 				"o ciperàcies (Corex). Poden ocupar zones amb fort pendent, on les seves arrels ajuden a fixar un sòl molt " + 
 				"orgànic i poc profund, sovint de menys de 30 cm. Les plantes i microbis que viuen al sòl tenen una forta " + 
 				"influència sobre l'aigua que s'escorre. Els prats ocupen el 45% de la conca del Redon.");
-		//Box roca = new Box("b_redon_roca",1189,155,1227,187,img);
+		Box roca = new Box("b_redon_roca",1189,155,1227,187,img);
 		//BLUE
-		Box roca = new Box("b_redon_roca",Color.argb(255, 0, 0, 255),img);
+		//Box roca = new Box("b_redon_roca",Color.argb(255, 0, 0, 255),img);
 		roca.setMessage("ROCA EXPOSADA: La roca mare de la conca queda en superfície en afloraments i escarpaments. " + 
 				"L'aigua circula ràpidament i el temps de contacte en aquestes zones és curt. Les zones de roca nua ocupen el " + 
 				"19% de la conca del Redon.");
-		//Box sarra = new Box("b_redon_sarra",1309,24,1345,53,img);
+		Box sarra = new Box("b_redon_sarra",1309,24,1345,53,img);
 		//MAGENTA
-		Box sarra = new Box("b_redon_sarra",Color.argb(255, 75, 0, 130),img);
+		//Box sarra = new Box("b_redon_sarra",Color.argb(255, 75, 0, 130),img);
 		sarra.setMessage("Tuc de Sarrahèra, 2630m");
 		
 		try{

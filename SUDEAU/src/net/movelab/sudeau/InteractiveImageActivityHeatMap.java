@@ -71,44 +71,6 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 			}
 		}				
 		image.setOnTouchListener(this);
-//		image.setOnTouchListener(new OnTouchListener() {
-//			
-//			@Override
-//			public boolean onTouch(View arg0, MotionEvent arg1) {
-//				//Log.d(TAG,"Imageview widthxheight " + image.getDrawable().getIntrinsicWidth() + "x" + image.getDrawable().getIntrinsicHeight() );
-//				Log.d(TAG,"Touch on image");
-//				return false;
-//			}
-//		});
-//		
-//		heatMap.setOnTouchListener( new OnTouchListener() {			
-//			@Override
-//			public boolean onTouch(View arg0, MotionEvent event) {
-//				// TODO Auto-generated method stub
-//				//Log.d(TAG,"Imageview widthxheight " + heatMap.getDrawable().getIntrinsicWidth() + "x" + heatMap.getDrawable().getIntrinsicHeight() );
-//				Log.d(TAG,"Touch on heatmap");
-//				return false;
-////				int x = (int) event.getX();
-////				int y = (int) event.getY();
-////				Log.d(TAG,"Clicked on " + "x:" + x + " y:" + y );
-////				switch(event.getAction()){				
-////				case MotionEvent.ACTION_DOWN:
-////					Box b = checkBoxes(x, y);
-////					if(b != null)
-////						showBubble(b);  
-////			        break;
-////			    case MotionEvent.ACTION_MOVE:
-////			        if(dialog!=null)
-////			          dialog.dismiss(); 
-////			         // do something
-////			        break;
-////			    case MotionEvent.ACTION_UP:
-////			        // do something else
-////			        break;
-////				}				
-////				return false;
-//			}
-//		});
 	}
 	
 	private int getBitmapXCoord(int screenXCoord){
@@ -127,9 +89,11 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		envelopes = DataContainer.getInteractiveImageBoxes(img, app.getDataBaseHelper());
 	}
 	
-	private Box checkBoxes(int x, int y){		
+	private Box checkBoxes(int x, int y){
 		for(int i = 0; i < envelopes.size(); i++){
-			Box b = envelopes.get(i);			
+			Box b = envelopes.get(i);
+			if(b.isInside(x, y))
+				return b;
 		}
 		return null;
 	}
@@ -152,8 +116,25 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		// TODO Auto-generated method stub
 		int x = (int) event.getX();
 		int y = (int) event.getY();
-		//Log.d(TAG,"Heat image color " + getImageColor(x, y));		
 		Log.d(TAG,"Clicked on x " + x + " y " + y);
+		switch(event.getAction()){				
+		case MotionEvent.ACTION_DOWN:
+			int bitmapX = getBitmapXCoord(x);
+			int bitmapY = getBitmapYCoord(y);
+			Log.d(TAG,"Bitmap coords x " + bitmapX + " y " + bitmapY);
+			Box b = checkBoxes(bitmapX, bitmapY);
+			if(b != null)
+				showBubble(b);  
+	        break;
+	    case MotionEvent.ACTION_MOVE:
+	        if(dialog!=null)
+	          dialog.dismiss(); 
+	         // do something
+	        break;
+	    case MotionEvent.ACTION_UP:
+	        // do something else
+	        break;
+		}				
 		return false;
 	}
 }
