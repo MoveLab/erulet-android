@@ -573,7 +573,7 @@ public class DetailItineraryActivity extends Activity
 							DialogInterface paramDialogInterface,
 							int paramInt) {
 						//Delete route and go to itinerary selection
-						DataContainer.deleteRouteCascade(routeInProgress, app.getDataBaseHelper());
+						DataContainer.deleteRouteCascade(routeInProgress, app);
 						finish();
 					}
 				});

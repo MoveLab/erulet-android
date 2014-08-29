@@ -20,7 +20,7 @@ import android.util.Log;
 
 public class EruletApp extends Application{
 	
-	private SharedPreferences mPrefs;
+	private SharedPreferences mPrefs;	
 	private static Context context;
 	private Locale locale = null;
 	private static final SimpleDateFormat HOURS_MINUTES_SECONDS_FORMAT = new SimpleDateFormat("HH:mm:ss.SSSZ");
@@ -52,7 +52,7 @@ public class EruletApp extends Application{
 	}
 	
 	public void createFolder(String path){
-		File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder);
+		File file = new File(Environment.getExternalStorageDirectory(), path);
 	    if (!file.exists()) {
 	        if (!file.mkdirs()) {
 	        	Log.d(TAG,"Error creating folder " + path);
@@ -107,6 +107,10 @@ public class EruletApp extends Application{
         }
         return mPrefs;
     }
+	
+	public SharedPreferences.Editor getPrefsEditor(){
+		return getPrefs().edit();
+	}
 	
 	@Override
     public void onConfigurationChanged(Configuration newConfig) {

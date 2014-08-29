@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.movelab.sudeau.EruletApp;
 import net.movelab.sudeau.Util;
 import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
@@ -18,6 +19,7 @@ import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.provider.Settings.Secure;
 import android.util.Log;
@@ -48,7 +50,7 @@ public class DataContainer {
 				//int c = userRoutes.size() + 1;
 				List<String> routeIds = getRouteIds(userRoutes);
 				int c = getMaxCounter(routeIds);
-				retVal = "R_" + userId + "_" + c; 				
+				retVal = "R_" + userId + "_" + c;
 			}else{
 				retVal = "R_" + userId + "_1";
 			}
@@ -178,32 +180,38 @@ public class DataContainer {
 		return r;
 	}
 	
-	public static void deleteRouteCascade(Route r, DataBaseHelper db){
+	public static void deleteRouteCascade(Route r, EruletApp app){		
 		if(r.getTrack() != null){
-			deleteTrackCascade(r.getTrack(), db);
+			deleteTrackCascade(r.getTrack(), app);
 		}
-		db.getRouteDataDao().delete(r);
+		app.getDataBaseHelper().getRouteDataDao().delete(r);
+		SharedPreferences.Editor ed = app.getPrefsEditor();
+		ed.remove(r.getId());
+		ed.commit();
 	}
 	
-	public static void deleteTrackCascade(Track t, DataBaseHelper db){
+	public static void deleteTrackCascade(Track t, EruletApp app){
 		if(t.getSteps() != null){
-			List<Step> steps = getTrackSteps(t, db);
+			List<Step> steps = getTrackSteps(t, app.getDataBaseHelper());
 			for(Step s : steps){
-				deleteStepCascade(s, db);
+				deleteStepCascade(s, app);
 			}
 		}
-		db.getTrackDataDao().delete(t);
+		app.getDataBaseHelper().getTrackDataDao().delete(t);
 	}
 	
-	public static void deleteStepCascade(Step s, DataBaseHelper db){
+	public static void deleteStepCascade(Step s, EruletApp app){
 		if(s.getHighlight()!=null){
-			deleteHighLight(s.getHighlight(), db);
+			deleteHighLight(s.getHighlight(), app);
 		}
-		db.getStepDataDao().delete(s);
+		app.getDataBaseHelper().getStepDataDao().delete(s);
 	}
 	
-	public static void deleteHighLight(HighLight h, DataBaseHelper db){
-		db.getHlDataDao().delete(h);
+	public static void deleteHighLight(HighLight h, EruletApp app){
+		app.getDataBaseHelper().getHlDataDao().delete(h);
+		SharedPreferences.Editor ed = app.getPrefsEditor();
+		ed.remove(h.getId());
+		ed.commit();
 	}
 	
 	/**

@@ -216,7 +216,8 @@ public class EditHighLightActivity extends Activity {
 	
 	private void createVideoFile() throws IOException {		
 	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
-	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);	    
+	    //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+	    File storageDir = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.videosFolder);
 	    currentVideo = File.createTempFile(
 	        imageFileName,  /* prefix */
 	        ".mp4",         /* suffix */
@@ -230,7 +231,8 @@ public class EditHighLightActivity extends Activity {
 	private void createImageFile() throws IOException {
 	    // Create an image file name
 	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
-	    File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);	    
+	    //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+	    File storageDir = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.picturesFolder);
 	    currentPhoto = File.createTempFile(
 	        imageFileName,  /* prefix */
 	        ".jpg",         /* suffix */

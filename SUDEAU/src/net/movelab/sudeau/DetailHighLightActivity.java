@@ -31,8 +31,7 @@ import android.widget.VideoView;
 public class DetailHighLightActivity extends Activity {
 	
 	private EruletApp app;
-	private ProgressBar progressBar;
-	private SharedPreferences.Editor mPrefEditor;
+	private ProgressBar progressBar;	
 	private RatingBar myRating;
 	private Step step;
 	private int screenWidth;
@@ -45,8 +44,7 @@ public class DetailHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		screenWidth = Util.getScreenSize(getBaseContext())[0];		
-		mPrefEditor = app.getPrefs().edit();
+		screenWidth = Util.getScreenSize(getBaseContext())[0];				
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
 			String step_json = extras.getString("step_j");
@@ -75,15 +73,20 @@ public class DetailHighLightActivity extends Activity {
 		
 		myRating = (RatingBar)findViewById(R.id.ratBarUser);
 		myRating.setStepSize(1.0f);
-		float userRating = app.getPrefs().getInt(s.getId(), 0);
-		myRating.setRating(userRating);
+		if(s.getHighlight() != null){
+			float userRating = app.getPrefs().getInt(s.getHighlight().getId(), 0);
+			myRating.setRating(userRating);
+		}
 		
 		myRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
-					boolean fromUser) {				
-				mPrefEditor.putInt(step.getId(), (int)rating);				
-            	mPrefEditor.commit();            	
+					boolean fromUser) {
+				if(step.getHighlight()!=null){
+					SharedPreferences.Editor mPrefEditor = app.getPrefsEditor(); 
+					mPrefEditor.putInt(step.getHighlight().getId(), (int)rating);
+	            	mPrefEditor.commit();         
+				}
 			}
 		});
 		
@@ -129,14 +132,7 @@ public class DetailHighLightActivity extends Activity {
 				float adjustedW = (float)screenWidth*0.75f;
 				int bitmapHeight = Util.getScaledImageHeight(options.outWidth, options.outHeight, adjustedW);
 				loadBitmapThumbnailToImageView(pathName, (int)adjustedW, bitmapHeight, ivPicture,progressBar);
-				//loadBitmapThumbnailToImageView(pathName, 384, 512, ivPicture,progressBar);
-			}
-//			Display display = getWindowManager().getDefaultDisplay();
-//			Point size = new Point();
-//			display.getSize(size);
-//			int width = size.x;
-//			int height = size.y;
-			//ivPicture.setImageBitmap(Util.decodeSampledBitmapFromFile(pathName, 384, 512));			
+			}			
 		}else{
 			progressBar.setVisibility(View.GONE);
 			ivVideo.setVisibility(View.GONE);

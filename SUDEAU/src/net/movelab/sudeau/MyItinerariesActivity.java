@@ -163,7 +163,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 	@Override
 	public void remove(Route object) { 
 		super.remove(object);
-		DataContainer.deleteRouteCascade(object, app.getDataBaseHelper());
+		DataContainer.deleteRouteCascade(object, app);
 	}
 	
 	@Override
