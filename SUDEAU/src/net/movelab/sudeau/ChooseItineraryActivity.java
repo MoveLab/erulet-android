@@ -69,6 +69,8 @@ public class ChooseItineraryActivity extends Activity {
 	private int second_id = Menu.FIRST+1;
 	
 	private EruletApp app;
+	
+	private static final String TAG = "ChooseItineraryActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -173,10 +175,12 @@ public class ChooseItineraryActivity extends Activity {
 			}
 			if (mMap != null) {
 				tileProvider = initTileProvider();
-				TileOverlay tileOverlay = mMap
-						.addTileOverlay(new TileOverlayOptions()
-								.tileProvider(tileProvider));
-				tileOverlay.setVisible(true);
+				if(tileProvider!=null){
+					TileOverlay tileOverlay = mMap
+							.addTileOverlay(new TileOverlayOptions()
+									.tileProvider(tileProvider));
+					tileOverlay.setVisible(true);
+				}
 			}
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);			
 			mMap.setOnMapClickListener(new OnMapClickListener() {				
@@ -258,10 +262,12 @@ public class ChooseItineraryActivity extends Activity {
 			tileProvider.close();
 		}
 		tileProvider = initTileProvider();
-		TileOverlay tileOverlay = mMap
-				.addTileOverlay(new TileOverlayOptions()
-						.tileProvider(tileProvider));
-		tileOverlay.setVisible(true);
+		if(tileProvider!=null){
+			TileOverlay tileOverlay = mMap
+					.addTileOverlay(new TileOverlayOptions()
+							.tileProvider(tileProvider));
+			tileOverlay.setVisible(true);
+		}
 		addRouteMarkersFromDB();
 		setUpCamera();
 	}
@@ -288,24 +294,29 @@ public class ChooseItineraryActivity extends Activity {
 		}
 	}
 
-	private MapBoxOfflineTileProvider initTileProvider() {		
-		File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
-		if (!f.exists())
-			try {
-				InputStream is = getAssets().open(
-						"Vista_general_vielha.mbtiles");
-				int size = is.available();
-				byte[] buffer = new byte[size];
-				is.read(buffer);
-				is.close();
-				FileOutputStream fos = new FileOutputStream(f);
-				fos.write(buffer);
-				fos.close();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-
-		return new MapBoxOfflineTileProvider(f.getPath());
+	private MapBoxOfflineTileProvider initTileProvider() {
+		File f = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder + "/Vista_general_vielha.mbtiles");
+		//File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
+//		if (!f.exists())
+//			try {
+//				InputStream is = getAssets().open(
+//						"Vista_general_vielha.mbtiles");
+//				int size = is.available();
+//				byte[] buffer = new byte[size];
+//				is.read(buffer);
+//				is.close();
+//				FileOutputStream fos = new FileOutputStream(f);
+//				fos.write(buffer);
+//				fos.close();
+//			} catch (Exception e) {
+//				throw new RuntimeException(e);
+//			}
+		if (f.exists()){
+			return new MapBoxOfflineTileProvider(f.getPath());
+		}else{
+			Log.d(TAG,"Fitxer cartografia no trobat " + f.getAbsolutePath());
+		}
+		return null;
 	}
 
 }

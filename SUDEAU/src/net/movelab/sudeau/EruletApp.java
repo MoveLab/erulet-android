@@ -1,5 +1,6 @@
 package net.movelab.sudeau;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,6 +15,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Environment;
+import android.util.Log;
 
 public class EruletApp extends Application{
 	
@@ -26,6 +29,7 @@ public class EruletApp extends Application{
 	private DataBaseHelper dataBaseHelper;
 	private boolean trackingServiceOn = false;
 	private Locale deviceLocale = null;
+	private static final String TAG = "EruletApp";
 	
 	@Override
 	public void onCreate() {
@@ -34,6 +38,7 @@ public class EruletApp extends Application{
 		EruletApp.context = getApplicationContext();
 		deviceLocale = getResources().getConfiguration().locale;
 		applyLocaleSettings();
+		createAppFolders();
         if(dataBaseHelper == null){
     		dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
     		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
@@ -44,6 +49,22 @@ public class EruletApp extends Application{
 //    		}
     	}
 
+	}
+	
+	public void createFolder(String path){
+		File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder);
+	    if (!file.exists()) {
+	        if (!file.mkdirs()) {
+	        	Log.d(TAG,"Error creating folder " + path);
+	        }
+	    }
+	}
+	
+	public void createAppFolders(){
+		createFolder(Util.baseFolder);
+		createFolder(Util.baseFolder + "/" + Util.picturesFolder);
+		createFolder(Util.baseFolder + "/" + Util.videosFolder);
+		createFolder(Util.baseFolder + "/" + Util.othersFolder);
 	}
 	
 	public void applyLocaleSettings(){

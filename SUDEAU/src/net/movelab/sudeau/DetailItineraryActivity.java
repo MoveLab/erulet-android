@@ -1278,7 +1278,8 @@ public class DetailItineraryActivity extends Activity
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
-		File sdcard = Environment.getExternalStorageDirectory();
+		//File sdcard = Environment.getExternalStorageDirectory();
+		File sdcard = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder);
 		if(selectedRoute.getLocalCarto()!=null){
 			File f = new File(sdcard,selectedRoute.getLocalCarto());
 			//File f = new File(getCacheDir() + "/OSMPublicTransport_HiRes.mbtiles");
@@ -1298,6 +1299,8 @@ public class DetailItineraryActivity extends Activity
 //					throw new RuntimeException(e);
 //				}
 				return new MapBoxOfflineTileProvider(f.getPath());
+			}else{
+				Log.d(TAG,"Fitxer cartografia no trobat " + f.getAbsolutePath());
 			}
 		}
 		return null;

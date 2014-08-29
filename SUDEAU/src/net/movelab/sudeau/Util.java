@@ -198,6 +198,12 @@ public class Util {
 	 * holder for current value of the listener window
 	 */
 	public static long listenerTimer = LISTENER_WINDOW;
+	
+	
+	public static String baseFolder = "Erulet";
+	public static String picturesFolder = "EruletFotos";
+	public static String videosFolder = "EruletVideos";
+	public static String othersFolder = "EruletMaterials";
 
 	/**
 	 * Surrounds the given string in quotation marks. Taken from Human Mobility

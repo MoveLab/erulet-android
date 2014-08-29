@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -33,31 +34,29 @@ public class HTMLViewerActivity extends Activity {
 		loadHTML();
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
-		menu.add(group1,first_id,first_id,"Reproduïr video...");			
-		return super.onCreateOptionsMenu(menu);
-	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		switch(item.getItemId()){
-			case 1:							
-				Intent i = new Intent(HTMLViewerActivity.this,VideoPlayActivity.class);				
-				startActivity(i);
-			    return true;		
-			default:
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item){
+//		switch(item.getItemId()){
+//			case 1:							
+//				Intent i = new Intent(HTMLViewerActivity.this,VideoPlayActivity.class);				
+//				startActivity(i);
+//			    return true;		
+//			default:
+//				break;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 		
 	private String getReferenceURI(){
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
 			String idReference = extras.getString("idReference");
 			Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-			return "file:///android_asset/" + r.getTextContent();
+			File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder);
+			return "file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
+			//return "file:///android_asset/" + r.getTextContent();
 		}
 		return null;
 	}
