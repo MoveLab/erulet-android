@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.Route;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
@@ -44,7 +45,13 @@ public class EruletApp extends Application{
     		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
 //    		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
 //    		if(!loaded){
-    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+//    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+//    			Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
+//    			if(r!=null){
+//    				DataContainer.deleteRouteCascade(r,this);
+//    			}
+//    			DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
+//    		DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
 //    			getPrefs().edit().putBoolean("redon_loaded", true).apply();
 //    		}
     	}

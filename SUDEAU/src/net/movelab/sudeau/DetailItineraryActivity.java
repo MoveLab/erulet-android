@@ -1250,7 +1250,7 @@ public class DetailItineraryActivity extends Activity
 			if(steps.size() <= 10){
 				freq = 1;
 			}else{
-				freq = 3;
+				freq = steps.size()/8;
 			}
 			for(int i = 0; i < steps.size(); i++){
 				Step current = steps.get(i);			
