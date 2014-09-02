@@ -77,8 +77,6 @@ public class Util {
 	
 	public static double MINIMUM_POP_DISTANCE_RADIUS = 50;	
 	
-	//Global debug flag
-	public static final boolean DEBUG=true;
 	//Estanh Redon Coordinates
 	public static final LatLng ESTANH_REDON = new LatLng(42.64, 0.78);
 	//

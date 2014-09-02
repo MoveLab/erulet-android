@@ -387,10 +387,8 @@ public class DetailItineraryActivity extends Activity
 	private void saveHighLight(HighLight h) {
 		Step s = DataContainer.findStepById(stepBeingEditedId, app.getDataBaseHelper());
 		if (s == null) {
-			// Something has gone very wrong
-			if (Util.DEBUG) {
-				Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);
-			}
+			// Something has gone very wrong			
+			Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);			
 		} else {			
 			DataContainer.addHighLightToStep(s, h, DataContainer.getAndroidId(getContentResolver()), app.getDataBaseHelper());
 		}
@@ -1454,10 +1452,10 @@ public class DetailItineraryActivity extends Activity
 			LatLng location = new LatLng(lat, lng);
 			boolean locationExists = locationExists(location, stepsInProgress);
 			// Point is same as last, we don't add it to the track
-			if (Util.DEBUG) {
-				Log.d("onReceive", "Received new location " + lat + " " + lng
-						+ " t " + app.formatDateHoursMinutesSeconds(time) + " already logged");
-			}
+			
+			Log.d("onReceive", "Received new location " + lat + " " + lng
+					+ " t " + app.formatDateHoursMinutesSeconds(time) + " already logged");
+			
 			if (!locationExists) {
 				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
 				if(mMap!=null && cu!=null){
@@ -1482,11 +1480,9 @@ public class DetailItineraryActivity extends Activity
 					DataContainer.addStepToTrack(s, routeInProgress.getTrack(),
 							DataContainer.getAndroidId(getContentResolver()), 
 							app.getDataBaseHelper());
-				}				
-				if (Util.DEBUG) {
-					Log.d("onReceive", "Received new location " + lat + " "
-							+ lng + " t " + app.formatDateHoursMinutesSeconds(time) );
-				}
+				}								
+				Log.d("onReceive", "Received new location " + lat + " "
+						+ lng + " t " + app.formatDateHoursMinutesSeconds(time) );				
 			}
 			if(routeMode==1){
 				checkNearbyMarkers(location);
@@ -1529,18 +1525,14 @@ public class DetailItineraryActivity extends Activity
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		//Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-		if (Util.DEBUG) {
-			Log.d("onConnected", "Google play services connected");
-		}
+		//Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();	
+		Log.d("onConnected", "Google play services connected");
 	}
 
 	@Override
 	public void onDisconnected() {
-		// TODO Auto-generated method stub
-		if (Util.DEBUG) {
-			Log.d("onDisconnected", "Google play services disconnected");
-		}
+		// TODO Auto-generated method stub		
+		Log.d("onDisconnected", "Google play services disconnected");
 	}
 
 }
