@@ -478,10 +478,10 @@ public class DataContainer {
 				"wpV02-inici pista Varradòs", null, 10, HighLight.WAYPOINT);
 		HighLight h13 = new HighLight("hl_varrados_wpv03", "wpV03-aparcament",
 				null, 10, HighLight.WAYPOINT);
-		HighLight h14 = new HighLight("hl_varrados_wpv04",
-				"wpV04-Barratge Varradòs", null, 10, HighLight.WAYPOINT);
-		HighLight h15 = new HighLight("hl_varrados_wpv05",
-				"wpV05-Saut deth Pish", null, 10, HighLight.WAYPOINT);
+//		HighLight h14 = new HighLight("hl_varrados_wpv04",
+//				"wpV04-Barratge Varradòs", null, 10, HighLight.WAYPOINT);
+//		HighLight h15 = new HighLight("hl_varrados_wpv05",
+//				"wpV05-Saut deth Pish", null, 10, HighLight.WAYPOINT);
 		HighLight h16 = new HighLight("hl_varrados_wpv06",
 				"wpV06-trencall amunt camí", null, 10, HighLight.WAYPOINT);
 		HighLight h17 = new HighLight("hl_varrados_wpv07",
@@ -491,10 +491,10 @@ public class DataContainer {
 		HighLight h19 = new HighLight("hl_varrados_wpv09",
 				"wpV09-inici/final circuit estanys", null, 10,
 				HighLight.WAYPOINT);
-		HighLight h20 = new HighLight("hl_varrados_wpv10",
-				"wpV10-Nere de Uèrri", null, 10, HighLight.WAYPOINT);
-		HighLight h21 = new HighLight("hl_varrados_wpv11",
-				"wpV11-Estanh Pica Palomèra", null, 10, HighLight.WAYPOINT);
+//		HighLight h20 = new HighLight("hl_varrados_wpv10",
+//				"wpV10-Nere de Uèrri", null, 10, HighLight.WAYPOINT);
+//		HighLight h21 = new HighLight("hl_varrados_wpv11",
+//				"wpV11-Estanh Pica Palomèra", null, 10, HighLight.WAYPOINT);
 
 		try {
 			hlDataDao.create(h1);
@@ -510,26 +510,26 @@ public class DataContainer {
 			hlDataDao.create(h11);
 			hlDataDao.create(h12);
 			hlDataDao.create(h13);
-			hlDataDao.create(h14);
-			hlDataDao.create(h15);
+			//hlDataDao.create(h14);
+			//hlDataDao.create(h15);
 			hlDataDao.create(h16);
 			hlDataDao.create(h17);
 			hlDataDao.create(h18);
 			hlDataDao.create(h19);
-			hlDataDao.create(h20);
-			hlDataDao.create(h21);
+			//hlDataDao.create(h20);
+			//hlDataDao.create(h21);
 		} catch (RuntimeException ex) {
 			Log.e("Inserting highlight", "Insert error " + ex.toString());
 		}
 
 		Step s1 = new Step("step_varrados_1", "step", 42.7378633696433,
-				0.756368635182401, 0, 10, 1, t, null);
+				0.756368635182401, 0, 10, 1, t, h11);
 		Step s2 = new Step("step_varrados_2", "step", 42.7379694385642,
 				0.756267080117364, 0, 10, 2, t, null);
 		Step s3 = new Step("step_varrados_3", "step", 42.7381332329505,
 				0.755894686489318, 0, 10, 3, t, null);
 		Step s4 = new Step("step_varrados_4", "step", 42.738266536489,
-				0.755804363736847, 0, 10, 4, t, null);
+				0.755804363736847, 0, 10, 4, t, h12);
 		Step s5 = new Step("step_varrados_5", "step", 42.7384793911674,
 				0.75563787281689, 0, 10, 5, t, null);
 		Step s6 = new Step("step_varrados_6", "step", 42.7387275218083,
@@ -1593,7 +1593,7 @@ public class DataContainer {
 		Step s535 = new Step("step_varrados_535", "step", 42.7768034498415,
 				0.832383995701556, 0, 10, 535, t, null);
 		Step s536 = new Step("step_varrados_536", "step", 42.7766970812424,
-				0.832473274070256, 0, 10, 536, t, null);
+				0.832473274070256, 0, 10, 536, t, h13);
 		Step s537 = new Step("step_varrados_537", "step", 42.7764305757402,
 				0.832546747917371, 0, 10, 537, t, null);
 		Step s538 = new Step("step_varrados_538", "step", 42.7763261097903,
@@ -1619,7 +1619,7 @@ public class DataContainer {
 		Step s548 = new Step("step_varrados_548", "step", 42.7763563034808,
 				0.834926858306302, 0, 10, 548, t, null);
 		Step s549 = new Step("step_varrados_549", "step", 42.7763887876225,
-				0.835216040315766, 0, 10, 549, t, null);
+				0.835216040315766, 0, 10, 549, t, h6);
 		Step s550 = new Step("step_varrados_550", "step", 42.7769300506112,
 				0.835029099821934, 0, 10, 550, t, null);
 		Step s551 = new Step("step_varrados_551", "step", 42.7771585489586,
@@ -1633,7 +1633,7 @@ public class DataContainer {
 		Step s555 = new Step("step_varrados_555", "step", 42.7776458178069,
 				0.835022489414666, 0, 10, 555, t, null);
 		Step s556 = new Step("step_varrados_556", "step", 42.7777065033012,
-				0.835017318334268, 0, 10, 556, t, null);
+				0.835017318334268, 0, 10, 556, t, h7);
 		Step s557 = new Step("step_varrados_557", "step", 42.7777066188254,
 				0.835023426315142, 0, 10, 557, t, null);
 		Step s558 = new Step("step_varrados_558", "step", 42.7777299999833,
@@ -1787,7 +1787,7 @@ public class DataContainer {
 		Step s632 = new Step("step_varrados_632", "step", 42.7783299999837,
 				0.842979999560943, 0, 10, 632, t, null);
 		Step s633 = new Step("step_varrados_633", "step", 42.7783299999837,
-				0.843009999560985, 0, 10, 633, t, null);
+				0.843009999560985, 0, 10, 633, t, h16);
 		Step s634 = new Step("step_varrados_634", "step", 42.7783099999837,
 				0.843059999561057, 0, 10, 634, t, null);
 		Step s635 = new Step("step_varrados_635", "step", 42.7782399999837,
@@ -1835,7 +1835,7 @@ public class DataContainer {
 		Step s656 = new Step("step_varrados_656", "step", 42.7782199999837,
 				0.845119999563976, 0, 10, 656, t, null);
 		Step s657 = new Step("step_varrados_657", "step", 42.778193924612,
-				0.845219303130673, 0, 10, 657, t, null);
+				0.845219303130673, 0, 10, 657, t, h17);
 		Step s658 = new Step("step_varrados_658", "step", 42.7781906144428,
 				0.845276512469736, 0, 10, 658, t, null);
 		Step s659 = new Step("step_varrados_659", "step", 42.7781999999838,
@@ -1881,7 +1881,7 @@ public class DataContainer {
 		Step s679 = new Step("step_varrados_679", "step", 42.7777799999838,
 				0.846989999566615, 0, 10, 679, t, null);
 		Step s680 = new Step("step_varrados_680", "step", 42.7777899999839,
-				0.847079999566741, 0, 10, 680, t, null);
+				0.847079999566741, 0, 10, 680, t, h8);
 		Step s681 = new Step("step_varrados_681", "step", 42.7777743908828,
 				0.847330664240011, 0, 10, 681, t, null);
 		Step s682 = new Step("step_varrados_682", "step", 42.7777662906937,
@@ -1963,7 +1963,7 @@ public class DataContainer {
 		Step s720 = new Step("step_varrados_720", "step", 42.781906405239,
 				0.859027225215981, 0, 10, 720, t, null);
 		Step s721 = new Step("step_varrados_721", "step", 42.7817128130731,
-				0.860231930867915, 0, 10, 721, t, null);
+				0.860231930867915, 0, 10, 721, t, h18);
 		Step s722 = new Step("step_varrados_722", "step", 42.781705581511,
 				0.861772507172661, 0, 10, 722, t, null);
 		Step s723 = new Step("step_varrados_723", "step", 42.78218558005,
@@ -1997,7 +1997,7 @@ public class DataContainer {
 		Step s737 = new Step("step_varrados_737", "step", 42.7846410487183,
 				0.868040873731418, 0, 10, 737, t, null);
 		Step s738 = new Step("step_varrados_738", "step", 42.7848566878145,
-				0.868015132759172, 0, 10, 738, t, null);
+				0.868015132759172, 0, 10, 738, t, h19);
 		Step s739 = new Step("step_varrados_739", "step", 42.7850416881734,
 				0.867794835741044, 0, 10, 739, t, null);
 		Step s740 = new Step("step_varrados_740", "step", 42.7851526461063,
@@ -2053,7 +2053,7 @@ public class DataContainer {
 		Step s765 = new Step("step_varrados_765", "step", 42.7912873468876,
 				0.851221030950311, 0, 10, 765, t, null);
 		Step s766 = new Step("step_varrados_766", "step", 42.7916358392038,
-				0.850597631536814, 0, 10, 766, t, null);
+				0.850597631536814, 0, 10, 766, t, h9);
 		Step s767 = new Step("step_varrados_767", "step", 42.79136392681,
 				0.851462914946149, 0, 10, 767, t, null);
 		Step s768 = new Step("step_varrados_768", "step", 42.7912567422093,
@@ -2097,7 +2097,7 @@ public class DataContainer {
 		Step s787 = new Step("step_varrados_787", "step", 42.7934290394676,
 				0.867029945423603, 0, 10, 787, t, null);
 		Step s788 = new Step("step_varrados_788", "step", 42.793441333406,
-				0.86768978837989, 0, 10, 788, t, null);
+				0.86768978837989, 0, 10, 788, t, h10);
 		Step s789 = new Step("step_varrados_789", "step", 42.793218734803,
 				0.86830878825355, 0, 10, 789, t, null);
 		Step s790 = new Step("step_varrados_790", "step", 42.7930063954668,
@@ -2981,6 +2981,25 @@ public class DataContainer {
 		} catch (RuntimeException ex) {
 			Log.e("Inserting step", "Insert error " + ex.toString());
 		}
+		
+		Route r = new Route();
+		r.setId("ROUTE_VARRADOS");
+		r.setName("Varradòs");
+		r.setDescription("Itinerari Varradòs");
+		r.setUserId("1");
+		// Ph_ch parameters
+		// r.setReference(r6);
+		// Interactive image
+		// r.setInteractiveImage(img);
+		r.setTrack(t);
+		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
+
+		try {
+			routeDataDao.create(r);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting route", "Insert error " + ex.toString());
+		}
+
 
 	}
 

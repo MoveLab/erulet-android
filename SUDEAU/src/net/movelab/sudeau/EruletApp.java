@@ -43,13 +43,13 @@ public class EruletApp extends Application{
         if(dataBaseHelper == null){
     		dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
     		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
-    		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
-    		if(!loaded){
-    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+//    		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
+//    		if(!loaded){
+//    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
 //    			Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
 //    			if(r!=null){
 //    				DataContainer.deleteRouteCascade(r,this);
-			}
+//			}
 //    			DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
 //    		DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
 //    		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
@@ -59,6 +59,7 @@ public class EruletApp extends Application{
 //    		DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
 //    			getPrefs().edit().putBoolean("redon_loaded", true).apply();
 //    		}
+    		DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
     	}
 
 	}
