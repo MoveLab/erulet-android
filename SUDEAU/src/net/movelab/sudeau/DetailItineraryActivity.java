@@ -10,9 +10,11 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
@@ -523,7 +525,12 @@ public class DetailItineraryActivity extends Activity
 			};
 		}
 		LatLng currentLatLng = new LatLng(current.getLatitude(),current.getLongitude());
-		CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
+		CameraUpdate cu = null;
+		if(mMap.getCameraPosition()!=null){
+			cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, mMap.getCameraPosition().zoom);
+		}else{
+			cu = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16);
+		}
 		if(lastPositionMarker==null){
 			lastPositionMarker = mObjFactory.addLastPositionMarker(
 					mMap, 
@@ -533,7 +540,9 @@ public class DetailItineraryActivity extends Activity
 		}
 		lastPositionMarker.setPosition(currentLatLng);
 		lastPositionMarker.showInfoWindow();
-		mMap.moveCamera(cu);
+		if(cu!=null){
+			mMap.moveCamera(cu);
+		}
 		countDown.start();
 	}
 
@@ -742,10 +751,19 @@ public class DetailItineraryActivity extends Activity
 						}
 					}
 					if (s != null && s.getReference() != null) {
-						Intent i = new Intent(DetailItineraryActivity.this,
-								HTMLViewerActivity.class);
-						i.putExtra("idReference", s.getReference().getId());
-						startActivity(i);
+						//Interactive image
+						Reference r = DataContainer.refreshReference(s.getReference(), app.getDataBaseHelper());
+						if(r.getName()!= null && r.getName().contains("jpg")){
+							Intent i = new Intent(DetailItineraryActivity.this,
+									InteractiveImageActivityHeatMap.class);			
+							i.putExtra("int_image_id", r.getTextContent());
+							startActivity(i);
+						}else{
+							Intent i = new Intent(DetailItineraryActivity.this,
+									HTMLViewerActivity.class);
+							i.putExtra("idReference", r.getId());
+							startActivity(i);
+						}
 					} else {
 						//Might be start/end markers
 						if(marker.equals(startMarker) || marker.equals(arrivalMarker)){
@@ -1248,7 +1266,7 @@ public class DetailItineraryActivity extends Activity
 			if(steps.size() <= 10){
 				freq = 1;
 			}else{
-				freq = steps.size()/8;
+				freq = steps.size()/5;
 			}
 			for(int i = 0; i < steps.size(); i++){
 				Step current = steps.get(i);			
@@ -1457,7 +1475,11 @@ public class DetailItineraryActivity extends Activity
 					+ " t " + app.formatDateHoursMinutesSeconds(time) + " already logged");
 			
 			if (!locationExists) {
-				cu = CameraUpdateFactory.newLatLngZoom(location, 16);
+				if(mMap != null && mMap.getCameraPosition() != null){
+					cu = CameraUpdateFactory.newLatLngZoom(location, mMap.getCameraPosition().zoom);
+				}else{
+					cu = CameraUpdateFactory.newLatLngZoom(location, 16);
+				}
 				if(mMap!=null && cu!=null){
 					mMap.moveCamera(cu);
 				}
@@ -1475,7 +1497,7 @@ public class DetailItineraryActivity extends Activity
 
 					currentStep = s;
 					stepsInProgress.add(s);
-					int order = stepsInProgress.size() - 1;
+					int order = stepsInProgress.size();
 					s.setOrder(order);
 					DataContainer.addStepToTrack(s, routeInProgress.getTrack(),
 							DataContainer.getAndroidId(getContentResolver()), 

@@ -44,24 +44,68 @@ public class EruletApp extends Application{
     		dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
     		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
     		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
-    		if(!loaded){
+//    		if(!loaded){
     			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
 //    			Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
 //    			if(r!=null){
 //    				DataContainer.deleteRouteCascade(r,this);
-			}
-//    			DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
-//    		DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
-//    		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
-//    		if(r!=null){
-//				DataContainer.deleteRouteCascade(r,this);
 //			}
-//    		DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
+//    			DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
+//    			DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
 //    			getPrefs().edit().putBoolean("redon_loaded", true).apply();
 //    		}
-//    		DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
+//    			DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
+//    			DataContainer.loadBassaOles(dataBaseHelper, this.getBaseContext());
+    		//reloadEscunHau();
+    		//reloadBassaOles();
+    		//reloadVarrados();
+    		//reloadGaronaPeu();
+    		//reloadArtigaDeLin();
+//    			DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
     	}
 
+	}
+	
+	private void reloadArtigaDeLin(){
+		Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
+		if(r!=null){
+			DataContainer.deleteRouteCascade(r,this);
+		}
+		DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
+	}
+	
+	private void reloadGaronaPeu(){
+		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
+		if(r!=null){
+			//DataContainer.deleteRouteCascade(r,this);
+			r.setLocalCarto("Garona_hires.mbtiles");
+			DataContainer.updateRoute(r, dataBaseHelper);
+		}
+		//DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
+	}
+	
+	private void reloadVarrados(){
+		Route r = DataContainer.findRouteById("ROUTE_VARRADOS", dataBaseHelper);
+		if(r!=null){
+			DataContainer.deleteRouteCascade(r,this);
+		}
+		DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
+	}
+	
+	private void reloadBassaOles(){
+		Route r = DataContainer.findRouteById("ROUTE_BASSAOLES", dataBaseHelper);
+		if(r!=null){
+			DataContainer.deleteRouteCascade(r,this);
+		}
+		DataContainer.loadBassaOles(dataBaseHelper, this.getBaseContext());
+	}
+	
+	private void reloadEscunHau(){
+		Route r = DataContainer.findRouteById("ROUTE_ESCUNHAU", dataBaseHelper);
+		if(r!=null){
+			DataContainer.deleteRouteCascade(r,this);
+		}
+		DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
 	}
 	
 	public void createFolder(String path){
@@ -111,7 +155,7 @@ public class EruletApp extends Application{
 	
 	public boolean isPrivilegedUser() {
 		//@TODO Check if the user is really a privileged user (can create new routes)
-		return true;
+		return false;
 	}
 	
 	public SharedPreferences getPrefs() {

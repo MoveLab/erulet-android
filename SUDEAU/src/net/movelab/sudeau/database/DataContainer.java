@@ -168,15 +168,36 @@ public class DataContainer {
 		db.getRouteDataDao().refresh(r);
 		return r;
 	}
+	
+	public static Reference refreshReference(Reference r, DataBaseHelper db) {
+		db.getReferenceDataDao().refresh(r);
+		return r;
+	}
 
 	public static void deleteRouteCascade(Route r, EruletApp app) {
 		if (r.getTrack() != null) {
 			deleteTrackCascade(r.getTrack(), app);
 		}
+		if(r.getReference() != null){
+			deleteReference(r.getReference(), app);
+		}
+		if(r.getInteractiveImage() != null){
+			deleteInteractiveImageCascade(r.getInteractiveImage(), app);
+		}
 		app.getDataBaseHelper().getRouteDataDao().delete(r);
 		SharedPreferences.Editor ed = app.getPrefsEditor();
 		ed.remove(r.getId());
 		ed.commit();
+	}
+	
+	public static void deleteInteractiveImageCascade(InteractiveImage img, EruletApp app) {
+		if(img.getBoxes() != null){
+			List<Box> boxes = getInteractiveImageBoxes(img, app.getDataBaseHelper());
+			for (Box b : boxes) {
+				app.getDataBaseHelper().getBoxDataDao().delete(b);
+			}
+		}
+		app.getDataBaseHelper().getInteractiveImageDataDao().delete(img);
 	}
 
 	public static void deleteTrackCascade(Track t, EruletApp app) {
@@ -193,10 +214,17 @@ public class DataContainer {
 		if (s.getHighlight() != null) {
 			deleteHighLight(s.getHighlight(), app);
 		}
+		if(s.getReference() != null){
+			deleteReference(s.getReference(), app);
+		}
 		app.getDataBaseHelper().getStepDataDao().delete(s);
 	}
+	
+	public static void deleteReference(Reference r, EruletApp app) {
+		app.getDataBaseHelper().getReferenceDataDao().delete(r);
+	}
 
-	public static void deleteHighLight(HighLight h, EruletApp app) {
+	public static void deleteHighLight(HighLight h, EruletApp app) {		
 		app.getDataBaseHelper().getHlDataDao().delete(h);
 		SharedPreferences.Editor ed = app.getPrefsEditor();
 		ed.remove(h.getId());
@@ -369,6 +397,46 @@ public class DataContainer {
 		db.getReferenceDataDao().refresh(r);
 		return r;
 	}
+	
+//	QueryBuilder<Track, String> queryBuilder = db.getTrackDataDao()
+//			.queryBuilder();
+//	Where<Track, String> where = queryBuilder.where();
+//	String retVal = null;
+//	try {
+//		where.like("id", "%" + userId + "%");
+//		PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
+//		List<Track> trackRoutes = db.getTrackDataDao().query(preparedQuery);
+//		if (trackRoutes != null) {
+//			List<String> ids = getTrackIds(trackRoutes);
+//			int c = getMaxCounter(ids);
+//			// int c = trackRoutes.size() + 1;
+//			retVal = "T_" + userId + "_" + c;
+//		} else {
+//			retVal = "T_" + userId + "_1";
+//		}			
+//		Log.d("getTrackId", "Returning track id" + retVal);			
+//		return retVal;
+//	} catch (SQLException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//	return retVal;
+	
+	public static Step getRouteStarterFast(Route route, DataBaseHelper db) {
+		if(route.getTrack()!=null){
+			try{
+				List<Step> steps = db.getStepDataDao().query(
+					db.getStepDataDao().queryBuilder().where()
+					.eq("trackId", route.getTrack().getId()).and().eq("order", 1).prepare());
+				if(steps != null && steps.size()>0){
+					return steps.get(0);
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 	public static Step getRouteStarter(Route route, DataBaseHelper db) {
 		Track t = route.getTrack();
@@ -425,6 +493,453 @@ public class DataContainer {
 	// }
 	// return null;
 	// }
+	
+	public static void loadBassaOles(DataBaseHelper db, Context context) {
+		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
+		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
+		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
+		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
+		
+		Track t = new Track("TRACK_BASSAOLES", "Waypoints recorregut Bassa d'Oles");
+		try {
+			trackDataDao.create(t);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting track", "Insert error " + ex.toString());
+		}
+		
+		//WP
+		HighLight h1 = new HighLight("hl_bassaoles_wpo01","wpO01-inici",null,10,HighLight.WAYPOINT);
+		HighLight h2 = new HighLight("hl_bassaoles_wpo02","wpO02-represa",null,10,HighLight.WAYPOINT);
+		HighLight h3 = new HighLight("hl_bassaoles_wpo03","wpO03-vista canal",null,10,HighLight.WAYPOINT);
+		HighLight h4 = new HighLight("hl_bassaoles_wpo04","wpO04-arbre tombat",null,10,HighLight.WAYPOINT);
+		HighLight h5 = new HighLight("hl_bassaoles_wpo05","wpO05-extrem N bassa",null,10,HighLight.WAYPOINT);
+		HighLight h6 = new HighLight("hl_bassaoles_wpo06","wpO06-cruïlla pista",null,10,HighLight.WAYPOINT);
+		HighLight h7 = new HighLight("hl_bassaoles_wpo07","wpO07-desviament pista",null,10,HighLight.WAYPOINT);
+		HighLight h8 = new HighLight("hl_bassaoles_wpo08","wpO08-basseta",null,10,HighLight.WAYPOINT);
+		HighLight h9 = new HighLight("hl_bassaoles_wpo09","wpO09-sortida sender",null,10,HighLight.WAYPOINT);
+		HighLight h10 = new HighLight("hl_bassaoles_wpo10","wpO10-inici sender",null,10,HighLight.WAYPOINT);
+		HighLight h11 = new HighLight("hl_bassaoles_wpo11","wpO11-prat",null,10,HighLight.WAYPOINT);
+		HighLight h12 = new HighLight("hl_bassaoles_wpo12","wpO12-pista",null,10,HighLight.WAYPOINT);
+		HighLight h13 = new HighLight("hl_bassaoles_wpo13","wpO13-desviament borda",null,10,HighLight.WAYPOINT);
+		HighLight h14 = new HighLight("hl_bassaoles_wpo14","wpO14",null,10,HighLight.WAYPOINT);
+
+		//POI
+		HighLight h15 = new HighLight("hl_bassaoles_poio01","poiO01-represa",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+		HighLight h16 = new HighLight("hl_bassaoles_poio02","poiO02-vista canal",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+		HighLight h17 = new HighLight("hl_bassaoles_poio03","poiO03-vista bassa N",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+		HighLight h18 = new HighLight("hl_bassaoles_poio04","poiO04-basseta",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+		HighLight h19 = new HighLight("hl_bassaoles_poio05","poiO05-aiguamoll",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+		HighLight h20 = new HighLight("hl_bassaoles_poio06","poiO06-illots càrex",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
+				
+		
+		try {
+			hlDataDao.create(h1);
+			hlDataDao.create(h2);
+			hlDataDao.create(h3);
+			hlDataDao.create(h4);
+			hlDataDao.create(h5);
+			hlDataDao.create(h6);
+			hlDataDao.create(h7);
+			hlDataDao.create(h8);
+			hlDataDao.create(h9);
+			hlDataDao.create(h10);
+			hlDataDao.create(h11);
+			hlDataDao.create(h12);
+			hlDataDao.create(h13);
+			hlDataDao.create(h14);
+			hlDataDao.create(h15);
+			hlDataDao.create(h16);
+			hlDataDao.create(h17);
+			hlDataDao.create(h18);
+			hlDataDao.create(h19);
+			hlDataDao.create(h20);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting highlight", "Insert error " + ex.toString());
+		}
+		
+		Step s1 = new Step("step_bassaoles_1", "step", 42.7149171657416, 0.774089345161048, 0, 10, 1, t, h1);
+		Step s2 = new Step("step_bassaoles_2", "step", 42.7149504407864, 0.774179742608889, 0, 10, 2, t, null);
+		Step s3 = new Step("step_bassaoles_3", "step", 42.7150084580268, 0.774153244934471, 0, 10, 3, t, null);
+		Step s4 = new Step("step_bassaoles_4", "step", 42.7150488336915, 0.77414569546976, 0, 10, 4, t, null);
+		Step s5 = new Step("step_bassaoles_5", "step", 42.7150896838814, 0.774162552344225, 0, 10, 5, t, null);
+		Step s6 = new Step("step_bassaoles_6", "step", 42.715130534069, 0.774179409239797, 0, 10, 6, t, h15);
+		Step s7 = new Step("step_bassaoles_7", "step", 42.7151762395073, 0.774214410071807, 0, 10, 7, t, h2);
+		Step s8 = new Step("step_bassaoles_8", "step", 42.7152417217644, 0.774340291518999, 0, 10, 8, t, null);
+		Step s9 = new Step("step_bassaoles_9", "step", 42.7152601937158, 0.774364054485635, 0, 10, 9, t, null);
+		Step s10 = new Step("step_bassaoles_10", "step", 42.7152882574889, 0.774418003786129, 0, 10, 10, t, null);
+		Step s11 = new Step("step_bassaoles_11", "step", 42.7153233075173, 0.774483915077973, 0, 10, 11, t, null);
+		Step s12 = new Step("step_bassaoles_12", "step", 42.7154632583167, 0.774387323796554, 0, 10, 12, t, null);
+		Step s13 = new Step("step_bassaoles_13", "step", 42.7155297998447, 0.774336097822315, 0, 10, 13, t, null);
+		Step s14 = new Step("step_bassaoles_14", "step", 42.7155644899055, 0.77426769291704, 0, 10, 14, t, null);
+		Step s15 = new Step("step_bassaoles_15", "step", 42.7156635945871, 0.774270255403993, 0, 10, 15, t, null);
+		Step s16 = new Step("step_bassaoles_16", "step", 42.715696039152, 0.774317942487713, 0, 10, 16, t, null);
+		Step s17 = new Step("step_bassaoles_17", "step", 42.7157596233959, 0.774346198608682, 0, 10, 17, t, null);
+		Step s18 = new Step("step_bassaoles_18", "step", 42.7158715144317, 0.774311668627549, 0, 10, 18, t, null);
+		Step s19 = new Step("step_bassaoles_19", "step", 42.7158788523856, 0.774225923573729, 0, 10, 19, t, null);
+		Step s20 = new Step("step_bassaoles_20", "step", 42.7159320143604, 0.77418128137689, 0, 10, 20, t, null);
+		Step s21 = new Step("step_bassaoles_21", "step", 42.7160298140649, 0.774116725239958, 0, 10, 21, t, null);
+		Step s22 = new Step("step_bassaoles_22", "step", 42.7160797816235, 0.77413936225245, 0, 10, 22, t, null);
+		Step s23 = new Step("step_bassaoles_23", "step", 42.7162133389408, 0.77406131538973, 0, 10, 23, t, null);
+		Step s24 = new Step("step_bassaoles_24", "step", 42.7161982985145, 0.77398247601243, 0, 10, 24, t, null);
+		Step s25 = new Step("step_bassaoles_25", "step", 42.7162269465401, 0.773834908995614, 0, 10, 25, t, null);
+		Step s26 = new Step("step_bassaoles_26", "step", 42.7162516882982, 0.773718011264, 0, 10, 26, t, null);
+		Step s27 = new Step("step_bassaoles_27", "step", 42.716249908404, 0.773626485774426, 0, 10, 27, t, h3);
+		Step s28 = new Step("step_bassaoles_28", "step", 42.7162925287309, 0.773502842505807, 0, 10, 28, t, h16);
+		Step s29 = new Step("step_bassaoles_29", "step", 42.7163133641518, 0.773416613991842, 0, 10, 29, t, null);
+		Step s30 = new Step("step_bassaoles_30", "step", 42.7163238953036, 0.77326358855263, 0, 10, 30, t, null);
+		Step s31 = new Step("step_bassaoles_31", "step", 42.7163480430252, 0.77311618190158, 0, 10, 31, t, null);
+		Step s32 = new Step("step_bassaoles_32", "step", 42.7163771647028, 0.772993021010115, 0, 10, 32, t, null);
+		Step s33 = new Step("step_bassaoles_33", "step", 42.7164112604146, 0.772894105879156, 0, 10, 33, t, null);
+		Step s34 = new Step("step_bassaoles_34", "step", 42.7164407379703, 0.77278924991004, 0, 10, 34, t, null);
+		Step s35 = new Step("step_bassaoles_35", "step", 42.7164657160669, 0.772684554834878, 0, 10, 35, t, null);
+		Step s36 = new Step("step_bassaoles_36", "step", 42.7164909315018, 0.7725920631159, 0, 10, 36, t, null);
+		Step s37 = new Step("step_bassaoles_37", "step", 42.7165253830248, 0.772511452760378, 0, 10, 37, t, null);
+		Step s38 = new Step("step_bassaoles_38", "step", 42.7165591221245, 0.772394231971268, 0, 10, 38, t, null);
+		Step s39 = new Step("step_bassaoles_39", "step", 42.7165840998511, 0.772289536551583, 0, 10, 39, t, h4);
+		Step s40 = new Step("step_bassaoles_40", "step", 42.7166084837776, 0.772154332410751, 0, 10, 40, t, null);
+		Step s41 = new Step("step_bassaoles_41", "step", 42.7166148107337, 0.772016721461265, 0, 10, 41, t, null);
+		Step s42 = new Step("step_bassaoles_42", "step", 42.7166281867697, 0.771952129926618, 0, 10, 42, t, null);
+		Step s43 = new Step("step_bassaoles_43", "step", 42.7166012466787, 0.771898140388993, 0, 10, 43, t, h17);
+		Step s44 = new Step("step_bassaoles_44", "step", 42.7165879200237, 0.771791762822445, 0, 10, 44, t, h5);
+		Step s45 = new Step("step_bassaoles_45", "step", 42.7166364034811, 0.771738126516824, 0, 10, 45, t, null);
+		Step s46 = new Step("step_bassaoles_46", "step", 42.7166839961534, 0.771638727126253, 0, 10, 46, t, null);
+		Step s47 = new Step("step_bassaoles_47", "step", 42.7167231838891, 0.771570158417617, 0, 10, 47, t, null);
+		Step s48 = new Step("step_bassaoles_48", "step", 42.7167669897144, 0.771507530287216, 0, 10, 48, t, null);
+		Step s49 = new Step("step_bassaoles_49", "step", 42.7168631248334, 0.771357544591017, 0, 10, 49, t, null);
+		Step s50 = new Step("step_bassaoles_50", "step", 42.7169204286028, 0.7712944328926, 0, 10, 50, t, null);
+		Step s51 = new Step("step_bassaoles_51", "step", 42.7169782074966, 0.771255728119061, 0, 10, 51, t, null);
+		Step s52 = new Step("step_bassaoles_52", "step", 42.7170312494346, 0.771204980839846, 0, 10, 52, t, null);
+		Step s53 = new Step("step_bassaoles_53", "step", 42.7170711496665, 0.771173022092318, 0, 10, 53, t, h6);
+		Step s54 = new Step("step_bassaoles_54", "step", 42.717072085038, 0.770989807914199, 0, 10, 54, t, null);
+		Step s55 = new Step("step_bassaoles_55", "step", 42.7170957545157, 0.770817991638304, 0, 10, 55, t, null);
+		Step s56 = new Step("step_bassaoles_56", "step", 42.7171287789071, 0.770664158278927, 0, 10, 56, t, null);
+		Step s57 = new Step("step_bassaoles_57", "step", 42.7171513783969, 0.770437425773829, 0, 10, 57, t, null);
+		Step s58 = new Step("step_bassaoles_58", "step", 42.7171617866628, 0.770278296156939, 0, 10, 58, t, null);
+		Step s59 = new Step("step_bassaoles_59", "step", 42.7171549103967, 0.770156421851355, 0, 10, 59, t, null);
+		Step s60 = new Step("step_bassaoles_60", "step", 42.7171576269784, 0.770064734073243, 0, 10, 60, t, null);
+		Step s61 = new Step("step_bassaoles_61", "step", 42.717165080555, 0.769985088647642, 0, 10, 61, t, null);
+		Step s62 = new Step("step_bassaoles_62", "step", 42.7172284105905, 0.769769108528357, 0, 10, 62, t, null);
+		Step s63 = new Step("step_bassaoles_63", "step", 42.7172651007477, 0.76957240065225, 0, 10, 63, t, null);
+		Step s64 = new Step("step_bassaoles_64", "step", 42.7172899569507, 0.76946160122528, 0, 10, 64, t, null);
+		Step s65 = new Step("step_bassaoles_65", "step", 42.7173217779254, 0.769384745987653, 0, 10, 65, t, null);
+		Step s66 = new Step("step_bassaoles_66", "step", 42.7173355447926, 0.769340289108466, 0, 10, 66, t, h7);
+		Step s67 = new Step("step_bassaoles_67", "step", 42.7173300814664, 0.769279424413057, 0, 10, 67, t, null);
+		Step s68 = new Step("step_bassaoles_68", "step", 42.7173053750884, 0.769189940332657, 0, 10, 68, t, null);
+		Step s69 = new Step("step_bassaoles_69", "step", 42.7172469473054, 0.769102886080448, 0, 10, 69, t, null);
+		Step s70 = new Step("step_bassaoles_70", "step", 42.7171279428011, 0.769003348620459, 0, 10, 70, t, null);
+		Step s71 = new Step("step_bassaoles_71", "step", 42.71701072191, 0.768995337846102, 0, 10, 71, t, null);
+		Step s72 = new Step("step_bassaoles_72", "step", 42.7169523492841, 0.769003535963987, 0, 10, 72, t, null);
+		Step s73 = new Step("step_bassaoles_73", "step", 42.7169122118709, 0.769023292523154, 0, 10, 73, t, null);
+		Step s74 = new Step("step_bassaoles_74", "step", 42.7168404601017, 0.769038076103431, 0, 10, 74, t, h18);
+		Step s75 = new Step("step_bassaoles_75", "step", 42.7168223437971, 0.769032619388548, 0, 10, 75, t, h8);
+		Step s76 = new Step("step_bassaoles_76", "step", 42.7167934451336, 0.768935959192282, 0, 10, 76, t, null);
+		Step s77 = new Step("step_bassaoles_77", "step", 42.7167518807636, 0.768882494995035, 0, 10, 77, t, null);
+		Step s78 = new Step("step_bassaoles_78", "step", 42.7166842716161, 0.76887881226059, 0, 10, 78, t, null);
+		Step s79 = new Step("step_bassaoles_79", "step", 42.7166008055062, 0.768985605442682, 0, 10, 79, t, null);
+		Step s80 = new Step("step_bassaoles_80", "step", 42.7165844728174, 0.769071674450463, 0, 10, 80, t, null);
+		Step s81 = new Step("step_bassaoles_81", "step", 42.716509529615, 0.769153737893996, 0, 10, 81, t, h9);
+		Step s82 = new Step("step_bassaoles_82", "step", 42.7164557752181, 0.769167876234365, 0, 10, 82, t, null);
+		Step s83 = new Step("step_bassaoles_83", "step", 42.7163672149925, 0.769244321408601, 0, 10, 83, t, null);
+		Step s84 = new Step("step_bassaoles_84", "step", 42.7163004381066, 0.769283350086419, 0, 10, 84, t, null);
+		Step s85 = new Step("step_bassaoles_85", "step", 42.7162742742505, 0.7693270292774, 0, 10, 85, t, null);
+		Step s86 = new Step("step_bassaoles_86", "step", 42.7162574657429, 0.769388691022172, 0, 10, 86, t, null);
+		Step s87 = new Step("step_bassaoles_87", "step", 42.7161735235886, 0.769471076086403, 0, 10, 87, t, null);
+		Step s88 = new Step("step_bassaoles_88", "step", 42.7161023661446, 0.769516367278524, 0, 10, 88, t, null);
+		Step s89 = new Step("step_bassaoles_89", "step", 42.7160361835407, 0.769585903796351, 0, 10, 89, t, h10);
+		Step s90 = new Step("step_bassaoles_90", "step", 42.7159562650888, 0.769643720474979, 0, 10, 90, t, null);
+		Step s91 = new Step("step_bassaoles_91", "step", 42.715903580455, 0.769712773086963, 0, 10, 91, t, null);
+		Step s92 = new Step("step_bassaoles_92", "step", 42.7158408272655, 0.769727233187595, 0, 10, 92, t, null);
+		Step s93 = new Step("step_bassaoles_93", "step", 42.7157326050774, 0.769718898711305, 0, 10, 93, t, null);
+		Step s94 = new Step("step_bassaoles_94", "step", 42.7156284067599, 0.76968599656874, 0, 10, 94, t, h11);
+		Step s95 = new Step("step_bassaoles_95", "step", 42.7155697963118, 0.769681990572029, 0, 10, 95, t, null);
+		Step s96 = new Step("step_bassaoles_96", "step", 42.7155117802128, 0.769708492632318, 0, 10, 96, t, null);
+		Step s97 = new Step("step_bassaoles_97", "step", 42.7153937272217, 0.769657769415839, 0, 10, 97, t, null);
+		Step s98 = new Step("step_bassaoles_98", "step", 42.7152940282396, 0.769624706327384, 0, 10, 98, t, null);
+		Step s99 = new Step("step_bassaoles_99", "step", 42.7152387283918, 0.769559523359864, 0, 10, 99, t, null);
+		Step s100 = new Step("step_bassaoles_100", "step", 42.7151974020815, 0.76951826318346, 0, 10, 100, t, null);
+		Step s101 = new Step("step_bassaoles_101", "step", 42.7151747864432, 0.769512967663435, 0, 10, 101, t, h12);
+		Step s102 = new Step("step_bassaoles_102", "step", 42.7150385161249, 0.769682707421322, 0, 10, 102, t, null);
+		Step s103 = new Step("step_bassaoles_103", "step", 42.7149503120725, 0.769777454718513, 0, 10, 103, t, h19);
+		Step s104 = new Step("step_bassaoles_104", "step", 42.7148580840141, 0.769896769117571, 0, 10, 104, t, null);
+		Step s105 = new Step("step_bassaoles_105", "step", 42.7147433590529, 0.770016889027111, 0, 10, 105, t, null);
+		Step s106 = new Step("step_bassaoles_106", "step", 42.7146506553444, 0.770111796560806, 0, 10, 106, t, null);
+		Step s107 = new Step("step_bassaoles_107", "step", 42.7145980892166, 0.770186948816087, 0, 10, 107, t, null);
+		Step s108 = new Step("step_bassaoles_108", "step", 42.7145428062068, 0.770353784867504, 0, 10, 108, t, null);
+		Step s109 = new Step("step_bassaoles_109", "step", 42.7145142814317, 0.770507450787815, 0, 10, 109, t, null);
+		Step s110 = new Step("step_bassaoles_110", "step", 42.7144462127599, 0.77071137877815, 0, 10, 110, t, null);
+		Step s111 = new Step("step_bassaoles_111", "step", 42.7144297598801, 0.770791342875013, 0, 10, 111, t, null);
+		Step s112 = new Step("step_bassaoles_112", "step", 42.7143750699611, 0.77098868549066, 0, 10, 112, t, null);
+		Step s113 = new Step("step_bassaoles_113", "step", 42.7144136783071, 0.771121629868399, 0, 10, 113, t, null);
+		Step s114 = new Step("step_bassaoles_114", "step", 42.7144751396432, 0.77127207355318, 0, 10, 114, t, null);
+		Step s115 = new Step("step_bassaoles_115", "step", 42.7145215586029, 0.771343680984947, 0, 10, 115, t, h13);
+		Step s116 = new Step("step_bassaoles_116", "step", 42.7146262316231, 0.771400991538531, 0, 10, 116, t, null);
+		Step s117 = new Step("step_bassaoles_117", "step", 42.7146989340108, 0.77143502360602, 0, 10, 117, t, null);
+		Step s118 = new Step("step_bassaoles_118", "step", 42.7147491395981, 0.771469861089874, 0, 10, 118, t, null);
+		Step s119 = new Step("step_bassaoles_119", "step", 42.7148491944317, 0.771521231563069, 0, 10, 119, t, null);
+		Step s120 = new Step("step_bassaoles_120", "step", 42.71491456081, 0.771641007844769, 0, 10, 120, t, null);
+		Step s121 = new Step("step_bassaoles_121", "step", 42.7149718784082, 0.771809919005867, 0, 10, 121, t, null);
+		Step s122 = new Step("step_bassaoles_122", "step", 42.7149765096444, 0.772047880119055, 0, 10, 122, t, null);
+		Step s123 = new Step("step_bassaoles_123", "step", 42.714933297156, 0.772141013845551, 0, 10, 123, t, null);
+		Step s124 = new Step("step_bassaoles_124", "step", 42.7148809671343, 0.772228367912406, 0, 10, 124, t, null);
+		Step s125 = new Step("step_bassaoles_125", "step", 42.7148472281252, 0.77234558558503, 0, 10, 125, t, null);
+		Step s126 = new Step("step_bassaoles_126", "step", 42.7148268683555, 0.77245621859027, 0, 10, 126, t, null);
+		Step s127 = new Step("step_bassaoles_127", "step", 42.7147985781782, 0.772622087477844, 0, 10, 127, t, null);
+		Step s128 = new Step("step_bassaoles_128", "step", 42.7147578579872, 0.772843353087412, 0, 10, 128, t, null);
+		Step s129 = new Step("step_bassaoles_129", "step", 42.714742471867, 0.772978231023634, 0, 10, 129, t, null);
+		Step s130 = new Step("step_bassaoles_130", "step", 42.7147179681736, 0.773107329250955, 0, 10, 130, t, null);
+		Step s131 = new Step("step_bassaoles_131", "step", 42.7146625621782, 0.773268061670985, 0, 10, 131, t, null);
+		Step s132 = new Step("step_bassaoles_132", "step", 42.7146066812717, 0.77340438766344, 0, 10, 132, t, null);
+		Step s133 = new Step("step_bassaoles_133", "step", 42.7145734156832, 0.773546010363791, 0, 10, 133, t, null);
+		Step s134 = new Step("step_bassaoles_134", "step", 42.7145672647619, 0.773692769014009, 0, 10, 134, t, null);
+		Step s135 = new Step("step_bassaoles_135", "step", 42.7145652570751, 0.773821062142863, 0, 10, 135, t, null);
+		Step s136 = new Step("step_bassaoles_136", "step", 42.7145829076528, 0.774034133238308, 0, 10, 136, t, null);
+		Step s137 = new Step("step_bassaoles_137", "step", 42.7146171317759, 0.774173342506307, 0, 10, 137, t, null);
+		Step s138 = new Step("step_bassaoles_138", "step", 42.7146981203747, 0.774170446806709, 0, 10, 138, t, null);
+		Step s139 = new Step("step_bassaoles_139", "step", 42.7147922511801, 0.774148763800047, 0, 10, 139, t, null);
+		Step s140 = new Step("step_bassaoles_140", "step", 42.7148415069474, 0.774134791050513, 0, 10, 140, t, null);
+		Step s141 = new Step("step_bassaoles_141", "step", 42.714880814908, 0.774072327496432, 0, 10, 141, t, null);
+		Step s142 = new Step("step_bassaoles_142", "step", 42.7149337395687, 0.774015482779203, 0, 10, 142, t, null);
+		Step s143 = new Step("step_bassaoles_143", "step", 42.7149858336996, 0.773915926928948, 0, 10, 143, t, h14);
+		Step s144 = new Step("step_bassaoles_144", "step", 42.7150845824518, 0.773900184112129, 0, 10, 144, t, null);
+		Step s145 = new Step("step_bassaoles_145", "step", 42.7151241275698, 0.773849923344069, 0, 10, 145, t, null);
+		Step s146 = new Step("step_bassaoles_146", "step", 42.7151761028917, 0.773744265455674, 0, 10, 146, t, null);
+		Step s147 = new Step("step_bassaoles_147", "step", 42.7152332894253, 0.773675056076249, 0, 10, 147, t, null);
+		Step s148 = new Step("step_bassaoles_148", "step", 42.7152863325307, 0.773624312299503, 0, 10, 148, t, h20);
+		Step s149 = new Step("step_bassaoles_149", "step", 42.7153346389206, 0.773561526136282, 0, 10, 149, t, null);
+		Step s150 = new Step("step_bassaoles_150", "step", 42.7153726411901, 0.773431943987928, 0, 10, 150, t, null);
+		Step s151 = new Step("step_bassaoles_151", "step", 42.7154170414704, 0.773399826606396, 0, 10, 151, t, null);
+		Step s152 = new Step("step_bassaoles_152", "step", 42.7154336148333, 0.773325963460736, 0, 10, 152, t, null);
+		Step s153 = new Step("step_bassaoles_153", "step", 42.7154769469653, 0.7732389313748, 0, 10, 153, t, null);
+		Step s154 = new Step("step_bassaoles_154", "step", 42.7155742713813, 0.77314996775767, 0, 10, 154, t, null);
+		Step s155 = new Step("step_bassaoles_155", "step", 42.7155957000076, 0.773094248305261, 0, 10, 155, t, null);
+		Step s156 = new Step("step_bassaoles_156", "step", 42.7156256525599, 0.773013800354681, 0, 10, 156, t, null);
+		Step s157 = new Step("step_bassaoles_157", "step", 42.7156602231134, 0.772939292999515, 0, 10, 157, t, null);
+		Step s158 = new Step("step_bassaoles_158", "step", 42.7156946749147, 0.772858683921336, 0, 10, 158, t, null);
+		Step s159 = new Step("step_bassaoles_159", "step", 42.7157245085892, 0.772772134090361, 0, 10, 159, t, null);
+		Step s160 = new Step("step_bassaoles_160", "step", 42.7157375318453, 0.772747244571204, 0, 10, 160, t, null);
+		Step s161 = new Step("step_bassaoles_161", "step", 42.7157815757851, 0.772696821561942, 0, 10, 161, t, null);
+		Step s162 = new Step("step_bassaoles_162", "step", 42.7157754144448, 0.772611559466752, 0, 10, 162, t, null);
+		Step s163 = new Step("step_bassaoles_163", "step", 42.7158541472901, 0.772492730156882, 0, 10, 163, t, null);
+		Step s164 = new Step("step_bassaoles_164", "step", 42.7159460218984, 0.772355112527268, 0, 10, 164, t, null);
+		Step s165 = new Step("step_bassaoles_165", "step", 42.7159895907236, 0.772280282400553, 0, 10, 165, t, null);
+		Step s166 = new Step("step_bassaoles_166", "step", 42.7160198988924, 0.772218138576882, 0, 10, 166, t, null);
+		Step s167 = new Step("step_bassaoles_167", "step", 42.716074122314, 0.77211239732219, 0, 10, 167, t, null);
+		Step s168 = new Step("step_bassaoles_168", "step", 42.7161335574747, 0.77204310493412, 0, 10, 168, t, null);
+		Step s169 = new Step("step_bassaoles_169", "step", 42.7161926957139, 0.771958558196698, 0, 10, 169, t, null);
+		Step s170 = new Step("step_bassaoles_170", "step", 42.7162301089975, 0.771914477518357, 0, 10, 170, t, null);
+		Step s171 = new Step("step_bassaoles_171", "step", 42.7162925062441, 0.771881714416701, 0, 10, 171, t, null);
+		Step s172 = new Step("step_bassaoles_172", "step", 42.7163323473098, 0.771846705644592, 0, 10, 172, t, null);
+		Step s173 = new Step("step_bassaoles_173", "step", 42.7163582746311, 0.771790824026602, 0, 10, 173, t, null);
+		Step s174 = new Step("step_bassaoles_174", "step", 42.7164340511479, 0.771751475850595, 0, 10, 174, t, null);
+		Step s175 = new Step("step_bassaoles_175", "step", 42.7165157521577, 0.771785187121623, 0, 10, 175, t, null);
+		Step s176 = new Step("step_bassaoles_176", "step", 42.7165478414627, 0.771814568338217, 0, 10, 176, t, null);
+		Step s177 = new Step("step_bassaoles_177", "step", 42.7165432233454, 0.771808627671093, 0, 10, 177, t, null);
+		Step s178 = new Step("step_bassaoles_178", "step", 42.7165833612856, 0.771788873015393, 0, 10, 178, t, null);
+		Step s179 = new Step("step_bassaoles_179", "step", 42.7165477227033, 0.771808466617539, 0, 10, 179, t, null);
+
+		try {
+			stepDataDao.create(s1);
+			stepDataDao.create(s2);
+			stepDataDao.create(s3);
+			stepDataDao.create(s4);
+			stepDataDao.create(s5);
+			stepDataDao.create(s6);
+			stepDataDao.create(s7);
+			stepDataDao.create(s8);
+			stepDataDao.create(s9);
+			stepDataDao.create(s10);
+			stepDataDao.create(s11);
+			stepDataDao.create(s12);
+			stepDataDao.create(s13);
+			stepDataDao.create(s14);
+			stepDataDao.create(s15);
+			stepDataDao.create(s16);
+			stepDataDao.create(s17);
+			stepDataDao.create(s18);
+			stepDataDao.create(s19);
+			stepDataDao.create(s20);
+			stepDataDao.create(s21);
+			stepDataDao.create(s22);
+			stepDataDao.create(s23);
+			stepDataDao.create(s24);
+			stepDataDao.create(s25);
+			stepDataDao.create(s26);
+			stepDataDao.create(s27);
+			stepDataDao.create(s28);
+			stepDataDao.create(s29);
+			stepDataDao.create(s30);
+			stepDataDao.create(s31);
+			stepDataDao.create(s32);
+			stepDataDao.create(s33);
+			stepDataDao.create(s34);
+			stepDataDao.create(s35);
+			stepDataDao.create(s36);
+			stepDataDao.create(s37);
+			stepDataDao.create(s38);
+			stepDataDao.create(s39);
+			stepDataDao.create(s40);
+			stepDataDao.create(s41);
+			stepDataDao.create(s42);
+			stepDataDao.create(s43);
+			stepDataDao.create(s44);
+			stepDataDao.create(s45);
+			stepDataDao.create(s46);
+			stepDataDao.create(s47);
+			stepDataDao.create(s48);
+			stepDataDao.create(s49);
+			stepDataDao.create(s50);
+			stepDataDao.create(s51);
+			stepDataDao.create(s52);
+			stepDataDao.create(s53);
+			stepDataDao.create(s54);
+			stepDataDao.create(s55);
+			stepDataDao.create(s56);
+			stepDataDao.create(s57);
+			stepDataDao.create(s58);
+			stepDataDao.create(s59);
+			stepDataDao.create(s60);
+			stepDataDao.create(s61);
+			stepDataDao.create(s62);
+			stepDataDao.create(s63);
+			stepDataDao.create(s64);
+			stepDataDao.create(s65);
+			stepDataDao.create(s66);
+			stepDataDao.create(s67);
+			stepDataDao.create(s68);
+			stepDataDao.create(s69);
+			stepDataDao.create(s70);
+			stepDataDao.create(s71);
+			stepDataDao.create(s72);
+			stepDataDao.create(s73);
+			stepDataDao.create(s74);
+			stepDataDao.create(s75);
+			stepDataDao.create(s76);
+			stepDataDao.create(s77);
+			stepDataDao.create(s78);
+			stepDataDao.create(s79);
+			stepDataDao.create(s80);
+			stepDataDao.create(s81);
+			stepDataDao.create(s82);
+			stepDataDao.create(s83);
+			stepDataDao.create(s84);
+			stepDataDao.create(s85);
+			stepDataDao.create(s86);
+			stepDataDao.create(s87);
+			stepDataDao.create(s88);
+			stepDataDao.create(s89);
+			stepDataDao.create(s90);
+			stepDataDao.create(s91);
+			stepDataDao.create(s92);
+			stepDataDao.create(s93);
+			stepDataDao.create(s94);
+			stepDataDao.create(s95);
+			stepDataDao.create(s96);
+			stepDataDao.create(s97);
+			stepDataDao.create(s98);
+			stepDataDao.create(s99);
+			stepDataDao.create(s100);
+			stepDataDao.create(s101);
+			stepDataDao.create(s102);
+			stepDataDao.create(s103);
+			stepDataDao.create(s104);
+			stepDataDao.create(s105);
+			stepDataDao.create(s106);
+			stepDataDao.create(s107);
+			stepDataDao.create(s108);
+			stepDataDao.create(s109);
+			stepDataDao.create(s110);
+			stepDataDao.create(s111);
+			stepDataDao.create(s112);
+			stepDataDao.create(s113);
+			stepDataDao.create(s114);
+			stepDataDao.create(s115);
+			stepDataDao.create(s116);
+			stepDataDao.create(s117);
+			stepDataDao.create(s118);
+			stepDataDao.create(s119);
+			stepDataDao.create(s120);
+			stepDataDao.create(s121);
+			stepDataDao.create(s122);
+			stepDataDao.create(s123);
+			stepDataDao.create(s124);
+			stepDataDao.create(s125);
+			stepDataDao.create(s126);
+			stepDataDao.create(s127);
+			stepDataDao.create(s128);
+			stepDataDao.create(s129);
+			stepDataDao.create(s130);
+			stepDataDao.create(s131);
+			stepDataDao.create(s132);
+			stepDataDao.create(s133);
+			stepDataDao.create(s134);
+			stepDataDao.create(s135);
+			stepDataDao.create(s136);
+			stepDataDao.create(s137);
+			stepDataDao.create(s138);
+			stepDataDao.create(s139);
+			stepDataDao.create(s140);
+			stepDataDao.create(s141);
+			stepDataDao.create(s142);
+			stepDataDao.create(s143);
+			stepDataDao.create(s144);
+			stepDataDao.create(s145);
+			stepDataDao.create(s146);
+			stepDataDao.create(s147);
+			stepDataDao.create(s148);
+			stepDataDao.create(s149);
+			stepDataDao.create(s150);
+			stepDataDao.create(s151);
+			stepDataDao.create(s152);
+			stepDataDao.create(s153);
+			stepDataDao.create(s154);
+			stepDataDao.create(s155);
+			stepDataDao.create(s156);
+			stepDataDao.create(s157);
+			stepDataDao.create(s158);
+			stepDataDao.create(s159);
+			stepDataDao.create(s160);
+			stepDataDao.create(s161);
+			stepDataDao.create(s162);
+			stepDataDao.create(s163);
+			stepDataDao.create(s164);
+			stepDataDao.create(s165);
+			stepDataDao.create(s166);
+			stepDataDao.create(s167);
+			stepDataDao.create(s168);
+			stepDataDao.create(s169);
+			stepDataDao.create(s170);
+			stepDataDao.create(s171);
+			stepDataDao.create(s172);
+			stepDataDao.create(s173);
+			stepDataDao.create(s174);
+			stepDataDao.create(s175);
+			stepDataDao.create(s176);
+			stepDataDao.create(s177);
+			stepDataDao.create(s178);
+			stepDataDao.create(s179);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting step", "Insert error " + ex.toString());
+		}
+		
+		Route r = new Route();
+		r.setId("ROUTE_BASSAOLES");
+		r.setName("Bassa d'Oles");
+		r.setDescription("Itinerari circular de 1.7 km amb 50 m de desnivell (30 minuts a peu) al voltant del complex de la  Bassa d’Oles, una altra petita bassa i un aiguamoll propers. El camí segueix una pista i senders força planers, i travessa algun prat. Sense cap dificultat, l’itinerari és apte per a tots els públics. La Bassa d’Oles és una bassa d’origen natural que posteriorment es va represar. Es practica la pesca intensiva, i la bassa és repoblada regularment amb truites. És per tant un exemple d’ecosistema aquàtic fortament humanitzat. Està envoltada d’una pineda de pi roig de gran valor paisatgístic. L’interés principal rau en l’important entapissat de vegetació aqüàtica submergida i les illes de joncs que s’hi troben. Degut a l’accessibilitat a les vores i la poca fondària, és fàcil observar la vegetació submergida.");
+		r.setUserId("1");
+		// Ph_ch parameters
+		// r.setReference(r6);
+		// Interactive image
+		// r.setInteractiveImage(img);
+		r.setTrack(t);
+		r.setLocalCarto("bassa_oles.mbtiles");
+
+		try {
+			routeDataDao.create(r);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting route", "Insert error " + ex.toString());
+		}
+		
+	}
 
 	public static void loadVarrados(DataBaseHelper db, Context context) {
 		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
@@ -2984,8 +3499,8 @@ public class DataContainer {
 		
 		Route r = new Route();
 		r.setId("ROUTE_VARRADOS");
-		r.setName("Varradòs");
-		r.setDescription("Itinerari Varradòs");
+		r.setName("Vall de Varradós");
+		r.setDescription("Itinerari en dues parts: primer 10 km de pista asfaltada amb 695 m de desnivell (30 minuts, anada), per recòrrer el riu de Varradòs i visitar el Saut deth Pish i el Barratge de Varradòs; després, itinerari circular de 12.3 km amb 980 m de desnivell (6-7 hores a peu), per visitar els estanhs Nere de Uèrri i de Pica Palomèra. El camí a peu transcorre per senders poc marcats i zones on la progressió es fa dificultosa, en una de les zones més recòndites i salvatges de l’Aran. És imprescindible tenir un bon sentit de l’orientació, bona forma física i experiència en alta muntanya. El riu de Varradòs està encaixonant en una vall de relleu escarpat, que dona lloca lloc a una intensa activitat d’allaus i a cascades impressionants, com el Saut deth Pish. Els estanys a visitar són un exemple d’hàbitats extrems, degut a l’acidesa de les seves aigües i l’alt contingut de metalls que provenen de les roques que els envolten.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
@@ -3044,63 +3559,134 @@ public class DataContainer {
 				"poiG09-Vista Es Cants", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 
-		HighLight h10 = new HighLight("hl_garonap_wpG01",
-				"wpG01-rotonda/parada bus", null, 10, HighLight.WAYPOINT);
+		HighLight h10 = new 
+				HighLight("hl_garonap_wpG01",
+				"wpG01 - Parada de l’autobus a la rotonda (N-230) de Pònt d’Arròs (sortida)", 
+				"Prendre la primera sortida de la rotonda, en direcció a Arres, i desviar-se cap a l’esquerra just desprès dels edificis, seguint la indicació per anar cap a l’Airau de Servicis del Conselh d’Aran, fins arribar al pont sobre la Garona (0.3 km, desnivell -13 m)", 10, HighLight.WAYPOINT);
 		// Ja hi ha poi
-		// HighLight h11 = new
-		// HighLight("hl_garonap_wpG02","wpG02-Pònt d'Arròs",null,10,HighLight.WAYPOINT);
+		HighLight h11 = new
+		HighLight("hl_garonap_wpG02",
+				"wpG02-Pònt d'Arròs",
+				"Travessar el pont, girar a l’esquerra i continuar pel camí de ferradura fins als prats que queden entre el camí i el riu aprop d’Aubèrt (1.5 km, desnivell 32 m)",10,HighLight.WAYPOINT);
+		
 		HighLight h12 = new HighLight("hl_garonap_wpG03",
-				"wpG03-Prats de Plaus", null, 10, HighLight.WAYPOINT);
+				"wpG03-Prats de Plaus", 
+				"Continuar pel camí fins arribar a les primeres cases d’Aubèrt, abans de travessar el pont (0.6 km, desnivell 11 m)", 10, HighLight.WAYPOINT);
+		
 		HighLight h13 = new HighLight("hl_garonap_wpG04",
-				"wpG04-trencall Pònt d'Aubèrt", null, 10, HighLight.WAYPOINT);
+				"wpG04 - trencall al Pònt d’Aubèrt", 
+				"Continuar pel carrer que va paral•lel al riu, fins que al final de les cases (0.2 km)", 10, HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h14 = new
-		// HighLight("hl_garonap_wpG05","wpG05-Perfil sòl al·luvial",null,10,HighLight.WAYPOINT);
+		HighLight h14 = new
+		HighLight("hl_garonap_wpG05",
+				"wpG05 - perfil sòl al·luvial",
+				"Continuar per camí de terra fins la tanca d’un prat, on el camí es desvia cap a la dreta en pujada (0.1 km)",10,HighLight.WAYPOINT);
+		
 		HighLight h15 = new HighLight("hl_garonap_wpG06",
-				"wpG06-sender per pujar al CR", null, 10, HighLight.WAYPOINT);
+				"wpG06 - sender per pujar al Camin Reiau", 
+				"Reseguir el sender, primer una curta pujada y després cap a l’esquerra, seguint el curs del riu a una certa altura, fins arribar al punt més alt des d’on hi ha una vista panoràmica del riu i la vall (1.3 km, desnivell 50 m)", 10, HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h16 = new
-		// HighLight("hl_garonap_wpG07","wpG07-Mirador riu",null,10,HighLight.WAYPOINT);
+		HighLight h16 = new
+		HighLight("hl_garonap_wpG07",
+				"wpG07 - Mirador sobre el riu",
+				"Continuar pel sender, en baixada suau, fins al Pònt de Beussa (0.5 km, desnivell -20 m)",10,HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h17 = new
-		// HighLight("hl_garonap_wpG08","wpG08-Pònt de Beussa",null,10,HighLight.WAYPOINT);
+		HighLight h17 = new
+		HighLight("hl_garonap_wpG08",
+				"wpG08 - Pònt de Beussa",
+				"A l’extrem del pont i pel cantó on hem arribat, prendre el camí senyalitzat cap a Gausac, on hi ha una barana de fusta, fins arribar a una reixa al terra que protegeix el respirador d’una conducció d’aigua (0.6 km, desnivell 15 m)",
+				10,HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h18 = new
-		// HighLight("hl_garonap_wpG09","wpG09-respirador conducció",null,10,HighLight.WAYPOINT);
+		HighLight h18 = new
+		HighLight("hl_garonap_wpG09",
+				"wpG09 - respirador conducció",
+				"Continuar pel camí, que ja s’ha eixamplat per convertir-se en un camí de ferradura, fins una clariana en els arbres al costat esquerre on s’obre un prat (0.4 km, desnivell 16 m)",
+				10,HighLight.WAYPOINT);
+		
 		HighLight h19 = new HighLight("hl_garonap_wpG10",
-				"wpG10-trencall a l'assut", null, 10, HighLight.WAYPOINT);
+				"wpG10 - trencall a l’assut", 
+				"Travessar el prat fins a la vora del riu, on hi ha l’assut i la captació d’aigua de la central de Benòs (50 m, desnivell -10 m)", 
+				10, HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h20 = new
-		// HighLight("hl_garonap_wpG11","wpG11-Assut i captació central Benós",null,10,HighLight.WAYPOINT);
+		HighLight h20 = new
+		HighLight("hl_garonap_wpG11",
+				"wpG11 - Assut i captació central de Benòs",
+				"Tornar enrere fins el camí de ferradura que haviem deixat, i continuar fins arribar a la carretera (0.5 km, desnivell 37 m)",
+				10,HighLight.WAYPOINT);
+		
 		HighLight h21 = new HighLight("hl_garonap_wpG12",
-				"wpG12-carretera Gausac", null, 10, HighLight.WAYPOINT);
+				"wpG12 - Carretera de Gausac", 
+				"Continuar cap a l’esquerra per la carretera, fins arribar a la cruïlla amb el carrer Anglada (0.2 km)", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h22 = new HighLight("hl_garonap_wpG13",
-				"wpG13-carrer Anglada", null, 10, HighLight.WAYPOINT);
+				"wpG13 - carrer Anglada", 
+				"Girar a l’esquerra i baixar pel carrer Anglada, fins arribar a la carretera nacional. Travessar la carretera pel pas de zebra que queda a l’esquerra, i seguir per la continuació del carrer Anglada fins que acaba al Passeig dera Libertat (0.4 km, desnivell -20 m)", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h23 = new HighLight("hl_garonap_wpG14",
-				"wpG14-Passeig dera Libertat", null, 10, HighLight.WAYPOINT);
+				"wpG14 - Passeig dera Libertat", 
+				"Girar a la dreta tot pujant el Passeig, caminar 35 m i prendre el carreró que queda a l’esquerra i va cap a la Plaça del Conselh Generau d’Aran", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h24 = new HighLight("hl_garonap_wpG15",
-				"wpG15-Carrer Conselh Aran", null, 10, HighLight.WAYPOINT);
-		HighLight h25 = new HighLight("hl_garonap_wpG16", "wpG16-Pont Nere",
-				null, 10, HighLight.WAYPOINT);
+				"wpG15 - Carreró Conselh Aran", 
+				"Passar el carreró i travessar la plaça fins arribar al riu Nere (60 m), i buscar el pont que queda a uns 20 m a l’esquerra.", 
+				10, HighLight.WAYPOINT);
+		
+		HighLight h25 = new HighLight("hl_garonap_wpG16", 
+				"wpG16 - Pont Nere",
+				"Travessar el pont i passar pel passadís que hi ha al front i continuar recte, primer pel davant de l’hospital i després pel carrer Dr. Manel Vidal, fins arribar al carrer Querimònia, davant de l’explanada d’aparcament (0.2 km)", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h26 = new HighLight("hl_garonap_wpG17",
-				"wpG17-Carrer Querimònia", null, 10, HighLight.WAYPOINT);
-		HighLight h27 = new HighLight("hl_garonap_wpG18", "wpG18-Pont Garona",
-				null, 10, HighLight.WAYPOINT);
+				"wpG17 - carrer Querimònia", 
+				"Girar a l’esquerra pel carrer Querimònia, i continuar fins arribar al pont sobre la Garona (45 m)", 
+				10, HighLight.WAYPOINT);
+		
+		HighLight h27 = new HighLight("hl_garonap_wpG18", 
+				"wpG18-Pont Garona",
+				"Abans de travessar el pont, girar a la dreta i continuar pel camí del parc que ressegueix la vora del riu, fins arribar a l’avinguda deth Solan, amb doble carril. Travessar pel pas zebra i buscar l’inici del passeig fluvial que queda uns 20 m a l’esquerra, darrere dels edificis i per la mateixa vora del riu que veniem (0.5 km, desnivell 8 m)", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h28 = new HighLight("hl_garonap_wpG19",
-				"wpG19-Inici passeig fluvial", null, 10, HighLight.WAYPOINT);
+				"wpG19 - Inici passeig fluvial", 
+				"Seguir el passeig fins el final, al Pònt i la Mòla de Betren (0.6 km, desnivell 8 m)", 
+				10, HighLight.WAYPOINT);
+
 		// Ja hi ha poi
-		// HighLight h29 = new
-		// HighLight("hl_garonap_wpG20","wpG20-Pònt dera Mòla de Betren",null,10,HighLight.WAYPOINT);
+		HighLight h29 = new
+		HighLight("hl_garonap_wpG20",
+				"wpG20 - Pònt dera Mòla de Betren",
+				"Travessar el pont, fer una curta pujada fins al camí (GR-211) i girar a la dreta. El camí és ben marcat. Va primer per uns prats de pastura i després es converteix en un sender per zona de matollar i roca. Continuar fins arribar a una zona amb vistes sobre la plana fluvial, una mica més enllà d’Escunhau (1.4 km, desnivell 58 m)",
+				10,HighLight.WAYPOINT);
+		
 		// Ja hi ha poi
-		// HighLight h30 = new
-		// HighLight("hl_garonap_wpG21","wpG21-vista Es Cants",null,10,HighLight.WAYPOINT);
+		HighLight h30 = new
+		HighLight("hl_garonap_wpG21",
+				"wpG21 - vista Es Cants",
+				"Seguir sempre pel camí, fins arribar a un trencall a la dreta que baixa cap el riu, una mica passat Casarilh (0.9 km, desnivell 68 m)",
+				10,HighLight.WAYPOINT);
+		
 		HighLight h31 = new HighLight("hl_garonap_wpG22",
-				"wpG22-trencall baixada a Pònt Casarilh", null, 10,
-				HighLight.WAYPOINT);
+				"wpG22 -  trencall baixada al Pònt de Casarilh", 
+				"Prendre el trencall de baixada, quasi en sentit contrari al que veniem fins el pont de Casarilh (0.4 km, desnivell -78 m)", 
+				10,HighLight.WAYPOINT);
+		
 		HighLight h32 = new HighLight("hl_garonap_wpG23",
-				"wpG23-Pònt Casarilh", null, 10, HighLight.WAYPOINT);
+				"wpG23 - Pònt de Casarilh", 
+				"Travessar el pont i continuar pel camí que puja a Casarilh, i en arribar al poble seguir recte cap amunt, primer pel carrer de Sant Antòni i després pel de Sant Tomàs, fins arribar al final al Carrèr Major. Girar a la dreta fins arribar a la carretera C-28 on hi ha la parada d’autobus (0.25 km, desnivell 17 m)", 
+				10, HighLight.WAYPOINT);
+		
 		HighLight h33 = new HighLight("hl_garonap_wpG24",
-				"wpG24-Parada bus Casarilh", null, 10, HighLight.WAYPOINT);
+				"wpG24 - Parada bus Casarilh (final)", 
+				null, 
+				10, HighLight.WAYPOINT);
 
 		try {
 			hlDataDao.create(h1);
@@ -3113,16 +3699,16 @@ public class DataContainer {
 			hlDataDao.create(h8);
 			hlDataDao.create(h9);
 			hlDataDao.create(h10);
-			// hlDataDao.create(h11);
+			hlDataDao.create(h11);
 			hlDataDao.create(h12);
 			hlDataDao.create(h13);
-			// hlDataDao.create(h14);
+			hlDataDao.create(h14);
 			hlDataDao.create(h15);
-			// hlDataDao.create(h16);
-			// hlDataDao.create(h17);
-			// hlDataDao.create(h18);
+			hlDataDao.create(h16);
+			hlDataDao.create(h17);
+			hlDataDao.create(h18);
 			hlDataDao.create(h19);
-			// hlDataDao.create(h20);
+			hlDataDao.create(h20);
 			hlDataDao.create(h21);
 			hlDataDao.create(h22);
 			hlDataDao.create(h23);
@@ -3131,8 +3717,8 @@ public class DataContainer {
 			hlDataDao.create(h26);
 			hlDataDao.create(h27);
 			hlDataDao.create(h28);
-			// hlDataDao.create(h29);
-			// hlDataDao.create(h30);
+			hlDataDao.create(h29);
+			hlDataDao.create(h30);
 			hlDataDao.create(h31);
 			hlDataDao.create(h32);
 			hlDataDao.create(h33);
@@ -3168,10 +3754,10 @@ public class DataContainer {
 				0.754623371629231, 0, 10, 13, t, null);
 		Step s14 = new Step("step_garonap_14", "step", 42.7370460016134,
 				0.754609933003155, 0, 10, 14, t, null);
-		// Step s15 = new Step("step_garonap_15", "step", 42.7368425758331,
-		// 0.754568412416713, 0, 10, 15, t, h11);
 		Step s15 = new Step("step_garonap_15", "step", 42.7368425758331,
-				0.754568412416713, 0, 10, 15, t, null);
+				0.754568412416713, 0, 10, 15, t, h11);
+//		Step s15 = new Step("step_garonap_15", "step", 42.7368425758331,
+//				0.754568412416713, 0, 10, 15, t, null);
 		Step s16 = new Step("step_garonap_16", "step", 42.736720616137,
 				0.754548383082882, 0, 10, 16, t, h1);
 		Step s17 = new Step("step_garonap_17", "step", 42.7367274398906,
@@ -3326,10 +3912,10 @@ public class DataContainer {
 				0.778315973465675, 0, 10, 91, t, null);
 		Step s92 = new Step("step_garonap_92", "step", 42.7289758588514,
 				0.778755870854447, 0, 10, 92, t, null);
-		// Step s93 = new Step("step_garonap_93", "step", 42.72885508652,
-		// 0.77902889830158, 0, 10, 93, t, h14);
 		Step s93 = new Step("step_garonap_93", "step", 42.72885508652,
-				0.77902889830158, 0, 10, 93, t, null);
+		0.77902889830158, 0, 10, 93, t, h14);
+		//Step s93 = new Step("step_garonap_93", "step", 42.72885508652,
+				//0.77902889830158, 0, 10, 93, t, null);
 		Step s94 = new Step("step_garonap_94", "step", 42.7287684142379,
 				0.779202992871558, 0, 10, 94, t, null);
 		Step s95 = new Step("step_garonap_95", "step", 42.7286556925048,
@@ -3440,10 +4026,10 @@ public class DataContainer {
 				0.788930397866985, 0, 10, 147, t, null);
 		Step s148 = new Step("step_garonap_148", "step", 42.7212439164675,
 				0.789162415068196, 0, 10, 148, t, null);
-		// Step s149 = new Step("step_garonap_149", "step", 42.7210466279925,
-		// 0.789438105482576, 0, 10, 149, t, h16);
 		Step s149 = new Step("step_garonap_149", "step", 42.7210466279925,
-				0.789438105482576, 0, 10, 149, t, null);
+		0.789438105482576, 0, 10, 149, t, h16);
+//		Step s149 = new Step("step_garonap_149", "step", 42.7210466279925,
+//				0.789438105482576, 0, 10, 149, t, null);
 		Step s150 = new Step("step_garonap_150", "step", 42.7209093850462,
 				0.789559001622671, 0, 10, 150, t, h4);
 		Step s151 = new Step("step_garonap_151", "step", 42.7206524251199,
@@ -3490,10 +4076,10 @@ public class DataContainer {
 				0.794247206067629, 0, 10, 171, t, null);
 		Step s172 = new Step("step_garonap_172", "step", 42.7186742810488,
 				0.794364565233033, 0, 10, 172, t, null);
-		// Step s173 = new Step("step_garonap_173", "step", 42.7185994366653,
-		// 0.794452703847136, 0, 10, 173, t, h17);
 		Step s173 = new Step("step_garonap_173", "step", 42.7185994366653,
-				0.794452703847136, 0, 10, 173, t, null);
+				0.794452703847136, 0, 10, 173, t, h17);
+//		Step s173 = new Step("step_garonap_173", "step", 42.7185994366653,
+//				0.794452703847136, 0, 10, 173, t, null);
 		Step s174 = new Step("step_garonap_174", "step", 42.7185187996814,
 				0.794473879586904, 0, 10, 174, t, null);
 		Step s175 = new Step("step_garonap_175", "step", 42.718399196049,
@@ -3550,10 +4136,10 @@ public class DataContainer {
 				0.796174388651822, 0, 10, 200, t, null);
 		Step s201 = new Step("step_garonap_201", "step", 42.7137561659995,
 				0.796162932963384, 0, 10, 201, t, h6);
-		// Step s202 = new Step("step_garonap_202", "step", 42.7136200084001,
-		// 0.796106695960067, 0, 10, 202, t, h18);
 		Step s202 = new Step("step_garonap_202", "step", 42.7136200084001,
-				0.796106695960067, 0, 10, 202, t, null);
+				0.796106695960067, 0, 10, 202, t, h18);
+//		Step s202 = new Step("step_garonap_202", "step", 42.7136200084001,
+//				0.796106695960067, 0, 10, 202, t, null);
 		Step s203 = new Step("step_garonap_203", "step", 42.7134924972581,
 				0.796031836056873, 0, 10, 203, t, null);
 		Step s204 = new Step("step_garonap_204", "step", 42.7132908449452,
@@ -3592,10 +4178,10 @@ public class DataContainer {
 				0.795108033979835, 0, 10, 220, t, null);
 		Step s221 = new Step("step_garonap_221", "step", 42.7102160753158,
 				0.795402962791543, 0, 10, 221, t, h7);
-		// Step s222 = new Step("step_garonap_222", "step", 42.7099943106244,
-		// 0.795343656183616, 0, 10, 222, t, h20);
 		Step s222 = new Step("step_garonap_222", "step", 42.7099943106244,
-				0.795343656183616, 0, 10, 222, t, null);
+				0.795343656183616, 0, 10, 222, t, h20);
+//		Step s222 = new Step("step_garonap_222", "step", 42.7099943106244,
+//				0.795343656183616, 0, 10, 222, t, null);
 		Step s223 = new Step("step_garonap_223", "step", 42.7099896447435,
 				0.794867605223311, 0, 10, 223, t, h19);
 		Step s224 = new Step("step_garonap_224", "step", 42.7098643993585,
@@ -3812,10 +4398,10 @@ public class DataContainer {
 				0.808091453921972, 0, 10, 329, t, null);
 		Step s330 = new Step("step_garonap_330", "step", 42.6980976971985,
 				0.808424815617884, 0, 10, 330, t, h8);
-		// Step s331 = new Step("step_garonap_331", "step", 42.6982390494523,
-		// 0.808517509368717, 0, 10, 331, t, h29);
 		Step s331 = new Step("step_garonap_331", "step", 42.6982390494523,
-				0.808517509368717, 0, 10, 331, t, null);
+				0.808517509368717, 0, 10, 331, t, h29);
+//		Step s331 = new Step("step_garonap_331", "step", 42.6982390494523,
+//				0.808517509368717, 0, 10, 331, t, null);
 		Step s332 = new Step("step_garonap_332", "step", 42.6982581522004,
 				0.808809838358955, 0, 10, 332, t, null);
 		Step s333 = new Step("step_garonap_333", "step", 42.698253939641,
@@ -3938,10 +4524,10 @@ public class DataContainer {
 				0.824113150542566, 0, 10, 391, t, null);
 		Step s392 = new Step("step_garonap_392", "step", 42.6997365587615,
 				0.824238427331007, 0, 10, 392, t, h9);
-		// Step s393 = new Step("step_garonap_393", "step", 42.6998143259799,
-		// 0.824302858646369, 0, 10, 393, t, h30);
 		Step s393 = new Step("step_garonap_393", "step", 42.6998143259799,
-				0.824302858646369, 0, 10, 393, t, null);
+				0.824302858646369, 0, 10, 393, t, h30);
+//		Step s393 = new Step("step_garonap_393", "step", 42.6998143259799,
+//				0.824302858646369, 0, 10, 393, t, null);
 		Step s394 = new Step("step_garonap_394", "step", 42.6999268356069,
 				0.824536998609412, 0, 10, 394, t, null);
 		Step s395 = new Step("step_garonap_395", "step", 42.7000430534772,
@@ -4644,8 +5230,8 @@ public class DataContainer {
 
 		Route r = new Route();
 		r.setId("ROUTE_GARONAP");
-		r.setName("Garona a peu");
-		r.setDescription("Itinerari Garona a peu");
+		r.setName("La Garona");
+		r.setDescription("Aquest itinerari té dues variants: en cotxe seguint la N-230 i la C-28, i a peu o BTT seguint el Camin Reiau i el GR-211, entre el Pont d’Arròs i Casarilh. La distància total és de 11 km, amb un desnivell acumulat de 184 m (3-4 h a peu). Per fer el recorregut a peu, el servei d’autobus intern de la Val d’Aran permet anar o retornar del punt de sortida o arribada. Aixímateix, és possible prendre l’autobús en diversos punts intermitjos del recorregut, cosa que fa possible fer recorreguts parcials de l’itinerari. El camí no presenta cap dificultat, i és adequat per a qualsevol persona amb una forma física mitja. La variant en cotxe fa l’itinerari accesible a tot tipus de visitants. La Garona ofereix la possibilitat de conèixer un ecosistema fluvial, els usos i aprofitaments humans que s’han fet des d’antic, i com aquests han modificat i configurat el riu actual.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
@@ -4667,6 +5253,11 @@ public class DataContainer {
 		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
 		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
 		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
+		RuntimeExceptionDao<InteractiveImage, String> interactiveImageDataDao = db
+				.getInteractiveImageDataDao();
+		RuntimeExceptionDao<Reference, String> referenceDataDao = db
+				.getReferenceDataDao();
+		RuntimeExceptionDao<Box, String> boxDataDao = db.getBoxDataDao();
 
 		Track t = new Track("TRACK_ESCUNHAU", "Waypoints recorregut Escunhau");
 		try {
@@ -4676,42 +5267,55 @@ public class DataContainer {
 		}
 
 		HighLight h1 = new HighLight("hl_escunhau_poi01",
-				"poiE01-Hònt des Audèths", null, 10,
+				"poiE01-Hònt des Audèths", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h2 = new HighLight("hl_escunhau_poi02",
-				"poiE02-vista barranc Malh Nere", null, 10,
+				"poiE02-vista barranc Malh Nere", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h3 = new HighLight("hl_escunhau_poi03",
-				"poiE03-vista panoràmica", null, 10,
+				"poiE03-vista panoràmica", "Fes clic per la foto interactiva...", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h4 = new HighLight("hl_escunhau_poi04",
-				"poiE04-bassal sortida potamogeton petit", null, 10,
+				"poiE04-bassal sortida potamogeton petit", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h5 = new HighLight("hl_escunhau_poi05",
-				"poiE05 potamogeton gros", null, 10,
+				"poiE05 potamogeton gros", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h6 = new HighLight("hl_escunhau_poi06", "poiE06-esparganis",
-				null, 10, HighLight.POINT_OF_INTEREST_OFFICIAL);
+				"Fes clic per més informació", 10, HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h7 = new HighLight("hl_escunhau_poi07",
-				"poiE07-badia caròfits", null, 10,
+				"poiE07-badia caròfits", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h8 = new HighLight("hl_escunhau_poi08",
-				"poiE08-engolidor sortida", null, 10,
+				"poiE08-engolidor sortida", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h9 = new HighLight("hl_escunhau_poi09",
-				"poiE09-roca volantins+potamogetons", null, 10,
+				"poiE09-roca volantins+potamogetons", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h10 = new HighLight("hl_escunhau_poi10", "poiE10-tartera",
-				null, 10, HighLight.POINT_OF_INTEREST_OFFICIAL);
+				"Fes clic per més informació", 10, HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h11 = new HighLight("hl_escunhau_poi11",
-				"poiE11-potamogeton mig", null, 10,
+				"poiE11-potamogeton mig", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h12 = new HighLight("hl_escunhau_poi12",
-				"poiE12-zonació macròfits", null, 10,
+				"poiE12-zonació macròfits", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
 		HighLight h13 = new HighLight("hl_escunhau_poi13",
-				"poiE13-potamogeton fi en superfície", null, 10,
+				"poiE13-potamogeton fi en superfície", "Fes clic per més informació", 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL);
+		
+		//WP Escunhau
+		
+		HighLight h14 = new HighLight("hl_escunhau_wpe01","wpE01 - inici", "Entrada a Escunhau per la sortida de la dreta de la rotonda a la C-28 (km 26, de Vielha en direcció a la Bonaigua), i pujada al cap del poble pels carrers principals de Santa Anna i Sant Pere, fins a l’esglèsia de Sant Pèir (0.37 km, desnivell 26 m)", 10,HighLight.WAYPOINT);
+		HighLight h15 = new HighLight("hl_escunhau_wpe02","wpE02 - esglèsia de Sant Pèir", "Inici de la pista darrere de l’esglèsia, cap a l’esquerra, fins a la bifurcació de Casarilh (0.2 km, desnivell 20 m)", 10,HighLight.WAYPOINT);
+		HighLight h16 = new HighLight("hl_escunhau_wpe03","wpE03 - trencall Casarilh", "Agafar el ramal de la dreta i seguir per la pista. Després d’una corba molt tancada i una ziga-zaga (primer esquerra i després dreta), hi ha una nova bifurcació (0.36 km, desnivell 32 m)", 10,HighLight.WAYPOINT);
+		HighLight h17 = new HighLight("hl_escunhau_wpe04","wpE04 - entrada prat", "Seguir recte i deixar la pista que surt cap a l’esquerra, fins la propera corba molt tancada (1.2 km, desnivell 93 m)", 10,HighLight.WAYPOINT);
+		HighLight h18 = new HighLight("hl_escunhau_wpe05","wpE05 - trencall Tuca", "Completar la corba a l’esquerra i deixar la pista que surt cap a la dreta. Passar una nova corba tancada i continuar fins el proper desviament (2.7 km, desnivell 139 m)", 10,HighLight.WAYPOINT);
+		HighLight h19 = new HighLight("hl_escunhau_wpe06","wpE06 - entrada prat", "Continuar recte, deixant el ramal de la dreta. Seguir la pista, sense trobar cap més bifurcació fin a la Plèta dera Lana (5.7 km, desnivell 485 m)", 10,HighLight.WAYPOINT);
+		HighLight h20 = new HighLight("hl_escunhau_wpe07","wpE07 - Plèta dera Lana", "Aparcar el cotxe i continuar a peu en la mateixa direcció que veiem, pel sender que surt des de la tanca en el mur de pedra seca que queda al davant, fins arribar a on el sender creua el riu (0.3 km, desnivell 20 m)", 10,HighLight.WAYPOINT);
+		HighLight h21 = new HighLight("hl_escunhau_wpe08","wpE08 - gual riu", "Seguir el sender marcat, fins arribar al pletiu on es troba la Cabana d’Estanho i un poc més amunt la colladeta que tanca l’estany (1.5 km, desnivell 203 m). A partir d’aquí baixar a l’estany i recòrrer la vora començant per la banda dreta.", 10,HighLight.WAYPOINT);
+		HighLight h22 = new HighLight("hl_escunhau_wpe09","wpE09 - final",null, 10,HighLight.WAYPOINT);
+		
 
 		try {
 			hlDataDao.create(h1);
@@ -4727,12 +5331,98 @@ public class DataContainer {
 			hlDataDao.create(h11);
 			hlDataDao.create(h12);
 			hlDataDao.create(h13);
+			hlDataDao.create(h14);
+			hlDataDao.create(h15);
+			hlDataDao.create(h16);
+			hlDataDao.create(h17);
+			hlDataDao.create(h18);
+			hlDataDao.create(h19);
+			hlDataDao.create(h20);
+			hlDataDao.create(h21);
+			hlDataDao.create(h22);
 		} catch (RuntimeException ex) {
 			Log.e("Inserting highlight", "Insert error " + ex.toString());
 		}
+		
+		Reference r1 = new Reference("ref_escunhau_01");
+		r1.setName("panoramica_escunhau.jpg");
+		r1.setTextContent("intimg_escunhau_poi03");
+		
+		Reference r2 = new Reference("ref_escunhau_02");
+		r2.setName("fisics_escunhau.html");
+		r2.setTextContent("fisics_escunhau.html");
+		
+		Reference r3 = new Reference("ref_escunhau_03");
+		r3.setName("poi1_escunhau.html");
+		r3.setTextContent("poi1_escunhau.html");
+		
+		Reference r4 = new Reference("ref_escunhau_04");
+		r4.setName("poi2_escunhau.html");
+		r4.setTextContent("poi2_escunhau.html");
+		//-->
+		Reference r5 = new Reference("ref_escunhau_05");
+		r5.setName("poi4_escunhau.html");
+		r5.setTextContent("poi4_escunhau.html");
+		
+		Reference r6 = new Reference("ref_escunhau_06");
+		r6.setName("poi5_escunhau.html");
+		r6.setTextContent("poi5_escunhau.html");
+		
+		Reference r7 = new Reference("ref_escunhau_07");
+		r7.setName("poi6_escunhau.html");
+		r7.setTextContent("poi6_escunhau.html");
+		
+		Reference r8 = new Reference("ref_escunhau_08");
+		r8.setName("poi7_escunhau.html");
+		r8.setTextContent("poi7_escunhau.html");
+		
+		Reference r9 = new Reference("ref_escunhau_09");
+		r9.setName("poi8_escunhau.html");
+		r9.setTextContent("poi8_escunhau.html");
+		
+		Reference r10 = new Reference("ref_escunhau_10");
+		r10.setName("poi9_escunhau.html");
+		r10.setTextContent("poi9_escunhau.html");
+		
+		Reference r11 = new Reference("ref_escunhau_11");
+		r11.setName("poi10_escunhau.html");
+		r11.setTextContent("poi10_escunhau.html");
+		
+		Reference r12 = new Reference("ref_escunhau_12");
+		r12.setName("poi11_escunhau.html");
+		r12.setTextContent("poi11_escunhau.html");
+		
+		Reference r13 = new Reference("ref_escunhau_13");
+		r13.setName("poi12_escunhau.html");
+		r13.setTextContent("poi12_escunhau.html");
+		
+		Reference r14 = new Reference("ref_escunhau_14");
+		r14.setName("poi13_escunhau.html");
+		r14.setTextContent("poi13_escunhau.html");
+
+		try {
+			
+			referenceDataDao.create(r1);
+			referenceDataDao.create(r2);
+			referenceDataDao.create(r3);
+			referenceDataDao.create(r4);
+			referenceDataDao.create(r5);
+			referenceDataDao.create(r6);
+			referenceDataDao.create(r7);
+			referenceDataDao.create(r8);
+			referenceDataDao.create(r9);
+			referenceDataDao.create(r10);
+			referenceDataDao.create(r11);
+			referenceDataDao.create(r12);
+			referenceDataDao.create(r13);
+			referenceDataDao.create(r14);
+			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
 
 		Step s1 = new Step("step_escunhau_1", "step", 42.697801176393,
-				0.821759757526527, 0, 10, 1, t, null);
+				0.821759757526527, 0, 10, 1, t, h14);
 		Step s2 = new Step("step_escunhau_2", "step", 42.6977078469484,
 				0.821824062502701, 0, 10, 2, t, null);
 		Step s3 = new Step("step_escunhau_3", "step", 42.6976553613319,
@@ -4776,7 +5466,7 @@ public class DataContainer {
 		Step s22 = new Step("step_escunhau_22", "step", 42.6965935410452,
 				0.825024913473575, 0, 10, 22, t, null);
 		Step s23 = new Step("step_escunhau_23", "step", 42.696548893341,
-				0.825044784406785, 0, 10, 23, t, null);
+				0.825044784406785, 0, 10, 23, t, h15);
 		Step s24 = new Step("step_escunhau_24", "step", 42.6965499362486,
 				0.825099684234192, 0, 10, 24, t, null);
 		Step s25 = new Step("step_escunhau_25", "step", 42.6966334771012,
@@ -4796,7 +5486,7 @@ public class DataContainer {
 		Step s32 = new Step("step_escunhau_32", "step", 42.6969777811949,
 				0.827239482927907, 0, 10, 32, t, null);
 		Step s33 = new Step("step_escunhau_33", "step", 42.6970297071241,
-				0.827365857340302, 0, 10, 33, t, null);
+				0.827365857340302, 0, 10, 33, t, h16);
 		Step s34 = new Step("step_escunhau_34", "step", 42.6970008726697,
 				0.82750725666083, 0, 10, 34, t, null);
 		Step s35 = new Step("step_escunhau_35", "step", 42.6970478357911,
@@ -4850,7 +5540,7 @@ public class DataContainer {
 		Step s59 = new Step("step_escunhau_59", "step", 42.6964298710688,
 				0.828357316303933, 0, 10, 59, t, null);
 		Step s60 = new Step("step_escunhau_60", "step", 42.6963303025662,
-				0.828330267304323, 0, 10, 60, t, null);
+				0.828330267304323, 0, 10, 60, t, h17);		
 		Step s61 = new Step("step_escunhau_61", "step", 42.6957126667467,
 				0.827576597377646, 0, 10, 61, t, null);
 		Step s62 = new Step("step_escunhau_62", "step", 42.6956252077515,
@@ -4954,7 +5644,7 @@ public class DataContainer {
 		Step s111 = new Step("step_escunhau_111", "step", 42.6916093551191,
 				0.817081202779328, 0, 10, 111, t, null);
 		Step s112 = new Step("step_escunhau_112", "step", 42.6915734752943,
-				0.817088563402404, 0, 10, 112, t, null);
+				0.817088563402404, 0, 10, 112, t, h18);
 		Step s113 = new Step("step_escunhau_113", "step", 42.691538409508,
 				0.81713862022293, 0, 10, 113, t, null);
 		Step s114 = new Step("step_escunhau_114", "step", 42.6915354217379,
@@ -5214,7 +5904,7 @@ public class DataContainer {
 		Step s241 = new Step("step_escunhau_241", "step", 42.691735048379,
 				0.829613498492999, 0, 10, 241, t, null);
 		Step s242 = new Step("step_escunhau_242", "step", 42.6915354390236,
-				0.829296964406399, 0, 10, 242, t, null);
+				0.829296964406399, 0, 10, 242, t, h19);
 		Step s243 = new Step("step_escunhau_243", "step", 42.6911829484009,
 				0.828753826334206, 0, 10, 243, t, null);
 		Step s244 = new Step("step_escunhau_244", "step", 42.6909232229831,
@@ -5736,7 +6426,7 @@ public class DataContainer {
 		Step s502 = new Step("step_escunhau_502", "step", 42.671207721043,
 				0.836020931633197, 0, 10, 502, t, null);
 		Step s503 = new Step("step_escunhau_503", "step", 42.6710881964046,
-				0.835890846197976, 0, 10, 503, t, h1);
+				0.835890846197976, 0, 10, 503, t, h1, r3);
 		Step s504 = new Step("step_escunhau_504", "step", 42.6709430571312,
 				0.835834868597098, 0, 10, 504, t, null);
 		Step s505 = new Step("step_escunhau_505", "step", 42.6707705745516,
@@ -5752,7 +6442,7 @@ public class DataContainer {
 		Step s510 = new Step("step_escunhau_510", "step", 42.6700245697261,
 				0.835598285236611, 0, 10, 510, t, null);
 		Step s511 = new Step("step_escunhau_511", "step", 42.6699999999834,
-				0.835619999551635, 0, 10, 511, t, null);
+				0.835619999551635, 0, 10, 511, t, h20);
 		Step s512 = new Step("step_escunhau_512", "step", 42.6699399999834,
 				0.835599999551608, 0, 10, 512, t, null);
 		Step s513 = new Step("step_escunhau_513", "step", 42.6696199999834,
@@ -5792,7 +6482,7 @@ public class DataContainer {
 		Step s530 = new Step("step_escunhau_530", "step", 42.6674499999834,
 				0.834339999549811, 0, 10, 530, t, null);
 		Step s531 = new Step("step_escunhau_531", "step", 42.6673899999834,
-				0.834239999549667, 0, 10, 531, t, null);
+				0.834239999549667, 0, 10, 531, t, h21);
 		Step s532 = new Step("step_escunhau_532", "step", 42.6671999999834,
 				0.834169999549567, 0, 10, 532, t, null);
 		Step s533 = new Step("step_escunhau_533", "step", 42.6670299999834,
@@ -5872,7 +6562,7 @@ public class DataContainer {
 		Step s570 = new Step("step_escunhau_570", "step", 42.6620499999833,
 				0.831329999545488, 0, 10, 570, t, null);
 		Step s571 = new Step("step_escunhau_571", "step", 42.6619999999832,
-				0.831289999545431, 0, 10, 571, t, h2);
+				0.831289999545431, 0, 10, 571, t, h2, r4);
 		Step s572 = new Step("step_escunhau_572", "step", 42.6619299999832,
 				0.831269999545402, 0, 10, 572, t, null);
 		Step s573 = new Step("step_escunhau_573", "step", 42.6618299999832,
@@ -6018,9 +6708,9 @@ public class DataContainer {
 		Step s643 = new Step("step_escunhau_643", "step", 42.656239999983,
 				0.826639999538651, 0, 10, 643, t, null);
 		Step s644 = new Step("step_escunhau_644", "step", 42.6561899999831,
-				0.826609999538608, 0, 10, 644, t, null);
+				0.826609999538608, 0, 10, 644, t, h22);
 		Step s645 = new Step("step_escunhau_645", "step", 42.6561654531682,
-				0.826597854857393, 0, 10, 645, t, h3);
+				0.826597854857393, 0, 10, 645, t, h3, r1);
 		Step s646 = new Step("step_escunhau_646", "step", 42.6561108797628,
 				0.826569255857387, 0, 10, 646, t, null);
 		Step s647 = new Step("step_escunhau_647", "step", 42.6560627085683,
@@ -6054,7 +6744,7 @@ public class DataContainer {
 		Step s661 = new Step("step_escunhau_661", "step", 42.6557765461236,
 				0.825916000551784, 0, 10, 661, t, null);
 		Step s662 = new Step("step_escunhau_662", "step", 42.6557512197625,
-				0.82588638303581, 0, 10, 662, t, h4);
+				0.82588638303581, 0, 10, 662, t, h4, r5);
 		Step s663 = new Step("step_escunhau_663", "step", 42.6557192597883,
 				0.825863096758205, 0, 10, 663, t, null);
 		Step s664 = new Step("step_escunhau_664", "step", 42.6556341152121,
@@ -6096,7 +6786,7 @@ public class DataContainer {
 		Step s682 = new Step("step_escunhau_682", "step", 42.6548840387301,
 				0.825388959052868, 0, 10, 682, t, null);
 		Step s683 = new Step("step_escunhau_683", "step", 42.6548330384249,
-				0.82531143759244, 0, 10, 683, t, h5);
+				0.82531143759244, 0, 10, 683, t, h5, r6);
 		Step s684 = new Step("step_escunhau_684", "step", 42.6548074224761,
 				0.825266581009465, 0, 10, 684, t, null);
 		Step s685 = new Step("step_escunhau_685", "step", 42.6547707312595,
@@ -6112,7 +6802,7 @@ public class DataContainer {
 		Step s690 = new Step("step_escunhau_690", "step", 42.6544930735692,
 				0.825073192118761, 0, 10, 690, t, null);
 		Step s691 = new Step("step_escunhau_691", "step", 42.6544523458832,
-				0.825062412170201, 0, 10, 691, t, h6);
+				0.825062412170201, 0, 10, 691, t, h6, r7);
 		Step s692 = new Step("step_escunhau_692", "step", 42.6543689880889,
 				0.82505921831559, 0, 10, 692, t, null);
 		Step s693 = new Step("step_escunhau_693", "step", 42.6542814201936,
@@ -6150,7 +6840,7 @@ public class DataContainer {
 		Step s709 = new Step("step_escunhau_709", "step", 42.6535326971521,
 				0.825002975318556, 0, 10, 709, t, null);
 		Step s710 = new Step("step_escunhau_710", "step", 42.653496237447,
-				0.824979847148619, 0, 10, 710, t, h7);
+				0.824979847148619, 0, 10, 710, t, h7, r8);
 		Step s711 = new Step("step_escunhau_711", "step", 42.6534398191566,
 				0.824972664322525, 0, 10, 711, t, null);
 		Step s712 = new Step("step_escunhau_712", "step", 42.653403822609,
@@ -6186,7 +6876,7 @@ public class DataContainer {
 		Step s727 = new Step("step_escunhau_727", "step", 42.6530468723572,
 				0.825761643313924, 0, 10, 727, t, null);
 		Step s728 = new Step("step_escunhau_728", "step", 42.6530467942415,
-				0.825804954362334, 0, 10, 728, t, h8);
+				0.825804954362334, 0, 10, 728, t, h8, r9);
 		Step s729 = new Step("step_escunhau_729", "step", 42.6530480081095,
 				0.825845170505533, 0, 10, 729, t, null);
 		Step s730 = new Step("step_escunhau_730", "step", 42.6530369407343,
@@ -6208,7 +6898,7 @@ public class DataContainer {
 		Step s738 = new Step("step_escunhau_738", "step", 42.6531692533015,
 				0.826017838848641, 0, 10, 738, t, null);
 		Step s739 = new Step("step_escunhau_739", "step", 42.6531906089072,
-				0.826016179736723, 0, 10, 739, t, h9);
+				0.826016179736723, 0, 10, 739, t, h9, r10);
 		Step s740 = new Step("step_escunhau_740", "step", 42.6532072131338,
 				0.826048844955729, 0, 10, 740, t, null);
 		Step s741 = new Step("step_escunhau_741", "step", 42.653272021332,
@@ -6236,7 +6926,7 @@ public class DataContainer {
 		Step s752 = new Step("step_escunhau_752", "step", 42.6534907466657,
 				0.826706284154383, 0, 10, 752, t, null);
 		Step s753 = new Step("step_escunhau_753", "step", 42.653482326005,
-				0.826737076521902, 0, 10, 753, t, h10);
+				0.826737076521902, 0, 10, 753, t, h10,r11);
 		Step s754 = new Step("step_escunhau_754", "step", 42.6534632927177,
 				0.826801787487938, 0, 10, 754, t, null);
 		Step s755 = new Step("step_escunhau_755", "step", 42.6534665837285,
@@ -6256,7 +6946,7 @@ public class DataContainer {
 		Step s762 = new Step("step_escunhau_762", "step", 42.6532807888682,
 				0.827149732751908, 0, 10, 762, t, null);
 		Step s763 = new Step("step_escunhau_763", "step", 42.6532701761328,
-				0.827183651191749, 0, 10, 763, t, h11);
+				0.827183651191749, 0, 10, 763, t, h11,r12);
 		Step s764 = new Step("step_escunhau_764", "step", 42.6532709858306,
 				0.827226321499189, 0, 10, 764, t, null);
 		Step s765 = new Step("step_escunhau_765", "step", 42.6532921592696,
@@ -6310,7 +7000,7 @@ public class DataContainer {
 		Step s789 = new Step("step_escunhau_789", "step", 42.654145776086,
 				0.827769243251112, 0, 10, 789, t, null);
 		Step s790 = new Step("step_escunhau_790", "step", 42.6542369765943,
-				0.827711168846106, 0, 10, 790, t, h12);
+				0.827711168846106, 0, 10, 790, t, h12, r13);
 		Step s791 = new Step("step_escunhau_791", "step", 42.6543033715767,
 				0.827650908064314, 0, 10, 791, t, null);
 		Step s792 = new Step("step_escunhau_792", "step", 42.6543827448083,
@@ -6330,7 +7020,7 @@ public class DataContainer {
 		Step s799 = new Step("step_escunhau_799", "step", 42.65500488363,
 				0.827248283259614, 0, 10, 799, t, null);
 		Step s800 = new Step("step_escunhau_800", "step", 42.6550733546053,
-				0.82717879896044, 0, 10, 800, t, h13);
+				0.82717879896044, 0, 10, 800, t, h13, r14);
 		Step s801 = new Step("step_escunhau_801", "step", 42.6551188071027,
 				0.82708266639223, 0, 10, 801, t, null);
 		Step s802 = new Step("step_escunhau_802", "step", 42.6551576836862,
@@ -7208,16 +7898,82 @@ public class DataContainer {
 		} catch (RuntimeException ex) {
 			Log.e("Inserting step", "Insert error " + ex.toString());
 		}
+		
+		// Interactive image
+		// Create image
+		InteractiveImage img = new InteractiveImage("intimg_escunhau_poi03");
+		img.setMediaPath("panoramica_escunhau.jpg");
+		img.setOriginalWidth(1558);
+		img.setOriginalHeight(480);
+		try {
+			interactiveImageDataDao.create(img);
+		} catch (Exception ex) {
+			Log.e("Inserting interact img", "Insert error " + ex.toString());
+		}
+
+		Box b1 = new Box("b_escunh_1", 56,16,104,82, img);
+		b1.setMessage("Pujoalbo, 2500 m");
+		
+		Box b2 = new Box("b_escunh_2", 466,36,508,96, img);
+		b2.setMessage("Tuca dera Aubeta, 2487 m");
+		
+		Box b3 = new Box("b_escunh_3", 619,15,664,79, img);
+		b3.setMessage("Cap dera Aubeta, 2532 m");
+		
+		Box b4 = new Box("b_escunh_4", 915,25,964,90, img);
+		b4.setMessage("Sèrra de Rius");
+		
+		Box b5 = new Box("b_escunh_5", 1209,25,1256,89, img);
+		b5.setMessage("Tuca de Betren o des Molassi, 2518 m");
+		
+		Box b6 = new Box("b_escunh_6", 1357,0,1410,58, img);
+		b6.setMessage("Tuc de Roca Blanca, 2460 m");
+		
+		Box b7 = new Box("b_escunh_7", 702,199,752,265, img);
+		b7.setMessage("Vessant d’esbadregalls: És una acumulació de blocs i graves, causada per la fragmentació de la roca de les zones de més altitud, que van baixant pel vessant. En els llocs molt pendents es pot formar un conus d’acumulació com el que veiem, que en aquest cas arriba a penetrar en l’estany. Són les formes del relleu més recent, produides després de que es fonessin els gels de l’última glaciació (fa 15.000 anys) i encara actives.");
+		
+		Box b8 = new Box("b_escunh_8", 805,230,851,300, img);
+		b8.setMessage("Avenc de desguàs de l’estany: Aquest estany no te una sortida d’aigua superficial, sino que s’escola cap el subsòl i surt per filtració en zones més baixes cap el riu. El punt marcat en el mapa és el desguàs principal de l’estany. Es tracta d’un avenc causat per l’erosió de tipus kàrstic, típica de les roques calcàries que formen la vora on es troba.");
+		
+		Box b9 = new Box("b_escunh_9", 866,148,918,210, img);
+		b9.setMessage("Penyasegats: Són de roca calcària, tipus marbre. Aquest tipus de roques es van formar per sedimentació fa uns 400 milions d’anys, en el fons d’un antic mar. Fa uns 300 milions d’anys es van transformar (metamorfitzar) en marbres per efecte d’altes temperatures. Quan es van formar, aquestes roques es disposaven en estrats o capes horitzontals. Però fa uns 30 milions d’anys, quan l’escorça terrestre es va plegar per formar els Pirineus, aquests estrats es van posar en posició vertical. Alguns fragments han quedat exposats i han resistit a l’erosió, i formen parets com la que veiem aquí.");
+		
+		Box b10 = new Box("b_escunh_10", 1004,264,1053,330, img);
+		b10.setMessage("Bassal: Aquesta àrea queda separada de la cubeta principal de l’estany. La poca fondària i l’entrada d’aigua per filtració des de la vora dreta li donen característiques molt diferenciades de la resta de l’estany: aigües molt fredes i tèrboles, i una vegetació espesa i diferent de la de la resta de l’estany que cobreix quasi tot el bassal.");
+		
+		Box b11 = new Box("b_escunh_11", 1165,165,1215,231, img);
+		b11.setMessage("Tot aquest vessant està format per fragments de roca, graves i sorra, sobre els que s’ha format una fina capa de sòl que permet que s’estableixin uns prats en pendent. El subsòl és molt porós, i conté una quantitat d’aigua subterrània important que es recarrega durant el desglaç i va fluint lentament cap a l’estany. Fins i tot durant l’estiu arriba a l’estany aigua freda que prové d’aquest dipòsit ocult sota terra.");
+
+		Box b12 = new Box("b_escunh_12", 863,400,909,459, img);
+		b12.setMessage("Morrena: Les morrenes son acumulacions de pedres, que poden tenir sorres i llims, que arrosegaven les antigues glaceres i quedaven dipositades en la part frontal. Quan es van fondre les glaceres, aquestes morrenes formaven moltes vegades represaments naturals que han donat lloc a estanys. Aquest és el cas de l’Estanho d’Escunhau, i ara mateix esteu a sobre de la morrena que va tancar i formar l’estany.");
+		
+		try {
+			boxDataDao.create(b1);
+			boxDataDao.create(b2);
+			boxDataDao.create(b3);
+			boxDataDao.create(b4);
+			boxDataDao.create(b5);
+			boxDataDao.create(b6);
+			boxDataDao.create(b7);
+			boxDataDao.create(b8);
+			boxDataDao.create(b9);
+			boxDataDao.create(b10);
+			boxDataDao.create(b11);
+			boxDataDao.create(b12);
+		} catch (Exception ex) {
+			Log.e("Inserting box", "Insert error " + ex.toString());
+		}
+
 
 		Route r = new Route();
 		r.setId("ROUTE_ESCUNHAU");
-		r.setName("Escunhau");
-		r.setDescription("Itinerari Escunhau");
+		r.setName("Estanho d’Escunhau");
+		r.setDescription("Itinerari de 10 km i 795 m de desnivell per pista (30-45 min en cotxe, anada), seguit de 1.8 km i 200 m de desnivell a peu (30-45 min, anada), per acabar amb un circuit (1 km) al voltant de l’Estanho d’Escunhau. La pista és de terra i està en bon estat, tret d’algun pas concret. Amb molta precaució és possible fer-la amb un cotxe que no sigui 4x4. El camí a peu és un sender força ben marcat, sense dificultat i amb un pendent moderat. L’itinerari és adequat per a qualsevol persona amb un mínim de forma física. L’Estanho d’Escunhau está situat sota unes escarpades parets de roca calcària, amb formes erosives peculiars, com ara l’avenc per on l’estany desaigua.  La seva característica principal és l’abundància de diverses plantes aquàtiques, que es poden distingir des de les vores, i que arriben al màxim desenvolupament a partir de mitjans d’agost.");
 		r.setUserId("1");
 		// Ph_ch parameters
-		// r.setReference(r6);
+		r.setReference(r2);
 		// Interactive image
-		// r.setInteractiveImage(img);
+		r.setInteractiveImage(img);
 		r.setTrack(t);
 		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
 
@@ -9881,16 +10637,25 @@ public class DataContainer {
 		} catch (RuntimeException ex) {
 			Log.e("Inserting step", "Insert error " + ex.toString());
 		}
-
+		
+	
 		Route r = new Route();
 		r.setId("ROUTE_ARTIGA");
-		r.setName("Artiga de Lin");
-		r.setDescription("Itinerari d'Artiga de Lin");
+		r.setName("Estanys de l’Artiga de Lin: Estanhons de Pois i Estanh deth Còth deth Hòro");
+		r.setDescription("Itinerari circular de 10 km amb 1040 m de desnivell (5-6 h a peu), per visitar " + 
+		"els Estanhons de Pois i l’Estanh de Còth deth Hòro. Sortida des de l’aparcament del Plan dera Artiga " + 
+		"de Lin. El camí segueix corriols de muntanya, de vegades poc marcats i de pendents molt acusades, " + 
+		"amb alguns trams de tartera i grimpades amb poca dificultat. L’itinerari és adequat per persones amb " + 
+		"un bon entrenament i experiència en alta muntanya. Alternativament, es pot visitar només un dels estanys, " + 
+		"sense completar el circuit: Pois, 3 km (anada) i 595 m de desnivell; Coth deth Hòro, 3.25 km (anada, " + 
+		"seguint la part final de l’itinerari a l’inversa) i 770 m de desnivell. Són estanys típicament alpins i " +
+		"amb aigües de tipus carbonatat, en un paisatge de roques calcàries i sorrenques de formes " + 
+		"espectaculars i vistes sobre el massís i glacera de l’Aneto.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
 		// Interactive image
-		// r.setInteractiveImage(img);
+		//r.setInteractiveImage(img);
 		r.setTrack(t);
 		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
 
@@ -10729,6 +11494,10 @@ public class DataContainer {
 		}
 
 		return r;
+	}
+	
+	public static void updateRoute(Route r,DataBaseHelper dataBaseHelper){
+		dataBaseHelper.getRouteDataDao().update(r);
 	}
 
 	public static void insertRoute(Route editedRoute,

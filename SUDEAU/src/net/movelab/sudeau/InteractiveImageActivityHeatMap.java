@@ -58,9 +58,9 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		}
 		if(interactiveImage!=null && 
 				interactiveImage.getMediaPath()!= null && 
-				!interactiveImage.getMediaPath().equalsIgnoreCase("")){
-			File sdcard = Environment.getExternalStorageDirectory();
-			File f = new File(sdcard,interactiveImage.getMediaPath());
+				!interactiveImage.getMediaPath().equalsIgnoreCase("")){			
+			File root = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder);
+			File f = new File(root,interactiveImage.getMediaPath());
 			if(f.exists()){
 				int[] screenSize = Util.getScreenSize(getBaseContext());
 				originalHeight = interactiveImage.getOriginalHeight();

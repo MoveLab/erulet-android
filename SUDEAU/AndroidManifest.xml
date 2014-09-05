@@ -33,8 +33,9 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o" />
+            android:value="AIzaSyBsiA8tXhQ3ghemBxV6X-mAzYc0xVzq2LQ" />
 
+<!--Old API Key         AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o -->
         <activity
             android:name="net.movelab.sudeau.Switchboard"
             android:theme="@android:style/Theme.Holo"

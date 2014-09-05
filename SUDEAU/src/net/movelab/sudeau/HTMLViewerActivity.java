@@ -17,12 +17,14 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class HTMLViewerActivity extends Activity {
 		
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;	
 	private EruletApp app;
+	WebView wv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,10 @@ public class HTMLViewerActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		wv = (WebView) findViewById(R.id.wb_webView);
+		wv.setWebViewClient(new MyWebViewClient());
 		loadHTML();
-	}
-	
+	}	
 	
 	
 //	@Override
@@ -61,9 +64,7 @@ public class HTMLViewerActivity extends Activity {
 		return null;
 	}
 	
-	private void loadHTML(){		 
-        WebView wv;  
-        wv = (WebView) findViewById(R.id.wb_webView);  
+	private void loadHTML(){		                   
         wv.loadUrl(getReferenceURI());
 	}
 	
@@ -79,6 +80,22 @@ public class HTMLViewerActivity extends Activity {
         }else{
         	super.onBackPressed();
         }
+	}
+	
+	private class MyWebViewClient extends WebViewClient {
+	    @Override
+	    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+	        if (url.contains("mp4")) {
+	        	Intent ihtml = new Intent(HTMLViewerActivity.this,
+						VideoPlayActivity.class);
+				ihtml.putExtra("videourl", url);
+				startActivity(ihtml);
+	            return false;
+	        }else{
+	            view.loadUrl(url);
+	            return true;
+	        }
+	    }
 	}
 	
 }

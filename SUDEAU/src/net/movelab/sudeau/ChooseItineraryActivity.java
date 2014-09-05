@@ -280,7 +280,7 @@ public class ChooseItineraryActivity extends Activity {
 		}
 		for(int i=0; i < routes.size(); i++){			
 			Route r = routes.get(i);
-			Step start = DataContainer.getRouteStarter(r, app.getDataBaseHelper());
+			Step start = DataContainer.getRouteStarterFast(r, app.getDataBaseHelper());
 			if(start!=null){
 //				Marker my_marker = mMap.addMarker(new MarkerOptions()
 //				.position(new LatLng(start.getLatitude(), start.getLongitude()))
