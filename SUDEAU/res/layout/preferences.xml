@@ -75,6 +75,33 @@
 	                android:onClick="onRadioButtonClicked"
 	                android:text="@string/lang_device" />
 			</RadioGroup>
+
+            <View android:id="@+id/separator"
+                android:background="#fff"
+                android:layout_width = "fill_parent"
+                android:layout_height="1dip"
+                android:layout_centerVertical ="true"
+                android:layout_alignParentTop="true"/>
+
+            <TextView
+                android:id="@+id/tvStepInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step Interval (Seconds)"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/etFixInterval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+
+            <Button
+                android:id="@+id/bOK"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK"/>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -144,7 +144,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	public Dao<Step, String> getStepDao() throws java.sql.SQLException {
 		if (stepDao == null) {
-			stepDao = getDao(Track.class);
+			stepDao = getDao(Step.class);
 		}
 		return stepDao;
 	}

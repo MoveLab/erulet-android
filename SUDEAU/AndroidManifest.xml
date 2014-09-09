@@ -33,7 +33,9 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBsiA8tXhQ3ghemBxV6X-mAzYc0xVzq2LQ" />
+            android:value="AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o" />
+
+<!--for signed APK            android:value="AIzaSyBsiA8tXhQ3ghemBxV6X-mAzYc0xVzq2LQ" /> -->
 
 <!--Old API Key         AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o -->
         <activity
@@ -50,13 +52,7 @@
         <activity android:name="net.movelab.sudeau.ChooseItineraryActivity" 
             android:theme="@android:style/Theme.Holo">
         </activity>
-        <activity android:name="net.movelab.sudeau.ChooseItineraryActivityLegacy" >
-        </activity>
         <activity android:name="net.movelab.sudeau.PlaceInfoActivity" >
-        </activity>
-        <activity android:name="net.movelab.sudeau.ReferenceInfoActivity" >
-        </activity>
-        <activity android:name="net.movelab.sudeau.OtherUsersActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.DetailItineraryActivity"
             android:configChanges="orientation|screenSize" 
@@ -66,8 +62,6 @@
         <activity android:name="net.movelab.sudeau.CompassActivity" 
             android:theme="@android:style/Theme.Holo">
         </activity>        
-        <activity android:name="net.movelab.sudeau.DriveActivity" >
-        </activity>
         <activity android:name="net.movelab.sudeau.CreditsActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.ManualActivity" >

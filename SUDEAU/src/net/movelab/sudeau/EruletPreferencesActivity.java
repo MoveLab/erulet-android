@@ -2,12 +2,15 @@ package net.movelab.sudeau;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RadioGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 
 public class EruletPreferencesActivity extends Activity {
@@ -17,10 +20,14 @@ public class EruletPreferencesActivity extends Activity {
 	private SharedPreferences.Editor mPrefEditor;
 	private EruletApp app;
 	private int formerSelectedRadioButton;
+    private EditText etFixInterval;
+    private Button bOK;
+    Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	
+		super.onCreate(savedInstanceState);
+        context = getApplicationContext();
 		setContentView(R.layout.preferences);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
@@ -29,6 +36,20 @@ public class EruletPreferencesActivity extends Activity {
 	    mPrefEditor = mPreferences.edit();
 	    rbPreferredLocaleSelector = (RadioGroup)findViewById(R.id.radioLang);
 		updateRadioButtonState();
+
+        etFixInterval = (EditText) findViewById(R.id.etFixInterval);
+        bOK = (Button) findViewById(R.id.bOK);
+        bOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String input = etFixInterval.getText().toString();
+                if(!input.matches("")){
+                    PropertyHolder.init(context);
+                    PropertyHolder.setAlarmInterval(1000*Long.parseLong(input, 10));
+                };
+                finish();
+            }
+        });
 	}
 	
 	private void updateRadioButtonState(){
