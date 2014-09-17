@@ -4,10 +4,13 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import android.location.Location;
@@ -29,8 +32,10 @@ public class Step implements Comparable<Step> {
 	private double altitude;
 	@DatabaseField
 	private double precision;
-	@DatabaseField(foreign=true, columnName="hlId")
-	private HighLight highlight;
+//	@DatabaseField(foreign=true, columnName="hlId")
+//	private HighLight highlight;
+	@ForeignCollectionField
+	private Collection<HighLight> highlights;
 	@DatabaseField(foreign=true, columnName="referenceId")
 	private Reference reference;
 	@DatabaseField
@@ -40,7 +45,7 @@ public class Step implements Comparable<Step> {
 	@DatabaseField
 	private long absoluteTimeMillis;
 	@DatabaseField(foreign=true, columnName="trackId")
-    private Track track;
+    private Track track;	
 	/**
 	 * This is only for shared steps there is a reference to the route it is
 	 * based on
@@ -48,15 +53,17 @@ public class Step implements Comparable<Step> {
 	@DatabaseField(foreign=true, columnName="routeId")
     private Route route;
 
-	public Step() {		
+	public Step() {
+		setHighlights(new ArrayList<HighLight>());
 	}
 	
 	public Step(String id) {
-		this.setId(id); 
+		this.setId(id);
+		setHighlights(new ArrayList<HighLight>());
 	}
 	
 	public Step(String id, String name, double latitude, double longitude, double altitude,
-			double precision, int order, Track track, HighLight highlight){
+			double precision, int order, Track track){
 		this.id=id;
 		this.name=name;
 		this.latitude=latitude;
@@ -65,12 +72,13 @@ public class Step implements Comparable<Step> {
 		this.precision=precision;
 		this.order=order;
 		this.track=track;
-		this.highlight=highlight;
+		//this.highlight=highlight;
+		setHighlights(new ArrayList<HighLight>());
 	}
 
 
 	public Step(String id, String name, double latitude, double longitude, double altitude,
-			double precision, int order, Track track, HighLight highlight, Reference reference){
+			double precision, int order, Track track, Reference reference){
 		this.id=id;
 		this.name=name;
 		this.latitude=latitude;
@@ -79,8 +87,9 @@ public class Step implements Comparable<Step> {
 		this.precision=precision;
 		this.order=order;
 		this.track=track;
-		this.highlight=highlight;
+		//this.highlight=highlight;
 		this.reference = reference;
+		setHighlights(new ArrayList<HighLight>());
 	}
 	
 	public int getOrder() {
@@ -107,13 +116,13 @@ public class Step implements Comparable<Step> {
 		this.absoluteTimeMillis = relativeTime;
 	}
 
-	public HighLight getHighlight() {
-		return highlight;
-	}
-
-	public void setHighlight(HighLight highlight) {
-		this.highlight = highlight;
-	}
+//	public HighLight getHighlight() {
+//		return highlight;
+//	}
+//
+//	public void setHighlight(HighLight highlight) {
+//		this.highlight = highlight;
+//	}
 
 	public Reference getReference() {
 		return reference;
@@ -224,6 +233,26 @@ public class Step implements Comparable<Step> {
 
 	public void setRoute(Route route) {
 		this.route = route;
-	}	
+	}
+
+	public Collection<HighLight> getHighlights() {
+		return highlights;
+	}
+
+	public void setHighlights(Collection<HighLight> highlights) {
+		this.highlights = highlights;
+	}
+	
+	public boolean hasHighLights(){
+		return (highlights!= null && highlights.size() > 0);
+	}
+	
+	public boolean hasSingleHighLight(){
+		return (highlights!= null && highlights.size() == 1);
+	}
+	
+	public boolean hasMultipleHighLights(){
+		return (highlights!= null && highlights.size() > 1);			 
+	}
 	
 }

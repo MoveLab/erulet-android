@@ -161,8 +161,10 @@ public class ModelUtilities {
 		if(steps!=null){
 			for(int i = 0; i < steps.size(); i++){
 				Step s = steps.get(i);
-				if(s.getHighlight()!=null){
-					retVal++;
+				if(s.getHighlights() != null){
+					for( HighLight hl : s.getHighlights() ){
+						retVal++;
+					}
 				}
 			}
 		}

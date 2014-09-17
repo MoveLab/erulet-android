@@ -1,6 +1,7 @@
 package net.movelab.sudeau;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import com.google.android.gms.common.data.DataBufferUtils;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -8,6 +9,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import net.movelab.sudeau.DetailItineraryActivity.FixReceiver;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -165,17 +167,21 @@ public class CompassActivity extends Activity implements SensorEventListener {
 			String idStep = extras.getString("idStep");
 			if(idStep != null && !idStep.equalsIgnoreCase("")){
 				Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
-				navLocation = new Location("");//provider name is unecessary
-				navLocation.setLatitude(s.getLatitude());//your coords of course
+				navLocation = new Location("");
+				navLocation.setLatitude(s.getLatitude());
 				navLocation.setLongitude(s.getLongitude());
-				if(s.getHighlight()!=null){
-					DataContainer.getHighLightStep(s, app.getDataBaseHelper());
-					if(s.getHighlight().getName() == null || 
-							s.getHighlight().getName().equalsIgnoreCase("")){
-						tvWpName.setText(getString(R.string.name_null));					
-					}else{
-						tvWpName.setText(getString(R.string.name) + " " + s.getHighlight().getName());
-					}								
+				if(s.hasHighLights()){
+					List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());					
+					if(s.hasSingleHighLight()){ //Single highlight
+						HighLight hl = highLights.get(0);
+						if(hl.getName() == null || hl.getName().equalsIgnoreCase("")){
+							tvWpName.setText(getString(R.string.name_null));					
+						}else{
+							tvWpName.setText(getString(R.string.name) + " " + hl.getName());
+						}
+					}else{ //Multiple highlights
+						tvWpName.setText(getString(R.string.name) + " " + Util.getMultipleHighLightsNameLabel(highLights) );
+					}							
 				}else{
 					tvWpName.setText(getString(R.string.point_no_name));					
 				}

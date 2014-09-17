@@ -344,7 +344,8 @@ public class DetailItineraryActivity extends Activity
 				Step s = fixReceiver.getStepById(stepBeingEditedId);
 				hl.setRadius(s.getPrecision());
 				if (s != null) {
-					s.setHighlight(hl);
+					//s.setHighlight(hl);
+					s.getHighlights().add(hl);
 				}
 				// Aggressively save highlight
 				saveHighLight(hl);
@@ -447,9 +448,9 @@ public class DetailItineraryActivity extends Activity
 			if(selectedRoute.getReference()==null){
 				menu.getItem(0).setVisible(false);
 			}
-			if(selectedRoute.getInteractiveImage()==null){
-				menu.getItem(1).setVisible(false);
-			}
+//			if(selectedRoute.getInteractiveImage()==null){
+//				menu.getItem(1).setVisible(false);
+//			}
 //			for (int i = 0; i < menu.size(); i++) {
 //				menu.getItem(i).setVisible(false);
 //			}
@@ -473,12 +474,12 @@ public class DetailItineraryActivity extends Activity
 			ihtml.putExtra("idReference", selectedRoute.getReference().getId());
 			startActivity(ihtml);
 			return true;
-		case 2:
-			Intent i = new Intent(DetailItineraryActivity.this,
-					InteractiveImageActivityHeatMap.class);			
-			i.putExtra("int_image_id", selectedRoute.getInteractiveImage().getId());
-			startActivity(i);
-			return true;
+//		case 2:
+//			Intent i = new Intent(DetailItineraryActivity.this,
+//					InteractiveImageActivityHeatMap.class);			
+//			i.putExtra("int_image_id", selectedRoute.getInteractiveImage().getId());
+//			startActivity(i);
+//			return true;
 		default:
 			break;
 		}
@@ -646,16 +647,29 @@ public class DetailItineraryActivity extends Activity
 				Marker m = userMarkers.nextElement();
 				Step s = routeInProgressMarkers.get(m);
 				int hlType = -1;
-				if(s.getHighlight()!=null){
-					hlType = s.getHighlight().getType();
-					//m = MapObjectsFactory.addHighLightMarker(
+//				if(s.getHighlight()!=null){
+//					hlType = s.getHighlight().getType();
+//					m = MapObjectsFactory.addUserHighLightMarker(
+//							mMap, 
+//							m.getPosition(), 
+//							m.getTitle(), 
+//							m.getSnippet(), 
+//							hlType);
+//				}				
+				if(s.getHighlights()!=null){
+					List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
+					if(s.hasSingleHighLight()){						
+						hlType = highLights.get(0).getType();											
+					}else{
+						hlType = HighLight.CONTAINER_N;
+					}
 					m = MapObjectsFactory.addUserHighLightMarker(
 							mMap, 
 							m.getPosition(), 
 							m.getTitle(), 
 							m.getSnippet(), 
 							hlType);
-				}				
+				}
 				Log.d(TAG,"refresh markers added " + hlType);
 			}
 		}
@@ -750,41 +764,20 @@ public class DetailItineraryActivity extends Activity
 							isUserMarker = true;
 						}
 					}
-					if (s != null && s.getReference() != null) {
-						//Interactive image
-						Reference r = DataContainer.refreshReference(s.getReference(), app.getDataBaseHelper());
-						if(r.getName()!= null && r.getName().contains("jpg")){
-							Intent i = new Intent(DetailItineraryActivity.this,
-									InteractiveImageActivityHeatMap.class);			
-							i.putExtra("int_image_id", r.getTextContent());
-							startActivity(i);
-						}else{
-							Intent i = new Intent(DetailItineraryActivity.this,
-									HTMLViewerActivity.class);
-							i.putExtra("idReference", r.getId());
-							startActivity(i);
-						}
-					} else {
-						//Might be start/end markers
-						if(marker.equals(startMarker) || marker.equals(arrivalMarker)){
-							//Do nothing in special
-						}else{
+					if(isUserMarker){						
+						if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
 							//We are editing. On click, if it's an user marker we go to
 							//Edit highlight activity
-							if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
-								launchHighLightEditIntent(s);								
-							}else{ //Go to highlight detail (if there's some media to show)
-								if(s != null && s.getHighlight()!=null && 
-										s.getHighlight().getMediaPath() != null){
+							//·$$·
+							//launchHighLightEditIntent(s);
+						}else{ //Go to highlight detail (if there's some media to show)															
+							if(s != null && s.getHighlights()!=null){
+								if(s.hasSingleHighLight()){
 									JSONObject hl_s;
 									try {
 										hl_s = JSONConverter.stepToJSONObject(s);
 										if(hl_s != null){
 											String s_j_string = hl_s.toString();
-											//Check if it's a warned marker. If it is, we consider the warning acknowledged
-//											if(proximityWarning != null && proximityWarning.markerIsBeingWarned(marker) ){
-//												proximityWarning.acknowledgeWarning();
-//											}
 											Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
 											startActivity(i);
@@ -792,11 +785,92 @@ public class DetailItineraryActivity extends Activity
 									} catch (JSONException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
-									}								
+									}
+								}else{ //if multiple highlights, open highlight menu
+									//·$$·
 								}
 							}
 						}
+					}else{ //Is not user marker
+						if( marker.equals(startMarker) || marker.equals(arrivalMarker) ){
+//							//Do nothing in special
+						}else if(s.hasHighLights()){
+							List<HighLight> highlights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
+							if(s.hasSingleHighLight()){
+								HighLight h = highlights.get(0);
+								if(h.getInteractiveImage()!=null){
+									//Interactive image
+									Intent i = new Intent(DetailItineraryActivity.this,
+											InteractiveImageActivityHeatMap.class);			
+									i.putExtra("int_image_id", h.getInteractiveImage().getId());
+									startActivity(i);
+								}else if(h.getReference()!=null){
+									Reference r = DataContainer.refreshReference(h.getReference(), app.getDataBaseHelper());
+									Intent i = new Intent(DetailItineraryActivity.this,
+											HTMLViewerActivity.class);
+									i.putExtra("idReference", r.getId());
+									startActivity(i);
+								}
+							}else{ //Multiple HighLights
+								//·$$· Open multiple highlights menu
+							}
+						}
 					}
+//					Step s = selectedRouteMarkers.get(marker);
+//					boolean isUserMarker = false;
+//					if (s == null) {
+//						if (routeInProgressMarkers != null) {
+//							s = routeInProgressMarkers.get(marker);
+//							isUserMarker = true;
+//						}
+//					}
+//					if (s != null && s.getReference() != null) {
+//						//Interactive image
+//						Reference r = DataContainer.refreshReference(s.getReference(), app.getDataBaseHelper());
+//						if(r.getName()!= null && r.getName().contains("jpg")){
+//							Intent i = new Intent(DetailItineraryActivity.this,
+//									InteractiveImageActivityHeatMap.class);			
+//							i.putExtra("int_image_id", r.getTextContent());
+//							startActivity(i);
+//						}else{
+//							Intent i = new Intent(DetailItineraryActivity.this,
+//									HTMLViewerActivity.class);
+//							i.putExtra("idReference", r.getId());
+//							startActivity(i);
+//						}
+//					} else {
+//						//Might be start/end markers
+//						if(marker.equals(startMarker) || marker.equals(arrivalMarker)){
+//							//Do nothing in special
+//						}else{
+//							//We are editing. On click, if it's an user marker we go to
+//							//Edit highlight activity
+//							if ( (routeMode == 1 || routeMode == 2) && isUserMarker) {
+//								//·$$·
+//								//launchHighLightEditIntent(s);
+//							}else{ //Go to highlight detail (if there's some media to show)															
+//								if(s != null && s.getHighlights()!=null){									
+//									if(s.hasSingleHighLight()){
+//										JSONObject hl_s;
+//										try {
+//											hl_s = JSONConverter.stepToJSONObject(s);
+//											if(hl_s != null){
+//												String s_j_string = hl_s.toString();
+//												Intent i = new Intent(DetailItineraryActivity.this,DetailHighLightActivity.class);
+//												i.putExtra("step_j", s_j_string);
+//												startActivity(i);
+//											}
+//										} catch (JSONException e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+//									}else{ //if multiple highlights, open highlight menu
+//										//·$$·
+//									}
+//								}
+//							}
+//						}
+//					}
 				}
 			});
 			mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
@@ -826,12 +900,45 @@ public class DetailItineraryActivity extends Activity
 						}
 					}
 					if (s != null) {
-						if (isUserMarker) {
-							if (s.getHighlight() == null) {
-								title.setText(getString(R.string.empty_marker));
-								snippet.setText(getString(R.string.click_add_data));
-							} else {
-								HighLight h1 = s.getHighlight();
+						if (isUserMarker) {							
+							if(s.hasSingleHighLight()){
+								List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
+								HighLight h1 = highLights.get(0);								
+								//HighLight h1 = s.getHighlight();
+								title.setText(h1.getName());
+								snippet.setText(h1.getLongText());
+								ImageView picture = (ImageView) myContentView
+										.findViewById(R.id.info_pic);
+								if (h1.getMediaPath() != null
+										&& !h1.getMediaPath().trim()
+												.equalsIgnoreCase("")) {
+									String file = h1.getMediaPath();
+									if (file.contains("mp4")) {
+										file = file.replace("file://", "");
+										Bitmap bm = ThumbnailUtils
+												.createVideoThumbnail(
+														file,
+														android.provider.MediaStore.Video.Thumbnails.MINI_KIND);
+										picture.setImageBitmap(bm);
+									} else {
+										file = file.replace("file://", "");
+										picture.setImageBitmap(Util.decodeSampledBitmapFromFile(
+												file, 
+												IMAGE_THUMBNAIL_WIDTH, 
+												IMAGE_THUMBNAIL_HEIGTH));										//
+									}
+								} else {
+									picture.setImageResource(R.drawable.ic_itinerary_icon);
+								}								
+							}else{ //Has multiple highlights
+								//·$$·
+							}
+						} else { //Not user marker
+							if(s.hasSingleHighLight()){
+								List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper()); 
+										//(List<HighLight>) s.getHighlights();								
+								//HighLight h1 = s.getHighlight();
+								HighLight h1 = highLights.get(0);
 								title.setText(h1.getName());
 								snippet.setText(h1.getLongText());
 								ImageView picture = (ImageView) myContentView
@@ -853,39 +960,13 @@ public class DetailItineraryActivity extends Activity
 										picture.setImageBitmap(Util.decodeSampledBitmapFromFile(
 												file, 
 												IMAGE_THUMBNAIL_WIDTH, 
-												IMAGE_THUMBNAIL_HEIGTH));										//
+												IMAGE_THUMBNAIL_HEIGTH));
 									}
 								} else {
 									picture.setImageResource(R.drawable.ic_itinerary_icon);
 								}
-							}
-						} else {
-							HighLight h1 = s.getHighlight();
-							title.setText(h1.getName());
-							snippet.setText(h1.getLongText());
-							ImageView picture = (ImageView) myContentView
-									.findViewById(R.id.info_pic);
-							if (h1.getMediaPath() != null
-									&& !h1.getMediaPath().trim()
-											.equalsIgnoreCase("")) {
-								String file = h1.getMediaPath();
-								if (file.contains("mp4")) {
-									file = file.replace("file://", "");
-									Bitmap bm = ThumbnailUtils
-											.createVideoThumbnail(
-													file,
-													android.provider.MediaStore.Video.Thumbnails.MINI_KIND);
-									picture.setImageBitmap(bm);
-								} else {
-									file = file.replace("file://", "");
-									//loadBitmapThumbnailToImageView(file, IMAGE_THUMBNAIL_WIDTH, IMAGE_THUMBNAIL_HEIGTH, picture);
-									picture.setImageBitmap(Util.decodeSampledBitmapFromFile(
-											file, 
-											IMAGE_THUMBNAIL_WIDTH, 
-											IMAGE_THUMBNAIL_HEIGTH));
-								}
-							} else {
-								picture.setImageResource(R.drawable.ic_itinerary_icon);
+							}else{ //Multiple highlights
+								//·$$·
 							}
 						}						
 
@@ -955,7 +1036,7 @@ public class DetailItineraryActivity extends Activity
 		}
 	}
 	
-	private void launchHighLightEditIntent(Step s){
+	private void launchHighLightEditIntent(Step s, HighLight h){
 		Intent i = new Intent(
 				DetailItineraryActivity.this,
 				EditHighLightActivity.class);
@@ -968,13 +1049,10 @@ public class DetailItineraryActivity extends Activity
 				Double.toString(s.getAltitude()));								
 		i.putExtra("date",
 				app.formatDateDayMonthYear(s.getAbsoluteTime()));
-		if (s.getHighlight() != null) {
-			i.putExtra("hlname", s.getHighlight()
-					.getName());
-			i.putExtra("hllongtext", s.getHighlight()
-					.getLongText());
-			i.putExtra("hlimagepath", s.getHighlight()
-					.getMediaPath());
+		if (h != null) {
+			i.putExtra("hlname", h.getName());
+			i.putExtra("hllongtext", h.getLongText());
+			i.putExtra("hlimagepath", h.getMediaPath());
 		}
 		startActivityForResult(i,
 				HIGHLIGHT_EDIT_REQUEST);
@@ -1037,8 +1115,9 @@ public class DetailItineraryActivity extends Activity
 							if(selectedMarker!=null){
 								selectedMarker.remove();
 							}
-							selectedMarker = m;							
-							launchHighLightEditIntent(s);
+							selectedMarker = m;
+							//·$$·
+							//launchHighLightEditIntent(s);
 						}
 					});
 			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no),
@@ -1154,14 +1233,27 @@ public class DetailItineraryActivity extends Activity
 	private void addMarkerIfNeeded(Step step) {
 		// stepTable
 		HighLight hl;
-		if ((hl = step.getHighlight()) != null) {
-			//Marker m = MapObjectsFactory.addHighLightMarker(
-			Marker m = MapObjectsFactory.addOfficialHighLightMarker(
-					mMap, 
-					new LatLng(step.getLatitude(), step.getLongitude()), 
-					hl.getName(), 
-					hl.getLongText(),
-					hl.getType());
+		if(step.hasHighLights()){
+			List<HighLight> highLights = DataContainer.getStepHighLights(step, app.getDataBaseHelper());					
+			Marker m;
+			if(step.hasSingleHighLight()){
+				hl = highLights.get(0);
+				//Marker m = MapObjectsFactory.addHighLightMarker(
+				m = MapObjectsFactory.addOfficialHighLightMarker(
+						mMap, 
+						new LatLng(step.getLatitude(), step.getLongitude()), 
+						hl.getName(), 
+						hl.getLongText(),
+						hl.getType());							
+			}else{ //Multiple highlights
+				//·$$·
+				m = MapObjectsFactory.addOfficialHighLightMarker(
+						mMap, 
+						new LatLng(step.getLatitude(), step.getLongitude()), 
+						"Multiples punts d'interes", 
+						"",
+						HighLight.CONTAINER_N);
+			}
 			selectedRouteMarkers.put(m, step);
 		}
 	}

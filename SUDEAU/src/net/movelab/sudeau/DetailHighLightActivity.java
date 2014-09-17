@@ -1,10 +1,12 @@
 package net.movelab.sudeau;
 
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
@@ -44,10 +46,12 @@ public class DetailHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		screenWidth = Util.getScreenSize(getBaseContext())[0];				
+		screenWidth = Util.getScreenSize(getBaseContext())[0];
+		String highLight_id = null;
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
 			String step_json = extras.getString("step_j");
+			highLight_id = extras.getString("highlight_id");
 			try {
 				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json));
 			} catch (JSONException e) {
@@ -56,11 +60,11 @@ public class DetailHighLightActivity extends Activity {
 			}
 		}
 		if(step!=null){
-			setupUI(step);
+			setupUI(step,highLight_id);
 		}
 	}		
 	
-	private void setupUI(Step s){
+	private void setupUI(Step s, String idHighLight){
 		TextView datatxt =  (TextView)findViewById(R.id.tvHlData);
 		TextView lattxt =  (TextView)findViewById(R.id.tvLatHl);
 		TextView longtxt =  (TextView)findViewById(R.id.tvLongHl);
@@ -73,8 +77,11 @@ public class DetailHighLightActivity extends Activity {
 		
 		myRating = (RatingBar)findViewById(R.id.ratBarUser);
 		myRating.setStepSize(1.0f);
-		if(s.getHighlight() != null){
-			float userRating = app.getPrefs().getInt(s.getHighlight().getId(), 0);
+		
+		final HighLight hl = getHighLightFromStep(s, idHighLight);
+		
+		if(hl != null){
+			float userRating = app.getPrefs().getInt(hl.getId(), 0);
 			myRating.setRating(userRating);
 		}
 		
@@ -82,9 +89,9 @@ public class DetailHighLightActivity extends Activity {
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
-				if(step.getHighlight()!=null){
+				if(hl!=null){
 					SharedPreferences.Editor mPrefEditor = app.getPrefsEditor(); 
-					mPrefEditor.putInt(step.getHighlight().getId(), (int)rating);
+					mPrefEditor.putInt(hl.getId(), (int)rating);
 	            	mPrefEditor.commit();         
 				}
 			}
@@ -95,8 +102,8 @@ public class DetailHighLightActivity extends Activity {
 		progressBar.setVisibility(View.VISIBLE);
 		
 		ImageView ivType = (ImageView)findViewById(R.id.highLightTypeIv);
-		if(s.getHighlight()!=null){
-			switch(s.getHighlight().getType()){
+		if(hl!=null){
+			switch(hl.getType()){
 				case HighLight.ALERT:
 					ivType.setImageResource(R.drawable.pin_warning);
 					break;
@@ -111,8 +118,8 @@ public class DetailHighLightActivity extends Activity {
 		
 		ImageView ivPicture = (ImageView)findViewById(R.id.highLightPicture);
 		VideoView ivVideo = (VideoView)findViewById(R.id.highLightVideo);
-		if(s.getHighlight()!=null && s.getHighlight().getMediaPath()!=null && !s.getHighlight().getMediaPath().trim().equalsIgnoreCase("")){
-			String pathName = s.getHighlight().getMediaPath().replace("file://", "");
+		if(hl!=null && hl.getMediaPath()!=null && !hl.getMediaPath().trim().equalsIgnoreCase("")){
+			String pathName = hl.getMediaPath().replace("file://", "");
 			if(pathName.contains("mp4")){
 				progressBar.setVisibility(View.GONE);
 				ivPicture.setVisibility(View.GONE);				
@@ -146,11 +153,11 @@ public class DetailHighLightActivity extends Activity {
 		String alt = Double.toString(s.getAltitude());
 		
 		String name = getString(R.string.point_no_name);
-		if(s.getHighlight()!=null && s.getHighlight().getName()!=null){
-			if(!s.getHighlight().getName().trim().equalsIgnoreCase("")){
-				name = s.getHighlight().getName();
+		if(hl!=null && hl.getName()!=null){
+			if(!hl.getName().trim().equalsIgnoreCase("")){
+				name = hl.getName();
 			}
-			globalRating.setRating( s.getHighlight().getGlobalRating() );
+			globalRating.setRating( hl.getGlobalRating() );
 		}
 		String description = getString(R.string.point_no_description);		
 		
@@ -170,6 +177,18 @@ public class DetailHighLightActivity extends Activity {
 		BitmapWorkerTask task = new BitmapWorkerTask(imageView,progressBar);
 		task.execute(path, Integer.toString(width),Integer.toString(height));
 		
+	}
+	
+	private HighLight getHighLightFromStep(Step s, String idHighLight){
+		if(s.hasHighLights()){
+			List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper()); 
+			for( HighLight h : highLights ){
+				if(h.getId().equalsIgnoreCase(idHighLight)){
+					return h;
+				}
+			}
+		}
+		return null;
 	}
 
 }

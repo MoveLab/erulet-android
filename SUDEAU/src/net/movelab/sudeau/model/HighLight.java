@@ -22,12 +22,21 @@ public class HighLight {
 	private int globalRating;
 	@DatabaseField
 	private int userRating;
+	@DatabaseField(foreign=true, columnName="stepId")
+    private Step step;
+	@DatabaseField(foreign=true, columnName="referenceId")
+	private Reference reference;
+	@DatabaseField(foreign=true, columnName="interactiveImageId")
+	private InteractiveImage interactiveImage;
 	
 	public static final int WAYPOINT = 1;
 	public static final int POINT_OF_INTEREST = 2;
 	public static final int POINT_OF_INTEREST_OFFICIAL = 3;
 	public static final int ALERT = 4;
 	public static final int POINT_OF_INTEREST_SHARED = 5;
+	public static final int CONTAINER_N = 6;
+	public static final int INTERACTIVE_IMAGE = 7;
+	public static final int REFERENCE = 8;
 	
 	public HighLight() {		
 	}
@@ -60,6 +69,15 @@ public class HighLight {
 		this.radius=radius;		
 		this.longText=longText;
 		this.type=type;
+	}
+	
+	public HighLight(String id, String name, String longText, double radius, int type, Step step) {
+		this.id=id;
+		this.name=name;
+		this.radius=radius;		
+		this.longText=longText;
+		this.type=type;
+		this.step=step;
 	}
 
 	public double getRadius() {
@@ -129,6 +147,30 @@ public class HighLight {
 
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
+	}
+
+	public Step getStep() {
+		return step;
+	}
+
+	public void setStep(Step step) {
+		this.step = step;
+	}
+
+	public Reference getReference() {
+		return reference;
+	}
+
+	public void setReference(Reference reference) {
+		this.reference = reference;
+	}
+
+	public InteractiveImage getInteractiveImage() {
+		return interactiveImage;
+	}
+
+	public void setInteractiveImage(InteractiveImage interactiveImage) {
+		this.interactiveImage = interactiveImage;
 	}
 
 }

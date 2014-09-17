@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import net.movelab.sudeau.TrackingContentContract.Fixes;
+import net.movelab.sudeau.model.HighLight;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -1007,6 +1009,21 @@ public class Util {
     	float factor = (float)originalW/(float)originalH;    	
     	retVal = fitToH*factor;
     	return (int)retVal;
+    }
+    
+    /**
+     * Limit to 40 characters length
+     * @param highLights
+     * @return
+     */
+    public static String getMultipleHighLightsNameLabel(List<HighLight> highLights){
+    	StringBuffer retVal = new StringBuffer();
+    	String delim = "";
+    	for (HighLight i : highLights) {
+    		retVal.append(delim).append(i.getName() == null ? "" : i.getName());
+    	    delim = " - ";
+    	}
+    	return retVal.toString();
     }
 
 }

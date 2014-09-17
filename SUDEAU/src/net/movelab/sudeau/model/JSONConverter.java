@@ -92,6 +92,15 @@ public class JSONConverter {
 		return t;
 	}
 	
+	public static List<HighLight> jsonArrayToHighLightList(JSONArray a) throws JSONException{
+		ArrayList<HighLight> retVal = new ArrayList<HighLight>();
+		for(int i = 0; i < a.length(); i++){
+			JSONObject jsonHighLight = a.getJSONObject(i);
+			retVal.add(jsonObjectToHighLight(jsonHighLight));
+		}
+		return retVal;
+	}
+	
 	public static List<Step> jsonArrayToStepList(JSONArray a) throws JSONException{
 		ArrayList<Step> retVal = new ArrayList<Step>();
 		for(int i = 0; i < a.length(); i++){
@@ -119,9 +128,13 @@ public class JSONConverter {
 		if(j.has("name")){
 			s.setName(j.getString("name"));
 		}
-		if(j.has("highlight")){
-			JSONObject hl = j.getJSONObject("highlight");
-			s.setHighlight(jsonObjectToHighLight(hl));
+//		if(j.has("highlight")){
+//			JSONObject hl = j.getJSONObject("highlight");
+//			s.setHighlight(jsonObjectToHighLight(hl));
+//		}
+		if(j.has("highlights")){
+			JSONArray highLights = j.getJSONArray("highlights");
+			s.setHighlights(jsonArrayToHighLightList(highLights));
 		}
 		if(j.has("order")){
 			s.setOrder(j.getInt("order"));
@@ -174,6 +187,10 @@ public class JSONConverter {
 		if(j.has("globalrating")){
 			h.setGlobalRating(j.getInt("globalrating"));
 		}
+		if(j.has("reference")){
+			JSONObject ref = j.getJSONObject("reference");
+			h.setReference(jsonObjectToReference(ref));
+		}
 		return h;
 	}
 	
@@ -203,6 +220,7 @@ public class JSONConverter {
 		j.put("type", h.getType());
 		j.put("userrating", h.getUserRating());
 		j.put("globalrating", h.getGlobalRating());
+		j.put("reference", h.getReference());
 		return j;
 	}
 	
@@ -255,7 +273,9 @@ public class JSONConverter {
 		j.put("latitude", s.getLatitude());
 		j.put("longitude", s.getLongitude());
 		j.put("name", s.getName());
-		j.put("highlight", highLightToJSONObject(s.getHighlight()));
+		//j.put("highlight", highLightToJSONObject(s.getHighlight()));
+		ArrayList<HighLight> highLights= new ArrayList<HighLight>(s.getHighlights());
+		j.put("highlights", highLightListToJSONArray(highLights) );
 		j.put("order", s.getOrder());
 		j.put("precision", s.getPrecision());
 		j.put("reference", referenceToJSONObject(s.getReference()));
@@ -264,6 +284,15 @@ public class JSONConverter {
 		}
 		j.put("relativeTime", s.getAbsoluteTimeMillis());
 		return j;
+	}
+	
+	public static JSONArray highLightListToJSONArray(List<HighLight> highLights) throws JSONException{
+		JSONArray arr = new JSONArray();
+		for(HighLight highLight: highLights){
+			//arr.put(stepToJSONObject(step));
+			arr.put(highLightToJSONObject(highLight));
+		}
+		return arr;
 	}
 		
 	public static JSONArray stepListToJSONArray(List<Step> steps) throws JSONException{
