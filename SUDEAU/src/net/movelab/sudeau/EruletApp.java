@@ -45,7 +45,7 @@ public class EruletApp extends Application{
     		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
     		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
 //    		if(!loaded){
-//    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
+    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
 //    			Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
 //    			if(r!=null){
 //    				DataContainer.deleteRouteCascade(r,this);

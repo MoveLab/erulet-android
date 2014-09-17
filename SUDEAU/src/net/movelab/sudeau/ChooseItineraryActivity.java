@@ -36,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.ui.IconGenerator;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class ChooseItineraryActivity extends Activity {
@@ -288,7 +290,14 @@ public class ChooseItineraryActivity extends Activity {
 //				.snippet(null)
 //				.icon(BitmapDescriptorFactory
 //						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-				Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
+				IconGenerator ic = new IconGenerator(getBaseContext());
+				ic.setTextAppearance(R.style.BubbleFont);
+				//Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
+				Marker my_marker = mMap.addMarker( new MarkerOptions()
+				.position(new LatLng(start.getLatitude(), start.getLongitude()))
+				.title(r.getName())
+				.snippet(null)
+				.icon( BitmapDescriptorFactory.fromBitmap(ic.makeIcon(r.getName())))); 
 				routeTable.put(my_marker, r);
 			}
 		}

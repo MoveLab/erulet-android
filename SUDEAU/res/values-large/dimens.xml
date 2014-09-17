@@ -6,8 +6,8 @@
     
     <dimen name="activity_label_title">36dp</dimen>
     <dimen name="label_small">14dp</dimen>
-    <dimen name="label_button">16dp</dimen>
-    <dimen name="label_button_small">12dp</dimen>
+    <dimen name="label_button">24dp</dimen>
+    <dimen name="label_button_small">20dp</dimen>
     <dimen name="infowindow_label">14dp</dimen>
     
     <dimen name="label_infoblock_highlighted">15dp</dimen>
