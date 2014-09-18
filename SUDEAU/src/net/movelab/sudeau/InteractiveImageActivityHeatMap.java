@@ -132,6 +132,8 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 	         // do something
 	        break;
 	    case MotionEvent.ACTION_UP:
+	    	if(dialog!=null)
+	          dialog.dismiss();
 	        // do something else
 	        break;
 		}				

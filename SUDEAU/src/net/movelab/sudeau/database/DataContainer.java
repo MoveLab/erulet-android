@@ -348,6 +348,11 @@ public class DataContainer {
 				.queryForId(idImage);
 		return i;
 	}
+	
+	public static HighLight findHighLightById(String idHighLight, DataBaseHelper db) {
+		HighLight h = db.getHlDataDao().queryForId(idHighLight);
+		return h;
+	}
 
 	public static Route findRouteById(String idRoute, DataBaseHelper db) {
 		Route r = db.getRouteDataDao().queryForId(idRoute);
@@ -7859,8 +7864,48 @@ public class DataContainer {
 		
 		
 		/**
-		 * Interactive image
+		 * Interactive images
 		 */
+		InteractiveImage geo = new InteractiveImage("intimg_escunhau_geo_poi03");
+		geo.setMediaPath("panoramica_escunhau_geo.jpg");
+		geo.setOriginalWidth(1554);
+		geo.setOriginalHeight(480);
+		try {
+			interactiveImageDataDao.create(geo);
+		} catch (Exception ex) {
+			Log.e("Inserting interact img geo", "Insert error " + ex.toString());
+		}
+		
+		String msg_arenoses = "Pedres arenoses (gresos i lutites) formades fa 350 milions d’anys (Carbonífer)"; 
+		
+		Box b13 = new Box("b_escunh_13",0,74,331,480,geo);
+		b13.setMessage(msg_arenoses);
+		Box b14 = new Box("b_escunh_14",331,276,614,480,geo);
+		b14.setMessage(msg_arenoses);
+		Box b15 = new Box("b_escunh_15",614,308,1553,480,geo);
+		b15.setMessage(msg_arenoses);
+		Box b16 = new Box("b_escunh_16",614,276,1247,308,geo);
+		b16.setMessage(msg_arenoses);
+		Box b17 = new Box("b_escunh_17",1247,11,1553,308,geo);
+		b17.setMessage(msg_arenoses);
+		Box b18 = new Box("b_escunh_18",331,142,1247,276,geo);
+		b18.setMessage("Marbres, formats fa 400 milions d’anys (Devonià-Carbonífer) i metamorfitzats fa 300 milions d’anys (Carbonífer-Permià)");
+		Box b19 = new Box("b_escunh_19",331,80,1092,142,geo);
+		b19.setMessage("Roques granítiques, formades fa 300 milions d’anys (Carbonífer-Permià)");
+
+		try {
+			boxDataDao.create(b13);
+			boxDataDao.create(b14);
+			boxDataDao.create(b15);
+			boxDataDao.create(b16);
+			boxDataDao.create(b17);
+			boxDataDao.create(b18);
+			boxDataDao.create(b19);			
+		} catch (Exception ex) {
+			Log.e("Inserting box", "Insert error " + ex.toString());
+		}
+		
+		
 		InteractiveImage img = new InteractiveImage("intimg_escunhau_poi03");
 		img.setMediaPath("panoramica_escunhau.jpg");
 		img.setOriginalWidth(1558);
@@ -7941,9 +7986,16 @@ public class DataContainer {
 		h2.setReference(r4);
 		
 		HighLight h3 = new HighLight("hl_escunhau_poi03",
-				"poiE03-vista panoràmica", "Fes clic per la foto interactiva...", 10,
+				"poiE03-vista panoràmica", 
+				"Fes clic per la foto interactiva...", 10,
 				HighLight.INTERACTIVE_IMAGE,s645);
 		h3.setInteractiveImage(img);
+		
+		HighLight h3b = new HighLight("hl_escunhau_poi03b",
+				"poiE03-vista panoràmica geologia", 
+				"Fes clic per la foto interactiva...", 10,
+				HighLight.INTERACTIVE_IMAGE,s645);
+		h3b.setInteractiveImage(geo);
 		
 		HighLight h4 = new HighLight("hl_escunhau_poi04",
 				"poiE04-bassal sortida potamogeton petit", "Fes clic per més informació", 10,
@@ -8021,6 +8073,7 @@ public class DataContainer {
 			hlDataDao.create(h1);
 			hlDataDao.create(h2);
 			hlDataDao.create(h3);
+			hlDataDao.create(h3b);
 			hlDataDao.create(h4);
 			hlDataDao.create(h5);
 			hlDataDao.create(h6);
@@ -11192,6 +11245,10 @@ public class DataContainer {
 	
 	public static void updateRoute(Route r,DataBaseHelper dataBaseHelper){
 		dataBaseHelper.getRouteDataDao().update(r);
+	}
+	
+	public static void updateHighLight(HighLight h,DataBaseHelper dataBaseHelper){
+		dataBaseHelper.getHlDataDao().update(h);
 	}
 
 	public static void insertRoute(Route editedRoute,

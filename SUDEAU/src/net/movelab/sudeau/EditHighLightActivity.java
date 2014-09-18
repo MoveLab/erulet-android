@@ -62,6 +62,7 @@ public class EditHighLightActivity extends Activity {
 	private int selectedHlType = HighLight.POINT_OF_INTEREST;	
 	
 	private EruletApp app;
+	private String editedHighLight; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class EditHighLightActivity extends Activity {
 			String name = extras.getString("hlname");
 			String longText = extras.getString("hllongtext");
 			String imagePath = extras.getString("hlimagepath");
+			editedHighLight = extras.getString("hlid");
 			int hlType = extras.getInt("hltype");
 			if(hlType!=0){
 				checkHighLightType(hlType);
@@ -360,6 +362,7 @@ public class EditHighLightActivity extends Activity {
 				Intent returnIntent = new Intent();
 				returnIntent.putExtra("hlName", tvName.getText().toString());
 				returnIntent.putExtra("hlLongText", tvLongText.getText().toString());
+				returnIntent.putExtra("hlid", editedHighLight);
 				int selectedRb = imageOrVideo.getCheckedRadioButtonId();
 				switch(selectedRb){
 					case R.id.rbImage:

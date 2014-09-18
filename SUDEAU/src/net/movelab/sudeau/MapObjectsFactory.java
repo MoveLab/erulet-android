@@ -69,6 +69,12 @@ public class MapObjectsFactory {
 			case HighLight.POINT_OF_INTEREST:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop);
 				break;
+			case HighLight.CONTAINER_N:
+				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+				break;
+			case HighLight.INTERACTIVE_IMAGE:
+				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+				break;
 			default:
 				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_empty);
@@ -94,6 +100,9 @@ public class MapObjectsFactory {
 				break;
 			case HighLight.POINT_OF_INTEREST:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop_bw);
+				break;				
+			case HighLight.CONTAINER_N:
+				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
 				break;
 			default:
 				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
