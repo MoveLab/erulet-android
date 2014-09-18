@@ -103,6 +103,9 @@
         <activity android:name="net.movelab.sudeau.DetailHighLightActivity"
             android:theme="@android:style/Theme.Holo">
         </activity>
+        <activity android:name="net.movelab.sudeau.MultipleHighLightSelection"
+            android:theme="@android:style/Theme.Holo">
+        </activity>
         
         <receiver android:name="net.movelab.sudeau.TrackingBroadcastReceiver" >
             <intent-filter>
