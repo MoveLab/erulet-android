@@ -71,6 +71,9 @@ public class MultipleHighLightSelection extends Activity {
 					case HighLight.POINT_OF_INTEREST:
 						launchStandardUserPointInfo(h.getId());
 						break;
+					case HighLight.WAYPOINT:
+						launchStandardUserPointInfo(h.getId());
+						break;						
 					default:
 						break;
 				}

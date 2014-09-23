@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"                    
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_erulet_new" />
+                    android:src="@drawable/ic_erulet_v2" />
 
                 <TextView
                     android:id="@+id/lbl_erulet_lore_l"
@@ -68,7 +68,7 @@
                 android:layout_height="0dip"
                 android:layout_marginBottom="5dip"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_info_icon"
+                android:drawableLeft="@drawable/ic_info_bw"
                 android:text="@string/user_manual" 
                 android:textSize="@dimen/label_button">
             </Button>
@@ -79,7 +79,7 @@
                 android:layout_height="0dip"
                 android:layout_marginBottom="5dip"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_info_icon"
+                android:drawableLeft="@drawable/ic_reference"
                 android:text="@string/security_recomm"
                 android:textSize="@dimen/label_button_small" >
             </Button>
@@ -90,7 +90,7 @@
                 android:layout_height="0dip"
                 android:layout_marginBottom="5dip"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_info_icon"
+                android:drawableLeft="@drawable/ic_credits"
                 android:text="@string/credits" 
                 android:textSize="@dimen/label_button">
             </Button>
@@ -101,7 +101,7 @@
                 android:layout_height="0dip"
                 android:layout_marginBottom="5dip"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_itinerary_icon"
+                android:drawableLeft="@drawable/ic_route_select"
                 android:text="@string/trip_selection" 
                 android:textSize="@dimen/label_button">
             </Button>

@@ -7,9 +7,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
@@ -25,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +65,7 @@ public class ChooseItineraryActivity extends Activity {
 	//private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, Route> routeTable;
 	private Marker selectedMarker;
+	private List<Route> routes;
 	
 	//private static final String TITLE = "Tria la opció de ruta que prefereixes:";
 	private String TITLE;
@@ -69,6 +76,7 @@ public class ChooseItineraryActivity extends Activity {
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST+1;
+	private ProgressBar progressBar;
 	
 	private EruletApp app;
 	
@@ -85,6 +93,7 @@ public class ChooseItineraryActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+		progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
 		//setUpDBIfNeeded();
 		setUpMapIfNeeded();
 		setUpCamera();
@@ -228,7 +237,7 @@ public class ChooseItineraryActivity extends Activity {
 		            snippet.setText(r.getDescription());
 		            title.setText(r.getName());
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
-		            picture.setImageResource(R.drawable.ic_itinerary_icon);		            
+		            picture.setImageResource(R.drawable.ic_pin_info);		            
 		            return myContentView;
 				}
 			});						
@@ -271,12 +280,40 @@ public class ChooseItineraryActivity extends Activity {
 			tileOverlay.setVisible(true);
 		}
 		addRouteMarkersFromDB();
+		asyncLoadRouteTracks();
 		setUpCamera();
+	}
+	
+	private void asyncLoadRouteTracks(){
+		if(progressBar!=null){
+        	progressBar.setVisibility(View.VISIBLE);
+        }
+		if(routes!=null){
+			JSONArray route_j_list = new JSONArray();
+			for(int i=0; i<routes.size();i++){
+				Route r = routes.get(i);
+				JSONObject route_j;
+				try {
+					route_j = JSONConverter.routeToJSONObject(r);
+					route_j_list.put(route_j);														
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
+			}
+			String params = route_j_list.toString();
+			RouteDrawerWorkerTask task = new RouteDrawerWorkerTask(mMap,app,progressBar);
+			task.execute(params);
+		}else{
+			if(progressBar!=null){
+	        	progressBar.setVisibility(View.GONE);
+	        }
+		}
 	}
 
 	private void addRouteMarkersFromDB() {
 		// custom icon
-		List<Route> routes = DataContainer.getAllRoutes(app.getDataBaseHelper());
+		routes = DataContainer.getAllRoutes(app.getDataBaseHelper());
 		if(routeTable == null){
 			routeTable = new Hashtable<Marker, Route>();
 		}

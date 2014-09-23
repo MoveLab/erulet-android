@@ -190,6 +190,7 @@ public class DataContainer {
 	}
 	
 	public static void deleteInteractiveImageCascade(InteractiveImage img, EruletApp app) {
+		app.getDataBaseHelper().getInteractiveImageDataDao().refresh(img);
 		if(img.getBoxes() != null){
 			List<Box> boxes = getInteractiveImageBoxes(img, app.getDataBaseHelper());
 			for (Box b : boxes) {
@@ -220,7 +221,7 @@ public class DataContainer {
 		}
 		if(s.getReference() != null){
 			deleteReference(s.getReference(), app);
-		}
+		}		
 		app.getDataBaseHelper().getStepDataDao().delete(s);
 	}
 	
@@ -531,3029 +532,3033 @@ public class DataContainer {
 	// return null;
 	// }
 	
-//	public static void loadBassaOles(DataBaseHelper db, Context context) {
-//		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
-//		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
-//		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
-//		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
-//		
-//		Track t = new Track("TRACK_BASSAOLES", "Waypoints recorregut Bassa d'Oles");
-//		try {
-//			trackDataDao.create(t);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting track", "Insert error " + ex.toString());
-//		}
-//		
-//		//WP
-//		HighLight h1 = new HighLight("hl_bassaoles_wpo01","wpO01-inici",null,10,HighLight.WAYPOINT);
-//		HighLight h2 = new HighLight("hl_bassaoles_wpo02","wpO02-represa",null,10,HighLight.WAYPOINT);
-//		HighLight h3 = new HighLight("hl_bassaoles_wpo03","wpO03-vista canal",null,10,HighLight.WAYPOINT);
-//		HighLight h4 = new HighLight("hl_bassaoles_wpo04","wpO04-arbre tombat",null,10,HighLight.WAYPOINT);
-//		HighLight h5 = new HighLight("hl_bassaoles_wpo05","wpO05-extrem N bassa",null,10,HighLight.WAYPOINT);
-//		HighLight h6 = new HighLight("hl_bassaoles_wpo06","wpO06-cruïlla pista",null,10,HighLight.WAYPOINT);
-//		HighLight h7 = new HighLight("hl_bassaoles_wpo07","wpO07-desviament pista",null,10,HighLight.WAYPOINT);
-//		HighLight h8 = new HighLight("hl_bassaoles_wpo08","wpO08-basseta",null,10,HighLight.WAYPOINT);
-//		HighLight h9 = new HighLight("hl_bassaoles_wpo09","wpO09-sortida sender",null,10,HighLight.WAYPOINT);
-//		HighLight h10 = new HighLight("hl_bassaoles_wpo10","wpO10-inici sender",null,10,HighLight.WAYPOINT);
-//		HighLight h11 = new HighLight("hl_bassaoles_wpo11","wpO11-prat",null,10,HighLight.WAYPOINT);
-//		HighLight h12 = new HighLight("hl_bassaoles_wpo12","wpO12-pista",null,10,HighLight.WAYPOINT);
-//		HighLight h13 = new HighLight("hl_bassaoles_wpo13","wpO13-desviament borda",null,10,HighLight.WAYPOINT);
-//		HighLight h14 = new HighLight("hl_bassaoles_wpo14","wpO14",null,10,HighLight.WAYPOINT);
-//
-//		//POI
-//		HighLight h15 = new HighLight("hl_bassaoles_poio01","poiO01-represa",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h16 = new HighLight("hl_bassaoles_poio02","poiO02-vista canal",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h17 = new HighLight("hl_bassaoles_poio03","poiO03-vista bassa N",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h18 = new HighLight("hl_bassaoles_poio04","poiO04-basseta",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h19 = new HighLight("hl_bassaoles_poio05","poiO05-aiguamoll",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h20 = new HighLight("hl_bassaoles_poio06","poiO06-illots càrex",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL);
-//				
-//		
-//		try {
-//			hlDataDao.create(h1);
-//			hlDataDao.create(h2);
-//			hlDataDao.create(h3);
-//			hlDataDao.create(h4);
-//			hlDataDao.create(h5);
-//			hlDataDao.create(h6);
-//			hlDataDao.create(h7);
-//			hlDataDao.create(h8);
-//			hlDataDao.create(h9);
-//			hlDataDao.create(h10);
-//			hlDataDao.create(h11);
-//			hlDataDao.create(h12);
-//			hlDataDao.create(h13);
-//			hlDataDao.create(h14);
-//			hlDataDao.create(h15);
-//			hlDataDao.create(h16);
-//			hlDataDao.create(h17);
-//			hlDataDao.create(h18);
-//			hlDataDao.create(h19);
-//			hlDataDao.create(h20);			
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting highlight", "Insert error " + ex.toString());
-//		}
-//		
-//		Step s1 = new Step("step_bassaoles_1", "step", 42.7149171657416, 0.774089345161048, 0, 10, 1, t, h1);
-//		Step s2 = new Step("step_bassaoles_2", "step", 42.7149504407864, 0.774179742608889, 0, 10, 2, t, null);
-//		Step s3 = new Step("step_bassaoles_3", "step", 42.7150084580268, 0.774153244934471, 0, 10, 3, t, null);
-//		Step s4 = new Step("step_bassaoles_4", "step", 42.7150488336915, 0.77414569546976, 0, 10, 4, t, null);
-//		Step s5 = new Step("step_bassaoles_5", "step", 42.7150896838814, 0.774162552344225, 0, 10, 5, t, null);
-//		Step s6 = new Step("step_bassaoles_6", "step", 42.715130534069, 0.774179409239797, 0, 10, 6, t, h15);
-//		Step s7 = new Step("step_bassaoles_7", "step", 42.7151762395073, 0.774214410071807, 0, 10, 7, t, h2);
-//		Step s8 = new Step("step_bassaoles_8", "step", 42.7152417217644, 0.774340291518999, 0, 10, 8, t, null);
-//		Step s9 = new Step("step_bassaoles_9", "step", 42.7152601937158, 0.774364054485635, 0, 10, 9, t, null);
-//		Step s10 = new Step("step_bassaoles_10", "step", 42.7152882574889, 0.774418003786129, 0, 10, 10, t, null);
-//		Step s11 = new Step("step_bassaoles_11", "step", 42.7153233075173, 0.774483915077973, 0, 10, 11, t, null);
-//		Step s12 = new Step("step_bassaoles_12", "step", 42.7154632583167, 0.774387323796554, 0, 10, 12, t, null);
-//		Step s13 = new Step("step_bassaoles_13", "step", 42.7155297998447, 0.774336097822315, 0, 10, 13, t, null);
-//		Step s14 = new Step("step_bassaoles_14", "step", 42.7155644899055, 0.77426769291704, 0, 10, 14, t, null);
-//		Step s15 = new Step("step_bassaoles_15", "step", 42.7156635945871, 0.774270255403993, 0, 10, 15, t, null);
-//		Step s16 = new Step("step_bassaoles_16", "step", 42.715696039152, 0.774317942487713, 0, 10, 16, t, null);
-//		Step s17 = new Step("step_bassaoles_17", "step", 42.7157596233959, 0.774346198608682, 0, 10, 17, t, null);
-//		Step s18 = new Step("step_bassaoles_18", "step", 42.7158715144317, 0.774311668627549, 0, 10, 18, t, null);
-//		Step s19 = new Step("step_bassaoles_19", "step", 42.7158788523856, 0.774225923573729, 0, 10, 19, t, null);
-//		Step s20 = new Step("step_bassaoles_20", "step", 42.7159320143604, 0.77418128137689, 0, 10, 20, t, null);
-//		Step s21 = new Step("step_bassaoles_21", "step", 42.7160298140649, 0.774116725239958, 0, 10, 21, t, null);
-//		Step s22 = new Step("step_bassaoles_22", "step", 42.7160797816235, 0.77413936225245, 0, 10, 22, t, null);
-//		Step s23 = new Step("step_bassaoles_23", "step", 42.7162133389408, 0.77406131538973, 0, 10, 23, t, null);
-//		Step s24 = new Step("step_bassaoles_24", "step", 42.7161982985145, 0.77398247601243, 0, 10, 24, t, null);
-//		Step s25 = new Step("step_bassaoles_25", "step", 42.7162269465401, 0.773834908995614, 0, 10, 25, t, null);
-//		Step s26 = new Step("step_bassaoles_26", "step", 42.7162516882982, 0.773718011264, 0, 10, 26, t, null);
-//		Step s27 = new Step("step_bassaoles_27", "step", 42.716249908404, 0.773626485774426, 0, 10, 27, t, h3);
-//		Step s28 = new Step("step_bassaoles_28", "step", 42.7162925287309, 0.773502842505807, 0, 10, 28, t, h16);
-//		Step s29 = new Step("step_bassaoles_29", "step", 42.7163133641518, 0.773416613991842, 0, 10, 29, t, null);
-//		Step s30 = new Step("step_bassaoles_30", "step", 42.7163238953036, 0.77326358855263, 0, 10, 30, t, null);
-//		Step s31 = new Step("step_bassaoles_31", "step", 42.7163480430252, 0.77311618190158, 0, 10, 31, t, null);
-//		Step s32 = new Step("step_bassaoles_32", "step", 42.7163771647028, 0.772993021010115, 0, 10, 32, t, null);
-//		Step s33 = new Step("step_bassaoles_33", "step", 42.7164112604146, 0.772894105879156, 0, 10, 33, t, null);
-//		Step s34 = new Step("step_bassaoles_34", "step", 42.7164407379703, 0.77278924991004, 0, 10, 34, t, null);
-//		Step s35 = new Step("step_bassaoles_35", "step", 42.7164657160669, 0.772684554834878, 0, 10, 35, t, null);
-//		Step s36 = new Step("step_bassaoles_36", "step", 42.7164909315018, 0.7725920631159, 0, 10, 36, t, null);
-//		Step s37 = new Step("step_bassaoles_37", "step", 42.7165253830248, 0.772511452760378, 0, 10, 37, t, null);
-//		Step s38 = new Step("step_bassaoles_38", "step", 42.7165591221245, 0.772394231971268, 0, 10, 38, t, null);
-//		Step s39 = new Step("step_bassaoles_39", "step", 42.7165840998511, 0.772289536551583, 0, 10, 39, t, h4);
-//		Step s40 = new Step("step_bassaoles_40", "step", 42.7166084837776, 0.772154332410751, 0, 10, 40, t, null);
-//		Step s41 = new Step("step_bassaoles_41", "step", 42.7166148107337, 0.772016721461265, 0, 10, 41, t, null);
-//		Step s42 = new Step("step_bassaoles_42", "step", 42.7166281867697, 0.771952129926618, 0, 10, 42, t, null);
-//		Step s43 = new Step("step_bassaoles_43", "step", 42.7166012466787, 0.771898140388993, 0, 10, 43, t, h17);
-//		Step s44 = new Step("step_bassaoles_44", "step", 42.7165879200237, 0.771791762822445, 0, 10, 44, t, h5);
-//		Step s45 = new Step("step_bassaoles_45", "step", 42.7166364034811, 0.771738126516824, 0, 10, 45, t, null);
-//		Step s46 = new Step("step_bassaoles_46", "step", 42.7166839961534, 0.771638727126253, 0, 10, 46, t, null);
-//		Step s47 = new Step("step_bassaoles_47", "step", 42.7167231838891, 0.771570158417617, 0, 10, 47, t, null);
-//		Step s48 = new Step("step_bassaoles_48", "step", 42.7167669897144, 0.771507530287216, 0, 10, 48, t, null);
-//		Step s49 = new Step("step_bassaoles_49", "step", 42.7168631248334, 0.771357544591017, 0, 10, 49, t, null);
-//		Step s50 = new Step("step_bassaoles_50", "step", 42.7169204286028, 0.7712944328926, 0, 10, 50, t, null);
-//		Step s51 = new Step("step_bassaoles_51", "step", 42.7169782074966, 0.771255728119061, 0, 10, 51, t, null);
-//		Step s52 = new Step("step_bassaoles_52", "step", 42.7170312494346, 0.771204980839846, 0, 10, 52, t, null);
-//		Step s53 = new Step("step_bassaoles_53", "step", 42.7170711496665, 0.771173022092318, 0, 10, 53, t, h6);
-//		Step s54 = new Step("step_bassaoles_54", "step", 42.717072085038, 0.770989807914199, 0, 10, 54, t, null);
-//		Step s55 = new Step("step_bassaoles_55", "step", 42.7170957545157, 0.770817991638304, 0, 10, 55, t, null);
-//		Step s56 = new Step("step_bassaoles_56", "step", 42.7171287789071, 0.770664158278927, 0, 10, 56, t, null);
-//		Step s57 = new Step("step_bassaoles_57", "step", 42.7171513783969, 0.770437425773829, 0, 10, 57, t, null);
-//		Step s58 = new Step("step_bassaoles_58", "step", 42.7171617866628, 0.770278296156939, 0, 10, 58, t, null);
-//		Step s59 = new Step("step_bassaoles_59", "step", 42.7171549103967, 0.770156421851355, 0, 10, 59, t, null);
-//		Step s60 = new Step("step_bassaoles_60", "step", 42.7171576269784, 0.770064734073243, 0, 10, 60, t, null);
-//		Step s61 = new Step("step_bassaoles_61", "step", 42.717165080555, 0.769985088647642, 0, 10, 61, t, null);
-//		Step s62 = new Step("step_bassaoles_62", "step", 42.7172284105905, 0.769769108528357, 0, 10, 62, t, null);
-//		Step s63 = new Step("step_bassaoles_63", "step", 42.7172651007477, 0.76957240065225, 0, 10, 63, t, null);
-//		Step s64 = new Step("step_bassaoles_64", "step", 42.7172899569507, 0.76946160122528, 0, 10, 64, t, null);
-//		Step s65 = new Step("step_bassaoles_65", "step", 42.7173217779254, 0.769384745987653, 0, 10, 65, t, null);
-//		Step s66 = new Step("step_bassaoles_66", "step", 42.7173355447926, 0.769340289108466, 0, 10, 66, t, h7);
-//		Step s67 = new Step("step_bassaoles_67", "step", 42.7173300814664, 0.769279424413057, 0, 10, 67, t, null);
-//		Step s68 = new Step("step_bassaoles_68", "step", 42.7173053750884, 0.769189940332657, 0, 10, 68, t, null);
-//		Step s69 = new Step("step_bassaoles_69", "step", 42.7172469473054, 0.769102886080448, 0, 10, 69, t, null);
-//		Step s70 = new Step("step_bassaoles_70", "step", 42.7171279428011, 0.769003348620459, 0, 10, 70, t, null);
-//		Step s71 = new Step("step_bassaoles_71", "step", 42.71701072191, 0.768995337846102, 0, 10, 71, t, null);
-//		Step s72 = new Step("step_bassaoles_72", "step", 42.7169523492841, 0.769003535963987, 0, 10, 72, t, null);
-//		Step s73 = new Step("step_bassaoles_73", "step", 42.7169122118709, 0.769023292523154, 0, 10, 73, t, null);
-//		Step s74 = new Step("step_bassaoles_74", "step", 42.7168404601017, 0.769038076103431, 0, 10, 74, t, h18);
-//		Step s75 = new Step("step_bassaoles_75", "step", 42.7168223437971, 0.769032619388548, 0, 10, 75, t, h8);
-//		Step s76 = new Step("step_bassaoles_76", "step", 42.7167934451336, 0.768935959192282, 0, 10, 76, t, null);
-//		Step s77 = new Step("step_bassaoles_77", "step", 42.7167518807636, 0.768882494995035, 0, 10, 77, t, null);
-//		Step s78 = new Step("step_bassaoles_78", "step", 42.7166842716161, 0.76887881226059, 0, 10, 78, t, null);
-//		Step s79 = new Step("step_bassaoles_79", "step", 42.7166008055062, 0.768985605442682, 0, 10, 79, t, null);
-//		Step s80 = new Step("step_bassaoles_80", "step", 42.7165844728174, 0.769071674450463, 0, 10, 80, t, null);
-//		Step s81 = new Step("step_bassaoles_81", "step", 42.716509529615, 0.769153737893996, 0, 10, 81, t, h9);
-//		Step s82 = new Step("step_bassaoles_82", "step", 42.7164557752181, 0.769167876234365, 0, 10, 82, t, null);
-//		Step s83 = new Step("step_bassaoles_83", "step", 42.7163672149925, 0.769244321408601, 0, 10, 83, t, null);
-//		Step s84 = new Step("step_bassaoles_84", "step", 42.7163004381066, 0.769283350086419, 0, 10, 84, t, null);
-//		Step s85 = new Step("step_bassaoles_85", "step", 42.7162742742505, 0.7693270292774, 0, 10, 85, t, null);
-//		Step s86 = new Step("step_bassaoles_86", "step", 42.7162574657429, 0.769388691022172, 0, 10, 86, t, null);
-//		Step s87 = new Step("step_bassaoles_87", "step", 42.7161735235886, 0.769471076086403, 0, 10, 87, t, null);
-//		Step s88 = new Step("step_bassaoles_88", "step", 42.7161023661446, 0.769516367278524, 0, 10, 88, t, null);
-//		Step s89 = new Step("step_bassaoles_89", "step", 42.7160361835407, 0.769585903796351, 0, 10, 89, t, h10);
-//		Step s90 = new Step("step_bassaoles_90", "step", 42.7159562650888, 0.769643720474979, 0, 10, 90, t, null);
-//		Step s91 = new Step("step_bassaoles_91", "step", 42.715903580455, 0.769712773086963, 0, 10, 91, t, null);
-//		Step s92 = new Step("step_bassaoles_92", "step", 42.7158408272655, 0.769727233187595, 0, 10, 92, t, null);
-//		Step s93 = new Step("step_bassaoles_93", "step", 42.7157326050774, 0.769718898711305, 0, 10, 93, t, null);
-//		Step s94 = new Step("step_bassaoles_94", "step", 42.7156284067599, 0.76968599656874, 0, 10, 94, t, h11);
-//		Step s95 = new Step("step_bassaoles_95", "step", 42.7155697963118, 0.769681990572029, 0, 10, 95, t, null);
-//		Step s96 = new Step("step_bassaoles_96", "step", 42.7155117802128, 0.769708492632318, 0, 10, 96, t, null);
-//		Step s97 = new Step("step_bassaoles_97", "step", 42.7153937272217, 0.769657769415839, 0, 10, 97, t, null);
-//		Step s98 = new Step("step_bassaoles_98", "step", 42.7152940282396, 0.769624706327384, 0, 10, 98, t, null);
-//		Step s99 = new Step("step_bassaoles_99", "step", 42.7152387283918, 0.769559523359864, 0, 10, 99, t, null);
-//		Step s100 = new Step("step_bassaoles_100", "step", 42.7151974020815, 0.76951826318346, 0, 10, 100, t, null);
-//		Step s101 = new Step("step_bassaoles_101", "step", 42.7151747864432, 0.769512967663435, 0, 10, 101, t, h12);
-//		Step s102 = new Step("step_bassaoles_102", "step", 42.7150385161249, 0.769682707421322, 0, 10, 102, t, null);
-//		Step s103 = new Step("step_bassaoles_103", "step", 42.7149503120725, 0.769777454718513, 0, 10, 103, t, h19);
-//		Step s104 = new Step("step_bassaoles_104", "step", 42.7148580840141, 0.769896769117571, 0, 10, 104, t, null);
-//		Step s105 = new Step("step_bassaoles_105", "step", 42.7147433590529, 0.770016889027111, 0, 10, 105, t, null);
-//		Step s106 = new Step("step_bassaoles_106", "step", 42.7146506553444, 0.770111796560806, 0, 10, 106, t, null);
-//		Step s107 = new Step("step_bassaoles_107", "step", 42.7145980892166, 0.770186948816087, 0, 10, 107, t, null);
-//		Step s108 = new Step("step_bassaoles_108", "step", 42.7145428062068, 0.770353784867504, 0, 10, 108, t, null);
-//		Step s109 = new Step("step_bassaoles_109", "step", 42.7145142814317, 0.770507450787815, 0, 10, 109, t, null);
-//		Step s110 = new Step("step_bassaoles_110", "step", 42.7144462127599, 0.77071137877815, 0, 10, 110, t, null);
-//		Step s111 = new Step("step_bassaoles_111", "step", 42.7144297598801, 0.770791342875013, 0, 10, 111, t, null);
-//		Step s112 = new Step("step_bassaoles_112", "step", 42.7143750699611, 0.77098868549066, 0, 10, 112, t, null);
-//		Step s113 = new Step("step_bassaoles_113", "step", 42.7144136783071, 0.771121629868399, 0, 10, 113, t, null);
-//		Step s114 = new Step("step_bassaoles_114", "step", 42.7144751396432, 0.77127207355318, 0, 10, 114, t, null);
-//		Step s115 = new Step("step_bassaoles_115", "step", 42.7145215586029, 0.771343680984947, 0, 10, 115, t, h13);
-//		Step s116 = new Step("step_bassaoles_116", "step", 42.7146262316231, 0.771400991538531, 0, 10, 116, t, null);
-//		Step s117 = new Step("step_bassaoles_117", "step", 42.7146989340108, 0.77143502360602, 0, 10, 117, t, null);
-//		Step s118 = new Step("step_bassaoles_118", "step", 42.7147491395981, 0.771469861089874, 0, 10, 118, t, null);
-//		Step s119 = new Step("step_bassaoles_119", "step", 42.7148491944317, 0.771521231563069, 0, 10, 119, t, null);
-//		Step s120 = new Step("step_bassaoles_120", "step", 42.71491456081, 0.771641007844769, 0, 10, 120, t, null);
-//		Step s121 = new Step("step_bassaoles_121", "step", 42.7149718784082, 0.771809919005867, 0, 10, 121, t, null);
-//		Step s122 = new Step("step_bassaoles_122", "step", 42.7149765096444, 0.772047880119055, 0, 10, 122, t, null);
-//		Step s123 = new Step("step_bassaoles_123", "step", 42.714933297156, 0.772141013845551, 0, 10, 123, t, null);
-//		Step s124 = new Step("step_bassaoles_124", "step", 42.7148809671343, 0.772228367912406, 0, 10, 124, t, null);
-//		Step s125 = new Step("step_bassaoles_125", "step", 42.7148472281252, 0.77234558558503, 0, 10, 125, t, null);
-//		Step s126 = new Step("step_bassaoles_126", "step", 42.7148268683555, 0.77245621859027, 0, 10, 126, t, null);
-//		Step s127 = new Step("step_bassaoles_127", "step", 42.7147985781782, 0.772622087477844, 0, 10, 127, t, null);
-//		Step s128 = new Step("step_bassaoles_128", "step", 42.7147578579872, 0.772843353087412, 0, 10, 128, t, null);
-//		Step s129 = new Step("step_bassaoles_129", "step", 42.714742471867, 0.772978231023634, 0, 10, 129, t, null);
-//		Step s130 = new Step("step_bassaoles_130", "step", 42.7147179681736, 0.773107329250955, 0, 10, 130, t, null);
-//		Step s131 = new Step("step_bassaoles_131", "step", 42.7146625621782, 0.773268061670985, 0, 10, 131, t, null);
-//		Step s132 = new Step("step_bassaoles_132", "step", 42.7146066812717, 0.77340438766344, 0, 10, 132, t, null);
-//		Step s133 = new Step("step_bassaoles_133", "step", 42.7145734156832, 0.773546010363791, 0, 10, 133, t, null);
-//		Step s134 = new Step("step_bassaoles_134", "step", 42.7145672647619, 0.773692769014009, 0, 10, 134, t, null);
-//		Step s135 = new Step("step_bassaoles_135", "step", 42.7145652570751, 0.773821062142863, 0, 10, 135, t, null);
-//		Step s136 = new Step("step_bassaoles_136", "step", 42.7145829076528, 0.774034133238308, 0, 10, 136, t, null);
-//		Step s137 = new Step("step_bassaoles_137", "step", 42.7146171317759, 0.774173342506307, 0, 10, 137, t, null);
-//		Step s138 = new Step("step_bassaoles_138", "step", 42.7146981203747, 0.774170446806709, 0, 10, 138, t, null);
-//		Step s139 = new Step("step_bassaoles_139", "step", 42.7147922511801, 0.774148763800047, 0, 10, 139, t, null);
-//		Step s140 = new Step("step_bassaoles_140", "step", 42.7148415069474, 0.774134791050513, 0, 10, 140, t, null);
-//		Step s141 = new Step("step_bassaoles_141", "step", 42.714880814908, 0.774072327496432, 0, 10, 141, t, null);
-//		Step s142 = new Step("step_bassaoles_142", "step", 42.7149337395687, 0.774015482779203, 0, 10, 142, t, null);
-//		Step s143 = new Step("step_bassaoles_143", "step", 42.7149858336996, 0.773915926928948, 0, 10, 143, t, h14);
-//		Step s144 = new Step("step_bassaoles_144", "step", 42.7150845824518, 0.773900184112129, 0, 10, 144, t, null);
-//		Step s145 = new Step("step_bassaoles_145", "step", 42.7151241275698, 0.773849923344069, 0, 10, 145, t, null);
-//		Step s146 = new Step("step_bassaoles_146", "step", 42.7151761028917, 0.773744265455674, 0, 10, 146, t, null);
-//		Step s147 = new Step("step_bassaoles_147", "step", 42.7152332894253, 0.773675056076249, 0, 10, 147, t, null);
-//		Step s148 = new Step("step_bassaoles_148", "step", 42.7152863325307, 0.773624312299503, 0, 10, 148, t, h20);
-//		Step s149 = new Step("step_bassaoles_149", "step", 42.7153346389206, 0.773561526136282, 0, 10, 149, t, null);
-//		Step s150 = new Step("step_bassaoles_150", "step", 42.7153726411901, 0.773431943987928, 0, 10, 150, t, null);
-//		Step s151 = new Step("step_bassaoles_151", "step", 42.7154170414704, 0.773399826606396, 0, 10, 151, t, null);
-//		Step s152 = new Step("step_bassaoles_152", "step", 42.7154336148333, 0.773325963460736, 0, 10, 152, t, null);
-//		Step s153 = new Step("step_bassaoles_153", "step", 42.7154769469653, 0.7732389313748, 0, 10, 153, t, null);
-//		Step s154 = new Step("step_bassaoles_154", "step", 42.7155742713813, 0.77314996775767, 0, 10, 154, t, null);
-//		Step s155 = new Step("step_bassaoles_155", "step", 42.7155957000076, 0.773094248305261, 0, 10, 155, t, null);
-//		Step s156 = new Step("step_bassaoles_156", "step", 42.7156256525599, 0.773013800354681, 0, 10, 156, t, null);
-//		Step s157 = new Step("step_bassaoles_157", "step", 42.7156602231134, 0.772939292999515, 0, 10, 157, t, null);
-//		Step s158 = new Step("step_bassaoles_158", "step", 42.7156946749147, 0.772858683921336, 0, 10, 158, t, null);
-//		Step s159 = new Step("step_bassaoles_159", "step", 42.7157245085892, 0.772772134090361, 0, 10, 159, t, null);
-//		Step s160 = new Step("step_bassaoles_160", "step", 42.7157375318453, 0.772747244571204, 0, 10, 160, t, null);
-//		Step s161 = new Step("step_bassaoles_161", "step", 42.7157815757851, 0.772696821561942, 0, 10, 161, t, null);
-//		Step s162 = new Step("step_bassaoles_162", "step", 42.7157754144448, 0.772611559466752, 0, 10, 162, t, null);
-//		Step s163 = new Step("step_bassaoles_163", "step", 42.7158541472901, 0.772492730156882, 0, 10, 163, t, null);
-//		Step s164 = new Step("step_bassaoles_164", "step", 42.7159460218984, 0.772355112527268, 0, 10, 164, t, null);
-//		Step s165 = new Step("step_bassaoles_165", "step", 42.7159895907236, 0.772280282400553, 0, 10, 165, t, null);
-//		Step s166 = new Step("step_bassaoles_166", "step", 42.7160198988924, 0.772218138576882, 0, 10, 166, t, null);
-//		Step s167 = new Step("step_bassaoles_167", "step", 42.716074122314, 0.77211239732219, 0, 10, 167, t, null);
-//		Step s168 = new Step("step_bassaoles_168", "step", 42.7161335574747, 0.77204310493412, 0, 10, 168, t, null);
-//		Step s169 = new Step("step_bassaoles_169", "step", 42.7161926957139, 0.771958558196698, 0, 10, 169, t, null);
-//		Step s170 = new Step("step_bassaoles_170", "step", 42.7162301089975, 0.771914477518357, 0, 10, 170, t, null);
-//		Step s171 = new Step("step_bassaoles_171", "step", 42.7162925062441, 0.771881714416701, 0, 10, 171, t, null);
-//		Step s172 = new Step("step_bassaoles_172", "step", 42.7163323473098, 0.771846705644592, 0, 10, 172, t, null);
-//		Step s173 = new Step("step_bassaoles_173", "step", 42.7163582746311, 0.771790824026602, 0, 10, 173, t, null);
-//		Step s174 = new Step("step_bassaoles_174", "step", 42.7164340511479, 0.771751475850595, 0, 10, 174, t, null);
-//		Step s175 = new Step("step_bassaoles_175", "step", 42.7165157521577, 0.771785187121623, 0, 10, 175, t, null);
-//		Step s176 = new Step("step_bassaoles_176", "step", 42.7165478414627, 0.771814568338217, 0, 10, 176, t, null);
-//		Step s177 = new Step("step_bassaoles_177", "step", 42.7165432233454, 0.771808627671093, 0, 10, 177, t, null);
-//		Step s178 = new Step("step_bassaoles_178", "step", 42.7165833612856, 0.771788873015393, 0, 10, 178, t, null);
-//		Step s179 = new Step("step_bassaoles_179", "step", 42.7165477227033, 0.771808466617539, 0, 10, 179, t, null);
-//
-//		try {
-//			stepDataDao.create(s1);
-//			stepDataDao.create(s2);
-//			stepDataDao.create(s3);
-//			stepDataDao.create(s4);
-//			stepDataDao.create(s5);
-//			stepDataDao.create(s6);
-//			stepDataDao.create(s7);
-//			stepDataDao.create(s8);
-//			stepDataDao.create(s9);
-//			stepDataDao.create(s10);
-//			stepDataDao.create(s11);
-//			stepDataDao.create(s12);
-//			stepDataDao.create(s13);
-//			stepDataDao.create(s14);
-//			stepDataDao.create(s15);
-//			stepDataDao.create(s16);
-//			stepDataDao.create(s17);
-//			stepDataDao.create(s18);
-//			stepDataDao.create(s19);
-//			stepDataDao.create(s20);
-//			stepDataDao.create(s21);
-//			stepDataDao.create(s22);
-//			stepDataDao.create(s23);
-//			stepDataDao.create(s24);
-//			stepDataDao.create(s25);
-//			stepDataDao.create(s26);
-//			stepDataDao.create(s27);
-//			stepDataDao.create(s28);
-//			stepDataDao.create(s29);
-//			stepDataDao.create(s30);
-//			stepDataDao.create(s31);
-//			stepDataDao.create(s32);
-//			stepDataDao.create(s33);
-//			stepDataDao.create(s34);
-//			stepDataDao.create(s35);
-//			stepDataDao.create(s36);
-//			stepDataDao.create(s37);
-//			stepDataDao.create(s38);
-//			stepDataDao.create(s39);
-//			stepDataDao.create(s40);
-//			stepDataDao.create(s41);
-//			stepDataDao.create(s42);
-//			stepDataDao.create(s43);
-//			stepDataDao.create(s44);
-//			stepDataDao.create(s45);
-//			stepDataDao.create(s46);
-//			stepDataDao.create(s47);
-//			stepDataDao.create(s48);
-//			stepDataDao.create(s49);
-//			stepDataDao.create(s50);
-//			stepDataDao.create(s51);
-//			stepDataDao.create(s52);
-//			stepDataDao.create(s53);
-//			stepDataDao.create(s54);
-//			stepDataDao.create(s55);
-//			stepDataDao.create(s56);
-//			stepDataDao.create(s57);
-//			stepDataDao.create(s58);
-//			stepDataDao.create(s59);
-//			stepDataDao.create(s60);
-//			stepDataDao.create(s61);
-//			stepDataDao.create(s62);
-//			stepDataDao.create(s63);
-//			stepDataDao.create(s64);
-//			stepDataDao.create(s65);
-//			stepDataDao.create(s66);
-//			stepDataDao.create(s67);
-//			stepDataDao.create(s68);
-//			stepDataDao.create(s69);
-//			stepDataDao.create(s70);
-//			stepDataDao.create(s71);
-//			stepDataDao.create(s72);
-//			stepDataDao.create(s73);
-//			stepDataDao.create(s74);
-//			stepDataDao.create(s75);
-//			stepDataDao.create(s76);
-//			stepDataDao.create(s77);
-//			stepDataDao.create(s78);
-//			stepDataDao.create(s79);
-//			stepDataDao.create(s80);
-//			stepDataDao.create(s81);
-//			stepDataDao.create(s82);
-//			stepDataDao.create(s83);
-//			stepDataDao.create(s84);
-//			stepDataDao.create(s85);
-//			stepDataDao.create(s86);
-//			stepDataDao.create(s87);
-//			stepDataDao.create(s88);
-//			stepDataDao.create(s89);
-//			stepDataDao.create(s90);
-//			stepDataDao.create(s91);
-//			stepDataDao.create(s92);
-//			stepDataDao.create(s93);
-//			stepDataDao.create(s94);
-//			stepDataDao.create(s95);
-//			stepDataDao.create(s96);
-//			stepDataDao.create(s97);
-//			stepDataDao.create(s98);
-//			stepDataDao.create(s99);
-//			stepDataDao.create(s100);
-//			stepDataDao.create(s101);
-//			stepDataDao.create(s102);
-//			stepDataDao.create(s103);
-//			stepDataDao.create(s104);
-//			stepDataDao.create(s105);
-//			stepDataDao.create(s106);
-//			stepDataDao.create(s107);
-//			stepDataDao.create(s108);
-//			stepDataDao.create(s109);
-//			stepDataDao.create(s110);
-//			stepDataDao.create(s111);
-//			stepDataDao.create(s112);
-//			stepDataDao.create(s113);
-//			stepDataDao.create(s114);
-//			stepDataDao.create(s115);
-//			stepDataDao.create(s116);
-//			stepDataDao.create(s117);
-//			stepDataDao.create(s118);
-//			stepDataDao.create(s119);
-//			stepDataDao.create(s120);
-//			stepDataDao.create(s121);
-//			stepDataDao.create(s122);
-//			stepDataDao.create(s123);
-//			stepDataDao.create(s124);
-//			stepDataDao.create(s125);
-//			stepDataDao.create(s126);
-//			stepDataDao.create(s127);
-//			stepDataDao.create(s128);
-//			stepDataDao.create(s129);
-//			stepDataDao.create(s130);
-//			stepDataDao.create(s131);
-//			stepDataDao.create(s132);
-//			stepDataDao.create(s133);
-//			stepDataDao.create(s134);
-//			stepDataDao.create(s135);
-//			stepDataDao.create(s136);
-//			stepDataDao.create(s137);
-//			stepDataDao.create(s138);
-//			stepDataDao.create(s139);
-//			stepDataDao.create(s140);
-//			stepDataDao.create(s141);
-//			stepDataDao.create(s142);
-//			stepDataDao.create(s143);
-//			stepDataDao.create(s144);
-//			stepDataDao.create(s145);
-//			stepDataDao.create(s146);
-//			stepDataDao.create(s147);
-//			stepDataDao.create(s148);
-//			stepDataDao.create(s149);
-//			stepDataDao.create(s150);
-//			stepDataDao.create(s151);
-//			stepDataDao.create(s152);
-//			stepDataDao.create(s153);
-//			stepDataDao.create(s154);
-//			stepDataDao.create(s155);
-//			stepDataDao.create(s156);
-//			stepDataDao.create(s157);
-//			stepDataDao.create(s158);
-//			stepDataDao.create(s159);
-//			stepDataDao.create(s160);
-//			stepDataDao.create(s161);
-//			stepDataDao.create(s162);
-//			stepDataDao.create(s163);
-//			stepDataDao.create(s164);
-//			stepDataDao.create(s165);
-//			stepDataDao.create(s166);
-//			stepDataDao.create(s167);
-//			stepDataDao.create(s168);
-//			stepDataDao.create(s169);
-//			stepDataDao.create(s170);
-//			stepDataDao.create(s171);
-//			stepDataDao.create(s172);
-//			stepDataDao.create(s173);
-//			stepDataDao.create(s174);
-//			stepDataDao.create(s175);
-//			stepDataDao.create(s176);
-//			stepDataDao.create(s177);
-//			stepDataDao.create(s178);
-//			stepDataDao.create(s179);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting step", "Insert error " + ex.toString());
-//		}
-//		
-//		Route r = new Route();
-//		r.setId("ROUTE_BASSAOLES");
-//		r.setName("Bassa d'Oles");
-//		r.setDescription("Itinerari circular de 1.7 km amb 50 m de desnivell (30 minuts a peu) al voltant del complex de la  Bassa d’Oles, una altra petita bassa i un aiguamoll propers. El camí segueix una pista i senders força planers, i travessa algun prat. Sense cap dificultat, l’itinerari és apte per a tots els públics. La Bassa d’Oles és una bassa d’origen natural que posteriorment es va represar. Es practica la pesca intensiva, i la bassa és repoblada regularment amb truites. És per tant un exemple d’ecosistema aquàtic fortament humanitzat. Està envoltada d’una pineda de pi roig de gran valor paisatgístic. L’interés principal rau en l’important entapissat de vegetació aqüàtica submergida i les illes de joncs que s’hi troben. Degut a l’accessibilitat a les vores i la poca fondària, és fàcil observar la vegetació submergida.");
-//		r.setUserId("1");
-//		// Ph_ch parameters
-//		// r.setReference(r6);
-//		// Interactive image
-//		// r.setInteractiveImage(img);
-//		r.setTrack(t);
-//		r.setLocalCarto("bassa_oles.mbtiles");
-//
-//		try {
-//			routeDataDao.create(r);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting route", "Insert error " + ex.toString());
-//		}
-//		
-//	}
+	public static void loadBassaOles(DataBaseHelper db, Context context) {
+		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
+		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
+		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
+		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
+		
+		Track t = new Track("TRACK_BASSAOLES", "Waypoints recorregut Bassa d'Oles");
+		try {
+			trackDataDao.create(t);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting track", "Insert error " + ex.toString());
+		}
+		
+		
+		Step s1 = new Step("step_bassaoles_1", "step", 42.7149171657416, 0.774089345161048, 0, 10, 1, t);
+		Step s2 = new Step("step_bassaoles_2", "step", 42.7149504407864, 0.774179742608889, 0, 10, 2, t, null);
+		Step s3 = new Step("step_bassaoles_3", "step", 42.7150084580268, 0.774153244934471, 0, 10, 3, t, null);
+		Step s4 = new Step("step_bassaoles_4", "step", 42.7150488336915, 0.77414569546976, 0, 10, 4, t, null);
+		Step s5 = new Step("step_bassaoles_5", "step", 42.7150896838814, 0.774162552344225, 0, 10, 5, t, null);
+		Step s6 = new Step("step_bassaoles_6", "step", 42.715130534069, 0.774179409239797, 0, 10, 6, t);
+		Step s7 = new Step("step_bassaoles_7", "step", 42.7151762395073, 0.774214410071807, 0, 10, 7, t);
+		Step s8 = new Step("step_bassaoles_8", "step", 42.7152417217644, 0.774340291518999, 0, 10, 8, t, null);
+		Step s9 = new Step("step_bassaoles_9", "step", 42.7152601937158, 0.774364054485635, 0, 10, 9, t, null);
+		Step s10 = new Step("step_bassaoles_10", "step", 42.7152882574889, 0.774418003786129, 0, 10, 10, t, null);
+		Step s11 = new Step("step_bassaoles_11", "step", 42.7153233075173, 0.774483915077973, 0, 10, 11, t, null);
+		Step s12 = new Step("step_bassaoles_12", "step", 42.7154632583167, 0.774387323796554, 0, 10, 12, t, null);
+		Step s13 = new Step("step_bassaoles_13", "step", 42.7155297998447, 0.774336097822315, 0, 10, 13, t, null);
+		Step s14 = new Step("step_bassaoles_14", "step", 42.7155644899055, 0.77426769291704, 0, 10, 14, t, null);
+		Step s15 = new Step("step_bassaoles_15", "step", 42.7156635945871, 0.774270255403993, 0, 10, 15, t, null);
+		Step s16 = new Step("step_bassaoles_16", "step", 42.715696039152, 0.774317942487713, 0, 10, 16, t, null);
+		Step s17 = new Step("step_bassaoles_17", "step", 42.7157596233959, 0.774346198608682, 0, 10, 17, t, null);
+		Step s18 = new Step("step_bassaoles_18", "step", 42.7158715144317, 0.774311668627549, 0, 10, 18, t, null);
+		Step s19 = new Step("step_bassaoles_19", "step", 42.7158788523856, 0.774225923573729, 0, 10, 19, t, null);
+		Step s20 = new Step("step_bassaoles_20", "step", 42.7159320143604, 0.77418128137689, 0, 10, 20, t, null);
+		Step s21 = new Step("step_bassaoles_21", "step", 42.7160298140649, 0.774116725239958, 0, 10, 21, t, null);
+		Step s22 = new Step("step_bassaoles_22", "step", 42.7160797816235, 0.77413936225245, 0, 10, 22, t, null);
+		Step s23 = new Step("step_bassaoles_23", "step", 42.7162133389408, 0.77406131538973, 0, 10, 23, t, null);
+		Step s24 = new Step("step_bassaoles_24", "step", 42.7161982985145, 0.77398247601243, 0, 10, 24, t, null);
+		Step s25 = new Step("step_bassaoles_25", "step", 42.7162269465401, 0.773834908995614, 0, 10, 25, t, null);
+		Step s26 = new Step("step_bassaoles_26", "step", 42.7162516882982, 0.773718011264, 0, 10, 26, t, null);
+		Step s27 = new Step("step_bassaoles_27", "step", 42.716249908404, 0.773626485774426, 0, 10, 27, t);
+		Step s28 = new Step("step_bassaoles_28", "step", 42.7162925287309, 0.773502842505807, 0, 10, 28, t);
+		Step s29 = new Step("step_bassaoles_29", "step", 42.7163133641518, 0.773416613991842, 0, 10, 29, t, null);
+		Step s30 = new Step("step_bassaoles_30", "step", 42.7163238953036, 0.77326358855263, 0, 10, 30, t, null);
+		Step s31 = new Step("step_bassaoles_31", "step", 42.7163480430252, 0.77311618190158, 0, 10, 31, t, null);
+		Step s32 = new Step("step_bassaoles_32", "step", 42.7163771647028, 0.772993021010115, 0, 10, 32, t, null);
+		Step s33 = new Step("step_bassaoles_33", "step", 42.7164112604146, 0.772894105879156, 0, 10, 33, t, null);
+		Step s34 = new Step("step_bassaoles_34", "step", 42.7164407379703, 0.77278924991004, 0, 10, 34, t, null);
+		Step s35 = new Step("step_bassaoles_35", "step", 42.7164657160669, 0.772684554834878, 0, 10, 35, t, null);
+		Step s36 = new Step("step_bassaoles_36", "step", 42.7164909315018, 0.7725920631159, 0, 10, 36, t, null);
+		Step s37 = new Step("step_bassaoles_37", "step", 42.7165253830248, 0.772511452760378, 0, 10, 37, t, null);
+		Step s38 = new Step("step_bassaoles_38", "step", 42.7165591221245, 0.772394231971268, 0, 10, 38, t, null);
+		Step s39 = new Step("step_bassaoles_39", "step", 42.7165840998511, 0.772289536551583, 0, 10, 39, t);
+		Step s40 = new Step("step_bassaoles_40", "step", 42.7166084837776, 0.772154332410751, 0, 10, 40, t, null);
+		Step s41 = new Step("step_bassaoles_41", "step", 42.7166148107337, 0.772016721461265, 0, 10, 41, t, null);
+		Step s42 = new Step("step_bassaoles_42", "step", 42.7166281867697, 0.771952129926618, 0, 10, 42, t, null);
+		Step s43 = new Step("step_bassaoles_43", "step", 42.7166012466787, 0.771898140388993, 0, 10, 43, t);
+		Step s44 = new Step("step_bassaoles_44", "step", 42.7165879200237, 0.771791762822445, 0, 10, 44, t);
+		Step s45 = new Step("step_bassaoles_45", "step", 42.7166364034811, 0.771738126516824, 0, 10, 45, t, null);
+		Step s46 = new Step("step_bassaoles_46", "step", 42.7166839961534, 0.771638727126253, 0, 10, 46, t, null);
+		Step s47 = new Step("step_bassaoles_47", "step", 42.7167231838891, 0.771570158417617, 0, 10, 47, t, null);
+		Step s48 = new Step("step_bassaoles_48", "step", 42.7167669897144, 0.771507530287216, 0, 10, 48, t, null);
+		Step s49 = new Step("step_bassaoles_49", "step", 42.7168631248334, 0.771357544591017, 0, 10, 49, t, null);
+		Step s50 = new Step("step_bassaoles_50", "step", 42.7169204286028, 0.7712944328926, 0, 10, 50, t, null);
+		Step s51 = new Step("step_bassaoles_51", "step", 42.7169782074966, 0.771255728119061, 0, 10, 51, t, null);
+		Step s52 = new Step("step_bassaoles_52", "step", 42.7170312494346, 0.771204980839846, 0, 10, 52, t, null);
+		Step s53 = new Step("step_bassaoles_53", "step", 42.7170711496665, 0.771173022092318, 0, 10, 53, t);
+		Step s54 = new Step("step_bassaoles_54", "step", 42.717072085038, 0.770989807914199, 0, 10, 54, t, null);
+		Step s55 = new Step("step_bassaoles_55", "step", 42.7170957545157, 0.770817991638304, 0, 10, 55, t, null);
+		Step s56 = new Step("step_bassaoles_56", "step", 42.7171287789071, 0.770664158278927, 0, 10, 56, t, null);
+		Step s57 = new Step("step_bassaoles_57", "step", 42.7171513783969, 0.770437425773829, 0, 10, 57, t, null);
+		Step s58 = new Step("step_bassaoles_58", "step", 42.7171617866628, 0.770278296156939, 0, 10, 58, t, null);
+		Step s59 = new Step("step_bassaoles_59", "step", 42.7171549103967, 0.770156421851355, 0, 10, 59, t, null);
+		Step s60 = new Step("step_bassaoles_60", "step", 42.7171576269784, 0.770064734073243, 0, 10, 60, t, null);
+		Step s61 = new Step("step_bassaoles_61", "step", 42.717165080555, 0.769985088647642, 0, 10, 61, t, null);
+		Step s62 = new Step("step_bassaoles_62", "step", 42.7172284105905, 0.769769108528357, 0, 10, 62, t, null);
+		Step s63 = new Step("step_bassaoles_63", "step", 42.7172651007477, 0.76957240065225, 0, 10, 63, t, null);
+		Step s64 = new Step("step_bassaoles_64", "step", 42.7172899569507, 0.76946160122528, 0, 10, 64, t, null);
+		Step s65 = new Step("step_bassaoles_65", "step", 42.7173217779254, 0.769384745987653, 0, 10, 65, t, null);
+		Step s66 = new Step("step_bassaoles_66", "step", 42.7173355447926, 0.769340289108466, 0, 10, 66, t);
+		Step s67 = new Step("step_bassaoles_67", "step", 42.7173300814664, 0.769279424413057, 0, 10, 67, t, null);
+		Step s68 = new Step("step_bassaoles_68", "step", 42.7173053750884, 0.769189940332657, 0, 10, 68, t, null);
+		Step s69 = new Step("step_bassaoles_69", "step", 42.7172469473054, 0.769102886080448, 0, 10, 69, t, null);
+		Step s70 = new Step("step_bassaoles_70", "step", 42.7171279428011, 0.769003348620459, 0, 10, 70, t, null);
+		Step s71 = new Step("step_bassaoles_71", "step", 42.71701072191, 0.768995337846102, 0, 10, 71, t, null);
+		Step s72 = new Step("step_bassaoles_72", "step", 42.7169523492841, 0.769003535963987, 0, 10, 72, t, null);
+		Step s73 = new Step("step_bassaoles_73", "step", 42.7169122118709, 0.769023292523154, 0, 10, 73, t, null);
+		Step s74 = new Step("step_bassaoles_74", "step", 42.7168404601017, 0.769038076103431, 0, 10, 74, t);
+		Step s75 = new Step("step_bassaoles_75", "step", 42.7168223437971, 0.769032619388548, 0, 10, 75, t);
+		Step s76 = new Step("step_bassaoles_76", "step", 42.7167934451336, 0.768935959192282, 0, 10, 76, t, null);
+		Step s77 = new Step("step_bassaoles_77", "step", 42.7167518807636, 0.768882494995035, 0, 10, 77, t, null);
+		Step s78 = new Step("step_bassaoles_78", "step", 42.7166842716161, 0.76887881226059, 0, 10, 78, t, null);
+		Step s79 = new Step("step_bassaoles_79", "step", 42.7166008055062, 0.768985605442682, 0, 10, 79, t, null);
+		Step s80 = new Step("step_bassaoles_80", "step", 42.7165844728174, 0.769071674450463, 0, 10, 80, t, null);
+		Step s81 = new Step("step_bassaoles_81", "step", 42.716509529615, 0.769153737893996, 0, 10, 81, t);
+		Step s82 = new Step("step_bassaoles_82", "step", 42.7164557752181, 0.769167876234365, 0, 10, 82, t, null);
+		Step s83 = new Step("step_bassaoles_83", "step", 42.7163672149925, 0.769244321408601, 0, 10, 83, t, null);
+		Step s84 = new Step("step_bassaoles_84", "step", 42.7163004381066, 0.769283350086419, 0, 10, 84, t, null);
+		Step s85 = new Step("step_bassaoles_85", "step", 42.7162742742505, 0.7693270292774, 0, 10, 85, t, null);
+		Step s86 = new Step("step_bassaoles_86", "step", 42.7162574657429, 0.769388691022172, 0, 10, 86, t, null);
+		Step s87 = new Step("step_bassaoles_87", "step", 42.7161735235886, 0.769471076086403, 0, 10, 87, t, null);
+		Step s88 = new Step("step_bassaoles_88", "step", 42.7161023661446, 0.769516367278524, 0, 10, 88, t, null);
+		Step s89 = new Step("step_bassaoles_89", "step", 42.7160361835407, 0.769585903796351, 0, 10, 89, t);
+		Step s90 = new Step("step_bassaoles_90", "step", 42.7159562650888, 0.769643720474979, 0, 10, 90, t, null);
+		Step s91 = new Step("step_bassaoles_91", "step", 42.715903580455, 0.769712773086963, 0, 10, 91, t, null);
+		Step s92 = new Step("step_bassaoles_92", "step", 42.7158408272655, 0.769727233187595, 0, 10, 92, t, null);
+		Step s93 = new Step("step_bassaoles_93", "step", 42.7157326050774, 0.769718898711305, 0, 10, 93, t, null);
+		Step s94 = new Step("step_bassaoles_94", "step", 42.7156284067599, 0.76968599656874, 0, 10, 94, t);
+		Step s95 = new Step("step_bassaoles_95", "step", 42.7155697963118, 0.769681990572029, 0, 10, 95, t, null);
+		Step s96 = new Step("step_bassaoles_96", "step", 42.7155117802128, 0.769708492632318, 0, 10, 96, t, null);
+		Step s97 = new Step("step_bassaoles_97", "step", 42.7153937272217, 0.769657769415839, 0, 10, 97, t, null);
+		Step s98 = new Step("step_bassaoles_98", "step", 42.7152940282396, 0.769624706327384, 0, 10, 98, t, null);
+		Step s99 = new Step("step_bassaoles_99", "step", 42.7152387283918, 0.769559523359864, 0, 10, 99, t, null);
+		Step s100 = new Step("step_bassaoles_100", "step", 42.7151974020815, 0.76951826318346, 0, 10, 100, t, null);
+		Step s101 = new Step("step_bassaoles_101", "step", 42.7151747864432, 0.769512967663435, 0, 10, 101, t);
+		Step s102 = new Step("step_bassaoles_102", "step", 42.7150385161249, 0.769682707421322, 0, 10, 102, t, null);
+		Step s103 = new Step("step_bassaoles_103", "step", 42.7149503120725, 0.769777454718513, 0, 10, 103, t);
+		Step s104 = new Step("step_bassaoles_104", "step", 42.7148580840141, 0.769896769117571, 0, 10, 104, t, null);
+		Step s105 = new Step("step_bassaoles_105", "step", 42.7147433590529, 0.770016889027111, 0, 10, 105, t, null);
+		Step s106 = new Step("step_bassaoles_106", "step", 42.7146506553444, 0.770111796560806, 0, 10, 106, t, null);
+		Step s107 = new Step("step_bassaoles_107", "step", 42.7145980892166, 0.770186948816087, 0, 10, 107, t, null);
+		Step s108 = new Step("step_bassaoles_108", "step", 42.7145428062068, 0.770353784867504, 0, 10, 108, t, null);
+		Step s109 = new Step("step_bassaoles_109", "step", 42.7145142814317, 0.770507450787815, 0, 10, 109, t, null);
+		Step s110 = new Step("step_bassaoles_110", "step", 42.7144462127599, 0.77071137877815, 0, 10, 110, t, null);
+		Step s111 = new Step("step_bassaoles_111", "step", 42.7144297598801, 0.770791342875013, 0, 10, 111, t, null);
+		Step s112 = new Step("step_bassaoles_112", "step", 42.7143750699611, 0.77098868549066, 0, 10, 112, t, null);
+		Step s113 = new Step("step_bassaoles_113", "step", 42.7144136783071, 0.771121629868399, 0, 10, 113, t, null);
+		Step s114 = new Step("step_bassaoles_114", "step", 42.7144751396432, 0.77127207355318, 0, 10, 114, t, null);
+		Step s115 = new Step("step_bassaoles_115", "step", 42.7145215586029, 0.771343680984947, 0, 10, 115, t);
+		Step s116 = new Step("step_bassaoles_116", "step", 42.7146262316231, 0.771400991538531, 0, 10, 116, t, null);
+		Step s117 = new Step("step_bassaoles_117", "step", 42.7146989340108, 0.77143502360602, 0, 10, 117, t, null);
+		Step s118 = new Step("step_bassaoles_118", "step", 42.7147491395981, 0.771469861089874, 0, 10, 118, t, null);
+		Step s119 = new Step("step_bassaoles_119", "step", 42.7148491944317, 0.771521231563069, 0, 10, 119, t, null);
+		Step s120 = new Step("step_bassaoles_120", "step", 42.71491456081, 0.771641007844769, 0, 10, 120, t, null);
+		Step s121 = new Step("step_bassaoles_121", "step", 42.7149718784082, 0.771809919005867, 0, 10, 121, t, null);
+		Step s122 = new Step("step_bassaoles_122", "step", 42.7149765096444, 0.772047880119055, 0, 10, 122, t, null);
+		Step s123 = new Step("step_bassaoles_123", "step", 42.714933297156, 0.772141013845551, 0, 10, 123, t, null);
+		Step s124 = new Step("step_bassaoles_124", "step", 42.7148809671343, 0.772228367912406, 0, 10, 124, t, null);
+		Step s125 = new Step("step_bassaoles_125", "step", 42.7148472281252, 0.77234558558503, 0, 10, 125, t, null);
+		Step s126 = new Step("step_bassaoles_126", "step", 42.7148268683555, 0.77245621859027, 0, 10, 126, t, null);
+		Step s127 = new Step("step_bassaoles_127", "step", 42.7147985781782, 0.772622087477844, 0, 10, 127, t, null);
+		Step s128 = new Step("step_bassaoles_128", "step", 42.7147578579872, 0.772843353087412, 0, 10, 128, t, null);
+		Step s129 = new Step("step_bassaoles_129", "step", 42.714742471867, 0.772978231023634, 0, 10, 129, t, null);
+		Step s130 = new Step("step_bassaoles_130", "step", 42.7147179681736, 0.773107329250955, 0, 10, 130, t, null);
+		Step s131 = new Step("step_bassaoles_131", "step", 42.7146625621782, 0.773268061670985, 0, 10, 131, t, null);
+		Step s132 = new Step("step_bassaoles_132", "step", 42.7146066812717, 0.77340438766344, 0, 10, 132, t, null);
+		Step s133 = new Step("step_bassaoles_133", "step", 42.7145734156832, 0.773546010363791, 0, 10, 133, t, null);
+		Step s134 = new Step("step_bassaoles_134", "step", 42.7145672647619, 0.773692769014009, 0, 10, 134, t, null);
+		Step s135 = new Step("step_bassaoles_135", "step", 42.7145652570751, 0.773821062142863, 0, 10, 135, t, null);
+		Step s136 = new Step("step_bassaoles_136", "step", 42.7145829076528, 0.774034133238308, 0, 10, 136, t, null);
+		Step s137 = new Step("step_bassaoles_137", "step", 42.7146171317759, 0.774173342506307, 0, 10, 137, t, null);
+		Step s138 = new Step("step_bassaoles_138", "step", 42.7146981203747, 0.774170446806709, 0, 10, 138, t, null);
+		Step s139 = new Step("step_bassaoles_139", "step", 42.7147922511801, 0.774148763800047, 0, 10, 139, t, null);
+		Step s140 = new Step("step_bassaoles_140", "step", 42.7148415069474, 0.774134791050513, 0, 10, 140, t, null);
+		Step s141 = new Step("step_bassaoles_141", "step", 42.714880814908, 0.774072327496432, 0, 10, 141, t, null);
+		Step s142 = new Step("step_bassaoles_142", "step", 42.7149337395687, 0.774015482779203, 0, 10, 142, t, null);
+		Step s143 = new Step("step_bassaoles_143", "step", 42.7149858336996, 0.773915926928948, 0, 10, 143, t);
+		Step s144 = new Step("step_bassaoles_144", "step", 42.7150845824518, 0.773900184112129, 0, 10, 144, t, null);
+		Step s145 = new Step("step_bassaoles_145", "step", 42.7151241275698, 0.773849923344069, 0, 10, 145, t, null);
+		Step s146 = new Step("step_bassaoles_146", "step", 42.7151761028917, 0.773744265455674, 0, 10, 146, t, null);
+		Step s147 = new Step("step_bassaoles_147", "step", 42.7152332894253, 0.773675056076249, 0, 10, 147, t, null);
+		Step s148 = new Step("step_bassaoles_148", "step", 42.7152863325307, 0.773624312299503, 0, 10, 148, t);
+		Step s149 = new Step("step_bassaoles_149", "step", 42.7153346389206, 0.773561526136282, 0, 10, 149, t, null);
+		Step s150 = new Step("step_bassaoles_150", "step", 42.7153726411901, 0.773431943987928, 0, 10, 150, t, null);
+		Step s151 = new Step("step_bassaoles_151", "step", 42.7154170414704, 0.773399826606396, 0, 10, 151, t, null);
+		Step s152 = new Step("step_bassaoles_152", "step", 42.7154336148333, 0.773325963460736, 0, 10, 152, t, null);
+		Step s153 = new Step("step_bassaoles_153", "step", 42.7154769469653, 0.7732389313748, 0, 10, 153, t, null);
+		Step s154 = new Step("step_bassaoles_154", "step", 42.7155742713813, 0.77314996775767, 0, 10, 154, t, null);
+		Step s155 = new Step("step_bassaoles_155", "step", 42.7155957000076, 0.773094248305261, 0, 10, 155, t, null);
+		Step s156 = new Step("step_bassaoles_156", "step", 42.7156256525599, 0.773013800354681, 0, 10, 156, t, null);
+		Step s157 = new Step("step_bassaoles_157", "step", 42.7156602231134, 0.772939292999515, 0, 10, 157, t, null);
+		Step s158 = new Step("step_bassaoles_158", "step", 42.7156946749147, 0.772858683921336, 0, 10, 158, t, null);
+		Step s159 = new Step("step_bassaoles_159", "step", 42.7157245085892, 0.772772134090361, 0, 10, 159, t, null);
+		Step s160 = new Step("step_bassaoles_160", "step", 42.7157375318453, 0.772747244571204, 0, 10, 160, t, null);
+		Step s161 = new Step("step_bassaoles_161", "step", 42.7157815757851, 0.772696821561942, 0, 10, 161, t, null);
+		Step s162 = new Step("step_bassaoles_162", "step", 42.7157754144448, 0.772611559466752, 0, 10, 162, t, null);
+		Step s163 = new Step("step_bassaoles_163", "step", 42.7158541472901, 0.772492730156882, 0, 10, 163, t, null);
+		Step s164 = new Step("step_bassaoles_164", "step", 42.7159460218984, 0.772355112527268, 0, 10, 164, t, null);
+		Step s165 = new Step("step_bassaoles_165", "step", 42.7159895907236, 0.772280282400553, 0, 10, 165, t, null);
+		Step s166 = new Step("step_bassaoles_166", "step", 42.7160198988924, 0.772218138576882, 0, 10, 166, t, null);
+		Step s167 = new Step("step_bassaoles_167", "step", 42.716074122314, 0.77211239732219, 0, 10, 167, t, null);
+		Step s168 = new Step("step_bassaoles_168", "step", 42.7161335574747, 0.77204310493412, 0, 10, 168, t, null);
+		Step s169 = new Step("step_bassaoles_169", "step", 42.7161926957139, 0.771958558196698, 0, 10, 169, t, null);
+		Step s170 = new Step("step_bassaoles_170", "step", 42.7162301089975, 0.771914477518357, 0, 10, 170, t, null);
+		Step s171 = new Step("step_bassaoles_171", "step", 42.7162925062441, 0.771881714416701, 0, 10, 171, t, null);
+		Step s172 = new Step("step_bassaoles_172", "step", 42.7163323473098, 0.771846705644592, 0, 10, 172, t, null);
+		Step s173 = new Step("step_bassaoles_173", "step", 42.7163582746311, 0.771790824026602, 0, 10, 173, t, null);
+		Step s174 = new Step("step_bassaoles_174", "step", 42.7164340511479, 0.771751475850595, 0, 10, 174, t, null);
+		Step s175 = new Step("step_bassaoles_175", "step", 42.7165157521577, 0.771785187121623, 0, 10, 175, t, null);
+		Step s176 = new Step("step_bassaoles_176", "step", 42.7165478414627, 0.771814568338217, 0, 10, 176, t, null);
+		Step s177 = new Step("step_bassaoles_177", "step", 42.7165432233454, 0.771808627671093, 0, 10, 177, t, null);
+		Step s178 = new Step("step_bassaoles_178", "step", 42.7165833612856, 0.771788873015393, 0, 10, 178, t, null);
+		Step s179 = new Step("step_bassaoles_179", "step", 42.7165477227033, 0.771808466617539, 0, 10, 179, t, null);
 
-//	public static void loadVarrados(DataBaseHelper db, Context context) {
-//		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
-//		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
-//		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
-//		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
-//
-//		Track t = new Track("TRACK_VARRADOS", "Waypoints recorregut Varradòs");
-//		try {
-//			trackDataDao.create(t);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting track", "Insert error " + ex.toString());
-//		}
-//
-//		// HL
-//		HighLight h1 = new HighLight("hl_varrados_poiv01",
-//				"poiV01-Mola deth Batan", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h2 = new HighLight("hl_varrados_poiv02",
-//				"poiV02-Hònt deth Sofre", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h3 = new HighLight("hl_varrados_poiv03",
-//				"poiV03-desguàs conducció Varradòs", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h4 = new HighLight("hl_varrados_poiv04",
-//				"poiV04-vista barranc Nere", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h5 = new HighLight("hl_varrados_poiv05",
-//				"poiV05-Barranc Salies", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h6 = new HighLight("hl_varrados_poiv06",
-//				"poiV06-Barratge de Varradòs", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h7 = new HighLight("hl_varrados_poiv07",
-//				"poiV07-Saut deth Pish", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h8 = new HighLight("hl_varrados_poiv08",
-//				"poiV08-Hònt dera Pila", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h9 = new HighLight("hl_varrados_poiv09",
-//				"poiV09-Nere de Uèrri", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//		HighLight h10 = new HighLight("hl_varrados_poiv10",
-//				"poiV10-Estanh Pica Palomèra", null, 10,
-//				HighLight.POINT_OF_INTEREST_OFFICIAL);
-//
-//		// WP
-//		HighLight h11 = new HighLight("hl_varrados_wpv01",
-//				"wpV01-sortida rotonda", null, 10, HighLight.WAYPOINT);
-//		HighLight h12 = new HighLight("hl_varrados_wpv02",
-//				"wpV02-inici pista Varradòs", null, 10, HighLight.WAYPOINT);
-//		HighLight h13 = new HighLight("hl_varrados_wpv03", "wpV03-aparcament",
-//				null, 10, HighLight.WAYPOINT);
-////		HighLight h14 = new HighLight("hl_varrados_wpv04",
-////				"wpV04-Barratge Varradòs", null, 10, HighLight.WAYPOINT);
-////		HighLight h15 = new HighLight("hl_varrados_wpv05",
-////				"wpV05-Saut deth Pish", null, 10, HighLight.WAYPOINT);
-//		HighLight h16 = new HighLight("hl_varrados_wpv06",
-//				"wpV06-trencall amunt camí", null, 10, HighLight.WAYPOINT);
-//		HighLight h17 = new HighLight("hl_varrados_wpv07",
-//				"wpV07-tronc caigut", null, 10, HighLight.WAYPOINT);
-//		HighLight h18 = new HighLight("hl_varrados_wpv08",
-//				"wpV08-barranc de Siesso", null, 10, HighLight.WAYPOINT);
-//		HighLight h19 = new HighLight("hl_varrados_wpv09",
-//				"wpV09-inici/final circuit estanys", null, 10,
-//				HighLight.WAYPOINT);
-////		HighLight h20 = new HighLight("hl_varrados_wpv10",
-////				"wpV10-Nere de Uèrri", null, 10, HighLight.WAYPOINT);
-////		HighLight h21 = new HighLight("hl_varrados_wpv11",
-////				"wpV11-Estanh Pica Palomèra", null, 10, HighLight.WAYPOINT);
-//
-//		try {
-//			hlDataDao.create(h1);
-//			hlDataDao.create(h2);
-//			hlDataDao.create(h3);
-//			hlDataDao.create(h4);
-//			hlDataDao.create(h5);
-//			hlDataDao.create(h6);
-//			hlDataDao.create(h7);
-//			hlDataDao.create(h8);
-//			hlDataDao.create(h9);
-//			hlDataDao.create(h10);
-//			hlDataDao.create(h11);
-//			hlDataDao.create(h12);
-//			hlDataDao.create(h13);
-//			//hlDataDao.create(h14);
-//			//hlDataDao.create(h15);
-//			hlDataDao.create(h16);
-//			hlDataDao.create(h17);
-//			hlDataDao.create(h18);
-//			hlDataDao.create(h19);
-//			//hlDataDao.create(h20);
-//			//hlDataDao.create(h21);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting highlight", "Insert error " + ex.toString());
-//		}
-//
-//		Step s1 = new Step("step_varrados_1", "step", 42.7378633696433,
-//				0.756368635182401, 0, 10, 1, t, h11);
-//		Step s2 = new Step("step_varrados_2", "step", 42.7379694385642,
-//				0.756267080117364, 0, 10, 2, t, null);
-//		Step s3 = new Step("step_varrados_3", "step", 42.7381332329505,
-//				0.755894686489318, 0, 10, 3, t, null);
-//		Step s4 = new Step("step_varrados_4", "step", 42.738266536489,
-//				0.755804363736847, 0, 10, 4, t, h12);
-//		Step s5 = new Step("step_varrados_5", "step", 42.7384793911674,
-//				0.75563787281689, 0, 10, 5, t, null);
-//		Step s6 = new Step("step_varrados_6", "step", 42.7387275218083,
-//				0.75543345889914, 0, 10, 6, t, null);
-//		Step s7 = new Step("step_varrados_7", "step", 42.7389301803697,
-//				0.75520625172494, 0, 10, 7, t, null);
-//		Step s8 = new Step("step_varrados_8", "step", 42.7390577960882,
-//				0.754986638180492, 0, 10, 8, t, null);
-//		Step s9 = new Step("step_varrados_9", "step", 42.739123404994,
-//				0.75477353774358, 0, 10, 9, t, null);
-//		Step s10 = new Step("step_varrados_10", "step", 42.7391872427623,
-//				0.754584933557306, 0, 10, 10, t, null);
-//		Step s11 = new Step("step_varrados_11", "step", 42.7393061238921,
-//				0.754333259697102, 0, 10, 11, t, null);
-//		Step s12 = new Step("step_varrados_12", "step", 42.739429888622,
-//				0.754215789236744, 0, 10, 12, t, null);
-//		Step s13 = new Step("step_varrados_13", "step", 42.7395440216613,
-//				0.75418112712893, 0, 10, 13, t, null);
-//		Step s14 = new Step("step_varrados_14", "step", 42.7396849364974,
-//				0.754249337910437, 0, 10, 14, t, null);
-//		Step s15 = new Step("step_varrados_15", "step", 42.7397723388377,
-//				0.754343914076339, 0, 10, 15, t, null);
-//		Step s16 = new Step("step_varrados_16", "step", 42.7398897647497,
-//				0.754477110227804, 0, 10, 16, t, null);
-//		Step s17 = new Step("step_varrados_17", "step", 42.740048641912,
-//				0.754657676638004, 0, 10, 17, t, null);
-//		Step s18 = new Step("step_varrados_18", "step", 42.740191292433,
-//				0.754814396543274, 0, 10, 18, t, null);
-//		Step s19 = new Step("step_varrados_19", "step", 42.7403250638875,
-//				0.754977545954112, 0, 10, 19, t, null);
-//		Step s20 = new Step("step_varrados_20", "step", 42.7404709212418,
-//				0.755183018056262, 0, 10, 20, t, null);
-//		Step s21 = new Step("step_varrados_21", "step", 42.7405656702552,
-//				0.755307873171522, 0, 10, 21, t, null);
-//		Step s22 = new Step("step_varrados_22", "step", 42.7406837289709,
-//				0.755358587391483, 0, 10, 22, t, null);
-//		Step s23 = new Step("step_varrados_23", "step", 42.7408236258214,
-//				0.75537491773891, 0, 10, 23, t, null);
-//		Step s24 = new Step("step_varrados_24", "step", 42.7410625423447,
-//				0.755274669604904, 0, 10, 24, t, null);
-//		Step s25 = new Step("step_varrados_25", "step", 42.7411279615596,
-//				0.755281471079679, 0, 10, 25, t, null);
-//		Step s26 = new Step("step_varrados_26", "step", 42.7412210592842,
-//				0.755436929171511, 0, 10, 26, t, null);
-//		Step s27 = new Step("step_varrados_27", "step", 42.7412863831568,
-//				0.755553685416148, 0, 10, 27, t, null);
-//		Step s28 = new Step("step_varrados_28", "step", 42.7413736049802,
-//				0.755639109671303, 0, 10, 28, t, null);
-//		Step s29 = new Step("step_varrados_29", "step", 42.7414603480529,
-//				0.755700117780109, 0, 10, 29, t, null);
-//		Step s30 = new Step("step_varrados_30", "step", 42.741561821396,
-//				0.755708672913028, 0, 10, 30, t, null);
-//		Step s31 = new Step("step_varrados_31", "step", 42.7416787430638,
-//				0.755701399518536, 0, 10, 31, t, null);
-//		Step s32 = new Step("step_varrados_32", "step", 42.7419855680362,
-//				0.75562008009342, 0, 10, 32, t, null);
-//		Step s33 = new Step("step_varrados_33", "step", 42.7420815846475,
-//				0.755579964247571, 0, 10, 33, t, null);
-//		Step s34 = new Step("step_varrados_34", "step", 42.7422038788581,
-//				0.75550224901752, 0, 10, 34, t, null);
-//		Step s35 = new Step("step_varrados_35", "step", 42.7422642601805,
-//				0.755481744401051, 0, 10, 35, t, null);
-//		Step s36 = new Step("step_varrados_36", "step", 42.742362945284,
-//				0.755462911595888, 0, 10, 36, t, null);
-//		Step s37 = new Step("step_varrados_37", "step", 42.7424890450155,
-//				0.755464469111663, 0, 10, 37, t, null);
-//		Step s38 = new Step("step_varrados_38", "step", 42.7426111840525,
-//				0.755493657939936, 0, 10, 38, t, null);
-//		Step s39 = new Step("step_varrados_39", "step", 42.7427383609523,
-//				0.755550153486482, 0, 10, 39, t, null);
-//		Step s40 = new Step("step_varrados_40", "step", 42.7429564211789,
-//				0.755649183596262, 0, 10, 40, t, null);
-//		Step s41 = new Step("step_varrados_41", "step", 42.7431292491026,
-//				0.755737629499467, 0, 10, 41, t, null);
-//		Step s42 = new Step("step_varrados_42", "step", 42.7434116155677,
-//				0.755901534968657, 0, 10, 42, t, null);
-//		Step s43 = new Step("step_varrados_43", "step", 42.7435390316137,
-//				0.755970240617789, 0, 10, 43, t, null);
-//		Step s44 = new Step("step_varrados_44", "step", 42.7436458418437,
-//				0.756021364163949, 0, 10, 44, t, null);
-//		Step s45 = new Step("step_varrados_45", "step", 42.7437615309703,
-//				0.75606605886636, 0, 10, 45, t, null);
-//		Step s46 = new Step("step_varrados_46", "step", 42.7438820185107,
-//				0.75612585222186, 0, 10, 46, t, null);
-//		Step s47 = new Step("step_varrados_47", "step", 42.7439435964877,
-//				0.756166390995714, 0, 10, 47, t, null);
-//		Step s48 = new Step("step_varrados_48", "step", 42.7439720878703,
-//				0.756241721264142, 0, 10, 48, t, null);
-//		Step s49 = new Step("step_varrados_49", "step", 42.7439557295304,
-//				0.75644084291647, 0, 10, 49, t, null);
-//		Step s50 = new Step("step_varrados_50", "step", 42.743939453899,
-//				0.75675908032097, 0, 10, 50, t, null);
-//		Step s51 = new Step("step_varrados_51", "step", 42.7439753149419,
-//				0.756980752920395, 0, 10, 51, t, null);
-//		Step s52 = new Step("step_varrados_52", "step", 42.7440554735923,
-//				0.757280240916633, 0, 10, 52, t, null);
-//		Step s53 = new Step("step_varrados_53", "step", 42.7441347346219,
-//				0.757533946969081, 0, 10, 53, t, null);
-//		Step s54 = new Step("step_varrados_54", "step", 42.7442814468155,
-//				0.757898232502361, 0, 10, 54, t, null);
-//		Step s55 = new Step("step_varrados_55", "step", 42.7444711021119,
-//				0.758386200317835, 0, 10, 55, t, null);
-//		Step s56 = new Step("step_varrados_56", "step", 42.7446727804482,
-//				0.758913444563633, 0, 10, 56, t, null);
-//		Step s57 = new Step("step_varrados_57", "step", 42.7447430782772,
-//				0.759054466531015, 0, 10, 57, t, null);
-//		Step s58 = new Step("step_varrados_58", "step", 42.7449231514533,
-//				0.759283164566515, 0, 10, 58, t, null);
-//		Step s59 = new Step("step_varrados_59", "step", 42.7450726644815,
-//				0.759445768470534, 0, 10, 59, t, null);
-//		Step s60 = new Step("step_varrados_60", "step", 42.7452566985989,
-//				0.759646836570152, 0, 10, 60, t, null);
-//		Step s61 = new Step("step_varrados_61", "step", 42.7453681261012,
-//				0.75970391019452, 0, 10, 61, t, null);
-//		Step s62 = new Step("step_varrados_62", "step", 42.7455816038119,
-//				0.759684001783452, 0, 10, 62, t, null);
-//		Step s63 = new Step("step_varrados_63", "step", 42.7459327879692,
-//				0.759683567446753, 0, 10, 63, t, null);
-//		Step s64 = new Step("step_varrados_64", "step", 42.7460227739183,
-//				0.75968032552045, 0, 10, 64, t, null);
-//		Step s65 = new Step("step_varrados_65", "step", 42.7461186725003,
-//				0.759634108447249, 0, 10, 65, t, null);
-//		Step s66 = new Step("step_varrados_66", "step", 42.7463572940286,
-//				0.759518605644059, 0, 10, 66, t, null);
-//		Step s67 = new Step("step_varrados_67", "step", 42.74657797797,
-//				0.759406802706668, 0, 10, 67, t, null);
-//		Step s68 = new Step("step_varrados_68", "step", 42.7467401916037,
-//				0.759413175635029, 0, 10, 68, t, null);
-//		Step s69 = new Step("step_varrados_69", "step", 42.7468969706313,
-//				0.759486942852562, 0, 10, 69, t, h1);
-//		Step s70 = new Step("step_varrados_70", "step", 42.747036469306,
-//				0.759597986826308, 0, 10, 70, t, null);
-//		Step s71 = new Step("step_varrados_71", "step", 42.7471890081756,
-//				0.759800196157452, 0, 10, 71, t, h2);
-//		Step s72 = new Step("step_varrados_72", "step", 42.747327212606,
-//				0.759960159897268, 0, 10, 72, t, null);
-//		Step s73 = new Step("step_varrados_73", "step", 42.7476661929537,
-//				0.760256454091534, 0, 10, 73, t, h3);
-//		Step s74 = new Step("step_varrados_74", "step", 42.7479424212676,
-//				0.760567229599749, 0, 10, 74, t, null);
-//		Step s75 = new Step("step_varrados_75", "step", 42.7481755472055,
-//				0.760861232737148, 0, 10, 75, t, null);
-//		Step s76 = new Step("step_varrados_76", "step", 42.7483711855274,
-//				0.761080224144762, 0, 10, 76, t, null);
-//		Step s77 = new Step("step_varrados_77", "step", 42.7485230055718,
-//				0.761245812555204, 0, 10, 77, t, null);
-//		Step s78 = new Step("step_varrados_78", "step", 42.7487707433078,
-//				0.76148125808793, 0, 10, 78, t, null);
-//		Step s79 = new Step("step_varrados_79", "step", 42.749038429023,
-//				0.761700714465977, 0, 10, 79, t, null);
-//		Step s80 = new Step("step_varrados_80", "step", 42.7492717727853,
-//				0.761890862911023, 0, 10, 80, t, null);
-//		Step s81 = new Step("step_varrados_81", "step", 42.74953768552,
-//				0.762134823395086, 0, 10, 81, t, null);
-//		Step s82 = new Step("step_varrados_82", "step", 42.749681382754,
-//				0.762230453630847, 0, 10, 82, t, null);
-//		Step s83 = new Step("step_varrados_83", "step", 42.7497627282271,
-//				0.762245853644363, 0, 10, 83, t, null);
-//		Step s84 = new Step("step_varrados_84", "step", 42.7502153078581,
-//				0.762134871069054, 0, 10, 84, t, null);
-//		Step s85 = new Step("step_varrados_85", "step", 42.7505426826927,
-//				0.762068104013806, 0, 10, 85, t, null);
-//		Step s86 = new Step("step_varrados_86", "step", 42.7507069487103,
-//				0.761949168806979, 0, 10, 86, t, null);
-//		Step s87 = new Step("step_varrados_87", "step", 42.7509331120053,
-//				0.761656942989657, 0, 10, 87, t, null);
-//		Step s88 = new Step("step_varrados_88", "step", 42.7511008620675,
-//				0.76148595087081, 0, 10, 88, t, null);
-//		Step s89 = new Step("step_varrados_89", "step", 42.7511500558878,
-//				0.761468906248276, 0, 10, 89, t, null);
-//		Step s90 = new Step("step_varrados_90", "step", 42.7512591135396,
-//				0.761519964057411, 0, 10, 90, t, null);
-//		Step s91 = new Step("step_varrados_91", "step", 42.7513829822585,
-//				0.761637692102152, 0, 10, 91, t, null);
-//		Step s92 = new Step("step_varrados_92", "step", 42.7514506096208,
-//				0.761757445328808, 0, 10, 92, t, null);
-//		Step s93 = new Step("step_varrados_93", "step", 42.7514653792315,
-//				0.761937140924976, 0, 10, 93, t, null);
-//		Step s94 = new Step("step_varrados_94", "step", 42.7514643413329,
-//				0.762114350895788, 0, 10, 94, t, null);
-//		Step s95 = new Step("step_varrados_95", "step", 42.751479510159,
-//				0.762199336522364, 0, 10, 95, t, null);
-//		Step s96 = new Step("step_varrados_96", "step", 42.751500532778,
-//				0.762238290970709, 0, 10, 96, t, null);
-//		Step s97 = new Step("step_varrados_97", "step", 42.7517885237434,
-//				0.762460083703489, 0, 10, 97, t, null);
-//		Step s98 = new Step("step_varrados_98", "step", 42.7521843606319,
-//				0.762555808010364, 0, 10, 98, t, null);
-//		Step s99 = new Step("step_varrados_99", "step", 42.7526276787626,
-//				0.762662043724061, 0, 10, 99, t, null);
-//		Step s100 = new Step("step_varrados_100", "step", 42.7528913230436,
-//				0.762790020442354, 0, 10, 100, t, null);
-//		Step s101 = new Step("step_varrados_101", "step", 42.7529558047571,
-//				0.762864069358013, 0, 10, 101, t, null);
-//		Step s102 = new Step("step_varrados_102", "step", 42.7530386588023,
-//				0.763071867544895, 0, 10, 102, t, null);
-//		Step s103 = new Step("step_varrados_103", "step", 42.753135427923,
-//				0.763300549123155, 0, 10, 103, t, null);
-//		Step s104 = new Step("step_varrados_104", "step", 42.7533702502195,
-//				0.763912223893644, 0, 10, 104, t, null);
-//		Step s105 = new Step("step_varrados_105", "step", 42.7535246463691,
-//				0.764325178362552, 0, 10, 105, t, null);
-//		Step s106 = new Step("step_varrados_106", "step", 42.7535756888368,
-//				0.764402767694741, 0, 10, 106, t, null);
-//		Step s107 = new Step("step_varrados_107", "step", 42.753691033083,
-//				0.764545250715059, 0, 10, 107, t, null);
-//		Step s108 = new Step("step_varrados_108", "step", 42.7537557521663,
-//				0.764631513096752, 0, 10, 108, t, null);
-//		Step s109 = new Step("step_varrados_109", "step", 42.7538785757878,
-//				0.764926468990585, 0, 10, 109, t, null);
-//		Step s110 = new Step("step_varrados_110", "step", 42.7539184443863,
-//				0.765123598999281, 0, 10, 110, t, null);
-//		Step s111 = new Step("step_varrados_111", "step", 42.7539755345091,
-//				0.76574167595968, 0, 10, 111, t, null);
-//		Step s112 = new Step("step_varrados_112", "step", 42.7540442897697,
-//				0.765919439754413, 0, 10, 112, t, null);
-//		Step s113 = new Step("step_varrados_113", "step", 42.7542209371614,
-//				0.766319384829133, 0, 10, 113, t, null);
-//		Step s114 = new Step("step_varrados_114", "step", 42.7542981082615,
-//				0.766582383125749, 0, 10, 114, t, null);
-//		Step s115 = new Step("step_varrados_115", "step", 42.7544202852444,
-//				0.766959849520706, 0, 10, 115, t, null);
-//		Step s116 = new Step("step_varrados_116", "step", 42.754481111863,
-//				0.767192887996512, 0, 10, 116, t, null);
-//		Step s117 = new Step("step_varrados_117", "step", 42.7545744325407,
-//				0.767360608028847, 0, 10, 117, t, null);
-//		Step s118 = new Step("step_varrados_118", "step", 42.7546382097549,
-//				0.76751411522955, 0, 10, 118, t, null);
-//		Step s119 = new Step("step_varrados_119", "step", 42.7546581716781,
-//				0.767614208679179, 0, 10, 119, t, null);
-//		Step s120 = new Step("step_varrados_120", "step", 42.7546895379153,
-//				0.768068256413764, 0, 10, 120, t, null);
-//		Step s121 = new Step("step_varrados_121", "step", 42.7547481601841,
-//				0.768188346202553, 0, 10, 121, t, null);
-//		Step s122 = new Step("step_varrados_122", "step", 42.754847097637,
-//				0.768297824325534, 0, 10, 122, t, null);
-//		Step s123 = new Step("step_varrados_123", "step", 42.7549181463831,
-//				0.768362480869417, 0, 10, 123, t, null);
-//		Step s124 = new Step("step_varrados_124", "step", 42.7550295699245,
-//				0.768419578444533, 0, 10, 124, t, null);
-//		Step s125 = new Step("step_varrados_125", "step", 42.7551932711892,
-//				0.768502293561864, 0, 10, 125, t, null);
-//		Step s126 = new Step("step_varrados_126", "step", 42.7553150503093,
-//				0.768513196537709, 0, 10, 126, t, null);
-//		Step s127 = new Step("step_varrados_127", "step", 42.7554209627955,
-//				0.768518559312707, 0, 10, 127, t, null);
-//		Step s128 = new Step("step_varrados_128", "step", 42.7555430989728,
-//				0.768547778935622, 0, 10, 128, t, null);
-//		Step s129 = new Step("step_varrados_129", "step", 42.7556046728885,
-//				0.768588337320896, 0, 10, 129, t, null);
-//		Step s130 = new Step("step_varrados_130", "step", 42.7559637829239,
-//				0.76911005812229, 0, 10, 130, t, null);
-//		Step s131 = new Step("step_varrados_131", "step", 42.7560535424418,
-//				0.769210704360424, 0, 10, 131, t, null);
-//		Step s132 = new Step("step_varrados_132", "step", 42.7564021534368,
-//				0.769540347636323, 0, 10, 132, t, null);
-//		Step s133 = new Step("step_varrados_133", "step", 42.7566178551696,
-//				0.769865597988014, 0, 10, 133, t, null);
-//		Step s134 = new Step("step_varrados_134", "step", 42.7568472323883,
-//				0.770199524911563, 0, 10, 134, t, null);
-//		Step s135 = new Step("step_varrados_135", "step", 42.7569401326287,
-//				0.770345886014687, 0, 10, 135, t, null);
-//		Step s136 = new Step("step_varrados_136", "step", 42.7570445976575,
-//				0.770739285821348, 0, 10, 136, t, null);
-//		Step s137 = new Step("step_varrados_137", "step", 42.7571397060557,
-//				0.771114692565971, 0, 10, 137, t, null);
-//		Step s138 = new Step("step_varrados_138", "step", 42.7571915168515,
-//				0.771231979134727, 0, 10, 138, t, null);
-//		Step s139 = new Step("step_varrados_139", "step", 42.7574324357169,
-//				0.771580775333147, 0, 10, 139, t, null);
-//		Step s140 = new Step("step_varrados_140", "step", 42.7577189410492,
-//				0.771958490269943, 0, 10, 140, t, null);
-//		Step s141 = new Step("step_varrados_141", "step", 42.7579290592865,
-//				0.772112874764003, 0, 10, 141, t, null);
-//		Step s142 = new Step("step_varrados_142", "step", 42.7582271677281,
-//				0.772508509486808, 0, 10, 142, t, null);
-//		Step s143 = new Step("step_varrados_143", "step", 42.7583792692447,
-//				0.772689416328076, 0, 10, 143, t, null);
-//		Step s144 = new Step("step_varrados_144", "step", 42.7587124570898,
-//				0.772689697257636, 0, 10, 144, t, null);
-//		Step s145 = new Step("step_varrados_145", "step", 42.7595605802226,
-//				0.772659305239216, 0, 10, 145, t, null);
-//		Step s146 = new Step("step_varrados_146", "step", 42.7596410928572,
-//				0.772631979211767, 0, 10, 146, t, null);
-//		Step s147 = new Step("step_varrados_147", "step", 42.7597778392118,
-//				0.772486543683098, 0, 10, 147, t, null);
-//		Step s148 = new Step("step_varrados_148", "step", 42.7598213471987,
-//				0.772408606604344, 0, 10, 148, t, null);
-//		Step s149 = new Step("step_varrados_149", "step", 42.7598019834022,
-//				0.772339033016901, 0, 10, 149, t, null);
-//		Step s150 = new Step("step_varrados_150", "step", 42.7597439593895,
-//				0.772249459358015, 0, 10, 150, t, null);
-//		Step s151 = new Step("step_varrados_151", "step", 42.7596656289292,
-//				0.772157558611538, 0, 10, 151, t, null);
-//		Step s152 = new Step("step_varrados_152", "step", 42.7596456113578,
-//				0.772054402562493, 0, 10, 152, t, null);
-//		Step s153 = new Step("step_varrados_153", "step", 42.7596797638585,
-//				0.771958470076934, 0, 10, 153, t, null);
-//		Step s154 = new Step("step_varrados_154", "step", 42.7597625853888,
-//				0.771934115425259, 0, 10, 154, t, null);
-//		Step s155 = new Step("step_varrados_155", "step", 42.7600838878753,
-//				0.772133401236853, 0, 10, 155, t, null);
-//		Step s156 = new Step("step_varrados_156", "step", 42.7602687249133,
-//				0.772261201782552, 0, 10, 156, t, null);
-//		Step s157 = new Step("step_varrados_157", "step", 42.7603561727838,
-//				0.772358887021055, 0, 10, 157, t, null);
-//		Step s158 = new Step("step_varrados_158", "step", 42.7604719829671,
-//				0.772525824371773, 0, 10, 158, t, null);
-//		Step s159 = new Step("step_varrados_159", "step", 42.7605595571756,
-//				0.77274571174046, 0, 10, 159, t, null);
-//		Step s160 = new Step("step_varrados_160", "step", 42.7606217831478,
-//				0.772819860675776, 0, 10, 160, t, null);
-//		Step s161 = new Step("step_varrados_161", "step", 42.7606716915476,
-//				0.772839458341983, 0, 10, 161, t, h4);
-//		Step s162 = new Step("step_varrados_162", "step", 42.7607446829809,
-//				0.772772684453635, 0, 10, 162, t, null);
-//		Step s163 = new Step("step_varrados_163", "step", 42.760756933473,
-//				0.772708087116996, 0, 10, 163, t, null);
-//		Step s164 = new Step("step_varrados_164", "step", 42.7607376292422,
-//				0.772641565422394, 0, 10, 164, t, null);
-//		Step s165 = new Step("step_varrados_165", "step", 42.7603905382039,
-//				0.771926880447086, 0, 10, 165, t, null);
-//		Step s166 = new Step("step_varrados_166", "step", 42.7603047453567,
-//				0.771798585068385, 0, 10, 166, t, null);
-//		Step s167 = new Step("step_varrados_167", "step", 42.7602498620383,
-//				0.771754725623485, 0, 10, 167, t, null);
-//		Step s168 = new Step("step_varrados_168", "step", 42.7601538310517,
-//				0.771678735027784, 0, 10, 168, t, null);
-//		Step s169 = new Step("step_varrados_169", "step", 42.7600739636824,
-//				0.77162355102629, 0, 10, 169, t, null);
-//		Step s170 = new Step("step_varrados_170", "step", 42.760052409182,
-//				0.771557111075856, 0, 10, 170, t, null);
-//		Step s171 = new Step("step_varrados_171", "step", 42.7600939045971,
-//				0.77149146566253, 0, 10, 171, t, null);
-//		Step s172 = new Step("step_varrados_172", "step", 42.7601588475893,
-//				0.771473861499772, 0, 10, 172, t, null);
-//		Step s173 = new Step("step_varrados_173", "step", 42.7602248604431,
-//				0.771511211326118, 0, 10, 173, t, null);
-//		Step s174 = new Step("step_varrados_174", "step", 42.7602872060498,
-//				0.771591464615939, 0, 10, 174, t, null);
-//		Step s175 = new Step("step_varrados_175", "step", 42.7605267573268,
-//				0.771870059728542, 0, 10, 175, t, null);
-//		Step s176 = new Step("step_varrados_176", "step", 42.7606368804157,
-//				0.771976097409376, 0, 10, 176, t, null);
-//		Step s177 = new Step("step_varrados_177", "step", 42.7610436782296,
-//				0.77228841806596, 0, 10, 177, t, null);
-//		Step s178 = new Step("step_varrados_178", "step", 42.7611236047198,
-//				0.772346656792, 0, 10, 178, t, null);
-//		Step s179 = new Step("step_varrados_179", "step", 42.7612161973587,
-//				0.772361669148077, 0, 10, 179, t, null);
-//		Step s180 = new Step("step_varrados_180", "step", 42.761397239788,
-//				0.772410173607852, 0, 10, 180, t, null);
-//		Step s181 = new Step("step_varrados_181", "step", 42.7615382635752,
-//				0.772484554214866, 0, 10, 181, t, null);
-//		Step s182 = new Step("step_varrados_182", "step", 42.761789231599,
-//				0.772655816715317, 0, 10, 182, t, null);
-//		Step s183 = new Step("step_varrados_183", "step", 42.761980995318,
-//				0.772792539547549, 0, 10, 183, t, null);
-//		Step s184 = new Step("step_varrados_184", "step", 42.7620410904267,
-//				0.772872876971648, 0, 10, 184, t, null);
-//		Step s185 = new Step("step_varrados_185", "step", 42.7621153962517,
-//				0.772989368038823, 0, 10, 185, t, null);
-//		Step s186 = new Step("step_varrados_186", "step", 42.7621502103627,
-//				0.773043114638706, 0, 10, 186, t, null);
-//		Step s187 = new Step("step_varrados_187", "step", 42.7622989330848,
-//				0.773166105414332, 0, 10, 187, t, null);
-//		Step s188 = new Step("step_varrados_188", "step", 42.7623953195163,
-//				0.773260419505892, 0, 10, 188, t, null);
-//		Step s189 = new Step("step_varrados_189", "step", 42.7624878004409,
-//				0.773385426253887, 0, 10, 189, t, null);
-//		Step s190 = new Step("step_varrados_190", "step", 42.7628477080571,
-//				0.773717776272258, 0, 10, 190, t, null);
-//		Step s191 = new Step("step_varrados_191", "step", 42.7629283464177,
-//				0.773812656130906, 0, 10, 191, t, null);
-//		Step s192 = new Step("step_varrados_192", "step", 42.7632667655045,
-//				0.774197720325713, 0, 10, 192, t, null);
-//		Step s193 = new Step("step_varrados_193", "step", 42.7634606052285,
-//				0.774441311881087, 0, 10, 193, t, null);
-//		Step s194 = new Step("step_varrados_194", "step", 42.7635478139394,
-//				0.774526792411825, 0, 10, 194, t, null);
-//		Step s195 = new Step("step_varrados_195", "step", 42.7636552695726,
-//				0.774611548157717, 0, 10, 195, t, null);
-//		Step s196 = new Step("step_varrados_196", "step", 42.7638595852204,
-//				0.774815048332683, 0, 10, 196, t, null);
-//		Step s197 = new Step("step_varrados_197", "step", 42.7639797133597,
-//				0.774972678880803, 0, 10, 197, t, null);
-//		Step s198 = new Step("step_varrados_198", "step", 42.7640208008094,
-//				0.775001761005139, 0, 10, 198, t, null);
-//		Step s199 = new Step("step_varrados_199", "step", 42.7640769237418,
-//				0.77499364098131, 0, 10, 199, t, null);
-//		Step s200 = new Step("step_varrados_200", "step", 42.7642493170693,
-//				0.774944694064014, 0, 10, 200, t, null);
-//		Step s201 = new Step("step_varrados_201", "step", 42.7646610057363,
-//				0.774929953679766, 0, 10, 201, t, null);
-//		Step s202 = new Step("step_varrados_202", "step", 42.7650362305595,
-//				0.7750081797042, 0, 10, 202, t, null);
-//		Step s203 = new Step("step_varrados_203", "step", 42.765272504699,
-//				0.77500277540988, 0, 10, 203, t, null);
-//		Step s204 = new Step("step_varrados_204", "step", 42.7655574461424,
-//				0.775068957997575, 0, 10, 204, t, null);
-//		Step s205 = new Step("step_varrados_205", "step", 42.7657437583774,
-//				0.775157004804499, 0, 10, 205, t, null);
-//		Step s206 = new Step("step_varrados_206", "step", 42.7658942539437,
-//				0.775255500646277, 0, 10, 206, t, null);
-//		Step s207 = new Step("step_varrados_207", "step", 42.7660227868425,
-//				0.775382281981833, 0, 10, 207, t, null);
-//		Step s208 = new Step("step_varrados_208", "step", 42.7662211236189,
-//				0.775625726727916, 0, 10, 208, t, null);
-//		Step s209 = new Step("step_varrados_209", "step", 42.7665279231475,
-//				0.776005841290113, 0, 10, 209, t, null);
-//		Step s210 = new Step("step_varrados_210", "step", 42.7665668793399,
-//				0.7760411123908, 0, 10, 210, t, null);
-//		Step s211 = new Step("step_varrados_211", "step", 42.7666280948921,
-//				0.776063365098574, 0, 10, 211, t, null);
-//		Step s212 = new Step("step_varrados_212", "step", 42.7667326473006,
-//				0.776114621401144, 0, 10, 212, t, null);
-//		Step s213 = new Step("step_varrados_213", "step", 42.7667787083775,
-//				0.776167971147485, 0, 10, 213, t, null);
-//		Step s214 = new Step("step_varrados_214", "step", 42.7668495201174,
-//				0.776336542683346, 0, 10, 214, t, null);
-//		Step s215 = new Step("step_varrados_215", "step", 42.7669604145338,
-//				0.77659839975816, 0, 10, 215, t, null);
-//		Step s216 = new Step("step_varrados_216", "step", 42.7671055239619,
-//				0.776767369484479, 0, 10, 216, t, null);
-//		Step s217 = new Step("step_varrados_217", "step", 42.7672397999147,
-//				0.776958115918646, 0, 10, 217, t, null);
-//		Step s218 = new Step("step_varrados_218", "step", 42.7673232191108,
-//				0.777080406340934, 0, 10, 218, t, null);
-//		Step s219 = new Step("step_varrados_219", "step", 42.767391720599,
-//				0.777246007532521, 0, 10, 219, t, null);
-//		Step s220 = new Step("step_varrados_220", "step", 42.7674849089098,
-//				0.777407670583029, 0, 10, 220, t, null);
-//		Step s221 = new Step("step_varrados_221", "step", 42.7675865621227,
-//				0.777541531892306, 0, 10, 221, t, null);
-//		Step s222 = new Step("step_varrados_222", "step", 42.7677120130381,
-//				0.777625654480976, 0, 10, 222, t, null);
-//		Step s223 = new Step("step_varrados_223", "step", 42.7677538705123,
-//				0.77769443402618, 0, 10, 223, t, null);
-//		Step s224 = new Step("step_varrados_224", "step", 42.7677655959675,
-//				0.777834567897921, 0, 10, 224, t, null);
-//		Step s225 = new Step("step_varrados_225", "step", 42.767758790453,
-//				0.777947864948048, 0, 10, 225, t, null);
-//		Step s226 = new Step("step_varrados_226", "step", 42.7677856138515,
-//				0.778169957667498, 0, 10, 226, t, null);
-//		Step s227 = new Step("step_varrados_227", "step", 42.7678371808608,
-//				0.778275056591699, 0, 10, 227, t, null);
-//		Step s228 = new Step("step_varrados_228", "step", 42.768017986335,
-//				0.778427478737412, 0, 10, 228, t, null);
-//		Step s229 = new Step("step_varrados_229", "step", 42.7680708546537,
-//				0.778483643417834, 0, 10, 229, t, null);
-//		Step s230 = new Step("step_varrados_230", "step", 42.7680949513088,
-//				0.778565280984924, 0, 10, 230, t, null);
-//		Step s231 = new Step("step_varrados_231", "step", 42.7680815145833,
-//				0.778684926662358, 0, 10, 231, t, null);
-//		Step s232 = new Step("step_varrados_232", "step", 42.7680753599909,
-//				0.778831811657673, 0, 10, 232, t, null);
-//		Step s233 = new Step("step_varrados_233", "step", 42.7681096992619,
-//				0.778977249205644, 0, 10, 233, t, null);
-//		Step s234 = new Step("step_varrados_234", "step", 42.7683920392395,
-//				0.779489653769941, 0, 10, 234, t, null);
-//		Step s235 = new Step("step_varrados_235", "step", 42.7685119845966,
-//				0.779754255045796, 0, 10, 235, t, null);
-//		Step s236 = new Step("step_varrados_236", "step", 42.7685468549303,
-//				0.779811064381669, 0, 10, 236, t, null);
-//		Step s237 = new Step("step_varrados_237", "step", 42.7686619442598,
-//				0.779941396248993, 0, 10, 237, t, null);
-//		Step s238 = new Step("step_varrados_238", "step", 42.7687569048455,
-//				0.780078558847235, 0, 10, 238, t, null);
-//		Step s239 = new Step("step_varrados_239", "step", 42.7688637649775,
-//				0.78024890789966, 0, 10, 239, t, null);
-//		Step s240 = new Step("step_varrados_240", "step", 42.7689422077848,
-//				0.780346939138516, 0, 10, 240, t, null);
-//		Step s241 = new Step("step_varrados_241", "step", 42.7690013505496,
-//				0.780378437595495, 0, 10, 241, t, null);
-//		Step s242 = new Step("step_varrados_242", "step", 42.769061262732,
-//				0.780333519396677, 0, 10, 242, t, null);
-//		Step s243 = new Step("step_varrados_243", "step", 42.7693990671012,
-//				0.779991448464035, 0, 10, 243, t, null);
-//		Step s244 = new Step("step_varrados_244", "step", 42.7694668533206,
-//				0.780004304438475, 0, 10, 244, t, null);
-//		Step s245 = new Step("step_varrados_245", "step", 42.7695695097605,
-//				0.780073970838153, 0, 10, 245, t, null);
-//		Step s246 = new Step("step_varrados_246", "step", 42.7698425499342,
-//				0.780339220171129, 0, 10, 246, t, null);
-//		Step s247 = new Step("step_varrados_247", "step", 42.7699163749288,
-//				0.780431306757887, 0, 10, 247, t, null);
-//		Step s248 = new Step("step_varrados_248", "step", 42.7701068868257,
-//				0.780852287950365, 0, 10, 248, t, null);
-//		Step s249 = new Step("step_varrados_249", "step", 42.7701571491725,
-//				0.780890215853949, 0, 10, 249, t, null);
-//		Step s250 = new Step("step_varrados_250", "step", 42.7703227367254,
-//				0.780954581231887, 0, 10, 250, t, null);
-//		Step s251 = new Step("step_varrados_251", "step", 42.7704013568431,
-//				0.780945662028552, 0, 10, 251, t, null);
-//		Step s252 = new Step("step_varrados_252", "step", 42.7704693207432,
-//				0.780851565512661, 0, 10, 252, t, null);
-//		Step s253 = new Step("step_varrados_253", "step", 42.7706099252481,
-//				0.780672371738157, 0, 10, 253, t, null);
-//		Step s254 = new Step("step_varrados_254", "step", 42.7707850442175,
-//				0.780531667677621, 0, 10, 254, t, null);
-//		Step s255 = new Step("step_varrados_255", "step", 42.7709011981865,
-//				0.780484739116719, 0, 10, 255, t, null);
-//		Step s256 = new Step("step_varrados_256", "step", 42.7709602817121,
-//				0.780513185074354, 0, 10, 256, t, h5);
-//		Step s257 = new Step("step_varrados_257", "step", 42.7710402044645,
-//				0.780687558647637, 0, 10, 257, t, null);
-//		Step s258 = new Step("step_varrados_258", "step", 42.7711005311031,
-//				0.780896244959194, 0, 10, 258, t, null);
-//		Step s259 = new Step("step_varrados_259", "step", 42.7711330326064,
-//				0.781063146018213, 0, 10, 259, t, null);
-//		Step s260 = new Step("step_varrados_260", "step", 42.7711444581665,
-//				0.781188020505514, 0, 10, 260, t, null);
-//		Step s261 = new Step("step_varrados_261", "step", 42.7711932993862,
-//				0.781268779470774, 0, 10, 261, t, null);
-//		Step s262 = new Step("step_varrados_262", "step", 42.7715084889457,
-//				0.781501978779148, 0, 10, 262, t, null);
-//		Step s263 = new Step("step_varrados_263", "step", 42.7717193646634,
-//				0.781696125045084, 0, 10, 263, t, null);
-//		Step s264 = new Step("step_varrados_264", "step", 42.7719079208662,
-//				0.781900236583173, 0, 10, 264, t, null);
-//		Step s265 = new Step("step_varrados_265", "step", 42.7720532596065,
-//				0.782081446416839, 0, 10, 265, t, null);
-//		Step s266 = new Step("step_varrados_266", "step", 42.7721322926163,
-//				0.78221002098729, 0, 10, 266, t, null);
-//		Step s267 = new Step("step_varrados_267", "step", 42.7721173125004,
-//				0.782366397449931, 0, 10, 267, t, null);
-//		Step s268 = new Step("step_varrados_268", "step", 42.772056569669,
-//				0.782484682882959, 0, 10, 268, t, null);
-//		Step s269 = new Step("step_varrados_269", "step", 42.7720215213924,
-//				0.782534825291184, 0, 10, 269, t, null);
-//		Step s270 = new Step("step_varrados_270", "step", 42.772005472112,
-//				0.782868470995283, 0, 10, 270, t, null);
-//		Step s271 = new Step("step_varrados_271", "step", 42.7719688837229,
-//				0.782955336657463, 0, 10, 271, t, null);
-//		Step s272 = new Step("step_varrados_272", "step", 42.7719392217131,
-//				0.783051122192925, 0, 10, 272, t, null);
-//		Step s273 = new Step("step_varrados_273", "step", 42.7719323520595,
-//				0.783161372918805, 0, 10, 273, t, null);
-//		Step s274 = new Step("step_varrados_274", "step", 42.7719548463403,
-//				0.783276687344823, 0, 10, 274, t, null);
-//		Step s275 = new Step("step_varrados_275", "step", 42.7719606466529,
-//				0.783343706062897, 0, 10, 275, t, null);
-//		Step s276 = new Step("step_varrados_276", "step", 42.7719355341898,
-//				0.783790735871737, 0, 10, 276, t, null);
-//		Step s277 = new Step("step_varrados_277", "step", 42.7719468977012,
-//				0.783912558989395, 0, 10, 277, t, null);
-//		Step s278 = new Step("step_varrados_278", "step", 42.772053269037,
-//				0.784406846646409, 0, 10, 278, t, null);
-//		Step s279 = new Step("step_varrados_279", "step", 42.7721465067807,
-//				0.784571586318066, 0, 10, 279, t, null);
-//		Step s280 = new Step("step_varrados_280", "step", 42.7722994809059,
-//				0.78468224908333, 0, 10, 280, t, null);
-//		Step s281 = new Step("step_varrados_281", "step", 42.7723627633392,
-//				0.784811389076323, 0, 10, 281, t, null);
-//		Step s282 = new Step("step_varrados_282", "step", 42.7723706351623,
-//				0.784869167325226, 0, 10, 282, t, null);
-//		Step s283 = new Step("step_varrados_283", "step", 42.7722187667845,
-//				0.785280993585848, 0, 10, 283, t, null);
-//		Step s284 = new Step("step_varrados_284", "step", 42.7722602510573,
-//				0.785679815058983, 0, 10, 284, t, null);
-//		Step s285 = new Step("step_varrados_285", "step", 42.77226894431,
-//				0.785896461902821, 0, 10, 285, t, null);
-//		Step s286 = new Step("step_varrados_286", "step", 42.7722385012989,
-//				0.786184785117649, 0, 10, 286, t, null);
-//		Step s287 = new Step("step_varrados_287", "step", 42.7722444124397,
-//				0.786374029546798, 0, 10, 287, t, null);
-//		Step s288 = new Step("step_varrados_288", "step", 42.7722861467688,
-//				0.786436712848652, 0, 10, 288, t, null);
-//		Step s289 = new Step("step_varrados_289", "step", 42.7723881500038,
-//				0.786472803080377, 0, 10, 289, t, null);
-//		Step s290 = new Step("step_varrados_290", "step", 42.7725505993181,
-//				0.786491461116626, 0, 10, 290, t, null);
-//		Step s291 = new Step("step_varrados_291", "step", 42.7726745088285,
-//				0.786496213610886, 0, 10, 291, t, null);
-//		Step s292 = new Step("step_varrados_292", "step", 42.77276632653,
-//				0.786587670579065, 0, 10, 292, t, null);
-//		Step s293 = new Step("step_varrados_293", "step", 42.7727589220837,
-//				0.786670439689906, 0, 10, 293, t, null);
-//		Step s294 = new Step("step_varrados_294", "step", 42.7726405625359,
-//				0.786952729287422, 0, 10, 294, t, null);
-//		Step s295 = new Step("step_varrados_295", "step", 42.7726224407417,
-//				0.787063381650234, 0, 10, 295, t, null);
-//		Step s296 = new Step("step_varrados_296", "step", 42.7726454624363,
-//				0.78720618172146, 0, 10, 296, t, null);
-//		Step s297 = new Step("step_varrados_297", "step", 42.7727403556754,
-//				0.787340310683958, 0, 10, 297, t, null);
-//		Step s298 = new Step("step_varrados_298", "step", 42.772901138771,
-//				0.78750570684998, 0, 10, 298, t, null);
-//		Step s299 = new Step("step_varrados_299", "step", 42.7730201289373,
-//				0.787605365280818, 0, 10, 299, t, null);
-//		Step s300 = new Step("step_varrados_300", "step", 42.7730983886915,
-//				0.787694251412437, 0, 10, 300, t, null);
-//		Step s301 = new Step("step_varrados_301", "step", 42.7731337864082,
-//				0.787778552481707, 0, 10, 301, t, null);
-//		Step s302 = new Step("step_varrados_302", "step", 42.7731466210564,
-//				0.787976720603781, 0, 10, 302, t, null);
-//		Step s303 = new Step("step_varrados_303", "step", 42.7731926105193,
-//				0.788143150681533, 0, 10, 303, t, null);
-//		Step s304 = new Step("step_varrados_304", "step", 42.7732882697522,
-//				0.788316980081918, 0, 10, 304, t, null);
-//		Step s305 = new Step("step_varrados_305", "step", 42.7733150222966,
-//				0.788419924200438, 0, 10, 305, t, null);
-//		Step s306 = new Step("step_varrados_306", "step", 42.7733289846185,
-//				0.788559993067808, 0, 10, 306, t, null);
-//		Step s307 = new Step("step_varrados_307", "step", 42.7733189081683,
-//				0.788737586998799, 0, 10, 307, t, null);
-//		Step s308 = new Step("step_varrados_308", "step", 42.7734036130455,
-//				0.788927086462359, 0, 10, 308, t, null);
-//		Step s309 = new Step("step_varrados_309", "step", 42.7734861352461,
-//				0.789003599945369, 0, 10, 309, t, null);
-//		Step s310 = new Step("step_varrados_310", "step", 42.7735691798092,
-//				0.789223717285691, 0, 10, 310, t, null);
-//		Step s311 = new Step("step_varrados_311", "step", 42.7736667922672,
-//				0.789382200903272, 0, 10, 311, t, null);
-//		Step s312 = new Step("step_varrados_312", "step", 42.7737010682849,
-//				0.789408483432002, 0, 10, 312, t, null);
-//		Step s313 = new Step("step_varrados_313", "step", 42.7737637645438,
-//				0.789390973487553, 0, 10, 313, t, null);
-//		Step s314 = new Step("step_varrados_314", "step", 42.7738004757903,
-//				0.789310216269113, 0, 10, 314, t, null);
-//		Step s315 = new Step("step_varrados_315", "step", 42.7737921933188,
-//				0.789231060108237, 0, 10, 315, t, null);
-//		Step s316 = new Step("step_varrados_316", "step", 42.7737495250725,
-//				0.789003393399802, 0, 10, 316, t, null);
-//		Step s317 = new Step("step_varrados_317", "step", 42.7737050276235,
-//				0.788681062340284, 0, 10, 317, t, null);
-//		Step s318 = new Step("step_varrados_318", "step", 42.7736853937788,
-//				0.788363958198278, 0, 10, 318, t, null);
-//		Step s319 = new Step("step_varrados_319", "step", 42.7737102732768,
-//				0.788136943339402, 0, 10, 319, t, null);
-//		Step s320 = new Step("step_varrados_320", "step", 42.7736983240545,
-//				0.787984578840411, 0, 10, 320, t, null);
-//		Step s321 = new Step("step_varrados_321", "step", 42.7736309068664,
-//				0.787757794647661, 0, 10, 321, t, null);
-//		Step s322 = new Step("step_varrados_322", "step", 42.7736110276476,
-//				0.78754459693637, 0, 10, 322, t, null);
-//		Step s323 = new Step("step_varrados_323", "step", 42.7736647905904,
-//				0.787414338798607, 0, 10, 323, t, null);
-//		Step s324 = new Step("step_varrados_324", "step", 42.7736585794088,
-//				0.787325941909105, 0, 10, 324, t, null);
-//		Step s325 = new Step("step_varrados_325", "step", 42.7735971361554,
-//				0.787175340629432, 0, 10, 325, t, null);
-//		Step s326 = new Step("step_varrados_326", "step", 42.7735575991284,
-//				0.786993401400927, 0, 10, 326, t, null);
-//		Step s327 = new Step("step_varrados_327", "step", 42.7735796297565,
-//				0.786852050165476, 0, 10, 327, t, null);
-//		Step s328 = new Step("step_varrados_328", "step", 42.7737812918349,
-//				0.786453723354377, 0, 10, 328, t, null);
-//		Step s329 = new Step("step_varrados_329", "step", 42.7739331744788,
-//				0.78580964734589, 0, 10, 329, t, null);
-//		Step s330 = new Step("step_varrados_330", "step", 42.7739804226565,
-//				0.785691842487462, 0, 10, 330, t, null);
-//		Step s331 = new Step("step_varrados_331", "step", 42.774055789278,
-//				0.785631095658737, 0, 10, 331, t, null);
-//		Step s332 = new Step("step_varrados_332", "step", 42.774205158903,
-//				0.785555487504637, 0, 10, 332, t, null);
-//		Step s333 = new Step("step_varrados_333", "step", 42.774282538801,
-//				0.785482445203941, 0, 10, 333, t, null);
-//		Step s334 = new Step("step_varrados_334", "step", 42.7743652497013,
-//				0.785335872729122, 0, 10, 334, t, null);
-//		Step s335 = new Step("step_varrados_335", "step", 42.7744587907791,
-//				0.785283644648003, 0, 10, 335, t, null);
-//		Step s336 = new Step("step_varrados_336", "step", 42.7745181686376,
-//				0.785327365370258, 0, 10, 336, t, null);
-//		Step s337 = new Step("step_varrados_337", "step", 42.7745091062956,
-//				0.785440754454927, 0, 10, 337, t, null);
-//		Step s338 = new Step("step_varrados_338", "step", 42.7742088806118,
-//				0.785747871718166, 0, 10, 338, t, null);
-//		Step s339 = new Step("step_varrados_339", "step", 42.7741741853385,
-//				0.78581633643123, 0, 10, 339, t, null);
-//		Step s340 = new Step("step_varrados_340", "step", 42.7741578418535,
-//				0.785902481926288, 0, 10, 340, t, null);
-//		Step s341 = new Step("step_varrados_341", "step", 42.7741689669604,
-//				0.786012095000084, 0, 10, 341, t, null);
-//		Step s342 = new Step("step_varrados_342", "step", 42.774223184829,
-//				0.786254628694396, 0, 10, 342, t, null);
-//		Step s343 = new Step("step_varrados_343", "step", 42.7742624277895,
-//				0.78642130072574, 0, 10, 343, t, null);
-//		Step s344 = new Step("step_varrados_344", "step", 42.7742908886465,
-//				0.786728925199284, 0, 10, 344, t, null);
-//		Step s345 = new Step("step_varrados_345", "step", 42.7743243326311,
-//				0.786828576054762, 0, 10, 345, t, null);
-//		Step s346 = new Step("step_varrados_346", "step", 42.7744616160194,
-//				0.786942862856268, 0, 10, 346, t, null);
-//		Step s347 = new Step("step_varrados_347", "step", 42.7745782389225,
-//				0.787036495229018, 0, 10, 347, t, null);
-//		Step s348 = new Step("step_varrados_348", "step", 42.7747073434473,
-//				0.787309978382285, 0, 10, 348, t, null);
-//		Step s349 = new Step("step_varrados_349", "step", 42.7747712789664,
-//				0.787356594731871, 0, 10, 349, t, null);
-//		Step s350 = new Step("step_varrados_350", "step", 42.7748433867766,
-//				0.787360138133705, 0, 10, 350, t, null);
-//		Step s351 = new Step("step_varrados_351", "step", 42.7749077420277,
-//				0.787312008079561, 0, 10, 351, t, null);
-//		Step s352 = new Step("step_varrados_352", "step", 42.7750551646635,
-//				0.78713562863484, 0, 10, 352, t, null);
-//		Step s353 = new Step("step_varrados_353", "step", 42.7752270973085,
-//				0.786946151686652, 0, 10, 353, t, null);
-//		Step s354 = new Step("step_varrados_354", "step", 42.7753982560719,
-//				0.786833098297272, 0, 10, 354, t, null);
-//		Step s355 = new Step("step_varrados_355", "step", 42.7755748588154,
-//				0.786768744556797, 0, 10, 355, t, null);
-//		Step s356 = new Step("step_varrados_356", "step", 42.7757116758729,
-//				0.78674247873467, 0, 10, 356, t, null);
-//		Step s357 = new Step("step_varrados_357", "step", 42.775929304192,
-//				0.786704165811307, 0, 10, 357, t, null);
-//		Step s358 = new Step("step_varrados_358", "step", 42.7760093419832,
-//				0.786768544168538, 0, 10, 358, t, null);
-//		Step s359 = new Step("step_varrados_359", "step", 42.7760848743687,
-//				0.786949208013942, 0, 10, 359, t, null);
-//		Step s360 = new Step("step_varrados_360", "step", 42.776123585085,
-//				0.787088401140237, 0, 10, 360, t, null);
-//		Step s361 = new Step("step_varrados_361", "step", 42.7761455379176,
-//				0.78729236567939, 0, 10, 361, t, null);
-//		Step s362 = new Step("step_varrados_362", "step", 42.7761368802842,
-//				0.787543259398628, 0, 10, 362, t, null);
-//		Step s363 = new Step("step_varrados_363", "step", 42.7761109848788,
-//				0.78795061871718, 0, 10, 363, t, null);
-//		Step s364 = new Step("step_varrados_364", "step", 42.7761157721521,
-//				0.788081852706751, 0, 10, 364, t, null);
-//		Step s365 = new Step("step_varrados_365", "step", 42.7761569007831,
-//				0.788346253237913, 0, 10, 365, t, null);
-//		Step s366 = new Step("step_varrados_366", "step", 42.7762101109201,
-//				0.788536881891589, 0, 10, 366, t, null);
-//		Step s367 = new Step("step_varrados_367", "step", 42.7762664042055,
-//				0.788654058914006, 0, 10, 367, t, null);
-//		Step s368 = new Step("step_varrados_368", "step", 42.7763304331369,
-//				0.789055162130488, 0, 10, 368, t, null);
-//		Step s369 = new Step("step_varrados_369", "step", 42.7763601931836,
-//				0.789313856953321, 0, 10, 369, t, null);
-//		Step s370 = new Step("step_varrados_370", "step", 42.7763375022788,
-//				0.789537747285399, 0, 10, 370, t, null);
-//		Step s371 = new Step("step_varrados_371", "step", 42.7762995938565,
-//				0.789789682249797, 0, 10, 371, t, null);
-//		Step s372 = new Step("step_varrados_372", "step", 42.7763171106018,
-//				0.789880736837757, 0, 10, 372, t, null);
-//		Step s373 = new Step("step_varrados_373", "step", 42.7764144274862,
-//				0.79002395918295, 0, 10, 373, t, null);
-//		Step s374 = new Step("step_varrados_374", "step", 42.7764875965438,
-//				0.790082474797855, 0, 10, 374, t, null);
-//		Step s375 = new Step("step_varrados_375", "step", 42.7768229575291,
-//				0.790311964250921, 0, 10, 375, t, null);
-//		Step s376 = new Step("step_varrados_376", "step", 42.7769245964252,
-//				0.790445866800845, 0, 10, 376, t, null);
-//		Step s377 = new Step("step_varrados_377", "step", 42.77696596528,
-//				0.790606361171, 0, 10, 377, t, null);
-//		Step s378 = new Step("step_varrados_378", "step", 42.7769468871512,
-//				0.790784285368203, 0, 10, 378, t, null);
-//		Step s379 = new Step("step_varrados_379", "step", 42.7768710362069,
-//				0.790936724818772, 0, 10, 379, t, null);
-//		Step s380 = new Step("step_varrados_380", "step", 42.7767425583079,
-//				0.791045196065839, 0, 10, 380, t, null);
-//		Step s381 = new Step("step_varrados_381", "step", 42.7766790264956,
-//				0.791136077723212, 0, 10, 381, t, null);
-//		Step s382 = new Step("step_varrados_382", "step", 42.7766559300048,
-//				0.791222465467439, 0, 10, 382, t, null);
-//		Step s383 = new Step("step_varrados_383", "step", 42.7766588763478,
-//				0.791375157953404, 0, 10, 383, t, null);
-//		Step s384 = new Step("step_varrados_384", "step", 42.7766804573054,
-//				0.791676929304354, 0, 10, 384, t, null);
-//		Step s385 = new Step("step_varrados_385", "step", 42.7766754757159,
-//				0.791768784778536, 0, 10, 385, t, null);
-//		Step s386 = new Step("step_varrados_386", "step", 42.7766463366228,
-//				0.791892058417891, 0, 10, 386, t, null);
-//		Step s387 = new Step("step_varrados_387", "step", 42.7766338288034,
-//				0.792060579944958, 0, 10, 387, t, null);
-//		Step s388 = new Step("step_varrados_388", "step", 42.776650095438,
-//				0.792203631164066, 0, 10, 388, t, null);
-//		Step s389 = new Step("step_varrados_389", "step", 42.7767272212296,
-//				0.792350631448415, 0, 10, 389, t, null);
-//		Step s390 = new Step("step_varrados_390", "step", 42.7768135105292,
-//				0.79262260051576, 0, 10, 390, t, null);
-//		Step s391 = new Step("step_varrados_391", "step", 42.7768559952057,
-//				0.792841119567739, 0, 10, 391, t, null);
-//		Step s392 = new Step("step_varrados_392", "step", 42.7768134035025,
-//				0.793084053203851, 0, 10, 392, t, null);
-//		Step s393 = new Step("step_varrados_393", "step", 42.7767949815359,
-//				0.793179442208182, 0, 10, 393, t, null);
-//		Step s394 = new Step("step_varrados_394", "step", 42.7768106580516,
-//				0.793291955534023, 0, 10, 394, t, null);
-//		Step s395 = new Step("step_varrados_395", "step", 42.7768663452478,
-//				0.793494726297457, 0, 10, 395, t, null);
-//		Step s396 = new Step("step_varrados_396", "step", 42.7768381920615,
-//				0.793786041984956, 0, 10, 396, t, null);
-//		Step s397 = new Step("step_varrados_397", "step", 42.7768363281549,
-//				0.794039752381415, 0, 10, 397, t, null);
-//		Step s398 = new Step("step_varrados_398", "step", 42.7767995867353,
-//				0.794352764304011, 0, 10, 398, t, null);
-//		Step s399 = new Step("step_varrados_399", "step", 42.7767555796334,
-//				0.79452240414351, 0, 10, 399, t, null);
-//		Step s400 = new Step("step_varrados_400", "step", 42.7767210555943,
-//				0.794600028618358, 0, 10, 400, t, null);
-//		Step s401 = new Step("step_varrados_401", "step", 42.7766907366955,
-//				0.794662223979899, 0, 10, 401, t, null);
-//		Step s402 = new Step("step_varrados_402", "step", 42.7766752690982,
-//				0.794794178808121, 0, 10, 402, t, null);
-//		Step s403 = new Step("step_varrados_403", "step", 42.7766793872558,
-//				0.795007948875949, 0, 10, 403, t, null);
-//		Step s404 = new Step("step_varrados_404", "step", 42.776710442483,
-//				0.79521770694295, 0, 10, 404, t, null);
-//		Step s405 = new Step("step_varrados_405", "step", 42.7767296607019,
-//				0.795397325824665, 0, 10, 405, t, null);
-//		Step s406 = new Step("step_varrados_406", "step", 42.7767219559054,
-//				0.795464830144568, 0, 10, 406, t, null);
-//		Step s407 = new Step("step_varrados_407", "step", 42.7766779619362,
-//				0.795518342552067, 0, 10, 407, t, null);
-//		Step s408 = new Step("step_varrados_408", "step", 42.776555875674,
-//				0.795608241523846, 0, 10, 408, t, null);
-//		Step s409 = new Step("step_varrados_409", "step", 42.7764902080511,
-//				0.795705305914341, 0, 10, 409, t, null);
-//		Step s410 = new Step("step_varrados_410", "step", 42.7763961024794,
-//				0.795962287681267, 0, 10, 410, t, null);
-//		Step s411 = new Step("step_varrados_411", "step", 42.7763642821522,
-//				0.796180387815375, 0, 10, 411, t, null);
-//		Step s412 = new Step("step_varrados_412", "step", 42.7763590304933,
-//				0.796492279098973, 0, 10, 412, t, null);
-//		Step s413 = new Step("step_varrados_413", "step", 42.7762902147463,
-//				0.796659740245492, 0, 10, 413, t, null);
-//		Step s414 = new Step("step_varrados_414", "step", 42.7762513599574,
-//				0.797214240986082, 0, 10, 414, t, null);
-//		Step s415 = new Step("step_varrados_415", "step", 42.7761750134279,
-//				0.797458366121874, 0, 10, 415, t, null);
-//		Step s416 = new Step("step_varrados_416", "step", 42.776185741141,
-//				0.79778191356464, 0, 10, 416, t, null);
-//		Step s417 = new Step("step_varrados_417", "step", 42.7762314643933,
-//				0.79805226994135, 0, 10, 417, t, null);
-//		Step s418 = new Step("step_varrados_418", "step", 42.7762423430153,
-//				0.798149673945792, 0, 10, 418, t, null);
-//		Step s419 = new Step("step_varrados_419", "step", 42.776211593403,
-//				0.798306616008923, 0, 10, 419, t, null);
-//		Step s420 = new Step("step_varrados_420", "step", 42.7761988641251,
-//				0.798698225382795, 0, 10, 420, t, null);
-//		Step s421 = new Step("step_varrados_421", "step", 42.7761647705638,
-//				0.799032529028595, 0, 10, 421, t, null);
-//		Step s422 = new Step("step_varrados_422", "step", 42.7760614824423,
-//				0.799280661984654, 0, 10, 422, t, null);
-//		Step s423 = new Step("step_varrados_423", "step", 42.7760210279495,
-//				0.799401275846473, 0, 10, 423, t, null);
-//		Step s424 = new Step("step_varrados_424", "step", 42.7760058881392,
-//				0.799667676708948, 0, 10, 424, t, null);
-//		Step s425 = new Step("step_varrados_425", "step", 42.7760049502403,
-//				0.79997024543479, 0, 10, 425, t, null);
-//		Step s426 = new Step("step_varrados_426", "step", 42.7760588259213,
-//				0.800313655989049, 0, 10, 426, t, null);
-//		Step s427 = new Step("step_varrados_427", "step", 42.7760720110037,
-//				0.800414034380415, 0, 10, 427, t, null);
-//		Step s428 = new Step("step_varrados_428", "step", 42.7760750037385,
-//				0.800569780216528, 0, 10, 428, t, null);
-//		Step s429 = new Step("step_varrados_429", "step", 42.7760838652278,
-//				0.800679479519669, 0, 10, 429, t, null);
-//		Step s430 = new Step("step_varrados_430", "step", 42.7761158103362,
-//				0.80081892082877, 0, 10, 430, t, null);
-//		Step s431 = new Step("step_varrados_431", "step", 42.7761051869872,
-//				0.800969036965324, 0, 10, 431, t, null);
-//		Step s432 = new Step("step_varrados_432", "step", 42.7761453061674,
-//				0.801416837184857, 0, 10, 432, t, null);
-//		Step s433 = new Step("step_varrados_433", "step", 42.7760982553064,
-//				0.801662975964865, 0, 10, 433, t, null);
-//		Step s434 = new Step("step_varrados_434", "step", 42.7760185352094,
-//				0.801849152058006, 0, 10, 434, t, null);
-//		Step s435 = new Step("step_varrados_435", "step", 42.7758800293593,
-//				0.802022128110766, 0, 10, 435, t, null);
-//		Step s436 = new Step("step_varrados_436", "step", 42.7757647824979,
-//				0.8022340072202, 0, 10, 436, t, null);
-//		Step s437 = new Step("step_varrados_437", "step", 42.7756961708374,
-//				0.802529800974016, 0, 10, 437, t, null);
-//		Step s438 = new Step("step_varrados_438", "step", 42.7756589733588,
-//				0.802937551187753, 0, 10, 438, t, null);
-//		Step s439 = new Step("step_varrados_439", "step", 42.775658332895,
-//				0.803490691317206, 0, 10, 439, t, null);
-//		Step s440 = new Step("step_varrados_440", "step", 42.7756744217956,
-//				0.803859886157333, 0, 10, 440, t, null);
-//		Step s441 = new Step("step_varrados_441", "step", 42.7756422933383,
-//				0.804062711187519, 0, 10, 441, t, null);
-//		Step s442 = new Step("step_varrados_442", "step", 42.7755843047292,
-//				0.804208388075337, 0, 10, 442, t, null);
-//		Step s443 = new Step("step_varrados_443", "step", 42.7754874265838,
-//				0.804321824439771, 0, 10, 443, t, null);
-//		Step s444 = new Step("step_varrados_444", "step", 42.7754263093,
-//				0.804421772996898, 0, 10, 444, t, null);
-//		Step s445 = new Step("step_varrados_445", "step", 42.7753792034483,
-//				0.804900155803276, 0, 10, 445, t, null);
-//		Step s446 = new Step("step_varrados_446", "step", 42.7753474830112,
-//				0.80512435609702, 0, 10, 446, t, null);
-//		Step s447 = new Step("step_varrados_447", "step", 42.7752670297324,
-//				0.805390004234243, 0, 10, 447, t, null);
-//		Step s448 = new Step("step_varrados_448", "step", 42.7751615948705,
-//				0.80564431061667, 0, 10, 448, t, null);
-//		Step s449 = new Step("step_varrados_449", "step", 42.7750454962375,
-//				0.805929551445099, 0, 10, 449, t, null);
-//		Step s450 = new Step("step_varrados_450", "step", 42.7750035787098,
-//				0.806209115708045, 0, 10, 450, t, null);
-//		Step s451 = new Step("step_varrados_451", "step", 42.7750116222369,
-//				0.806511362424659, 0, 10, 451, t, null);
-//		Step s452 = new Step("step_varrados_452", "step", 42.7751073451084,
-//				0.80680745788484, 0, 10, 452, t, null);
-//		Step s453 = new Step("step_varrados_453", "step", 42.7752064550642,
-//				0.807045373048572, 0, 10, 453, t, null);
-//		Step s454 = new Step("step_varrados_454", "step", 42.7752945499883,
-//				0.807295901289179, 0, 10, 454, t, null);
-//		Step s455 = new Step("step_varrados_455", "step", 42.7753378526142,
-//				0.807441055201133, 0, 10, 455, t, null);
-//		Step s456 = new Step("step_varrados_456", "step", 42.7753339696393,
-//				0.807590930486194, 0, 10, 456, t, null);
-//		Step s457 = new Step("step_varrados_457", "step", 42.775312003035,
-//				0.807854511530735, 0, 10, 457, t, null);
-//		Step s458 = new Step("step_varrados_458", "step", 42.7753154534439,
-//				0.808034686783989, 0, 10, 458, t, null);
-//		Step s459 = new Step("step_varrados_459", "step", 42.7753623219862,
-//				0.80836612436825, 0, 10, 459, t, null);
-//		Step s460 = new Step("step_varrados_460", "step", 42.7753722868652,
-//				0.808533846453008, 0, 10, 460, t, null);
-//		Step s461 = new Step("step_varrados_461", "step", 42.7753597261427,
-//				0.80881848675547, 0, 10, 461, t, null);
-//		Step s462 = new Step("step_varrados_462", "step", 42.7753273562275,
-//				0.809244396161309, 0, 10, 462, t, null);
-//		Step s463 = new Step("step_varrados_463", "step", 42.7753179490309,
-//				0.809458639643713, 0, 10, 463, t, null);
-//		Step s464 = new Step("step_varrados_464", "step", 42.7753207249547,
-//				0.809721347616641, 0, 10, 464, t, null);
-//		Step s465 = new Step("step_varrados_465", "step", 42.7752951303944,
-//				0.810030893991682, 0, 10, 465, t, null);
-//		Step s466 = new Step("step_varrados_466", "step", 42.7752618213004,
-//				0.810407941380881, 0, 10, 466, t, null);
-//		Step s467 = new Step("step_varrados_467", "step", 42.7751296403066,
-//				0.810794584414833, 0, 10, 467, t, null);
-//		Step s468 = new Step("step_varrados_468", "step", 42.7751042206386,
-//				0.810877988745142, 0, 10, 468, t, null);
-//		Step s469 = new Step("step_varrados_469", "step", 42.7751178023864,
-//				0.811235047198648, 0, 10, 469, t, null);
-//		Step s470 = new Step("step_varrados_470", "step", 42.7750959985646,
-//				0.811743090053863, 0, 10, 470, t, null);
-//		Step s471 = new Step("step_varrados_471", "step", 42.7751696144567,
-//				0.812296666181634, 0, 10, 471, t, null);
-//		Step s472 = new Step("step_varrados_472", "step", 42.7752334442038,
-//				0.81269168250887, 0, 10, 472, t, null);
-//		Step s473 = new Step("step_varrados_473", "step", 42.7752976552614,
-//				0.812988898023178, 0, 10, 473, t, null);
-//		Step s474 = new Step("step_varrados_474", "step", 42.7754012775451,
-//				0.813345844591932, 0, 10, 474, t, null);
-//		Step s475 = new Step("step_varrados_475", "step", 42.775501507522,
-//				0.813760973681991, 0, 10, 475, t, null);
-//		Step s476 = new Step("step_varrados_476", "step", 42.775560633222,
-//				0.81402781159088, 0, 10, 476, t, null);
-//		Step s477 = new Step("step_varrados_477", "step", 42.7756599617077,
-//				0.814277955994017, 0, 10, 477, t, null);
-//		Step s478 = new Step("step_varrados_478", "step", 42.7757383424968,
-//				0.814492167313064, 0, 10, 478, t, null);
-//		Step s479 = new Step("step_varrados_479", "step", 42.7757933990937,
-//				0.814899721762458, 0, 10, 479, t, null);
-//		Step s480 = new Step("step_varrados_480", "step", 42.7758929823953,
-//				0.815281263712942, 0, 10, 480, t, null);
-//		Step s481 = new Step("step_varrados_481", "step", 42.775972258676,
-//				0.815660465028408, 0, 10, 481, t, null);
-//		Step s482 = new Step("step_varrados_482", "step", 42.7760100481753,
-//				0.815989175273752, 0, 10, 482, t, null);
-//		Step s483 = new Step("step_varrados_483", "step", 42.7760195447374,
-//				0.816486955956657, 0, 10, 483, t, null);
-//		Step s484 = new Step("step_varrados_484", "step", 42.7760726722223,
-//				0.816793736481651, 0, 10, 484, t, null);
-//		Step s485 = new Step("step_varrados_485", "step", 42.7760927302982,
-//				0.817019169716828, 0, 10, 485, t, null);
-//		Step s486 = new Step("step_varrados_486", "step", 42.7760844945573,
-//				0.817413672927407, 0, 10, 486, t, null);
-//		Step s487 = new Step("step_varrados_487", "step", 42.7760476514336,
-//				0.817842796085849, 0, 10, 487, t, null);
-//		Step s488 = new Step("step_varrados_488", "step", 42.7760216651029,
-//				0.818014840334125, 0, 10, 488, t, null);
-//		Step s489 = new Step("step_varrados_489", "step", 42.7760043281568,
-//				0.818168245150497, 0, 10, 489, t, null);
-//		Step s490 = new Step("step_varrados_490", "step", 42.7760497526734,
-//				0.818661708661911, 0, 10, 490, t, null);
-//		Step s491 = new Step("step_varrados_491", "step", 42.776017501126,
-//				0.818977600704243, 0, 10, 491, t, null);
-//		Step s492 = new Step("step_varrados_492", "step", 42.7760711455972,
-//				0.819311868528207, 0, 10, 492, t, null);
-//		Step s493 = new Step("step_varrados_493", "step", 42.7761117180697,
-//				0.819432681163947, 0, 10, 493, t, null);
-//		Step s494 = new Step("step_varrados_494", "step", 42.7762931885548,
-//				0.819741072043309, 0, 10, 494, t, null);
-//		Step s495 = new Step("step_varrados_495", "step", 42.7763512349266,
-//				0.819833768719272, 0, 10, 495, t, null);
-//		Step s496 = new Step("step_varrados_496", "step", 42.7763905458871,
-//				0.820006577428274, 0, 10, 496, t, null);
-//		Step s497 = new Step("step_varrados_497", "step", 42.7763570510796,
-//				0.820139158071436, 0, 10, 497, t, null);
-//		Step s498 = new Step("step_varrados_498", "step", 42.7762628316443,
-//				0.820393050617975, 0, 10, 498, t, null);
-//		Step s499 = new Step("step_varrados_499", "step", 42.7762184494235,
-//				0.821018017182332, 0, 10, 499, t, null);
-//		Step s500 = new Step("step_varrados_500", "step", 42.7762371622563,
-//				0.821173213174239, 0, 10, 500, t, null);
-//		Step s501 = new Step("step_varrados_501", "step", 42.7765568073295,
-//				0.822473002064509, 0, 10, 501, t, null);
-//		Step s502 = new Step("step_varrados_502", "step", 42.7765589408704,
-//				0.822466815385324, 0, 10, 502, t, null);
-//		Step s503 = new Step("step_varrados_503", "step", 42.7765484052475,
-//				0.822623037875871, 0, 10, 503, t, null);
-//		Step s504 = new Step("step_varrados_504", "step", 42.7765341674711,
-//				0.822702991472857, 0, 10, 504, t, null);
-//		Step s505 = new Step("step_varrados_505", "step", 42.7764800308892,
-//				0.82293408456318, 0, 10, 505, t, null);
-//		Step s506 = new Step("step_varrados_506", "step", 42.7764636165972,
-//				0.823136351897984, 0, 10, 506, t, null);
-//		Step s507 = new Step("step_varrados_507", "step", 42.7764795112157,
-//				0.823380270206765, 0, 10, 507, t, null);
-//		Step s508 = new Step("step_varrados_508", "step", 42.7764806008795,
-//				0.823792784118838, 0, 10, 508, t, null);
-//		Step s509 = new Step("step_varrados_509", "step", 42.7764430810115,
-//				0.82406913310175, 0, 10, 509, t, null);
-//		Step s510 = new Step("step_varrados_510", "step", 42.776343322474,
-//				0.824387388721933, 0, 10, 510, t, null);
-//		Step s511 = new Step("step_varrados_511", "step", 42.7763429712083,
-//				0.824842735311837, 0, 10, 511, t, null);
-//		Step s512 = new Step("step_varrados_512", "step", 42.7763042168889,
-//				0.824935770299625, 0, 10, 512, t, null);
-//		Step s513 = new Step("step_varrados_513", "step", 42.7762284935527,
-//				0.82509732998596, 0, 10, 513, t, null);
-//		Step s514 = new Step("step_varrados_514", "step", 42.7761689952813,
-//				0.825401949798703, 0, 10, 514, t, null);
-//		Step s515 = new Step("step_varrados_515", "step", 42.7761490052893,
-//				0.825653235456425, 0, 10, 515, t, null);
-//		Step s516 = new Step("step_varrados_516", "step", 42.7761749955355,
-//				0.825954862487439, 0, 10, 516, t, null);
-//		Step s517 = new Step("step_varrados_517", "step", 42.7761988391526,
-//				0.826143495556443, 0, 10, 517, t, null);
-//		Step s518 = new Step("step_varrados_518", "step", 42.7761796474808,
-//				0.82631835499656, 0, 10, 518, t, null);
-//		Step s519 = new Step("step_varrados_519", "step", 42.776170034366,
-//				0.826523438455042, 0, 10, 519, t, null);
-//		Step s520 = new Step("step_varrados_520", "step", 42.7762287697869,
-//				0.827245638711149, 0, 10, 520, t, null);
-//		Step s521 = new Step("step_varrados_521", "step", 42.7764283441946,
-//				0.827678713523929, 0, 10, 521, t, null);
-//		Step s522 = new Step("step_varrados_522", "step", 42.7766734051224,
-//				0.828492194711843, 0, 10, 522, t, null);
-//		Step s523 = new Step("step_varrados_523", "step", 42.7769212224383,
-//				0.829213907078676, 0, 10, 523, t, null);
-//		Step s524 = new Step("step_varrados_524", "step", 42.7769706765796,
-//				0.829447488283819, 0, 10, 524, t, null);
-//		Step s525 = new Step("step_varrados_525", "step", 42.7769468814774,
-//				0.829854763125599, 0, 10, 525, t, null);
-//		Step s526 = new Step("step_varrados_526", "step", 42.7769234901335,
-//				0.830283415310618, 0, 10, 526, t, null);
-//		Step s527 = new Step("step_varrados_527", "step", 42.7769578305941,
-//				0.830551140858247, 0, 10, 527, t, null);
-//		Step s528 = new Step("step_varrados_528", "step", 42.7770048007902,
-//				0.830772586149133, 0, 10, 528, t, null);
-//		Step s529 = new Step("step_varrados_529", "step", 42.7770553441433,
-//				0.830945011477055, 0, 10, 529, t, null);
-//		Step s530 = new Step("step_varrados_530", "step", 42.7771137359068,
-//				0.831175226558588, 0, 10, 530, t, null);
-//		Step s531 = new Step("step_varrados_531", "step", 42.7771387792926,
-//				0.831308815086685, 0, 10, 531, t, null);
-//		Step s532 = new Step("step_varrados_532", "step", 42.7771187763774,
-//				0.831560103310123, 0, 10, 532, t, null);
-//		Step s533 = new Step("step_varrados_533", "step", 42.7770540093798,
-//				0.831825177706942, 0, 10, 533, t, null);
-//		Step s534 = new Step("step_varrados_534", "step", 42.776934097034,
-//				0.832150239429747, 0, 10, 534, t, null);
-//		Step s535 = new Step("step_varrados_535", "step", 42.7768034498415,
-//				0.832383995701556, 0, 10, 535, t, null);
-//		Step s536 = new Step("step_varrados_536", "step", 42.7766970812424,
-//				0.832473274070256, 0, 10, 536, t, h13);
-//		Step s537 = new Step("step_varrados_537", "step", 42.7764305757402,
-//				0.832546747917371, 0, 10, 537, t, null);
-//		Step s538 = new Step("step_varrados_538", "step", 42.7763261097903,
-//				0.832617623450312, 0, 10, 538, t, null);
-//		Step s539 = new Step("step_varrados_539", "step", 42.7762241352266,
-//				0.832938998098033, 0, 10, 539, t, null);
-//		Step s540 = new Step("step_varrados_540", "step", 42.7761700355568,
-//				0.83317313585596, 0, 10, 540, t, null);
-//		Step s541 = new Step("step_varrados_541", "step", 42.7762295788758,
-//				0.833464428260158, 0, 10, 541, t, null);
-//		Step s542 = new Step("step_varrados_542", "step", 42.7762748095106,
-//				0.833594255890246, 0, 10, 542, t, null);
-//		Step s543 = new Step("step_varrados_543", "step", 42.7762873918613,
-//				0.833783284967075, 0, 10, 543, t, null);
-//		Step s544 = new Step("step_varrados_544", "step", 42.7763574849622,
-//				0.83391835788763, 0, 10, 544, t, null);
-//		Step s545 = new Step("step_varrados_545", "step", 42.7763171090475,
-//				0.834045059100275, 0, 10, 545, t, null);
-//		Step s546 = new Step("step_varrados_546", "step", 42.7763111185418,
-//				0.834323358036312, 0, 10, 546, t, null);
-//		Step s547 = new Step("step_varrados_547", "step", 42.7763196046106,
-//				0.834533921720014, 0, 10, 547, t, null);
-//		Step s548 = new Step("step_varrados_548", "step", 42.7763563034808,
-//				0.834926858306302, 0, 10, 548, t, null);
-//		Step s549 = new Step("step_varrados_549", "step", 42.7763887876225,
-//				0.835216040315766, 0, 10, 549, t, h6);
-//		Step s550 = new Step("step_varrados_550", "step", 42.7769300506112,
-//				0.835029099821934, 0, 10, 550, t, null);
-//		Step s551 = new Step("step_varrados_551", "step", 42.7771585489586,
-//				0.835207550715466, 0, 10, 551, t, null);
-//		Step s552 = new Step("step_varrados_552", "step", 42.7774050424153,
-//				0.835266192252793, 0, 10, 552, t, null);
-//		Step s553 = new Step("step_varrados_553", "step", 42.7774917457864,
-//				0.835327346591656, 0, 10, 553, t, null);
-//		Step s554 = new Step("step_varrados_554", "step", 42.7775566393055,
-//				0.835187565350371, 0, 10, 554, t, null);
-//		Step s555 = new Step("step_varrados_555", "step", 42.7776458178069,
-//				0.835022489414666, 0, 10, 555, t, null);
-//		Step s556 = new Step("step_varrados_556", "step", 42.7777065033012,
-//				0.835017318334268, 0, 10, 556, t, h7);
-//		Step s557 = new Step("step_varrados_557", "step", 42.7777066188254,
-//				0.835023426315142, 0, 10, 557, t, null);
-//		Step s558 = new Step("step_varrados_558", "step", 42.7777299999833,
-//				0.835029999549526, 0, 10, 558, t, null);
-//		Step s559 = new Step("step_varrados_559", "step", 42.7777499999833,
-//				0.835039999549541, 0, 10, 559, t, null);
-//		Step s560 = new Step("step_varrados_560", "step", 42.7777399999834,
-//				0.835259999549861, 0, 10, 560, t, null);
-//		Step s561 = new Step("step_varrados_561", "step", 42.7777699999833,
-//				0.835199999549774, 0, 10, 561, t, null);
-//		Step s562 = new Step("step_varrados_562", "step", 42.7777799999833,
-//				0.835249999549846, 0, 10, 562, t, null);
-//		Step s563 = new Step("step_varrados_563", "step", 42.7777699999833,
-//				0.835329999549962, 0, 10, 563, t, null);
-//		Step s564 = new Step("step_varrados_564", "step", 42.7777999999834,
-//				0.83536999955002, 0, 10, 564, t, null);
-//		Step s565 = new Step("step_varrados_565", "step", 42.7778599999834,
-//				0.835399999550062, 0, 10, 565, t, null);
-//		Step s566 = new Step("step_varrados_566", "step", 42.7779099999834,
-//				0.835419999550091, 0, 10, 566, t, null);
-//		Step s567 = new Step("step_varrados_567", "step", 42.7780399999833,
-//				0.835309999549929, 0, 10, 567, t, null);
-//		Step s568 = new Step("step_varrados_568", "step", 42.7780899999834,
-//				0.835569999550307, 0, 10, 568, t, null);
-//		Step s569 = new Step("step_varrados_569", "step", 42.7780899999834,
-//				0.835879999550756, 0, 10, 569, t, null);
-//		Step s570 = new Step("step_varrados_570", "step", 42.7780699999834,
-//				0.835969999550888, 0, 10, 570, t, null);
-//		Step s571 = new Step("step_varrados_571", "step", 42.7780699999834,
-//				0.836049999551003, 0, 10, 571, t, null);
-//		Step s572 = new Step("step_varrados_572", "step", 42.7780499999834,
-//				0.836149999551148, 0, 10, 572, t, null);
-//		Step s573 = new Step("step_varrados_573", "step", 42.7779999999834,
-//				0.836369999551467, 0, 10, 573, t, null);
-//		Step s574 = new Step("step_varrados_574", "step", 42.7779599999834,
-//				0.836479999551628, 0, 10, 574, t, null);
-//		Step s575 = new Step("step_varrados_575", "step", 42.7779499999834,
-//				0.836649999551873, 0, 10, 575, t, null);
-//		Step s576 = new Step("step_varrados_576", "step", 42.7779499999834,
-//				0.836729999551989, 0, 10, 576, t, null);
-//		Step s577 = new Step("step_varrados_577", "step", 42.7779499999834,
-//				0.836729999551989, 0, 10, 577, t, null);
-//		Step s578 = new Step("step_varrados_578", "step", 42.7779399999834,
-//				0.836819999552119, 0, 10, 578, t, null);
-//		Step s579 = new Step("step_varrados_579", "step", 42.7778999999834,
-//				0.83688999955222, 0, 10, 579, t, null);
-//		Step s580 = new Step("step_varrados_580", "step", 42.7778499999834,
-//				0.836929999552279, 0, 10, 580, t, null);
-//		Step s581 = new Step("step_varrados_581", "step", 42.7779399999834,
-//				0.837039999552436, 0, 10, 581, t, null);
-//		Step s582 = new Step("step_varrados_582", "step", 42.7779499999834,
-//				0.837139999552582, 0, 10, 582, t, null);
-//		Step s583 = new Step("step_varrados_583", "step", 42.7779199999834,
-//				0.837219999552698, 0, 10, 583, t, null);
-//		Step s584 = new Step("step_varrados_584", "step", 42.7779099999834,
-//				0.837379999552927, 0, 10, 584, t, null);
-//		Step s585 = new Step("step_varrados_585", "step", 42.7779199999834,
-//				0.837449999553028, 0, 10, 585, t, null);
-//		Step s586 = new Step("step_varrados_586", "step", 42.7779199999834,
-//				0.837539999553159, 0, 10, 586, t, null);
-//		Step s587 = new Step("step_varrados_587", "step", 42.7779599999835,
-//				0.837599999553244, 0, 10, 587, t, null);
-//		Step s588 = new Step("step_varrados_588", "step", 42.7779199999835,
-//				0.837739999553447, 0, 10, 588, t, null);
-//		Step s589 = new Step("step_varrados_589", "step", 42.7778999999835,
-//				0.837799999553534, 0, 10, 589, t, null);
-//		Step s590 = new Step("step_varrados_590", "step", 42.7779999999835,
-//				0.838169999554065, 0, 10, 590, t, null);
-//		Step s591 = new Step("step_varrados_591", "step", 42.7780399999835,
-//				0.838249999554181, 0, 10, 591, t, null);
-//		Step s592 = new Step("step_varrados_592", "step", 42.7780599999835,
-//				0.838329999554295, 0, 10, 592, t, null);
-//		Step s593 = new Step("step_varrados_593", "step", 42.7780499999835,
-//				0.838489999554526, 0, 10, 593, t, null);
-//		Step s594 = new Step("step_varrados_594", "step", 42.7780299999835,
-//				0.838559999554625, 0, 10, 594, t, null);
-//		Step s595 = new Step("step_varrados_595", "step", 42.7780199999835,
-//				0.838689999554815, 0, 10, 595, t, null);
-//		Step s596 = new Step("step_varrados_596", "step", 42.7780299999835,
-//				0.838759999554914, 0, 10, 596, t, null);
-//		Step s597 = new Step("step_varrados_597", "step", 42.7780599999835,
-//				0.838829999555015, 0, 10, 597, t, null);
-//		Step s598 = new Step("step_varrados_598", "step", 42.7780299999835,
-//				0.83913999955546, 0, 10, 598, t, null);
-//		Step s599 = new Step("step_varrados_599", "step", 42.7780099999835,
-//				0.839239999555605, 0, 10, 599, t, null);
-//		Step s600 = new Step("step_varrados_600", "step", 42.7779899999835,
-//				0.839319999555719, 0, 10, 600, t, null);
-//		Step s601 = new Step("step_varrados_601", "step", 42.7780299999835,
-//				0.839399999555834, 0, 10, 601, t, null);
-//		Step s602 = new Step("step_varrados_602", "step", 42.7780499999835,
-//				0.839569999556078, 0, 10, 602, t, null);
-//		Step s603 = new Step("step_varrados_603", "step", 42.7780699999835,
-//				0.839649999556192, 0, 10, 603, t, null);
-//		Step s604 = new Step("step_varrados_604", "step", 42.7780799999835,
-//				0.839719999556292, 0, 10, 604, t, null);
-//		Step s605 = new Step("step_varrados_605", "step", 42.7780799999835,
-//				0.839979999556665, 0, 10, 605, t, null);
-//		Step s606 = new Step("step_varrados_606", "step", 42.7780699999836,
-//				0.840069999556794, 0, 10, 606, t, null);
-//		Step s607 = new Step("step_varrados_607", "step", 42.7780699999836,
-//				0.840189999556966, 0, 10, 607, t, null);
-//		Step s608 = new Step("step_varrados_608", "step", 42.7780599999836,
-//				0.84026999955708, 0, 10, 608, t, null);
-//		Step s609 = new Step("step_varrados_609", "step", 42.7779899999836,
-//				0.840569999557511, 0, 10, 609, t, null);
-//		Step s610 = new Step("step_varrados_610", "step", 42.7780299999836,
-//				0.840689999557681, 0, 10, 610, t, null);
-//		Step s611 = new Step("step_varrados_611", "step", 42.7780299999836,
-//				0.840769999557796, 0, 10, 611, t, null);
-//		Step s612 = new Step("step_varrados_612", "step", 42.7780399999836,
-//				0.840849999557911, 0, 10, 612, t, null);
-//		Step s613 = new Step("step_varrados_613", "step", 42.7780899999836,
-//				0.840969999558081, 0, 10, 613, t, null);
-//		Step s614 = new Step("step_varrados_614", "step", 42.7780799999836,
-//				0.841119999558296, 0, 10, 614, t, null);
-//		Step s615 = new Step("step_varrados_615", "step", 42.7780899999836,
-//				0.841259999558495, 0, 10, 615, t, null);
-//		Step s616 = new Step("step_varrados_616", "step", 42.7780999999836,
-//				0.841399999558695, 0, 10, 616, t, null);
-//		Step s617 = new Step("step_varrados_617", "step", 42.7781299999836,
-//				0.841459999558781, 0, 10, 617, t, null);
-//		Step s618 = new Step("step_varrados_618", "step", 42.7781599999836,
-//				0.841579999558951, 0, 10, 618, t, null);
-//		Step s619 = new Step("step_varrados_619", "step", 42.7781699999836,
-//				0.84166999955908, 0, 10, 619, t, null);
-//		Step s620 = new Step("step_varrados_620", "step", 42.7781999999836,
-//				0.841839999559322, 0, 10, 620, t, null);
-//		Step s621 = new Step("step_varrados_621", "step", 42.7781799999836,
-//				0.841969999559508, 0, 10, 621, t, null);
-//		Step s622 = new Step("step_varrados_622", "step", 42.7781399999836,
-//				0.842029999559593, 0, 10, 622, t, null);
-//		Step s623 = new Step("step_varrados_623", "step", 42.7780999999836,
-//				0.842119999559723, 0, 10, 623, t, null);
-//		Step s624 = new Step("step_varrados_624", "step", 42.7780999999836,
-//				0.842219999559864, 0, 10, 624, t, null);
-//		Step s625 = new Step("step_varrados_625", "step", 42.7781199999836,
-//				0.842289999559963, 0, 10, 625, t, null);
-//		Step s626 = new Step("step_varrados_626", "step", 42.7781699999836,
-//				0.84239999956012, 0, 10, 626, t, null);
-//		Step s627 = new Step("step_varrados_627", "step", 42.7781799999836,
-//				0.84246999956022, 0, 10, 627, t, null);
-//		Step s628 = new Step("step_varrados_628", "step", 42.7782199999837,
-//				0.842679999560517, 0, 10, 628, t, null);
-//		Step s629 = new Step("step_varrados_629", "step", 42.7782299999837,
-//				0.842769999560644, 0, 10, 629, t, null);
-//		Step s630 = new Step("step_varrados_630", "step", 42.7782699999837,
-//				0.842849999560758, 0, 10, 630, t, null);
-//		Step s631 = new Step("step_varrados_631", "step", 42.7783099999837,
-//				0.842919999560858, 0, 10, 631, t, null);
-//		Step s632 = new Step("step_varrados_632", "step", 42.7783299999837,
-//				0.842979999560943, 0, 10, 632, t, null);
-//		Step s633 = new Step("step_varrados_633", "step", 42.7783299999837,
-//				0.843009999560985, 0, 10, 633, t, h16);
-//		Step s634 = new Step("step_varrados_634", "step", 42.7783099999837,
-//				0.843059999561057, 0, 10, 634, t, null);
-//		Step s635 = new Step("step_varrados_635", "step", 42.7782399999837,
-//				0.843029999561015, 0, 10, 635, t, null);
-//		Step s636 = new Step("step_varrados_636", "step", 42.7781799999837,
-//				0.843009999560988, 0, 10, 636, t, null);
-//		Step s637 = new Step("step_varrados_637", "step", 42.7781399999837,
-//				0.843019999561002, 0, 10, 637, t, null);
-//		Step s638 = new Step("step_varrados_638", "step", 42.7781799999837,
-//				0.843239999561314, 0, 10, 638, t, null);
-//		Step s639 = new Step("step_varrados_639", "step", 42.7781599999837,
-//				0.84334999956147, 0, 10, 639, t, null);
-//		Step s640 = new Step("step_varrados_640", "step", 42.7781499999837,
-//				0.843449999561613, 0, 10, 640, t, null);
-//		Step s641 = new Step("step_varrados_641", "step", 42.7781799999837,
-//				0.843589999561811, 0, 10, 641, t, null);
-//		Step s642 = new Step("step_varrados_642", "step", 42.7781799999837,
-//				0.84365999956191, 0, 10, 642, t, null);
-//		Step s643 = new Step("step_varrados_643", "step", 42.7782199999837,
-//				0.84377999956208, 0, 10, 643, t, null);
-//		Step s644 = new Step("step_varrados_644", "step", 42.7782599999837,
-//				0.843839999562164, 0, 10, 644, t, null);
-//		Step s645 = new Step("step_varrados_645", "step", 42.7783099999837,
-//				0.844049999562461, 0, 10, 645, t, null);
-//		Step s646 = new Step("step_varrados_646", "step", 42.7783099999837,
-//				0.844169999562632, 0, 10, 646, t, null);
-//		Step s647 = new Step("step_varrados_647", "step", 42.7782799999837,
-//				0.844299999562816, 0, 10, 647, t, null);
-//		Step s648 = new Step("step_varrados_648", "step", 42.7783299999837,
-//				0.844469999563056, 0, 10, 648, t, null);
-//		Step s649 = new Step("step_varrados_649", "step", 42.7783399999837,
-//				0.844549999563169, 0, 10, 649, t, null);
-//		Step s650 = new Step("step_varrados_650", "step", 42.7783099999837,
-//				0.844629999563282, 0, 10, 650, t, null);
-//		Step s651 = new Step("step_varrados_651", "step", 42.7783199999838,
-//				0.844779999563493, 0, 10, 651, t, null);
-//		Step s652 = new Step("step_varrados_652", "step", 42.7783299999837,
-//				0.844869999563622, 0, 10, 652, t, null);
-//		Step s653 = new Step("step_varrados_653", "step", 42.7783299999838,
-//				0.844989999563791, 0, 10, 653, t, null);
-//		Step s654 = new Step("step_varrados_654", "step", 42.7783499999838,
-//				0.845099999563946, 0, 10, 654, t, null);
-//		Step s655 = new Step("step_varrados_655", "step", 42.7783699999838,
-//				0.845139999564003, 0, 10, 655, t, null);
-//		Step s656 = new Step("step_varrados_656", "step", 42.7782199999837,
-//				0.845119999563976, 0, 10, 656, t, null);
-//		Step s657 = new Step("step_varrados_657", "step", 42.778193924612,
-//				0.845219303130673, 0, 10, 657, t, h17);
-//		Step s658 = new Step("step_varrados_658", "step", 42.7781906144428,
-//				0.845276512469736, 0, 10, 658, t, null);
-//		Step s659 = new Step("step_varrados_659", "step", 42.7781999999838,
-//				0.845309999564245, 0, 10, 659, t, null);
-//		Step s660 = new Step("step_varrados_660", "step", 42.7782299999838,
-//				0.845409999564385, 0, 10, 660, t, null);
-//		Step s661 = new Step("step_varrados_661", "step", 42.7782899999838,
-//				0.84546999956447, 0, 10, 661, t, null);
-//		Step s662 = new Step("step_varrados_662", "step", 42.7783299999838,
-//				0.845589999564637, 0, 10, 662, t, null);
-//		Step s663 = new Step("step_varrados_663", "step", 42.7783199999838,
-//				0.845659999564736, 0, 10, 663, t, null);
-//		Step s664 = new Step("step_varrados_664", "step", 42.7782799999838,
-//				0.845719999564823, 0, 10, 664, t, null);
-//		Step s665 = new Step("step_varrados_665", "step", 42.7782799999838,
-//				0.845809999564949, 0, 10, 665, t, null);
-//		Step s666 = new Step("step_varrados_666", "step", 42.7782299999838,
-//				0.845889999565062, 0, 10, 666, t, null);
-//		Step s667 = new Step("step_varrados_667", "step", 42.7781399999838,
-//				0.846029999565261, 0, 10, 667, t, null);
-//		Step s668 = new Step("step_varrados_668", "step", 42.7781299999838,
-//				0.846099999565359, 0, 10, 668, t, null);
-//		Step s669 = new Step("step_varrados_669", "step", 42.7781099999838,
-//				0.8461999995655, 0, 10, 669, t, null);
-//		Step s670 = new Step("step_varrados_670", "step", 42.7780699999838,
-//				0.846309999565656, 0, 10, 670, t, null);
-//		Step s671 = new Step("step_varrados_671", "step", 42.7780399999838,
-//				0.84636999956574, 0, 10, 671, t, null);
-//		Step s672 = new Step("step_varrados_672", "step", 42.7779999999838,
-//				0.846419999565811, 0, 10, 672, t, null);
-//		Step s673 = new Step("step_varrados_673", "step", 42.7779799999838,
-//				0.846489999565911, 0, 10, 673, t, null);
-//		Step s674 = new Step("step_varrados_674", "step", 42.7778999999838,
-//				0.846539999565981, 0, 10, 674, t, null);
-//		Step s675 = new Step("step_varrados_675", "step", 42.7778499999838,
-//				0.846589999566052, 0, 10, 675, t, null);
-//		Step s676 = new Step("step_varrados_676", "step", 42.7778499999838,
-//				0.846659999566151, 0, 10, 676, t, null);
-//		Step s677 = new Step("step_varrados_677", "step", 42.7778199999838,
-//				0.846779999566321, 0, 10, 677, t, null);
-//		Step s678 = new Step("step_varrados_678", "step", 42.7778099999838,
-//				0.846909999566503, 0, 10, 678, t, null);
-//		Step s679 = new Step("step_varrados_679", "step", 42.7777799999838,
-//				0.846989999566615, 0, 10, 679, t, null);
-//		Step s680 = new Step("step_varrados_680", "step", 42.7777899999839,
-//				0.847079999566741, 0, 10, 680, t, h8);
-//		Step s681 = new Step("step_varrados_681", "step", 42.7777743908828,
-//				0.847330664240011, 0, 10, 681, t, null);
-//		Step s682 = new Step("step_varrados_682", "step", 42.7777662906937,
-//				0.847618209753621, 0, 10, 682, t, null);
-//		Step s683 = new Step("step_varrados_683", "step", 42.7778267163819,
-//				0.847958389282735, 0, 10, 683, t, null);
-//		Step s684 = new Step("step_varrados_684", "step", 42.77796005223,
-//				0.848344940200717, 0, 10, 684, t, null);
-//		Step s685 = new Step("step_varrados_685", "step", 42.7781883363357,
-//				0.848752652692298, 0, 10, 685, t, null);
-//		Step s686 = new Step("step_varrados_686", "step", 42.7784078495049,
-//				0.849172896023431, 0, 10, 686, t, null);
-//		Step s687 = new Step("step_varrados_687", "step", 42.7785863155844,
-//				0.849325630997836, 0, 10, 687, t, null);
-//		Step s688 = new Step("step_varrados_688", "step", 42.7788581001006,
-//				0.849652387636669, 0, 10, 688, t, null);
-//		Step s689 = new Step("step_varrados_689", "step", 42.7790680623843,
-//				0.849804034759551, 0, 10, 689, t, null);
-//		Step s690 = new Step("step_varrados_690", "step", 42.7792129656676,
-//				0.849847915968234, 0, 10, 690, t, null);
-//		Step s691 = new Step("step_varrados_691", "step", 42.779295448997,
-//				0.84992451890576, 0, 10, 691, t, null);
-//		Step s692 = new Step("step_varrados_692", "step", 42.779505181498,
-//				0.850063951535098, 0, 10, 692, t, null);
-//		Step s693 = new Step("step_varrados_693", "step", 42.7796262995609,
-//				0.850279798513893, 0, 10, 693, t, null);
-//		Step s694 = new Step("step_varrados_694", "step", 42.7796808416743,
-//				0.850546847921519, 0, 10, 694, t, null);
-//		Step s695 = new Step("step_varrados_695", "step", 42.7797702326602,
-//				0.850751569834354, 0, 10, 695, t, null);
-//		Step s696 = new Step("step_varrados_696", "step", 42.7799053068193,
-//				0.850991385114767, 0, 10, 696, t, null);
-//		Step s697 = new Step("step_varrados_697", "step", 42.780057576022,
-//				0.851187820863933, 0, 10, 697, t, null);
-//		Step s698 = new Step("step_varrados_698", "step", 42.7800969840978,
-//				0.85160820262647, 0, 10, 698, t, null);
-//		Step s699 = new Step("step_varrados_699", "step", 42.7800902778279,
-//				0.851730679534439, 0, 10, 699, t, null);
-//		Step s700 = new Step("step_varrados_700", "step", 42.7801930507754,
-//				0.851928829438331, 0, 10, 700, t, null);
-//		Step s701 = new Step("step_varrados_701", "step", 42.7802027082405,
-//				0.852203547081022, 0, 10, 701, t, null);
-//		Step s702 = new Step("step_varrados_702", "step", 42.7802428304992,
-//				0.852422201132553, 0, 10, 702, t, null);
-//		Step s703 = new Step("step_varrados_703", "step", 42.7803490704996,
-//				0.852565222342275, 0, 10, 703, t, null);
-//		Step s704 = new Step("step_varrados_704", "step", 42.7805039724491,
-//				0.852902154948675, 0, 10, 704, t, null);
-//		Step s705 = new Step("step_varrados_705", "step", 42.7806143361502,
-//				0.853265077805767, 0, 10, 705, t, null);
-//		Step s706 = new Step("step_varrados_706", "step", 42.7807388024506,
-//				0.853419696008476, 0, 10, 706, t, null);
-//		Step s707 = new Step("step_varrados_707", "step", 42.7809600499328,
-//				0.853693216922956, 0, 10, 707, t, null);
-//		Step s708 = new Step("step_varrados_708", "step", 42.7811599442205,
-//				0.8540286010906, 0, 10, 708, t, null);
-//		Step s709 = new Step("step_varrados_709", "step", 42.7813090487819,
-//				0.854536888283475, 0, 10, 709, t, null);
-//		Step s710 = new Step("step_varrados_710", "step", 42.7813740684705,
-//				0.854883047663739, 0, 10, 710, t, null);
-//		Step s711 = new Step("step_varrados_711", "step", 42.7815447873424,
-//				0.855103309921731, 0, 10, 711, t, null);
-//		Step s712 = new Step("step_varrados_712", "step", 42.7816968208779,
-//				0.855287544154884, 0, 10, 712, t, null);
-//		Step s713 = new Step("step_varrados_713", "step", 42.7818153753182,
-//				0.855607408470042, 0, 10, 713, t, null);
-//		Step s714 = new Step("step_varrados_714", "step", 42.7819559690084,
-//				0.855902063448126, 0, 10, 714, t, null);
-//		Step s715 = new Step("step_varrados_715", "step", 42.7820725768879,
-//				0.856118085904114, 0, 10, 715, t, null);
-//		Step s716 = new Step("step_varrados_716", "step", 42.7821616150266,
-//				0.85630449847388, 0, 10, 716, t, null);
-//		Step s717 = new Step("step_varrados_717", "step", 42.7821608517515,
-//				0.856744621422754, 0, 10, 717, t, null);
-//		Step s718 = new Step("step_varrados_718", "step", 42.7822677332258,
-//				0.857162693076775, 0, 10, 718, t, null);
-//		Step s719 = new Step("step_varrados_719", "step", 42.7820915877997,
-//				0.85833624765761, 0, 10, 719, t, null);
-//		Step s720 = new Step("step_varrados_720", "step", 42.781906405239,
-//				0.859027225215981, 0, 10, 720, t, null);
-//		Step s721 = new Step("step_varrados_721", "step", 42.7817128130731,
-//				0.860231930867915, 0, 10, 721, t, h18);
-//		Step s722 = new Step("step_varrados_722", "step", 42.781705581511,
-//				0.861772507172661, 0, 10, 722, t, null);
-//		Step s723 = new Step("step_varrados_723", "step", 42.78218558005,
-//				0.862642288379833, 0, 10, 723, t, null);
-//		Step s724 = new Step("step_varrados_724", "step", 42.7823879129296,
-//				0.863833370920577, 0, 10, 724, t, null);
-//		Step s725 = new Step("step_varrados_725", "step", 42.7826355686355,
-//				0.864558353109902, 0, 10, 725, t, null);
-//		Step s726 = new Step("step_varrados_726", "step", 42.7828043906573,
-//				0.864919299584165, 0, 10, 726, t, null);
-//		Step s727 = new Step("step_varrados_727", "step", 42.7828968889682,
-//				0.865050595330602, 0, 10, 727, t, null);
-//		Step s728 = new Step("step_varrados_728", "step", 42.7831021046226,
-//				0.865190242059001, 0, 10, 728, t, null);
-//		Step s729 = new Step("step_varrados_729", "step", 42.7832552616738,
-//				0.865435592593108, 0, 10, 729, t, null);
-//		Step s730 = new Step("step_varrados_730", "step", 42.7833616562951,
-//				0.865829253137265, 0, 10, 730, t, null);
-//		Step s731 = new Step("step_varrados_731", "step", 42.7836339649767,
-//				0.866186651642873, 0, 10, 731, t, null);
-//		Step s732 = new Step("step_varrados_732", "step", 42.7838946546472,
-//				0.866403861972128, 0, 10, 732, t, null);
-//		Step s733 = new Step("step_varrados_733", "step", 42.7840763461002,
-//				0.866489309620539, 0, 10, 733, t, null);
-//		Step s734 = new Step("step_varrados_734", "step", 42.7841837617688,
-//				0.866937955973928, 0, 10, 734, t, null);
-//		Step s735 = new Step("step_varrados_735", "step", 42.7842236818478,
-//				0.867388921647377, 0, 10, 735, t, null);
-//		Step s736 = new Step("step_varrados_736", "step", 42.7844630614356,
-//				0.867912504872536, 0, 10, 736, t, null);
-//		Step s737 = new Step("step_varrados_737", "step", 42.7846410487183,
-//				0.868040873731418, 0, 10, 737, t, null);
-//		Step s738 = new Step("step_varrados_738", "step", 42.7848566878145,
-//				0.868015132759172, 0, 10, 738, t, h19);
-//		Step s739 = new Step("step_varrados_739", "step", 42.7850416881734,
-//				0.867794835741044, 0, 10, 739, t, null);
-//		Step s740 = new Step("step_varrados_740", "step", 42.7851526461063,
-//				0.867467050307945, 0, 10, 740, t, null);
-//		Step s741 = new Step("step_varrados_741", "step", 42.7853719346968,
-//				0.867153881422759, 0, 10, 741, t, null);
-//		Step s742 = new Step("step_varrados_742", "step", 42.7855315892755,
-//				0.866781630835407, 0, 10, 742, t, null);
-//		Step s743 = new Step("step_varrados_743", "step", 42.7857749128277,
-//				0.866308698710837, 0, 10, 743, t, null);
-//		Step s744 = new Step("step_varrados_744", "step", 42.7860111713883,
-//				0.865939923846105, 0, 10, 744, t, null);
-//		Step s745 = new Step("step_varrados_745", "step", 42.7863172576237,
-//				0.865452601641779, 0, 10, 745, t, null);
-//		Step s746 = new Step("step_varrados_746", "step", 42.7867065547263,
-//				0.864840155601482, 0, 10, 746, t, null);
-//		Step s747 = new Step("step_varrados_747", "step", 42.7871232672078,
-//				0.864258321216513, 0, 10, 747, t, null);
-//		Step s748 = new Step("step_varrados_748", "step", 42.7872250751744,
-//				0.863673091419051, 0, 10, 748, t, null);
-//		Step s749 = new Step("step_varrados_749", "step", 42.7870660357844,
-//				0.862871654968839, 0, 10, 749, t, null);
-//		Step s750 = new Step("step_varrados_750", "step", 42.7872323293287,
-//				0.862132377312593, 0, 10, 750, t, null);
-//		Step s751 = new Step("step_varrados_751", "step", 42.7876293996571,
-//				0.861213983917439, 0, 10, 751, t, null);
-//		Step s752 = new Step("step_varrados_752", "step", 42.7879096092201,
-//				0.860788647165056, 0, 10, 752, t, null);
-//		Step s753 = new Step("step_varrados_753", "step", 42.7880638292242,
-//				0.860367647793654, 0, 10, 753, t, null);
-//		Step s754 = new Step("step_varrados_754", "step", 42.7882180476298,
-//				0.859946646377445, 0, 10, 754, t, null);
-//		Step s755 = new Step("step_varrados_755", "step", 42.7883633092681,
-//				0.859287542080679, 0, 10, 755, t, null);
-//		Step s756 = new Step("step_varrados_756", "step", 42.788572432533,
-//				0.858913547391222, 0, 10, 756, t, null);
-//		Step s757 = new Step("step_varrados_757", "step", 42.7886293386215,
-//				0.85810465720313, 0, 10, 757, t, null);
-//		Step s758 = new Step("step_varrados_758", "step", 42.7887173927825,
-//				0.857276351421657, 0, 10, 758, t, null);
-//		Step s759 = new Step("step_varrados_759", "step", 42.7889440499654,
-//				0.856877290152976, 0, 10, 759, t, null);
-//		Step s760 = new Step("step_varrados_760", "step", 42.7892898283524,
-//				0.856107324400259, 0, 10, 760, t, null);
-//		Step s761 = new Step("step_varrados_761", "step", 42.7895346201181,
-//				0.854753972925662, 0, 10, 761, t, null);
-//		Step s762 = new Step("step_varrados_762", "step", 42.7896621146797,
-//				0.853869268488976, 0, 10, 762, t, null);
-//		Step s763 = new Step("step_varrados_763", "step", 42.7903876672934,
-//				0.853183957719014, 0, 10, 763, t, null);
-//		Step s764 = new Step("step_varrados_764", "step", 42.7908493188203,
-//				0.851871974290023, 0, 10, 764, t, null);
-//		Step s765 = new Step("step_varrados_765", "step", 42.7912873468876,
-//				0.851221030950311, 0, 10, 765, t, null);
-//		Step s766 = new Step("step_varrados_766", "step", 42.7916358392038,
-//				0.850597631536814, 0, 10, 766, t, h9);
-//		Step s767 = new Step("step_varrados_767", "step", 42.79136392681,
-//				0.851462914946149, 0, 10, 767, t, null);
-//		Step s768 = new Step("step_varrados_768", "step", 42.7912567422093,
-//				0.852469213065517, 0, 10, 768, t, null);
-//		Step s769 = new Step("step_varrados_769", "step", 42.791381691836,
-//				0.853369668572236, 0, 10, 769, t, null);
-//		Step s770 = new Step("step_varrados_770", "step", 42.7914535560984,
-//				0.854320869293166, 0, 10, 770, t, null);
-//		Step s771 = new Step("step_varrados_771", "step", 42.791472928553,
-//				0.854393560241215, 0, 10, 771, t, null);
-//		Step s772 = new Step("step_varrados_772", "step", 42.7918396232009,
-//				0.855701383738248, 0, 10, 772, t, null);
-//		Step s773 = new Step("step_varrados_773", "step", 42.791943346071,
-//				0.856431411452408, 0, 10, 773, t, null);
-//		Step s774 = new Step("step_varrados_774", "step", 42.7919630202251,
-//				0.857482240247933, 0, 10, 774, t, null);
-//		Step s775 = new Step("step_varrados_775", "step", 42.7919254895003,
-//				0.858363867209495, 0, 10, 775, t, null);
-//		Step s776 = new Step("step_varrados_776", "step", 42.7918312148422,
-//				0.859100727909447, 0, 10, 776, t, null);
-//		Step s777 = new Step("step_varrados_777", "step", 42.7910550126868,
-//				0.860209552007539, 0, 10, 777, t, null);
-//		Step s778 = new Step("step_varrados_778", "step", 42.790584132224,
-//				0.861032733463832, 0, 10, 778, t, null);
-//		Step s779 = new Step("step_varrados_779", "step", 42.79064021665,
-//				0.862106740412443, 0, 10, 779, t, null);
-//		Step s780 = new Step("step_varrados_780", "step", 42.791208660015,
-//				0.862649595159584, 0, 10, 780, t, null);
-//		Step s781 = new Step("step_varrados_781", "step", 42.7919769069564,
-//				0.863283397903733, 0, 10, 781, t, null);
-//		Step s782 = new Step("step_varrados_782", "step", 42.7924644741081,
-//				0.864318135009438, 0, 10, 782, t, null);
-//		Step s783 = new Step("step_varrados_783", "step", 42.7928173837804,
-//				0.864892891734061, 0, 10, 783, t, null);
-//		Step s784 = new Step("step_varrados_784", "step", 42.79314562801,
-//				0.865352345737581, 0, 10, 784, t, null);
-//		Step s785 = new Step("step_varrados_785", "step", 42.7935677920574,
-//				0.865778008049059, 0, 10, 785, t, null);
-//		Step s786 = new Step("step_varrados_786", "step", 42.7935440965955,
-//				0.866439089002562, 0, 10, 786, t, null);
-//		Step s787 = new Step("step_varrados_787", "step", 42.7934290394676,
-//				0.867029945423603, 0, 10, 787, t, null);
-//		Step s788 = new Step("step_varrados_788", "step", 42.793441333406,
-//				0.86768978837989, 0, 10, 788, t, h10);
-//		Step s789 = new Step("step_varrados_789", "step", 42.793218734803,
-//				0.86830878825355, 0, 10, 789, t, null);
-//		Step s790 = new Step("step_varrados_790", "step", 42.7930063954668,
-//				0.868511711790476, 0, 10, 790, t, null);
-//		Step s791 = new Step("step_varrados_791", "step", 42.7928384055643,
-//				0.869403937978139, 0, 10, 791, t, null);
-//		Step s792 = new Step("step_varrados_792", "step", 42.7926315219247,
-//				0.869900116736355, 0, 10, 792, t, null);
-//		Step s793 = new Step("step_varrados_793", "step", 42.7924870802089,
-//				0.869880618482486, 0, 10, 793, t, null);
-//		Step s794 = new Step("step_varrados_794", "step", 42.7924521814484,
-//				0.870908879012247, 0, 10, 794, t, null);
-//		Step s795 = new Step("step_varrados_795", "step", 42.7921197568489,
-//				0.871433807479138, 0, 10, 795, t, null);
-//		Step s796 = new Step("step_varrados_796", "step", 42.7917059521334,
-//				0.871698643425879, 0, 10, 796, t, null);
-//		Step s797 = new Step("step_varrados_797", "step", 42.7912448091214,
-//				0.872081251914902, 0, 10, 797, t, null);
-//		Step s798 = new Step("step_varrados_798", "step", 42.7913426794132,
-//				0.872744254192972, 0, 10, 798, t, null);
-//		Step s799 = new Step("step_varrados_799", "step", 42.7916259779579,
-//				0.873694350187148, 0, 10, 799, t, null);
-//		Step s800 = new Step("step_varrados_800", "step", 42.7914903133744,
-//				0.874389807909378, 0, 10, 800, t, null);
-//		Step s801 = new Step("step_varrados_801", "step", 42.7913977494549,
-//				0.875224395008848, 0, 10, 801, t, null);
-//		Step s802 = new Step("step_varrados_802", "step", 42.7913298382217,
-//				0.875446800087101, 0, 10, 802, t, null);
-//		Step s803 = new Step("step_varrados_803", "step", 42.7907169842163,
-//				0.875418864040742, 0, 10, 803, t, null);
-//		Step s804 = new Step("step_varrados_804", "step", 42.7903601904137,
-//				0.875602244099836, 0, 10, 804, t, null);
-//		Step s805 = new Step("step_varrados_805", "step", 42.7900381812964,
-//				0.875961715764307, 0, 10, 805, t, null);
-//		Step s806 = new Step("step_varrados_806", "step", 42.789655827681,
-//				0.875980908479342, 0, 10, 806, t, null);
-//		Step s807 = new Step("step_varrados_807", "step", 42.7888787201491,
-//				0.875836323453298, 0, 10, 807, t, null);
-//		Step s808 = new Step("step_varrados_808", "step", 42.7885695720514,
-//				0.875675732448398, 0, 10, 808, t, null);
-//		Step s809 = new Step("step_varrados_809", "step", 42.7882505946022,
-//				0.875228165516202, 0, 10, 809, t, null);
-//		Step s810 = new Step("step_varrados_810", "step", 42.7876389516565,
-//				0.874295466603189, 0, 10, 810, t, null);
-//		Step s811 = new Step("step_varrados_811", "step", 42.7871015559418,
-//				0.872755061633696, 0, 10, 811, t, null);
-//		Step s812 = new Step("step_varrados_812", "step", 42.7868223213976,
-//				0.871297527062438, 0, 10, 812, t, null);
-//		Step s813 = new Step("step_varrados_813", "step", 42.7864730768667,
-//				0.87085325702052, 0, 10, 813, t, null);
-//		Step s814 = new Step("step_varrados_814", "step", 42.7862369824473,
-//				0.870290270242631, 0, 10, 814, t, null);
-//		Step s815 = new Step("step_varrados_815", "step", 42.7859857204915,
-//				0.86979761608405, 0, 10, 815, t, null);
-//		Step s816 = new Step("step_varrados_816", "step", 42.7855346813597,
-//				0.869335926723184, 0, 10, 816, t, null);
-//		Step s817 = new Step("step_varrados_817", "step", 42.7850673239389,
-//				0.868634820051698, 0, 10, 817, t, null);
-//		Step s818 = new Step("step_varrados_818", "step", 42.7848584865535,
-//				0.868045418969845, 0, 10, 818, t, null);
-//
-//		try {
-//			stepDataDao.create(s1);
-//			stepDataDao.create(s2);
-//			stepDataDao.create(s3);
-//			stepDataDao.create(s4);
-//			stepDataDao.create(s5);
-//			stepDataDao.create(s6);
-//			stepDataDao.create(s7);
-//			stepDataDao.create(s8);
-//			stepDataDao.create(s9);
-//			stepDataDao.create(s10);
-//			stepDataDao.create(s11);
-//			stepDataDao.create(s12);
-//			stepDataDao.create(s13);
-//			stepDataDao.create(s14);
-//			stepDataDao.create(s15);
-//			stepDataDao.create(s16);
-//			stepDataDao.create(s17);
-//			stepDataDao.create(s18);
-//			stepDataDao.create(s19);
-//			stepDataDao.create(s20);
-//			stepDataDao.create(s21);
-//			stepDataDao.create(s22);
-//			stepDataDao.create(s23);
-//			stepDataDao.create(s24);
-//			stepDataDao.create(s25);
-//			stepDataDao.create(s26);
-//			stepDataDao.create(s27);
-//			stepDataDao.create(s28);
-//			stepDataDao.create(s29);
-//			stepDataDao.create(s30);
-//			stepDataDao.create(s31);
-//			stepDataDao.create(s32);
-//			stepDataDao.create(s33);
-//			stepDataDao.create(s34);
-//			stepDataDao.create(s35);
-//			stepDataDao.create(s36);
-//			stepDataDao.create(s37);
-//			stepDataDao.create(s38);
-//			stepDataDao.create(s39);
-//			stepDataDao.create(s40);
-//			stepDataDao.create(s41);
-//			stepDataDao.create(s42);
-//			stepDataDao.create(s43);
-//			stepDataDao.create(s44);
-//			stepDataDao.create(s45);
-//			stepDataDao.create(s46);
-//			stepDataDao.create(s47);
-//			stepDataDao.create(s48);
-//			stepDataDao.create(s49);
-//			stepDataDao.create(s50);
-//			stepDataDao.create(s51);
-//			stepDataDao.create(s52);
-//			stepDataDao.create(s53);
-//			stepDataDao.create(s54);
-//			stepDataDao.create(s55);
-//			stepDataDao.create(s56);
-//			stepDataDao.create(s57);
-//			stepDataDao.create(s58);
-//			stepDataDao.create(s59);
-//			stepDataDao.create(s60);
-//			stepDataDao.create(s61);
-//			stepDataDao.create(s62);
-//			stepDataDao.create(s63);
-//			stepDataDao.create(s64);
-//			stepDataDao.create(s65);
-//			stepDataDao.create(s66);
-//			stepDataDao.create(s67);
-//			stepDataDao.create(s68);
-//			stepDataDao.create(s69);
-//			stepDataDao.create(s70);
-//			stepDataDao.create(s71);
-//			stepDataDao.create(s72);
-//			stepDataDao.create(s73);
-//			stepDataDao.create(s74);
-//			stepDataDao.create(s75);
-//			stepDataDao.create(s76);
-//			stepDataDao.create(s77);
-//			stepDataDao.create(s78);
-//			stepDataDao.create(s79);
-//			stepDataDao.create(s80);
-//			stepDataDao.create(s81);
-//			stepDataDao.create(s82);
-//			stepDataDao.create(s83);
-//			stepDataDao.create(s84);
-//			stepDataDao.create(s85);
-//			stepDataDao.create(s86);
-//			stepDataDao.create(s87);
-//			stepDataDao.create(s88);
-//			stepDataDao.create(s89);
-//			stepDataDao.create(s90);
-//			stepDataDao.create(s91);
-//			stepDataDao.create(s92);
-//			stepDataDao.create(s93);
-//			stepDataDao.create(s94);
-//			stepDataDao.create(s95);
-//			stepDataDao.create(s96);
-//			stepDataDao.create(s97);
-//			stepDataDao.create(s98);
-//			stepDataDao.create(s99);
-//			stepDataDao.create(s100);
-//			stepDataDao.create(s101);
-//			stepDataDao.create(s102);
-//			stepDataDao.create(s103);
-//			stepDataDao.create(s104);
-//			stepDataDao.create(s105);
-//			stepDataDao.create(s106);
-//			stepDataDao.create(s107);
-//			stepDataDao.create(s108);
-//			stepDataDao.create(s109);
-//			stepDataDao.create(s110);
-//			stepDataDao.create(s111);
-//			stepDataDao.create(s112);
-//			stepDataDao.create(s113);
-//			stepDataDao.create(s114);
-//			stepDataDao.create(s115);
-//			stepDataDao.create(s116);
-//			stepDataDao.create(s117);
-//			stepDataDao.create(s118);
-//			stepDataDao.create(s119);
-//			stepDataDao.create(s120);
-//			stepDataDao.create(s121);
-//			stepDataDao.create(s122);
-//			stepDataDao.create(s123);
-//			stepDataDao.create(s124);
-//			stepDataDao.create(s125);
-//			stepDataDao.create(s126);
-//			stepDataDao.create(s127);
-//			stepDataDao.create(s128);
-//			stepDataDao.create(s129);
-//			stepDataDao.create(s130);
-//			stepDataDao.create(s131);
-//			stepDataDao.create(s132);
-//			stepDataDao.create(s133);
-//			stepDataDao.create(s134);
-//			stepDataDao.create(s135);
-//			stepDataDao.create(s136);
-//			stepDataDao.create(s137);
-//			stepDataDao.create(s138);
-//			stepDataDao.create(s139);
-//			stepDataDao.create(s140);
-//			stepDataDao.create(s141);
-//			stepDataDao.create(s142);
-//			stepDataDao.create(s143);
-//			stepDataDao.create(s144);
-//			stepDataDao.create(s145);
-//			stepDataDao.create(s146);
-//			stepDataDao.create(s147);
-//			stepDataDao.create(s148);
-//			stepDataDao.create(s149);
-//			stepDataDao.create(s150);
-//			stepDataDao.create(s151);
-//			stepDataDao.create(s152);
-//			stepDataDao.create(s153);
-//			stepDataDao.create(s154);
-//			stepDataDao.create(s155);
-//			stepDataDao.create(s156);
-//			stepDataDao.create(s157);
-//			stepDataDao.create(s158);
-//			stepDataDao.create(s159);
-//			stepDataDao.create(s160);
-//			stepDataDao.create(s161);
-//			stepDataDao.create(s162);
-//			stepDataDao.create(s163);
-//			stepDataDao.create(s164);
-//			stepDataDao.create(s165);
-//			stepDataDao.create(s166);
-//			stepDataDao.create(s167);
-//			stepDataDao.create(s168);
-//			stepDataDao.create(s169);
-//			stepDataDao.create(s170);
-//			stepDataDao.create(s171);
-//			stepDataDao.create(s172);
-//			stepDataDao.create(s173);
-//			stepDataDao.create(s174);
-//			stepDataDao.create(s175);
-//			stepDataDao.create(s176);
-//			stepDataDao.create(s177);
-//			stepDataDao.create(s178);
-//			stepDataDao.create(s179);
-//			stepDataDao.create(s180);
-//			stepDataDao.create(s181);
-//			stepDataDao.create(s182);
-//			stepDataDao.create(s183);
-//			stepDataDao.create(s184);
-//			stepDataDao.create(s185);
-//			stepDataDao.create(s186);
-//			stepDataDao.create(s187);
-//			stepDataDao.create(s188);
-//			stepDataDao.create(s189);
-//			stepDataDao.create(s190);
-//			stepDataDao.create(s191);
-//			stepDataDao.create(s192);
-//			stepDataDao.create(s193);
-//			stepDataDao.create(s194);
-//			stepDataDao.create(s195);
-//			stepDataDao.create(s196);
-//			stepDataDao.create(s197);
-//			stepDataDao.create(s198);
-//			stepDataDao.create(s199);
-//			stepDataDao.create(s200);
-//			stepDataDao.create(s201);
-//			stepDataDao.create(s202);
-//			stepDataDao.create(s203);
-//			stepDataDao.create(s204);
-//			stepDataDao.create(s205);
-//			stepDataDao.create(s206);
-//			stepDataDao.create(s207);
-//			stepDataDao.create(s208);
-//			stepDataDao.create(s209);
-//			stepDataDao.create(s210);
-//			stepDataDao.create(s211);
-//			stepDataDao.create(s212);
-//			stepDataDao.create(s213);
-//			stepDataDao.create(s214);
-//			stepDataDao.create(s215);
-//			stepDataDao.create(s216);
-//			stepDataDao.create(s217);
-//			stepDataDao.create(s218);
-//			stepDataDao.create(s219);
-//			stepDataDao.create(s220);
-//			stepDataDao.create(s221);
-//			stepDataDao.create(s222);
-//			stepDataDao.create(s223);
-//			stepDataDao.create(s224);
-//			stepDataDao.create(s225);
-//			stepDataDao.create(s226);
-//			stepDataDao.create(s227);
-//			stepDataDao.create(s228);
-//			stepDataDao.create(s229);
-//			stepDataDao.create(s230);
-//			stepDataDao.create(s231);
-//			stepDataDao.create(s232);
-//			stepDataDao.create(s233);
-//			stepDataDao.create(s234);
-//			stepDataDao.create(s235);
-//			stepDataDao.create(s236);
-//			stepDataDao.create(s237);
-//			stepDataDao.create(s238);
-//			stepDataDao.create(s239);
-//			stepDataDao.create(s240);
-//			stepDataDao.create(s241);
-//			stepDataDao.create(s242);
-//			stepDataDao.create(s243);
-//			stepDataDao.create(s244);
-//			stepDataDao.create(s245);
-//			stepDataDao.create(s246);
-//			stepDataDao.create(s247);
-//			stepDataDao.create(s248);
-//			stepDataDao.create(s249);
-//			stepDataDao.create(s250);
-//			stepDataDao.create(s251);
-//			stepDataDao.create(s252);
-//			stepDataDao.create(s253);
-//			stepDataDao.create(s254);
-//			stepDataDao.create(s255);
-//			stepDataDao.create(s256);
-//			stepDataDao.create(s257);
-//			stepDataDao.create(s258);
-//			stepDataDao.create(s259);
-//			stepDataDao.create(s260);
-//			stepDataDao.create(s261);
-//			stepDataDao.create(s262);
-//			stepDataDao.create(s263);
-//			stepDataDao.create(s264);
-//			stepDataDao.create(s265);
-//			stepDataDao.create(s266);
-//			stepDataDao.create(s267);
-//			stepDataDao.create(s268);
-//			stepDataDao.create(s269);
-//			stepDataDao.create(s270);
-//			stepDataDao.create(s271);
-//			stepDataDao.create(s272);
-//			stepDataDao.create(s273);
-//			stepDataDao.create(s274);
-//			stepDataDao.create(s275);
-//			stepDataDao.create(s276);
-//			stepDataDao.create(s277);
-//			stepDataDao.create(s278);
-//			stepDataDao.create(s279);
-//			stepDataDao.create(s280);
-//			stepDataDao.create(s281);
-//			stepDataDao.create(s282);
-//			stepDataDao.create(s283);
-//			stepDataDao.create(s284);
-//			stepDataDao.create(s285);
-//			stepDataDao.create(s286);
-//			stepDataDao.create(s287);
-//			stepDataDao.create(s288);
-//			stepDataDao.create(s289);
-//			stepDataDao.create(s290);
-//			stepDataDao.create(s291);
-//			stepDataDao.create(s292);
-//			stepDataDao.create(s293);
-//			stepDataDao.create(s294);
-//			stepDataDao.create(s295);
-//			stepDataDao.create(s296);
-//			stepDataDao.create(s297);
-//			stepDataDao.create(s298);
-//			stepDataDao.create(s299);
-//			stepDataDao.create(s300);
-//			stepDataDao.create(s301);
-//			stepDataDao.create(s302);
-//			stepDataDao.create(s303);
-//			stepDataDao.create(s304);
-//			stepDataDao.create(s305);
-//			stepDataDao.create(s306);
-//			stepDataDao.create(s307);
-//			stepDataDao.create(s308);
-//			stepDataDao.create(s309);
-//			stepDataDao.create(s310);
-//			stepDataDao.create(s311);
-//			stepDataDao.create(s312);
-//			stepDataDao.create(s313);
-//			stepDataDao.create(s314);
-//			stepDataDao.create(s315);
-//			stepDataDao.create(s316);
-//			stepDataDao.create(s317);
-//			stepDataDao.create(s318);
-//			stepDataDao.create(s319);
-//			stepDataDao.create(s320);
-//			stepDataDao.create(s321);
-//			stepDataDao.create(s322);
-//			stepDataDao.create(s323);
-//			stepDataDao.create(s324);
-//			stepDataDao.create(s325);
-//			stepDataDao.create(s326);
-//			stepDataDao.create(s327);
-//			stepDataDao.create(s328);
-//			stepDataDao.create(s329);
-//			stepDataDao.create(s330);
-//			stepDataDao.create(s331);
-//			stepDataDao.create(s332);
-//			stepDataDao.create(s333);
-//			stepDataDao.create(s334);
-//			stepDataDao.create(s335);
-//			stepDataDao.create(s336);
-//			stepDataDao.create(s337);
-//			stepDataDao.create(s338);
-//			stepDataDao.create(s339);
-//			stepDataDao.create(s340);
-//			stepDataDao.create(s341);
-//			stepDataDao.create(s342);
-//			stepDataDao.create(s343);
-//			stepDataDao.create(s344);
-//			stepDataDao.create(s345);
-//			stepDataDao.create(s346);
-//			stepDataDao.create(s347);
-//			stepDataDao.create(s348);
-//			stepDataDao.create(s349);
-//			stepDataDao.create(s350);
-//			stepDataDao.create(s351);
-//			stepDataDao.create(s352);
-//			stepDataDao.create(s353);
-//			stepDataDao.create(s354);
-//			stepDataDao.create(s355);
-//			stepDataDao.create(s356);
-//			stepDataDao.create(s357);
-//			stepDataDao.create(s358);
-//			stepDataDao.create(s359);
-//			stepDataDao.create(s360);
-//			stepDataDao.create(s361);
-//			stepDataDao.create(s362);
-//			stepDataDao.create(s363);
-//			stepDataDao.create(s364);
-//			stepDataDao.create(s365);
-//			stepDataDao.create(s366);
-//			stepDataDao.create(s367);
-//			stepDataDao.create(s368);
-//			stepDataDao.create(s369);
-//			stepDataDao.create(s370);
-//			stepDataDao.create(s371);
-//			stepDataDao.create(s372);
-//			stepDataDao.create(s373);
-//			stepDataDao.create(s374);
-//			stepDataDao.create(s375);
-//			stepDataDao.create(s376);
-//			stepDataDao.create(s377);
-//			stepDataDao.create(s378);
-//			stepDataDao.create(s379);
-//			stepDataDao.create(s380);
-//			stepDataDao.create(s381);
-//			stepDataDao.create(s382);
-//			stepDataDao.create(s383);
-//			stepDataDao.create(s384);
-//			stepDataDao.create(s385);
-//			stepDataDao.create(s386);
-//			stepDataDao.create(s387);
-//			stepDataDao.create(s388);
-//			stepDataDao.create(s389);
-//			stepDataDao.create(s390);
-//			stepDataDao.create(s391);
-//			stepDataDao.create(s392);
-//			stepDataDao.create(s393);
-//			stepDataDao.create(s394);
-//			stepDataDao.create(s395);
-//			stepDataDao.create(s396);
-//			stepDataDao.create(s397);
-//			stepDataDao.create(s398);
-//			stepDataDao.create(s399);
-//			stepDataDao.create(s400);
-//			stepDataDao.create(s401);
-//			stepDataDao.create(s402);
-//			stepDataDao.create(s403);
-//			stepDataDao.create(s404);
-//			stepDataDao.create(s405);
-//			stepDataDao.create(s406);
-//			stepDataDao.create(s407);
-//			stepDataDao.create(s408);
-//			stepDataDao.create(s409);
-//			stepDataDao.create(s410);
-//			stepDataDao.create(s411);
-//			stepDataDao.create(s412);
-//			stepDataDao.create(s413);
-//			stepDataDao.create(s414);
-//			stepDataDao.create(s415);
-//			stepDataDao.create(s416);
-//			stepDataDao.create(s417);
-//			stepDataDao.create(s418);
-//			stepDataDao.create(s419);
-//			stepDataDao.create(s420);
-//			stepDataDao.create(s421);
-//			stepDataDao.create(s422);
-//			stepDataDao.create(s423);
-//			stepDataDao.create(s424);
-//			stepDataDao.create(s425);
-//			stepDataDao.create(s426);
-//			stepDataDao.create(s427);
-//			stepDataDao.create(s428);
-//			stepDataDao.create(s429);
-//			stepDataDao.create(s430);
-//			stepDataDao.create(s431);
-//			stepDataDao.create(s432);
-//			stepDataDao.create(s433);
-//			stepDataDao.create(s434);
-//			stepDataDao.create(s435);
-//			stepDataDao.create(s436);
-//			stepDataDao.create(s437);
-//			stepDataDao.create(s438);
-//			stepDataDao.create(s439);
-//			stepDataDao.create(s440);
-//			stepDataDao.create(s441);
-//			stepDataDao.create(s442);
-//			stepDataDao.create(s443);
-//			stepDataDao.create(s444);
-//			stepDataDao.create(s445);
-//			stepDataDao.create(s446);
-//			stepDataDao.create(s447);
-//			stepDataDao.create(s448);
-//			stepDataDao.create(s449);
-//			stepDataDao.create(s450);
-//			stepDataDao.create(s451);
-//			stepDataDao.create(s452);
-//			stepDataDao.create(s453);
-//			stepDataDao.create(s454);
-//			stepDataDao.create(s455);
-//			stepDataDao.create(s456);
-//			stepDataDao.create(s457);
-//			stepDataDao.create(s458);
-//			stepDataDao.create(s459);
-//			stepDataDao.create(s460);
-//			stepDataDao.create(s461);
-//			stepDataDao.create(s462);
-//			stepDataDao.create(s463);
-//			stepDataDao.create(s464);
-//			stepDataDao.create(s465);
-//			stepDataDao.create(s466);
-//			stepDataDao.create(s467);
-//			stepDataDao.create(s468);
-//			stepDataDao.create(s469);
-//			stepDataDao.create(s470);
-//			stepDataDao.create(s471);
-//			stepDataDao.create(s472);
-//			stepDataDao.create(s473);
-//			stepDataDao.create(s474);
-//			stepDataDao.create(s475);
-//			stepDataDao.create(s476);
-//			stepDataDao.create(s477);
-//			stepDataDao.create(s478);
-//			stepDataDao.create(s479);
-//			stepDataDao.create(s480);
-//			stepDataDao.create(s481);
-//			stepDataDao.create(s482);
-//			stepDataDao.create(s483);
-//			stepDataDao.create(s484);
-//			stepDataDao.create(s485);
-//			stepDataDao.create(s486);
-//			stepDataDao.create(s487);
-//			stepDataDao.create(s488);
-//			stepDataDao.create(s489);
-//			stepDataDao.create(s490);
-//			stepDataDao.create(s491);
-//			stepDataDao.create(s492);
-//			stepDataDao.create(s493);
-//			stepDataDao.create(s494);
-//			stepDataDao.create(s495);
-//			stepDataDao.create(s496);
-//			stepDataDao.create(s497);
-//			stepDataDao.create(s498);
-//			stepDataDao.create(s499);
-//			stepDataDao.create(s500);
-//			stepDataDao.create(s501);
-//			stepDataDao.create(s502);
-//			stepDataDao.create(s503);
-//			stepDataDao.create(s504);
-//			stepDataDao.create(s505);
-//			stepDataDao.create(s506);
-//			stepDataDao.create(s507);
-//			stepDataDao.create(s508);
-//			stepDataDao.create(s509);
-//			stepDataDao.create(s510);
-//			stepDataDao.create(s511);
-//			stepDataDao.create(s512);
-//			stepDataDao.create(s513);
-//			stepDataDao.create(s514);
-//			stepDataDao.create(s515);
-//			stepDataDao.create(s516);
-//			stepDataDao.create(s517);
-//			stepDataDao.create(s518);
-//			stepDataDao.create(s519);
-//			stepDataDao.create(s520);
-//			stepDataDao.create(s521);
-//			stepDataDao.create(s522);
-//			stepDataDao.create(s523);
-//			stepDataDao.create(s524);
-//			stepDataDao.create(s525);
-//			stepDataDao.create(s526);
-//			stepDataDao.create(s527);
-//			stepDataDao.create(s528);
-//			stepDataDao.create(s529);
-//			stepDataDao.create(s530);
-//			stepDataDao.create(s531);
-//			stepDataDao.create(s532);
-//			stepDataDao.create(s533);
-//			stepDataDao.create(s534);
-//			stepDataDao.create(s535);
-//			stepDataDao.create(s536);
-//			stepDataDao.create(s537);
-//			stepDataDao.create(s538);
-//			stepDataDao.create(s539);
-//			stepDataDao.create(s540);
-//			stepDataDao.create(s541);
-//			stepDataDao.create(s542);
-//			stepDataDao.create(s543);
-//			stepDataDao.create(s544);
-//			stepDataDao.create(s545);
-//			stepDataDao.create(s546);
-//			stepDataDao.create(s547);
-//			stepDataDao.create(s548);
-//			stepDataDao.create(s549);
-//			stepDataDao.create(s550);
-//			stepDataDao.create(s551);
-//			stepDataDao.create(s552);
-//			stepDataDao.create(s553);
-//			stepDataDao.create(s554);
-//			stepDataDao.create(s555);
-//			stepDataDao.create(s556);
-//			stepDataDao.create(s557);
-//			stepDataDao.create(s558);
-//			stepDataDao.create(s559);
-//			stepDataDao.create(s560);
-//			stepDataDao.create(s561);
-//			stepDataDao.create(s562);
-//			stepDataDao.create(s563);
-//			stepDataDao.create(s564);
-//			stepDataDao.create(s565);
-//			stepDataDao.create(s566);
-//			stepDataDao.create(s567);
-//			stepDataDao.create(s568);
-//			stepDataDao.create(s569);
-//			stepDataDao.create(s570);
-//			stepDataDao.create(s571);
-//			stepDataDao.create(s572);
-//			stepDataDao.create(s573);
-//			stepDataDao.create(s574);
-//			stepDataDao.create(s575);
-//			stepDataDao.create(s576);
-//			stepDataDao.create(s577);
-//			stepDataDao.create(s578);
-//			stepDataDao.create(s579);
-//			stepDataDao.create(s580);
-//			stepDataDao.create(s581);
-//			stepDataDao.create(s582);
-//			stepDataDao.create(s583);
-//			stepDataDao.create(s584);
-//			stepDataDao.create(s585);
-//			stepDataDao.create(s586);
-//			stepDataDao.create(s587);
-//			stepDataDao.create(s588);
-//			stepDataDao.create(s589);
-//			stepDataDao.create(s590);
-//			stepDataDao.create(s591);
-//			stepDataDao.create(s592);
-//			stepDataDao.create(s593);
-//			stepDataDao.create(s594);
-//			stepDataDao.create(s595);
-//			stepDataDao.create(s596);
-//			stepDataDao.create(s597);
-//			stepDataDao.create(s598);
-//			stepDataDao.create(s599);
-//			stepDataDao.create(s600);
-//			stepDataDao.create(s601);
-//			stepDataDao.create(s602);
-//			stepDataDao.create(s603);
-//			stepDataDao.create(s604);
-//			stepDataDao.create(s605);
-//			stepDataDao.create(s606);
-//			stepDataDao.create(s607);
-//			stepDataDao.create(s608);
-//			stepDataDao.create(s609);
-//			stepDataDao.create(s610);
-//			stepDataDao.create(s611);
-//			stepDataDao.create(s612);
-//			stepDataDao.create(s613);
-//			stepDataDao.create(s614);
-//			stepDataDao.create(s615);
-//			stepDataDao.create(s616);
-//			stepDataDao.create(s617);
-//			stepDataDao.create(s618);
-//			stepDataDao.create(s619);
-//			stepDataDao.create(s620);
-//			stepDataDao.create(s621);
-//			stepDataDao.create(s622);
-//			stepDataDao.create(s623);
-//			stepDataDao.create(s624);
-//			stepDataDao.create(s625);
-//			stepDataDao.create(s626);
-//			stepDataDao.create(s627);
-//			stepDataDao.create(s628);
-//			stepDataDao.create(s629);
-//			stepDataDao.create(s630);
-//			stepDataDao.create(s631);
-//			stepDataDao.create(s632);
-//			stepDataDao.create(s633);
-//			stepDataDao.create(s634);
-//			stepDataDao.create(s635);
-//			stepDataDao.create(s636);
-//			stepDataDao.create(s637);
-//			stepDataDao.create(s638);
-//			stepDataDao.create(s639);
-//			stepDataDao.create(s640);
-//			stepDataDao.create(s641);
-//			stepDataDao.create(s642);
-//			stepDataDao.create(s643);
-//			stepDataDao.create(s644);
-//			stepDataDao.create(s645);
-//			stepDataDao.create(s646);
-//			stepDataDao.create(s647);
-//			stepDataDao.create(s648);
-//			stepDataDao.create(s649);
-//			stepDataDao.create(s650);
-//			stepDataDao.create(s651);
-//			stepDataDao.create(s652);
-//			stepDataDao.create(s653);
-//			stepDataDao.create(s654);
-//			stepDataDao.create(s655);
-//			stepDataDao.create(s656);
-//			stepDataDao.create(s657);
-//			stepDataDao.create(s658);
-//			stepDataDao.create(s659);
-//			stepDataDao.create(s660);
-//			stepDataDao.create(s661);
-//			stepDataDao.create(s662);
-//			stepDataDao.create(s663);
-//			stepDataDao.create(s664);
-//			stepDataDao.create(s665);
-//			stepDataDao.create(s666);
-//			stepDataDao.create(s667);
-//			stepDataDao.create(s668);
-//			stepDataDao.create(s669);
-//			stepDataDao.create(s670);
-//			stepDataDao.create(s671);
-//			stepDataDao.create(s672);
-//			stepDataDao.create(s673);
-//			stepDataDao.create(s674);
-//			stepDataDao.create(s675);
-//			stepDataDao.create(s676);
-//			stepDataDao.create(s677);
-//			stepDataDao.create(s678);
-//			stepDataDao.create(s679);
-//			stepDataDao.create(s680);
-//			stepDataDao.create(s681);
-//			stepDataDao.create(s682);
-//			stepDataDao.create(s683);
-//			stepDataDao.create(s684);
-//			stepDataDao.create(s685);
-//			stepDataDao.create(s686);
-//			stepDataDao.create(s687);
-//			stepDataDao.create(s688);
-//			stepDataDao.create(s689);
-//			stepDataDao.create(s690);
-//			stepDataDao.create(s691);
-//			stepDataDao.create(s692);
-//			stepDataDao.create(s693);
-//			stepDataDao.create(s694);
-//			stepDataDao.create(s695);
-//			stepDataDao.create(s696);
-//			stepDataDao.create(s697);
-//			stepDataDao.create(s698);
-//			stepDataDao.create(s699);
-//			stepDataDao.create(s700);
-//			stepDataDao.create(s701);
-//			stepDataDao.create(s702);
-//			stepDataDao.create(s703);
-//			stepDataDao.create(s704);
-//			stepDataDao.create(s705);
-//			stepDataDao.create(s706);
-//			stepDataDao.create(s707);
-//			stepDataDao.create(s708);
-//			stepDataDao.create(s709);
-//			stepDataDao.create(s710);
-//			stepDataDao.create(s711);
-//			stepDataDao.create(s712);
-//			stepDataDao.create(s713);
-//			stepDataDao.create(s714);
-//			stepDataDao.create(s715);
-//			stepDataDao.create(s716);
-//			stepDataDao.create(s717);
-//			stepDataDao.create(s718);
-//			stepDataDao.create(s719);
-//			stepDataDao.create(s720);
-//			stepDataDao.create(s721);
-//			stepDataDao.create(s722);
-//			stepDataDao.create(s723);
-//			stepDataDao.create(s724);
-//			stepDataDao.create(s725);
-//			stepDataDao.create(s726);
-//			stepDataDao.create(s727);
-//			stepDataDao.create(s728);
-//			stepDataDao.create(s729);
-//			stepDataDao.create(s730);
-//			stepDataDao.create(s731);
-//			stepDataDao.create(s732);
-//			stepDataDao.create(s733);
-//			stepDataDao.create(s734);
-//			stepDataDao.create(s735);
-//			stepDataDao.create(s736);
-//			stepDataDao.create(s737);
-//			stepDataDao.create(s738);
-//			stepDataDao.create(s739);
-//			stepDataDao.create(s740);
-//			stepDataDao.create(s741);
-//			stepDataDao.create(s742);
-//			stepDataDao.create(s743);
-//			stepDataDao.create(s744);
-//			stepDataDao.create(s745);
-//			stepDataDao.create(s746);
-//			stepDataDao.create(s747);
-//			stepDataDao.create(s748);
-//			stepDataDao.create(s749);
-//			stepDataDao.create(s750);
-//			stepDataDao.create(s751);
-//			stepDataDao.create(s752);
-//			stepDataDao.create(s753);
-//			stepDataDao.create(s754);
-//			stepDataDao.create(s755);
-//			stepDataDao.create(s756);
-//			stepDataDao.create(s757);
-//			stepDataDao.create(s758);
-//			stepDataDao.create(s759);
-//			stepDataDao.create(s760);
-//			stepDataDao.create(s761);
-//			stepDataDao.create(s762);
-//			stepDataDao.create(s763);
-//			stepDataDao.create(s764);
-//			stepDataDao.create(s765);
-//			stepDataDao.create(s766);
-//			stepDataDao.create(s767);
-//			stepDataDao.create(s768);
-//			stepDataDao.create(s769);
-//			stepDataDao.create(s770);
-//			stepDataDao.create(s771);
-//			stepDataDao.create(s772);
-//			stepDataDao.create(s773);
-//			stepDataDao.create(s774);
-//			stepDataDao.create(s775);
-//			stepDataDao.create(s776);
-//			stepDataDao.create(s777);
-//			stepDataDao.create(s778);
-//			stepDataDao.create(s779);
-//			stepDataDao.create(s780);
-//			stepDataDao.create(s781);
-//			stepDataDao.create(s782);
-//			stepDataDao.create(s783);
-//			stepDataDao.create(s784);
-//			stepDataDao.create(s785);
-//			stepDataDao.create(s786);
-//			stepDataDao.create(s787);
-//			stepDataDao.create(s788);
-//			stepDataDao.create(s789);
-//			stepDataDao.create(s790);
-//			stepDataDao.create(s791);
-//			stepDataDao.create(s792);
-//			stepDataDao.create(s793);
-//			stepDataDao.create(s794);
-//			stepDataDao.create(s795);
-//			stepDataDao.create(s796);
-//			stepDataDao.create(s797);
-//			stepDataDao.create(s798);
-//			stepDataDao.create(s799);
-//			stepDataDao.create(s800);
-//			stepDataDao.create(s801);
-//			stepDataDao.create(s802);
-//			stepDataDao.create(s803);
-//			stepDataDao.create(s804);
-//			stepDataDao.create(s805);
-//			stepDataDao.create(s806);
-//			stepDataDao.create(s807);
-//			stepDataDao.create(s808);
-//			stepDataDao.create(s809);
-//			stepDataDao.create(s810);
-//			stepDataDao.create(s811);
-//			stepDataDao.create(s812);
-//			stepDataDao.create(s813);
-//			stepDataDao.create(s814);
-//			stepDataDao.create(s815);
-//			stepDataDao.create(s816);
-//			stepDataDao.create(s817);
-//			stepDataDao.create(s818);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting step", "Insert error " + ex.toString());
-//		}
-//		
-//		Route r = new Route();
-//		r.setId("ROUTE_VARRADOS");
-//		r.setName("Vall de Varradós");
-//		r.setDescription("Itinerari en dues parts: primer 10 km de pista asfaltada amb 695 m de desnivell (30 minuts, anada), per recòrrer el riu de Varradòs i visitar el Saut deth Pish i el Barratge de Varradòs; després, itinerari circular de 12.3 km amb 980 m de desnivell (6-7 hores a peu), per visitar els estanhs Nere de Uèrri i de Pica Palomèra. El camí a peu transcorre per senders poc marcats i zones on la progressió es fa dificultosa, en una de les zones més recòndites i salvatges de l’Aran. És imprescindible tenir un bon sentit de l’orientació, bona forma física i experiència en alta muntanya. El riu de Varradòs està encaixonant en una vall de relleu escarpat, que dona lloca lloc a una intensa activitat d’allaus i a cascades impressionants, com el Saut deth Pish. Els estanys a visitar són un exemple d’hàbitats extrems, degut a l’acidesa de les seves aigües i l’alt contingut de metalls que provenen de les roques que els envolten.");
-//		r.setUserId("1");
-//		// Ph_ch parameters
-//		// r.setReference(r6);
-//		// Interactive image
-//		// r.setInteractiveImage(img);
-//		r.setTrack(t);
-//		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
-//
-//		try {
-//			routeDataDao.create(r);
-//		} catch (RuntimeException ex) {
-//			Log.e("Inserting route", "Insert error " + ex.toString());
-//		}
-//
-//
-//	}
+		try {
+			stepDataDao.create(s1);
+			stepDataDao.create(s2);
+			stepDataDao.create(s3);
+			stepDataDao.create(s4);
+			stepDataDao.create(s5);
+			stepDataDao.create(s6);
+			stepDataDao.create(s7);
+			stepDataDao.create(s8);
+			stepDataDao.create(s9);
+			stepDataDao.create(s10);
+			stepDataDao.create(s11);
+			stepDataDao.create(s12);
+			stepDataDao.create(s13);
+			stepDataDao.create(s14);
+			stepDataDao.create(s15);
+			stepDataDao.create(s16);
+			stepDataDao.create(s17);
+			stepDataDao.create(s18);
+			stepDataDao.create(s19);
+			stepDataDao.create(s20);
+			stepDataDao.create(s21);
+			stepDataDao.create(s22);
+			stepDataDao.create(s23);
+			stepDataDao.create(s24);
+			stepDataDao.create(s25);
+			stepDataDao.create(s26);
+			stepDataDao.create(s27);
+			stepDataDao.create(s28);
+			stepDataDao.create(s29);
+			stepDataDao.create(s30);
+			stepDataDao.create(s31);
+			stepDataDao.create(s32);
+			stepDataDao.create(s33);
+			stepDataDao.create(s34);
+			stepDataDao.create(s35);
+			stepDataDao.create(s36);
+			stepDataDao.create(s37);
+			stepDataDao.create(s38);
+			stepDataDao.create(s39);
+			stepDataDao.create(s40);
+			stepDataDao.create(s41);
+			stepDataDao.create(s42);
+			stepDataDao.create(s43);
+			stepDataDao.create(s44);
+			stepDataDao.create(s45);
+			stepDataDao.create(s46);
+			stepDataDao.create(s47);
+			stepDataDao.create(s48);
+			stepDataDao.create(s49);
+			stepDataDao.create(s50);
+			stepDataDao.create(s51);
+			stepDataDao.create(s52);
+			stepDataDao.create(s53);
+			stepDataDao.create(s54);
+			stepDataDao.create(s55);
+			stepDataDao.create(s56);
+			stepDataDao.create(s57);
+			stepDataDao.create(s58);
+			stepDataDao.create(s59);
+			stepDataDao.create(s60);
+			stepDataDao.create(s61);
+			stepDataDao.create(s62);
+			stepDataDao.create(s63);
+			stepDataDao.create(s64);
+			stepDataDao.create(s65);
+			stepDataDao.create(s66);
+			stepDataDao.create(s67);
+			stepDataDao.create(s68);
+			stepDataDao.create(s69);
+			stepDataDao.create(s70);
+			stepDataDao.create(s71);
+			stepDataDao.create(s72);
+			stepDataDao.create(s73);
+			stepDataDao.create(s74);
+			stepDataDao.create(s75);
+			stepDataDao.create(s76);
+			stepDataDao.create(s77);
+			stepDataDao.create(s78);
+			stepDataDao.create(s79);
+			stepDataDao.create(s80);
+			stepDataDao.create(s81);
+			stepDataDao.create(s82);
+			stepDataDao.create(s83);
+			stepDataDao.create(s84);
+			stepDataDao.create(s85);
+			stepDataDao.create(s86);
+			stepDataDao.create(s87);
+			stepDataDao.create(s88);
+			stepDataDao.create(s89);
+			stepDataDao.create(s90);
+			stepDataDao.create(s91);
+			stepDataDao.create(s92);
+			stepDataDao.create(s93);
+			stepDataDao.create(s94);
+			stepDataDao.create(s95);
+			stepDataDao.create(s96);
+			stepDataDao.create(s97);
+			stepDataDao.create(s98);
+			stepDataDao.create(s99);
+			stepDataDao.create(s100);
+			stepDataDao.create(s101);
+			stepDataDao.create(s102);
+			stepDataDao.create(s103);
+			stepDataDao.create(s104);
+			stepDataDao.create(s105);
+			stepDataDao.create(s106);
+			stepDataDao.create(s107);
+			stepDataDao.create(s108);
+			stepDataDao.create(s109);
+			stepDataDao.create(s110);
+			stepDataDao.create(s111);
+			stepDataDao.create(s112);
+			stepDataDao.create(s113);
+			stepDataDao.create(s114);
+			stepDataDao.create(s115);
+			stepDataDao.create(s116);
+			stepDataDao.create(s117);
+			stepDataDao.create(s118);
+			stepDataDao.create(s119);
+			stepDataDao.create(s120);
+			stepDataDao.create(s121);
+			stepDataDao.create(s122);
+			stepDataDao.create(s123);
+			stepDataDao.create(s124);
+			stepDataDao.create(s125);
+			stepDataDao.create(s126);
+			stepDataDao.create(s127);
+			stepDataDao.create(s128);
+			stepDataDao.create(s129);
+			stepDataDao.create(s130);
+			stepDataDao.create(s131);
+			stepDataDao.create(s132);
+			stepDataDao.create(s133);
+			stepDataDao.create(s134);
+			stepDataDao.create(s135);
+			stepDataDao.create(s136);
+			stepDataDao.create(s137);
+			stepDataDao.create(s138);
+			stepDataDao.create(s139);
+			stepDataDao.create(s140);
+			stepDataDao.create(s141);
+			stepDataDao.create(s142);
+			stepDataDao.create(s143);
+			stepDataDao.create(s144);
+			stepDataDao.create(s145);
+			stepDataDao.create(s146);
+			stepDataDao.create(s147);
+			stepDataDao.create(s148);
+			stepDataDao.create(s149);
+			stepDataDao.create(s150);
+			stepDataDao.create(s151);
+			stepDataDao.create(s152);
+			stepDataDao.create(s153);
+			stepDataDao.create(s154);
+			stepDataDao.create(s155);
+			stepDataDao.create(s156);
+			stepDataDao.create(s157);
+			stepDataDao.create(s158);
+			stepDataDao.create(s159);
+			stepDataDao.create(s160);
+			stepDataDao.create(s161);
+			stepDataDao.create(s162);
+			stepDataDao.create(s163);
+			stepDataDao.create(s164);
+			stepDataDao.create(s165);
+			stepDataDao.create(s166);
+			stepDataDao.create(s167);
+			stepDataDao.create(s168);
+			stepDataDao.create(s169);
+			stepDataDao.create(s170);
+			stepDataDao.create(s171);
+			stepDataDao.create(s172);
+			stepDataDao.create(s173);
+			stepDataDao.create(s174);
+			stepDataDao.create(s175);
+			stepDataDao.create(s176);
+			stepDataDao.create(s177);
+			stepDataDao.create(s178);
+			stepDataDao.create(s179);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting step", "Insert error " + ex.toString());
+		}
+		
+		//WP
+		HighLight h1 = new HighLight("hl_bassaoles_wpo01","wpO01-inici",null,10,HighLight.WAYPOINT,s1);
+		HighLight h2 = new HighLight("hl_bassaoles_wpo02","wpO02-represa",null,10,HighLight.WAYPOINT,s7);
+		HighLight h3 = new HighLight("hl_bassaoles_wpo03","wpO03-vista canal",null,10,HighLight.WAYPOINT,s27);
+		HighLight h4 = new HighLight("hl_bassaoles_wpo04","wpO04-arbre tombat",null,10,HighLight.WAYPOINT,s39);
+		HighLight h5 = new HighLight("hl_bassaoles_wpo05","wpO05-extrem N bassa",null,10,HighLight.WAYPOINT,s44);
+		HighLight h6 = new HighLight("hl_bassaoles_wpo06","wpO06-cruïlla pista",null,10,HighLight.WAYPOINT,s66);
+		HighLight h7 = new HighLight("hl_bassaoles_wpo07","wpO07-desviament pista",null,10,HighLight.WAYPOINT);
+		HighLight h8 = new HighLight("hl_bassaoles_wpo08","wpO08-basseta",null,10,HighLight.WAYPOINT,s75);
+		HighLight h9 = new HighLight("hl_bassaoles_wpo09","wpO09-sortida sender",null,10,HighLight.WAYPOINT,s81);
+		HighLight h10 = new HighLight("hl_bassaoles_wpo10","wpO10-inici sender",null,10,HighLight.WAYPOINT,s89);
+		HighLight h11 = new HighLight("hl_bassaoles_wpo11","wpO11-prat",null,10,HighLight.WAYPOINT,s94);
+		HighLight h12 = new HighLight("hl_bassaoles_wpo12","wpO12-pista",null,10,HighLight.WAYPOINT,s101);
+		HighLight h13 = new HighLight("hl_bassaoles_wpo13","wpO13-desviament borda",null,10,HighLight.WAYPOINT,s115);
+		HighLight h14 = new HighLight("hl_bassaoles_wpo14","wpO14",null,10,HighLight.WAYPOINT,s143);
+
+		//POI
+		HighLight h15 = new HighLight("hl_bassaoles_poio01","poiO01-represa",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s6);
+		HighLight h16 = new HighLight("hl_bassaoles_poio02","poiO02-vista canal",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s28);
+		HighLight h17 = new HighLight("hl_bassaoles_poio03","poiO03-vista bassa N",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s43);
+		HighLight h18 = new HighLight("hl_bassaoles_poio04","poiO04-basseta",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s74);
+		HighLight h19 = new HighLight("hl_bassaoles_poio05","poiO05-aiguamoll",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s103);
+		HighLight h20 = new HighLight("hl_bassaoles_poio06","poiO06-illots càrex",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s148);
+				
+		
+		try {
+			hlDataDao.create(h1);
+			hlDataDao.create(h2);
+			hlDataDao.create(h3);
+			hlDataDao.create(h4);
+			hlDataDao.create(h5);
+			hlDataDao.create(h6);
+			hlDataDao.create(h7);
+			hlDataDao.create(h8);
+			hlDataDao.create(h9);
+			hlDataDao.create(h10);
+			hlDataDao.create(h11);
+			hlDataDao.create(h12);
+			hlDataDao.create(h13);
+			hlDataDao.create(h14);
+			hlDataDao.create(h15);
+			hlDataDao.create(h16);
+			hlDataDao.create(h17);
+			hlDataDao.create(h18);
+			hlDataDao.create(h19);
+			hlDataDao.create(h20);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting highlight", "Insert error " + ex.toString());
+		}
+
+		
+		Route r = new Route();
+		r.setId("ROUTE_BASSAOLES");
+		r.setName("Bassa d'Oles");
+		r.setDescription("Itinerari circular de 1.7 km amb 50 m de desnivell (30 minuts a peu) al voltant del complex de la  Bassa d’Oles, una altra petita bassa i un aiguamoll propers. El camí segueix una pista i senders força planers, i travessa algun prat. Sense cap dificultat, l’itinerari és apte per a tots els públics. La Bassa d’Oles és una bassa d’origen natural que posteriorment es va represar. Es practica la pesca intensiva, i la bassa és repoblada regularment amb truites. És per tant un exemple d’ecosistema aquàtic fortament humanitzat. Està envoltada d’una pineda de pi roig de gran valor paisatgístic. L’interés principal rau en l’important entapissat de vegetació aqüàtica submergida i les illes de joncs que s’hi troben. Degut a l’accessibilitat a les vores i la poca fondària, és fàcil observar la vegetació submergida.");
+		r.setUserId("1");
+		// Ph_ch parameters
+		// r.setReference(r6);
+		// Interactive image
+		// r.setInteractiveImage(img);
+		r.setTrack(t);
+		r.setLocalCarto("bassa_oles.mbtiles");
+
+		try {
+			routeDataDao.create(r);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting route", "Insert error " + ex.toString());
+		}
+		
+	}
+
+	public static void loadVarrados(DataBaseHelper db, Context context) {
+		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
+		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
+		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
+		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
+
+		Track t = new Track("TRACK_VARRADOS", "Waypoints recorregut Varradòs");
+		try {
+			trackDataDao.create(t);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting track", "Insert error " + ex.toString());
+		}
+
+
+		Step s1 = new Step("step_varrados_1", "step", 42.7378633696433,
+				0.756368635182401, 0, 10, 1, t);
+		Step s2 = new Step("step_varrados_2", "step", 42.7379694385642,
+				0.756267080117364, 0, 10, 2, t, null);
+		Step s3 = new Step("step_varrados_3", "step", 42.7381332329505,
+				0.755894686489318, 0, 10, 3, t, null);
+		Step s4 = new Step("step_varrados_4", "step", 42.738266536489,
+				0.755804363736847, 0, 10, 4, t);
+		Step s5 = new Step("step_varrados_5", "step", 42.7384793911674,
+				0.75563787281689, 0, 10, 5, t, null);
+		Step s6 = new Step("step_varrados_6", "step", 42.7387275218083,
+				0.75543345889914, 0, 10, 6, t, null);
+		Step s7 = new Step("step_varrados_7", "step", 42.7389301803697,
+				0.75520625172494, 0, 10, 7, t, null);
+		Step s8 = new Step("step_varrados_8", "step", 42.7390577960882,
+				0.754986638180492, 0, 10, 8, t, null);
+		Step s9 = new Step("step_varrados_9", "step", 42.739123404994,
+				0.75477353774358, 0, 10, 9, t, null);
+		Step s10 = new Step("step_varrados_10", "step", 42.7391872427623,
+				0.754584933557306, 0, 10, 10, t, null);
+		Step s11 = new Step("step_varrados_11", "step", 42.7393061238921,
+				0.754333259697102, 0, 10, 11, t, null);
+		Step s12 = new Step("step_varrados_12", "step", 42.739429888622,
+				0.754215789236744, 0, 10, 12, t, null);
+		Step s13 = new Step("step_varrados_13", "step", 42.7395440216613,
+				0.75418112712893, 0, 10, 13, t, null);
+		Step s14 = new Step("step_varrados_14", "step", 42.7396849364974,
+				0.754249337910437, 0, 10, 14, t, null);
+		Step s15 = new Step("step_varrados_15", "step", 42.7397723388377,
+				0.754343914076339, 0, 10, 15, t, null);
+		Step s16 = new Step("step_varrados_16", "step", 42.7398897647497,
+				0.754477110227804, 0, 10, 16, t, null);
+		Step s17 = new Step("step_varrados_17", "step", 42.740048641912,
+				0.754657676638004, 0, 10, 17, t, null);
+		Step s18 = new Step("step_varrados_18", "step", 42.740191292433,
+				0.754814396543274, 0, 10, 18, t, null);
+		Step s19 = new Step("step_varrados_19", "step", 42.7403250638875,
+				0.754977545954112, 0, 10, 19, t, null);
+		Step s20 = new Step("step_varrados_20", "step", 42.7404709212418,
+				0.755183018056262, 0, 10, 20, t, null);
+		Step s21 = new Step("step_varrados_21", "step", 42.7405656702552,
+				0.755307873171522, 0, 10, 21, t, null);
+		Step s22 = new Step("step_varrados_22", "step", 42.7406837289709,
+				0.755358587391483, 0, 10, 22, t, null);
+		Step s23 = new Step("step_varrados_23", "step", 42.7408236258214,
+				0.75537491773891, 0, 10, 23, t, null);
+		Step s24 = new Step("step_varrados_24", "step", 42.7410625423447,
+				0.755274669604904, 0, 10, 24, t, null);
+		Step s25 = new Step("step_varrados_25", "step", 42.7411279615596,
+				0.755281471079679, 0, 10, 25, t, null);
+		Step s26 = new Step("step_varrados_26", "step", 42.7412210592842,
+				0.755436929171511, 0, 10, 26, t, null);
+		Step s27 = new Step("step_varrados_27", "step", 42.7412863831568,
+				0.755553685416148, 0, 10, 27, t, null);
+		Step s28 = new Step("step_varrados_28", "step", 42.7413736049802,
+				0.755639109671303, 0, 10, 28, t, null);
+		Step s29 = new Step("step_varrados_29", "step", 42.7414603480529,
+				0.755700117780109, 0, 10, 29, t, null);
+		Step s30 = new Step("step_varrados_30", "step", 42.741561821396,
+				0.755708672913028, 0, 10, 30, t, null);
+		Step s31 = new Step("step_varrados_31", "step", 42.7416787430638,
+				0.755701399518536, 0, 10, 31, t, null);
+		Step s32 = new Step("step_varrados_32", "step", 42.7419855680362,
+				0.75562008009342, 0, 10, 32, t, null);
+		Step s33 = new Step("step_varrados_33", "step", 42.7420815846475,
+				0.755579964247571, 0, 10, 33, t, null);
+		Step s34 = new Step("step_varrados_34", "step", 42.7422038788581,
+				0.75550224901752, 0, 10, 34, t, null);
+		Step s35 = new Step("step_varrados_35", "step", 42.7422642601805,
+				0.755481744401051, 0, 10, 35, t, null);
+		Step s36 = new Step("step_varrados_36", "step", 42.742362945284,
+				0.755462911595888, 0, 10, 36, t, null);
+		Step s37 = new Step("step_varrados_37", "step", 42.7424890450155,
+				0.755464469111663, 0, 10, 37, t, null);
+		Step s38 = new Step("step_varrados_38", "step", 42.7426111840525,
+				0.755493657939936, 0, 10, 38, t, null);
+		Step s39 = new Step("step_varrados_39", "step", 42.7427383609523,
+				0.755550153486482, 0, 10, 39, t, null);
+		Step s40 = new Step("step_varrados_40", "step", 42.7429564211789,
+				0.755649183596262, 0, 10, 40, t, null);
+		Step s41 = new Step("step_varrados_41", "step", 42.7431292491026,
+				0.755737629499467, 0, 10, 41, t, null);
+		Step s42 = new Step("step_varrados_42", "step", 42.7434116155677,
+				0.755901534968657, 0, 10, 42, t, null);
+		Step s43 = new Step("step_varrados_43", "step", 42.7435390316137,
+				0.755970240617789, 0, 10, 43, t, null);
+		Step s44 = new Step("step_varrados_44", "step", 42.7436458418437,
+				0.756021364163949, 0, 10, 44, t, null);
+		Step s45 = new Step("step_varrados_45", "step", 42.7437615309703,
+				0.75606605886636, 0, 10, 45, t, null);
+		Step s46 = new Step("step_varrados_46", "step", 42.7438820185107,
+				0.75612585222186, 0, 10, 46, t, null);
+		Step s47 = new Step("step_varrados_47", "step", 42.7439435964877,
+				0.756166390995714, 0, 10, 47, t, null);
+		Step s48 = new Step("step_varrados_48", "step", 42.7439720878703,
+				0.756241721264142, 0, 10, 48, t, null);
+		Step s49 = new Step("step_varrados_49", "step", 42.7439557295304,
+				0.75644084291647, 0, 10, 49, t, null);
+		Step s50 = new Step("step_varrados_50", "step", 42.743939453899,
+				0.75675908032097, 0, 10, 50, t, null);
+		Step s51 = new Step("step_varrados_51", "step", 42.7439753149419,
+				0.756980752920395, 0, 10, 51, t, null);
+		Step s52 = new Step("step_varrados_52", "step", 42.7440554735923,
+				0.757280240916633, 0, 10, 52, t, null);
+		Step s53 = new Step("step_varrados_53", "step", 42.7441347346219,
+				0.757533946969081, 0, 10, 53, t, null);
+		Step s54 = new Step("step_varrados_54", "step", 42.7442814468155,
+				0.757898232502361, 0, 10, 54, t, null);
+		Step s55 = new Step("step_varrados_55", "step", 42.7444711021119,
+				0.758386200317835, 0, 10, 55, t, null);
+		Step s56 = new Step("step_varrados_56", "step", 42.7446727804482,
+				0.758913444563633, 0, 10, 56, t, null);
+		Step s57 = new Step("step_varrados_57", "step", 42.7447430782772,
+				0.759054466531015, 0, 10, 57, t, null);
+		Step s58 = new Step("step_varrados_58", "step", 42.7449231514533,
+				0.759283164566515, 0, 10, 58, t, null);
+		Step s59 = new Step("step_varrados_59", "step", 42.7450726644815,
+				0.759445768470534, 0, 10, 59, t, null);
+		Step s60 = new Step("step_varrados_60", "step", 42.7452566985989,
+				0.759646836570152, 0, 10, 60, t, null);
+		Step s61 = new Step("step_varrados_61", "step", 42.7453681261012,
+				0.75970391019452, 0, 10, 61, t, null);
+		Step s62 = new Step("step_varrados_62", "step", 42.7455816038119,
+				0.759684001783452, 0, 10, 62, t, null);
+		Step s63 = new Step("step_varrados_63", "step", 42.7459327879692,
+				0.759683567446753, 0, 10, 63, t, null);
+		Step s64 = new Step("step_varrados_64", "step", 42.7460227739183,
+				0.75968032552045, 0, 10, 64, t, null);
+		Step s65 = new Step("step_varrados_65", "step", 42.7461186725003,
+				0.759634108447249, 0, 10, 65, t, null);
+		Step s66 = new Step("step_varrados_66", "step", 42.7463572940286,
+				0.759518605644059, 0, 10, 66, t, null);
+		Step s67 = new Step("step_varrados_67", "step", 42.74657797797,
+				0.759406802706668, 0, 10, 67, t, null);
+		Step s68 = new Step("step_varrados_68", "step", 42.7467401916037,
+				0.759413175635029, 0, 10, 68, t, null);
+		Step s69 = new Step("step_varrados_69", "step", 42.7468969706313,
+				0.759486942852562, 0, 10, 69, t);
+		Step s70 = new Step("step_varrados_70", "step", 42.747036469306,
+				0.759597986826308, 0, 10, 70, t, null);
+		Step s71 = new Step("step_varrados_71", "step", 42.7471890081756,
+				0.759800196157452, 0, 10, 71, t);
+		Step s72 = new Step("step_varrados_72", "step", 42.747327212606,
+				0.759960159897268, 0, 10, 72, t, null);
+		Step s73 = new Step("step_varrados_73", "step", 42.7476661929537,
+				0.760256454091534, 0, 10, 73, t);
+		Step s74 = new Step("step_varrados_74", "step", 42.7479424212676,
+				0.760567229599749, 0, 10, 74, t, null);
+		Step s75 = new Step("step_varrados_75", "step", 42.7481755472055,
+				0.760861232737148, 0, 10, 75, t, null);
+		Step s76 = new Step("step_varrados_76", "step", 42.7483711855274,
+				0.761080224144762, 0, 10, 76, t, null);
+		Step s77 = new Step("step_varrados_77", "step", 42.7485230055718,
+				0.761245812555204, 0, 10, 77, t, null);
+		Step s78 = new Step("step_varrados_78", "step", 42.7487707433078,
+				0.76148125808793, 0, 10, 78, t, null);
+		Step s79 = new Step("step_varrados_79", "step", 42.749038429023,
+				0.761700714465977, 0, 10, 79, t, null);
+		Step s80 = new Step("step_varrados_80", "step", 42.7492717727853,
+				0.761890862911023, 0, 10, 80, t, null);
+		Step s81 = new Step("step_varrados_81", "step", 42.74953768552,
+				0.762134823395086, 0, 10, 81, t, null);
+		Step s82 = new Step("step_varrados_82", "step", 42.749681382754,
+				0.762230453630847, 0, 10, 82, t, null);
+		Step s83 = new Step("step_varrados_83", "step", 42.7497627282271,
+				0.762245853644363, 0, 10, 83, t, null);
+		Step s84 = new Step("step_varrados_84", "step", 42.7502153078581,
+				0.762134871069054, 0, 10, 84, t, null);
+		Step s85 = new Step("step_varrados_85", "step", 42.7505426826927,
+				0.762068104013806, 0, 10, 85, t, null);
+		Step s86 = new Step("step_varrados_86", "step", 42.7507069487103,
+				0.761949168806979, 0, 10, 86, t, null);
+		Step s87 = new Step("step_varrados_87", "step", 42.7509331120053,
+				0.761656942989657, 0, 10, 87, t, null);
+		Step s88 = new Step("step_varrados_88", "step", 42.7511008620675,
+				0.76148595087081, 0, 10, 88, t, null);
+		Step s89 = new Step("step_varrados_89", "step", 42.7511500558878,
+				0.761468906248276, 0, 10, 89, t, null);
+		Step s90 = new Step("step_varrados_90", "step", 42.7512591135396,
+				0.761519964057411, 0, 10, 90, t, null);
+		Step s91 = new Step("step_varrados_91", "step", 42.7513829822585,
+				0.761637692102152, 0, 10, 91, t, null);
+		Step s92 = new Step("step_varrados_92", "step", 42.7514506096208,
+				0.761757445328808, 0, 10, 92, t, null);
+		Step s93 = new Step("step_varrados_93", "step", 42.7514653792315,
+				0.761937140924976, 0, 10, 93, t, null);
+		Step s94 = new Step("step_varrados_94", "step", 42.7514643413329,
+				0.762114350895788, 0, 10, 94, t, null);
+		Step s95 = new Step("step_varrados_95", "step", 42.751479510159,
+				0.762199336522364, 0, 10, 95, t, null);
+		Step s96 = new Step("step_varrados_96", "step", 42.751500532778,
+				0.762238290970709, 0, 10, 96, t, null);
+		Step s97 = new Step("step_varrados_97", "step", 42.7517885237434,
+				0.762460083703489, 0, 10, 97, t, null);
+		Step s98 = new Step("step_varrados_98", "step", 42.7521843606319,
+				0.762555808010364, 0, 10, 98, t, null);
+		Step s99 = new Step("step_varrados_99", "step", 42.7526276787626,
+				0.762662043724061, 0, 10, 99, t, null);
+		Step s100 = new Step("step_varrados_100", "step", 42.7528913230436,
+				0.762790020442354, 0, 10, 100, t, null);
+		Step s101 = new Step("step_varrados_101", "step", 42.7529558047571,
+				0.762864069358013, 0, 10, 101, t, null);
+		Step s102 = new Step("step_varrados_102", "step", 42.7530386588023,
+				0.763071867544895, 0, 10, 102, t, null);
+		Step s103 = new Step("step_varrados_103", "step", 42.753135427923,
+				0.763300549123155, 0, 10, 103, t, null);
+		Step s104 = new Step("step_varrados_104", "step", 42.7533702502195,
+				0.763912223893644, 0, 10, 104, t, null);
+		Step s105 = new Step("step_varrados_105", "step", 42.7535246463691,
+				0.764325178362552, 0, 10, 105, t, null);
+		Step s106 = new Step("step_varrados_106", "step", 42.7535756888368,
+				0.764402767694741, 0, 10, 106, t, null);
+		Step s107 = new Step("step_varrados_107", "step", 42.753691033083,
+				0.764545250715059, 0, 10, 107, t, null);
+		Step s108 = new Step("step_varrados_108", "step", 42.7537557521663,
+				0.764631513096752, 0, 10, 108, t, null);
+		Step s109 = new Step("step_varrados_109", "step", 42.7538785757878,
+				0.764926468990585, 0, 10, 109, t, null);
+		Step s110 = new Step("step_varrados_110", "step", 42.7539184443863,
+				0.765123598999281, 0, 10, 110, t, null);
+		Step s111 = new Step("step_varrados_111", "step", 42.7539755345091,
+				0.76574167595968, 0, 10, 111, t, null);
+		Step s112 = new Step("step_varrados_112", "step", 42.7540442897697,
+				0.765919439754413, 0, 10, 112, t, null);
+		Step s113 = new Step("step_varrados_113", "step", 42.7542209371614,
+				0.766319384829133, 0, 10, 113, t, null);
+		Step s114 = new Step("step_varrados_114", "step", 42.7542981082615,
+				0.766582383125749, 0, 10, 114, t, null);
+		Step s115 = new Step("step_varrados_115", "step", 42.7544202852444,
+				0.766959849520706, 0, 10, 115, t, null);
+		Step s116 = new Step("step_varrados_116", "step", 42.754481111863,
+				0.767192887996512, 0, 10, 116, t, null);
+		Step s117 = new Step("step_varrados_117", "step", 42.7545744325407,
+				0.767360608028847, 0, 10, 117, t, null);
+		Step s118 = new Step("step_varrados_118", "step", 42.7546382097549,
+				0.76751411522955, 0, 10, 118, t, null);
+		Step s119 = new Step("step_varrados_119", "step", 42.7546581716781,
+				0.767614208679179, 0, 10, 119, t, null);
+		Step s120 = new Step("step_varrados_120", "step", 42.7546895379153,
+				0.768068256413764, 0, 10, 120, t, null);
+		Step s121 = new Step("step_varrados_121", "step", 42.7547481601841,
+				0.768188346202553, 0, 10, 121, t, null);
+		Step s122 = new Step("step_varrados_122", "step", 42.754847097637,
+				0.768297824325534, 0, 10, 122, t, null);
+		Step s123 = new Step("step_varrados_123", "step", 42.7549181463831,
+				0.768362480869417, 0, 10, 123, t, null);
+		Step s124 = new Step("step_varrados_124", "step", 42.7550295699245,
+				0.768419578444533, 0, 10, 124, t, null);
+		Step s125 = new Step("step_varrados_125", "step", 42.7551932711892,
+				0.768502293561864, 0, 10, 125, t, null);
+		Step s126 = new Step("step_varrados_126", "step", 42.7553150503093,
+				0.768513196537709, 0, 10, 126, t, null);
+		Step s127 = new Step("step_varrados_127", "step", 42.7554209627955,
+				0.768518559312707, 0, 10, 127, t, null);
+		Step s128 = new Step("step_varrados_128", "step", 42.7555430989728,
+				0.768547778935622, 0, 10, 128, t, null);
+		Step s129 = new Step("step_varrados_129", "step", 42.7556046728885,
+				0.768588337320896, 0, 10, 129, t, null);
+		Step s130 = new Step("step_varrados_130", "step", 42.7559637829239,
+				0.76911005812229, 0, 10, 130, t, null);
+		Step s131 = new Step("step_varrados_131", "step", 42.7560535424418,
+				0.769210704360424, 0, 10, 131, t, null);
+		Step s132 = new Step("step_varrados_132", "step", 42.7564021534368,
+				0.769540347636323, 0, 10, 132, t, null);
+		Step s133 = new Step("step_varrados_133", "step", 42.7566178551696,
+				0.769865597988014, 0, 10, 133, t, null);
+		Step s134 = new Step("step_varrados_134", "step", 42.7568472323883,
+				0.770199524911563, 0, 10, 134, t, null);
+		Step s135 = new Step("step_varrados_135", "step", 42.7569401326287,
+				0.770345886014687, 0, 10, 135, t, null);
+		Step s136 = new Step("step_varrados_136", "step", 42.7570445976575,
+				0.770739285821348, 0, 10, 136, t, null);
+		Step s137 = new Step("step_varrados_137", "step", 42.7571397060557,
+				0.771114692565971, 0, 10, 137, t, null);
+		Step s138 = new Step("step_varrados_138", "step", 42.7571915168515,
+				0.771231979134727, 0, 10, 138, t, null);
+		Step s139 = new Step("step_varrados_139", "step", 42.7574324357169,
+				0.771580775333147, 0, 10, 139, t, null);
+		Step s140 = new Step("step_varrados_140", "step", 42.7577189410492,
+				0.771958490269943, 0, 10, 140, t, null);
+		Step s141 = new Step("step_varrados_141", "step", 42.7579290592865,
+				0.772112874764003, 0, 10, 141, t, null);
+		Step s142 = new Step("step_varrados_142", "step", 42.7582271677281,
+				0.772508509486808, 0, 10, 142, t, null);
+		Step s143 = new Step("step_varrados_143", "step", 42.7583792692447,
+				0.772689416328076, 0, 10, 143, t, null);
+		Step s144 = new Step("step_varrados_144", "step", 42.7587124570898,
+				0.772689697257636, 0, 10, 144, t, null);
+		Step s145 = new Step("step_varrados_145", "step", 42.7595605802226,
+				0.772659305239216, 0, 10, 145, t, null);
+		Step s146 = new Step("step_varrados_146", "step", 42.7596410928572,
+				0.772631979211767, 0, 10, 146, t, null);
+		Step s147 = new Step("step_varrados_147", "step", 42.7597778392118,
+				0.772486543683098, 0, 10, 147, t, null);
+		Step s148 = new Step("step_varrados_148", "step", 42.7598213471987,
+				0.772408606604344, 0, 10, 148, t, null);
+		Step s149 = new Step("step_varrados_149", "step", 42.7598019834022,
+				0.772339033016901, 0, 10, 149, t, null);
+		Step s150 = new Step("step_varrados_150", "step", 42.7597439593895,
+				0.772249459358015, 0, 10, 150, t, null);
+		Step s151 = new Step("step_varrados_151", "step", 42.7596656289292,
+				0.772157558611538, 0, 10, 151, t, null);
+		Step s152 = new Step("step_varrados_152", "step", 42.7596456113578,
+				0.772054402562493, 0, 10, 152, t, null);
+		Step s153 = new Step("step_varrados_153", "step", 42.7596797638585,
+				0.771958470076934, 0, 10, 153, t, null);
+		Step s154 = new Step("step_varrados_154", "step", 42.7597625853888,
+				0.771934115425259, 0, 10, 154, t, null);
+		Step s155 = new Step("step_varrados_155", "step", 42.7600838878753,
+				0.772133401236853, 0, 10, 155, t, null);
+		Step s156 = new Step("step_varrados_156", "step", 42.7602687249133,
+				0.772261201782552, 0, 10, 156, t, null);
+		Step s157 = new Step("step_varrados_157", "step", 42.7603561727838,
+				0.772358887021055, 0, 10, 157, t, null);
+		Step s158 = new Step("step_varrados_158", "step", 42.7604719829671,
+				0.772525824371773, 0, 10, 158, t, null);
+		Step s159 = new Step("step_varrados_159", "step", 42.7605595571756,
+				0.77274571174046, 0, 10, 159, t, null);
+		Step s160 = new Step("step_varrados_160", "step", 42.7606217831478,
+				0.772819860675776, 0, 10, 160, t, null);
+		Step s161 = new Step("step_varrados_161", "step", 42.7606716915476,
+				0.772839458341983, 0, 10, 161, t);
+		Step s162 = new Step("step_varrados_162", "step", 42.7607446829809,
+				0.772772684453635, 0, 10, 162, t, null);
+		Step s163 = new Step("step_varrados_163", "step", 42.760756933473,
+				0.772708087116996, 0, 10, 163, t, null);
+		Step s164 = new Step("step_varrados_164", "step", 42.7607376292422,
+				0.772641565422394, 0, 10, 164, t, null);
+		Step s165 = new Step("step_varrados_165", "step", 42.7603905382039,
+				0.771926880447086, 0, 10, 165, t, null);
+		Step s166 = new Step("step_varrados_166", "step", 42.7603047453567,
+				0.771798585068385, 0, 10, 166, t, null);
+		Step s167 = new Step("step_varrados_167", "step", 42.7602498620383,
+				0.771754725623485, 0, 10, 167, t, null);
+		Step s168 = new Step("step_varrados_168", "step", 42.7601538310517,
+				0.771678735027784, 0, 10, 168, t, null);
+		Step s169 = new Step("step_varrados_169", "step", 42.7600739636824,
+				0.77162355102629, 0, 10, 169, t, null);
+		Step s170 = new Step("step_varrados_170", "step", 42.760052409182,
+				0.771557111075856, 0, 10, 170, t, null);
+		Step s171 = new Step("step_varrados_171", "step", 42.7600939045971,
+				0.77149146566253, 0, 10, 171, t, null);
+		Step s172 = new Step("step_varrados_172", "step", 42.7601588475893,
+				0.771473861499772, 0, 10, 172, t, null);
+		Step s173 = new Step("step_varrados_173", "step", 42.7602248604431,
+				0.771511211326118, 0, 10, 173, t, null);
+		Step s174 = new Step("step_varrados_174", "step", 42.7602872060498,
+				0.771591464615939, 0, 10, 174, t, null);
+		Step s175 = new Step("step_varrados_175", "step", 42.7605267573268,
+				0.771870059728542, 0, 10, 175, t, null);
+		Step s176 = new Step("step_varrados_176", "step", 42.7606368804157,
+				0.771976097409376, 0, 10, 176, t, null);
+		Step s177 = new Step("step_varrados_177", "step", 42.7610436782296,
+				0.77228841806596, 0, 10, 177, t, null);
+		Step s178 = new Step("step_varrados_178", "step", 42.7611236047198,
+				0.772346656792, 0, 10, 178, t, null);
+		Step s179 = new Step("step_varrados_179", "step", 42.7612161973587,
+				0.772361669148077, 0, 10, 179, t, null);
+		Step s180 = new Step("step_varrados_180", "step", 42.761397239788,
+				0.772410173607852, 0, 10, 180, t, null);
+		Step s181 = new Step("step_varrados_181", "step", 42.7615382635752,
+				0.772484554214866, 0, 10, 181, t, null);
+		Step s182 = new Step("step_varrados_182", "step", 42.761789231599,
+				0.772655816715317, 0, 10, 182, t, null);
+		Step s183 = new Step("step_varrados_183", "step", 42.761980995318,
+				0.772792539547549, 0, 10, 183, t, null);
+		Step s184 = new Step("step_varrados_184", "step", 42.7620410904267,
+				0.772872876971648, 0, 10, 184, t, null);
+		Step s185 = new Step("step_varrados_185", "step", 42.7621153962517,
+				0.772989368038823, 0, 10, 185, t, null);
+		Step s186 = new Step("step_varrados_186", "step", 42.7621502103627,
+				0.773043114638706, 0, 10, 186, t, null);
+		Step s187 = new Step("step_varrados_187", "step", 42.7622989330848,
+				0.773166105414332, 0, 10, 187, t, null);
+		Step s188 = new Step("step_varrados_188", "step", 42.7623953195163,
+				0.773260419505892, 0, 10, 188, t, null);
+		Step s189 = new Step("step_varrados_189", "step", 42.7624878004409,
+				0.773385426253887, 0, 10, 189, t, null);
+		Step s190 = new Step("step_varrados_190", "step", 42.7628477080571,
+				0.773717776272258, 0, 10, 190, t, null);
+		Step s191 = new Step("step_varrados_191", "step", 42.7629283464177,
+				0.773812656130906, 0, 10, 191, t, null);
+		Step s192 = new Step("step_varrados_192", "step", 42.7632667655045,
+				0.774197720325713, 0, 10, 192, t, null);
+		Step s193 = new Step("step_varrados_193", "step", 42.7634606052285,
+				0.774441311881087, 0, 10, 193, t, null);
+		Step s194 = new Step("step_varrados_194", "step", 42.7635478139394,
+				0.774526792411825, 0, 10, 194, t, null);
+		Step s195 = new Step("step_varrados_195", "step", 42.7636552695726,
+				0.774611548157717, 0, 10, 195, t, null);
+		Step s196 = new Step("step_varrados_196", "step", 42.7638595852204,
+				0.774815048332683, 0, 10, 196, t, null);
+		Step s197 = new Step("step_varrados_197", "step", 42.7639797133597,
+				0.774972678880803, 0, 10, 197, t, null);
+		Step s198 = new Step("step_varrados_198", "step", 42.7640208008094,
+				0.775001761005139, 0, 10, 198, t, null);
+		Step s199 = new Step("step_varrados_199", "step", 42.7640769237418,
+				0.77499364098131, 0, 10, 199, t, null);
+		Step s200 = new Step("step_varrados_200", "step", 42.7642493170693,
+				0.774944694064014, 0, 10, 200, t, null);
+		Step s201 = new Step("step_varrados_201", "step", 42.7646610057363,
+				0.774929953679766, 0, 10, 201, t, null);
+		Step s202 = new Step("step_varrados_202", "step", 42.7650362305595,
+				0.7750081797042, 0, 10, 202, t, null);
+		Step s203 = new Step("step_varrados_203", "step", 42.765272504699,
+				0.77500277540988, 0, 10, 203, t, null);
+		Step s204 = new Step("step_varrados_204", "step", 42.7655574461424,
+				0.775068957997575, 0, 10, 204, t, null);
+		Step s205 = new Step("step_varrados_205", "step", 42.7657437583774,
+				0.775157004804499, 0, 10, 205, t, null);
+		Step s206 = new Step("step_varrados_206", "step", 42.7658942539437,
+				0.775255500646277, 0, 10, 206, t, null);
+		Step s207 = new Step("step_varrados_207", "step", 42.7660227868425,
+				0.775382281981833, 0, 10, 207, t, null);
+		Step s208 = new Step("step_varrados_208", "step", 42.7662211236189,
+				0.775625726727916, 0, 10, 208, t, null);
+		Step s209 = new Step("step_varrados_209", "step", 42.7665279231475,
+				0.776005841290113, 0, 10, 209, t, null);
+		Step s210 = new Step("step_varrados_210", "step", 42.7665668793399,
+				0.7760411123908, 0, 10, 210, t, null);
+		Step s211 = new Step("step_varrados_211", "step", 42.7666280948921,
+				0.776063365098574, 0, 10, 211, t, null);
+		Step s212 = new Step("step_varrados_212", "step", 42.7667326473006,
+				0.776114621401144, 0, 10, 212, t, null);
+		Step s213 = new Step("step_varrados_213", "step", 42.7667787083775,
+				0.776167971147485, 0, 10, 213, t, null);
+		Step s214 = new Step("step_varrados_214", "step", 42.7668495201174,
+				0.776336542683346, 0, 10, 214, t, null);
+		Step s215 = new Step("step_varrados_215", "step", 42.7669604145338,
+				0.77659839975816, 0, 10, 215, t, null);
+		Step s216 = new Step("step_varrados_216", "step", 42.7671055239619,
+				0.776767369484479, 0, 10, 216, t, null);
+		Step s217 = new Step("step_varrados_217", "step", 42.7672397999147,
+				0.776958115918646, 0, 10, 217, t, null);
+		Step s218 = new Step("step_varrados_218", "step", 42.7673232191108,
+				0.777080406340934, 0, 10, 218, t, null);
+		Step s219 = new Step("step_varrados_219", "step", 42.767391720599,
+				0.777246007532521, 0, 10, 219, t, null);
+		Step s220 = new Step("step_varrados_220", "step", 42.7674849089098,
+				0.777407670583029, 0, 10, 220, t, null);
+		Step s221 = new Step("step_varrados_221", "step", 42.7675865621227,
+				0.777541531892306, 0, 10, 221, t, null);
+		Step s222 = new Step("step_varrados_222", "step", 42.7677120130381,
+				0.777625654480976, 0, 10, 222, t, null);
+		Step s223 = new Step("step_varrados_223", "step", 42.7677538705123,
+				0.77769443402618, 0, 10, 223, t, null);
+		Step s224 = new Step("step_varrados_224", "step", 42.7677655959675,
+				0.777834567897921, 0, 10, 224, t, null);
+		Step s225 = new Step("step_varrados_225", "step", 42.767758790453,
+				0.777947864948048, 0, 10, 225, t, null);
+		Step s226 = new Step("step_varrados_226", "step", 42.7677856138515,
+				0.778169957667498, 0, 10, 226, t, null);
+		Step s227 = new Step("step_varrados_227", "step", 42.7678371808608,
+				0.778275056591699, 0, 10, 227, t, null);
+		Step s228 = new Step("step_varrados_228", "step", 42.768017986335,
+				0.778427478737412, 0, 10, 228, t, null);
+		Step s229 = new Step("step_varrados_229", "step", 42.7680708546537,
+				0.778483643417834, 0, 10, 229, t, null);
+		Step s230 = new Step("step_varrados_230", "step", 42.7680949513088,
+				0.778565280984924, 0, 10, 230, t, null);
+		Step s231 = new Step("step_varrados_231", "step", 42.7680815145833,
+				0.778684926662358, 0, 10, 231, t, null);
+		Step s232 = new Step("step_varrados_232", "step", 42.7680753599909,
+				0.778831811657673, 0, 10, 232, t, null);
+		Step s233 = new Step("step_varrados_233", "step", 42.7681096992619,
+				0.778977249205644, 0, 10, 233, t, null);
+		Step s234 = new Step("step_varrados_234", "step", 42.7683920392395,
+				0.779489653769941, 0, 10, 234, t, null);
+		Step s235 = new Step("step_varrados_235", "step", 42.7685119845966,
+				0.779754255045796, 0, 10, 235, t, null);
+		Step s236 = new Step("step_varrados_236", "step", 42.7685468549303,
+				0.779811064381669, 0, 10, 236, t, null);
+		Step s237 = new Step("step_varrados_237", "step", 42.7686619442598,
+				0.779941396248993, 0, 10, 237, t, null);
+		Step s238 = new Step("step_varrados_238", "step", 42.7687569048455,
+				0.780078558847235, 0, 10, 238, t, null);
+		Step s239 = new Step("step_varrados_239", "step", 42.7688637649775,
+				0.78024890789966, 0, 10, 239, t, null);
+		Step s240 = new Step("step_varrados_240", "step", 42.7689422077848,
+				0.780346939138516, 0, 10, 240, t, null);
+		Step s241 = new Step("step_varrados_241", "step", 42.7690013505496,
+				0.780378437595495, 0, 10, 241, t, null);
+		Step s242 = new Step("step_varrados_242", "step", 42.769061262732,
+				0.780333519396677, 0, 10, 242, t, null);
+		Step s243 = new Step("step_varrados_243", "step", 42.7693990671012,
+				0.779991448464035, 0, 10, 243, t, null);
+		Step s244 = new Step("step_varrados_244", "step", 42.7694668533206,
+				0.780004304438475, 0, 10, 244, t, null);
+		Step s245 = new Step("step_varrados_245", "step", 42.7695695097605,
+				0.780073970838153, 0, 10, 245, t, null);
+		Step s246 = new Step("step_varrados_246", "step", 42.7698425499342,
+				0.780339220171129, 0, 10, 246, t, null);
+		Step s247 = new Step("step_varrados_247", "step", 42.7699163749288,
+				0.780431306757887, 0, 10, 247, t, null);
+		Step s248 = new Step("step_varrados_248", "step", 42.7701068868257,
+				0.780852287950365, 0, 10, 248, t, null);
+		Step s249 = new Step("step_varrados_249", "step", 42.7701571491725,
+				0.780890215853949, 0, 10, 249, t, null);
+		Step s250 = new Step("step_varrados_250", "step", 42.7703227367254,
+				0.780954581231887, 0, 10, 250, t, null);
+		Step s251 = new Step("step_varrados_251", "step", 42.7704013568431,
+				0.780945662028552, 0, 10, 251, t, null);
+		Step s252 = new Step("step_varrados_252", "step", 42.7704693207432,
+				0.780851565512661, 0, 10, 252, t, null);
+		Step s253 = new Step("step_varrados_253", "step", 42.7706099252481,
+				0.780672371738157, 0, 10, 253, t, null);
+		Step s254 = new Step("step_varrados_254", "step", 42.7707850442175,
+				0.780531667677621, 0, 10, 254, t, null);
+		Step s255 = new Step("step_varrados_255", "step", 42.7709011981865,
+				0.780484739116719, 0, 10, 255, t, null);
+		Step s256 = new Step("step_varrados_256", "step", 42.7709602817121,
+				0.780513185074354, 0, 10, 256, t);
+		Step s257 = new Step("step_varrados_257", "step", 42.7710402044645,
+				0.780687558647637, 0, 10, 257, t, null);
+		Step s258 = new Step("step_varrados_258", "step", 42.7711005311031,
+				0.780896244959194, 0, 10, 258, t, null);
+		Step s259 = new Step("step_varrados_259", "step", 42.7711330326064,
+				0.781063146018213, 0, 10, 259, t, null);
+		Step s260 = new Step("step_varrados_260", "step", 42.7711444581665,
+				0.781188020505514, 0, 10, 260, t, null);
+		Step s261 = new Step("step_varrados_261", "step", 42.7711932993862,
+				0.781268779470774, 0, 10, 261, t, null);
+		Step s262 = new Step("step_varrados_262", "step", 42.7715084889457,
+				0.781501978779148, 0, 10, 262, t, null);
+		Step s263 = new Step("step_varrados_263", "step", 42.7717193646634,
+				0.781696125045084, 0, 10, 263, t, null);
+		Step s264 = new Step("step_varrados_264", "step", 42.7719079208662,
+				0.781900236583173, 0, 10, 264, t, null);
+		Step s265 = new Step("step_varrados_265", "step", 42.7720532596065,
+				0.782081446416839, 0, 10, 265, t, null);
+		Step s266 = new Step("step_varrados_266", "step", 42.7721322926163,
+				0.78221002098729, 0, 10, 266, t, null);
+		Step s267 = new Step("step_varrados_267", "step", 42.7721173125004,
+				0.782366397449931, 0, 10, 267, t, null);
+		Step s268 = new Step("step_varrados_268", "step", 42.772056569669,
+				0.782484682882959, 0, 10, 268, t, null);
+		Step s269 = new Step("step_varrados_269", "step", 42.7720215213924,
+				0.782534825291184, 0, 10, 269, t, null);
+		Step s270 = new Step("step_varrados_270", "step", 42.772005472112,
+				0.782868470995283, 0, 10, 270, t, null);
+		Step s271 = new Step("step_varrados_271", "step", 42.7719688837229,
+				0.782955336657463, 0, 10, 271, t, null);
+		Step s272 = new Step("step_varrados_272", "step", 42.7719392217131,
+				0.783051122192925, 0, 10, 272, t, null);
+		Step s273 = new Step("step_varrados_273", "step", 42.7719323520595,
+				0.783161372918805, 0, 10, 273, t, null);
+		Step s274 = new Step("step_varrados_274", "step", 42.7719548463403,
+				0.783276687344823, 0, 10, 274, t, null);
+		Step s275 = new Step("step_varrados_275", "step", 42.7719606466529,
+				0.783343706062897, 0, 10, 275, t, null);
+		Step s276 = new Step("step_varrados_276", "step", 42.7719355341898,
+				0.783790735871737, 0, 10, 276, t, null);
+		Step s277 = new Step("step_varrados_277", "step", 42.7719468977012,
+				0.783912558989395, 0, 10, 277, t, null);
+		Step s278 = new Step("step_varrados_278", "step", 42.772053269037,
+				0.784406846646409, 0, 10, 278, t, null);
+		Step s279 = new Step("step_varrados_279", "step", 42.7721465067807,
+				0.784571586318066, 0, 10, 279, t, null);
+		Step s280 = new Step("step_varrados_280", "step", 42.7722994809059,
+				0.78468224908333, 0, 10, 280, t, null);
+		Step s281 = new Step("step_varrados_281", "step", 42.7723627633392,
+				0.784811389076323, 0, 10, 281, t, null);
+		Step s282 = new Step("step_varrados_282", "step", 42.7723706351623,
+				0.784869167325226, 0, 10, 282, t, null);
+		Step s283 = new Step("step_varrados_283", "step", 42.7722187667845,
+				0.785280993585848, 0, 10, 283, t, null);
+		Step s284 = new Step("step_varrados_284", "step", 42.7722602510573,
+				0.785679815058983, 0, 10, 284, t, null);
+		Step s285 = new Step("step_varrados_285", "step", 42.77226894431,
+				0.785896461902821, 0, 10, 285, t, null);
+		Step s286 = new Step("step_varrados_286", "step", 42.7722385012989,
+				0.786184785117649, 0, 10, 286, t, null);
+		Step s287 = new Step("step_varrados_287", "step", 42.7722444124397,
+				0.786374029546798, 0, 10, 287, t, null);
+		Step s288 = new Step("step_varrados_288", "step", 42.7722861467688,
+				0.786436712848652, 0, 10, 288, t, null);
+		Step s289 = new Step("step_varrados_289", "step", 42.7723881500038,
+				0.786472803080377, 0, 10, 289, t, null);
+		Step s290 = new Step("step_varrados_290", "step", 42.7725505993181,
+				0.786491461116626, 0, 10, 290, t, null);
+		Step s291 = new Step("step_varrados_291", "step", 42.7726745088285,
+				0.786496213610886, 0, 10, 291, t, null);
+		Step s292 = new Step("step_varrados_292", "step", 42.77276632653,
+				0.786587670579065, 0, 10, 292, t, null);
+		Step s293 = new Step("step_varrados_293", "step", 42.7727589220837,
+				0.786670439689906, 0, 10, 293, t, null);
+		Step s294 = new Step("step_varrados_294", "step", 42.7726405625359,
+				0.786952729287422, 0, 10, 294, t, null);
+		Step s295 = new Step("step_varrados_295", "step", 42.7726224407417,
+				0.787063381650234, 0, 10, 295, t, null);
+		Step s296 = new Step("step_varrados_296", "step", 42.7726454624363,
+				0.78720618172146, 0, 10, 296, t, null);
+		Step s297 = new Step("step_varrados_297", "step", 42.7727403556754,
+				0.787340310683958, 0, 10, 297, t, null);
+		Step s298 = new Step("step_varrados_298", "step", 42.772901138771,
+				0.78750570684998, 0, 10, 298, t, null);
+		Step s299 = new Step("step_varrados_299", "step", 42.7730201289373,
+				0.787605365280818, 0, 10, 299, t, null);
+		Step s300 = new Step("step_varrados_300", "step", 42.7730983886915,
+				0.787694251412437, 0, 10, 300, t, null);
+		Step s301 = new Step("step_varrados_301", "step", 42.7731337864082,
+				0.787778552481707, 0, 10, 301, t, null);
+		Step s302 = new Step("step_varrados_302", "step", 42.7731466210564,
+				0.787976720603781, 0, 10, 302, t, null);
+		Step s303 = new Step("step_varrados_303", "step", 42.7731926105193,
+				0.788143150681533, 0, 10, 303, t, null);
+		Step s304 = new Step("step_varrados_304", "step", 42.7732882697522,
+				0.788316980081918, 0, 10, 304, t, null);
+		Step s305 = new Step("step_varrados_305", "step", 42.7733150222966,
+				0.788419924200438, 0, 10, 305, t, null);
+		Step s306 = new Step("step_varrados_306", "step", 42.7733289846185,
+				0.788559993067808, 0, 10, 306, t, null);
+		Step s307 = new Step("step_varrados_307", "step", 42.7733189081683,
+				0.788737586998799, 0, 10, 307, t, null);
+		Step s308 = new Step("step_varrados_308", "step", 42.7734036130455,
+				0.788927086462359, 0, 10, 308, t, null);
+		Step s309 = new Step("step_varrados_309", "step", 42.7734861352461,
+				0.789003599945369, 0, 10, 309, t, null);
+		Step s310 = new Step("step_varrados_310", "step", 42.7735691798092,
+				0.789223717285691, 0, 10, 310, t, null);
+		Step s311 = new Step("step_varrados_311", "step", 42.7736667922672,
+				0.789382200903272, 0, 10, 311, t, null);
+		Step s312 = new Step("step_varrados_312", "step", 42.7737010682849,
+				0.789408483432002, 0, 10, 312, t, null);
+		Step s313 = new Step("step_varrados_313", "step", 42.7737637645438,
+				0.789390973487553, 0, 10, 313, t, null);
+		Step s314 = new Step("step_varrados_314", "step", 42.7738004757903,
+				0.789310216269113, 0, 10, 314, t, null);
+		Step s315 = new Step("step_varrados_315", "step", 42.7737921933188,
+				0.789231060108237, 0, 10, 315, t, null);
+		Step s316 = new Step("step_varrados_316", "step", 42.7737495250725,
+				0.789003393399802, 0, 10, 316, t, null);
+		Step s317 = new Step("step_varrados_317", "step", 42.7737050276235,
+				0.788681062340284, 0, 10, 317, t, null);
+		Step s318 = new Step("step_varrados_318", "step", 42.7736853937788,
+				0.788363958198278, 0, 10, 318, t, null);
+		Step s319 = new Step("step_varrados_319", "step", 42.7737102732768,
+				0.788136943339402, 0, 10, 319, t, null);
+		Step s320 = new Step("step_varrados_320", "step", 42.7736983240545,
+				0.787984578840411, 0, 10, 320, t, null);
+		Step s321 = new Step("step_varrados_321", "step", 42.7736309068664,
+				0.787757794647661, 0, 10, 321, t, null);
+		Step s322 = new Step("step_varrados_322", "step", 42.7736110276476,
+				0.78754459693637, 0, 10, 322, t, null);
+		Step s323 = new Step("step_varrados_323", "step", 42.7736647905904,
+				0.787414338798607, 0, 10, 323, t, null);
+		Step s324 = new Step("step_varrados_324", "step", 42.7736585794088,
+				0.787325941909105, 0, 10, 324, t, null);
+		Step s325 = new Step("step_varrados_325", "step", 42.7735971361554,
+				0.787175340629432, 0, 10, 325, t, null);
+		Step s326 = new Step("step_varrados_326", "step", 42.7735575991284,
+				0.786993401400927, 0, 10, 326, t, null);
+		Step s327 = new Step("step_varrados_327", "step", 42.7735796297565,
+				0.786852050165476, 0, 10, 327, t, null);
+		Step s328 = new Step("step_varrados_328", "step", 42.7737812918349,
+				0.786453723354377, 0, 10, 328, t, null);
+		Step s329 = new Step("step_varrados_329", "step", 42.7739331744788,
+				0.78580964734589, 0, 10, 329, t, null);
+		Step s330 = new Step("step_varrados_330", "step", 42.7739804226565,
+				0.785691842487462, 0, 10, 330, t, null);
+		Step s331 = new Step("step_varrados_331", "step", 42.774055789278,
+				0.785631095658737, 0, 10, 331, t, null);
+		Step s332 = new Step("step_varrados_332", "step", 42.774205158903,
+				0.785555487504637, 0, 10, 332, t, null);
+		Step s333 = new Step("step_varrados_333", "step", 42.774282538801,
+				0.785482445203941, 0, 10, 333, t, null);
+		Step s334 = new Step("step_varrados_334", "step", 42.7743652497013,
+				0.785335872729122, 0, 10, 334, t, null);
+		Step s335 = new Step("step_varrados_335", "step", 42.7744587907791,
+				0.785283644648003, 0, 10, 335, t, null);
+		Step s336 = new Step("step_varrados_336", "step", 42.7745181686376,
+				0.785327365370258, 0, 10, 336, t, null);
+		Step s337 = new Step("step_varrados_337", "step", 42.7745091062956,
+				0.785440754454927, 0, 10, 337, t, null);
+		Step s338 = new Step("step_varrados_338", "step", 42.7742088806118,
+				0.785747871718166, 0, 10, 338, t, null);
+		Step s339 = new Step("step_varrados_339", "step", 42.7741741853385,
+				0.78581633643123, 0, 10, 339, t, null);
+		Step s340 = new Step("step_varrados_340", "step", 42.7741578418535,
+				0.785902481926288, 0, 10, 340, t, null);
+		Step s341 = new Step("step_varrados_341", "step", 42.7741689669604,
+				0.786012095000084, 0, 10, 341, t, null);
+		Step s342 = new Step("step_varrados_342", "step", 42.774223184829,
+				0.786254628694396, 0, 10, 342, t, null);
+		Step s343 = new Step("step_varrados_343", "step", 42.7742624277895,
+				0.78642130072574, 0, 10, 343, t, null);
+		Step s344 = new Step("step_varrados_344", "step", 42.7742908886465,
+				0.786728925199284, 0, 10, 344, t, null);
+		Step s345 = new Step("step_varrados_345", "step", 42.7743243326311,
+				0.786828576054762, 0, 10, 345, t, null);
+		Step s346 = new Step("step_varrados_346", "step", 42.7744616160194,
+				0.786942862856268, 0, 10, 346, t, null);
+		Step s347 = new Step("step_varrados_347", "step", 42.7745782389225,
+				0.787036495229018, 0, 10, 347, t, null);
+		Step s348 = new Step("step_varrados_348", "step", 42.7747073434473,
+				0.787309978382285, 0, 10, 348, t, null);
+		Step s349 = new Step("step_varrados_349", "step", 42.7747712789664,
+				0.787356594731871, 0, 10, 349, t, null);
+		Step s350 = new Step("step_varrados_350", "step", 42.7748433867766,
+				0.787360138133705, 0, 10, 350, t, null);
+		Step s351 = new Step("step_varrados_351", "step", 42.7749077420277,
+				0.787312008079561, 0, 10, 351, t, null);
+		Step s352 = new Step("step_varrados_352", "step", 42.7750551646635,
+				0.78713562863484, 0, 10, 352, t, null);
+		Step s353 = new Step("step_varrados_353", "step", 42.7752270973085,
+				0.786946151686652, 0, 10, 353, t, null);
+		Step s354 = new Step("step_varrados_354", "step", 42.7753982560719,
+				0.786833098297272, 0, 10, 354, t, null);
+		Step s355 = new Step("step_varrados_355", "step", 42.7755748588154,
+				0.786768744556797, 0, 10, 355, t, null);
+		Step s356 = new Step("step_varrados_356", "step", 42.7757116758729,
+				0.78674247873467, 0, 10, 356, t, null);
+		Step s357 = new Step("step_varrados_357", "step", 42.775929304192,
+				0.786704165811307, 0, 10, 357, t, null);
+		Step s358 = new Step("step_varrados_358", "step", 42.7760093419832,
+				0.786768544168538, 0, 10, 358, t, null);
+		Step s359 = new Step("step_varrados_359", "step", 42.7760848743687,
+				0.786949208013942, 0, 10, 359, t, null);
+		Step s360 = new Step("step_varrados_360", "step", 42.776123585085,
+				0.787088401140237, 0, 10, 360, t, null);
+		Step s361 = new Step("step_varrados_361", "step", 42.7761455379176,
+				0.78729236567939, 0, 10, 361, t, null);
+		Step s362 = new Step("step_varrados_362", "step", 42.7761368802842,
+				0.787543259398628, 0, 10, 362, t, null);
+		Step s363 = new Step("step_varrados_363", "step", 42.7761109848788,
+				0.78795061871718, 0, 10, 363, t, null);
+		Step s364 = new Step("step_varrados_364", "step", 42.7761157721521,
+				0.788081852706751, 0, 10, 364, t, null);
+		Step s365 = new Step("step_varrados_365", "step", 42.7761569007831,
+				0.788346253237913, 0, 10, 365, t, null);
+		Step s366 = new Step("step_varrados_366", "step", 42.7762101109201,
+				0.788536881891589, 0, 10, 366, t, null);
+		Step s367 = new Step("step_varrados_367", "step", 42.7762664042055,
+				0.788654058914006, 0, 10, 367, t, null);
+		Step s368 = new Step("step_varrados_368", "step", 42.7763304331369,
+				0.789055162130488, 0, 10, 368, t, null);
+		Step s369 = new Step("step_varrados_369", "step", 42.7763601931836,
+				0.789313856953321, 0, 10, 369, t, null);
+		Step s370 = new Step("step_varrados_370", "step", 42.7763375022788,
+				0.789537747285399, 0, 10, 370, t, null);
+		Step s371 = new Step("step_varrados_371", "step", 42.7762995938565,
+				0.789789682249797, 0, 10, 371, t, null);
+		Step s372 = new Step("step_varrados_372", "step", 42.7763171106018,
+				0.789880736837757, 0, 10, 372, t, null);
+		Step s373 = new Step("step_varrados_373", "step", 42.7764144274862,
+				0.79002395918295, 0, 10, 373, t, null);
+		Step s374 = new Step("step_varrados_374", "step", 42.7764875965438,
+				0.790082474797855, 0, 10, 374, t, null);
+		Step s375 = new Step("step_varrados_375", "step", 42.7768229575291,
+				0.790311964250921, 0, 10, 375, t, null);
+		Step s376 = new Step("step_varrados_376", "step", 42.7769245964252,
+				0.790445866800845, 0, 10, 376, t, null);
+		Step s377 = new Step("step_varrados_377", "step", 42.77696596528,
+				0.790606361171, 0, 10, 377, t, null);
+		Step s378 = new Step("step_varrados_378", "step", 42.7769468871512,
+				0.790784285368203, 0, 10, 378, t, null);
+		Step s379 = new Step("step_varrados_379", "step", 42.7768710362069,
+				0.790936724818772, 0, 10, 379, t, null);
+		Step s380 = new Step("step_varrados_380", "step", 42.7767425583079,
+				0.791045196065839, 0, 10, 380, t, null);
+		Step s381 = new Step("step_varrados_381", "step", 42.7766790264956,
+				0.791136077723212, 0, 10, 381, t, null);
+		Step s382 = new Step("step_varrados_382", "step", 42.7766559300048,
+				0.791222465467439, 0, 10, 382, t, null);
+		Step s383 = new Step("step_varrados_383", "step", 42.7766588763478,
+				0.791375157953404, 0, 10, 383, t, null);
+		Step s384 = new Step("step_varrados_384", "step", 42.7766804573054,
+				0.791676929304354, 0, 10, 384, t, null);
+		Step s385 = new Step("step_varrados_385", "step", 42.7766754757159,
+				0.791768784778536, 0, 10, 385, t, null);
+		Step s386 = new Step("step_varrados_386", "step", 42.7766463366228,
+				0.791892058417891, 0, 10, 386, t, null);
+		Step s387 = new Step("step_varrados_387", "step", 42.7766338288034,
+				0.792060579944958, 0, 10, 387, t, null);
+		Step s388 = new Step("step_varrados_388", "step", 42.776650095438,
+				0.792203631164066, 0, 10, 388, t, null);
+		Step s389 = new Step("step_varrados_389", "step", 42.7767272212296,
+				0.792350631448415, 0, 10, 389, t, null);
+		Step s390 = new Step("step_varrados_390", "step", 42.7768135105292,
+				0.79262260051576, 0, 10, 390, t, null);
+		Step s391 = new Step("step_varrados_391", "step", 42.7768559952057,
+				0.792841119567739, 0, 10, 391, t, null);
+		Step s392 = new Step("step_varrados_392", "step", 42.7768134035025,
+				0.793084053203851, 0, 10, 392, t, null);
+		Step s393 = new Step("step_varrados_393", "step", 42.7767949815359,
+				0.793179442208182, 0, 10, 393, t, null);
+		Step s394 = new Step("step_varrados_394", "step", 42.7768106580516,
+				0.793291955534023, 0, 10, 394, t, null);
+		Step s395 = new Step("step_varrados_395", "step", 42.7768663452478,
+				0.793494726297457, 0, 10, 395, t, null);
+		Step s396 = new Step("step_varrados_396", "step", 42.7768381920615,
+				0.793786041984956, 0, 10, 396, t, null);
+		Step s397 = new Step("step_varrados_397", "step", 42.7768363281549,
+				0.794039752381415, 0, 10, 397, t, null);
+		Step s398 = new Step("step_varrados_398", "step", 42.7767995867353,
+				0.794352764304011, 0, 10, 398, t, null);
+		Step s399 = new Step("step_varrados_399", "step", 42.7767555796334,
+				0.79452240414351, 0, 10, 399, t, null);
+		Step s400 = new Step("step_varrados_400", "step", 42.7767210555943,
+				0.794600028618358, 0, 10, 400, t, null);
+		Step s401 = new Step("step_varrados_401", "step", 42.7766907366955,
+				0.794662223979899, 0, 10, 401, t, null);
+		Step s402 = new Step("step_varrados_402", "step", 42.7766752690982,
+				0.794794178808121, 0, 10, 402, t, null);
+		Step s403 = new Step("step_varrados_403", "step", 42.7766793872558,
+				0.795007948875949, 0, 10, 403, t, null);
+		Step s404 = new Step("step_varrados_404", "step", 42.776710442483,
+				0.79521770694295, 0, 10, 404, t, null);
+		Step s405 = new Step("step_varrados_405", "step", 42.7767296607019,
+				0.795397325824665, 0, 10, 405, t, null);
+		Step s406 = new Step("step_varrados_406", "step", 42.7767219559054,
+				0.795464830144568, 0, 10, 406, t, null);
+		Step s407 = new Step("step_varrados_407", "step", 42.7766779619362,
+				0.795518342552067, 0, 10, 407, t, null);
+		Step s408 = new Step("step_varrados_408", "step", 42.776555875674,
+				0.795608241523846, 0, 10, 408, t, null);
+		Step s409 = new Step("step_varrados_409", "step", 42.7764902080511,
+				0.795705305914341, 0, 10, 409, t, null);
+		Step s410 = new Step("step_varrados_410", "step", 42.7763961024794,
+				0.795962287681267, 0, 10, 410, t, null);
+		Step s411 = new Step("step_varrados_411", "step", 42.7763642821522,
+				0.796180387815375, 0, 10, 411, t, null);
+		Step s412 = new Step("step_varrados_412", "step", 42.7763590304933,
+				0.796492279098973, 0, 10, 412, t, null);
+		Step s413 = new Step("step_varrados_413", "step", 42.7762902147463,
+				0.796659740245492, 0, 10, 413, t, null);
+		Step s414 = new Step("step_varrados_414", "step", 42.7762513599574,
+				0.797214240986082, 0, 10, 414, t, null);
+		Step s415 = new Step("step_varrados_415", "step", 42.7761750134279,
+				0.797458366121874, 0, 10, 415, t, null);
+		Step s416 = new Step("step_varrados_416", "step", 42.776185741141,
+				0.79778191356464, 0, 10, 416, t, null);
+		Step s417 = new Step("step_varrados_417", "step", 42.7762314643933,
+				0.79805226994135, 0, 10, 417, t, null);
+		Step s418 = new Step("step_varrados_418", "step", 42.7762423430153,
+				0.798149673945792, 0, 10, 418, t, null);
+		Step s419 = new Step("step_varrados_419", "step", 42.776211593403,
+				0.798306616008923, 0, 10, 419, t, null);
+		Step s420 = new Step("step_varrados_420", "step", 42.7761988641251,
+				0.798698225382795, 0, 10, 420, t, null);
+		Step s421 = new Step("step_varrados_421", "step", 42.7761647705638,
+				0.799032529028595, 0, 10, 421, t, null);
+		Step s422 = new Step("step_varrados_422", "step", 42.7760614824423,
+				0.799280661984654, 0, 10, 422, t, null);
+		Step s423 = new Step("step_varrados_423", "step", 42.7760210279495,
+				0.799401275846473, 0, 10, 423, t, null);
+		Step s424 = new Step("step_varrados_424", "step", 42.7760058881392,
+				0.799667676708948, 0, 10, 424, t, null);
+		Step s425 = new Step("step_varrados_425", "step", 42.7760049502403,
+				0.79997024543479, 0, 10, 425, t, null);
+		Step s426 = new Step("step_varrados_426", "step", 42.7760588259213,
+				0.800313655989049, 0, 10, 426, t, null);
+		Step s427 = new Step("step_varrados_427", "step", 42.7760720110037,
+				0.800414034380415, 0, 10, 427, t, null);
+		Step s428 = new Step("step_varrados_428", "step", 42.7760750037385,
+				0.800569780216528, 0, 10, 428, t, null);
+		Step s429 = new Step("step_varrados_429", "step", 42.7760838652278,
+				0.800679479519669, 0, 10, 429, t, null);
+		Step s430 = new Step("step_varrados_430", "step", 42.7761158103362,
+				0.80081892082877, 0, 10, 430, t, null);
+		Step s431 = new Step("step_varrados_431", "step", 42.7761051869872,
+				0.800969036965324, 0, 10, 431, t, null);
+		Step s432 = new Step("step_varrados_432", "step", 42.7761453061674,
+				0.801416837184857, 0, 10, 432, t, null);
+		Step s433 = new Step("step_varrados_433", "step", 42.7760982553064,
+				0.801662975964865, 0, 10, 433, t, null);
+		Step s434 = new Step("step_varrados_434", "step", 42.7760185352094,
+				0.801849152058006, 0, 10, 434, t, null);
+		Step s435 = new Step("step_varrados_435", "step", 42.7758800293593,
+				0.802022128110766, 0, 10, 435, t, null);
+		Step s436 = new Step("step_varrados_436", "step", 42.7757647824979,
+				0.8022340072202, 0, 10, 436, t, null);
+		Step s437 = new Step("step_varrados_437", "step", 42.7756961708374,
+				0.802529800974016, 0, 10, 437, t, null);
+		Step s438 = new Step("step_varrados_438", "step", 42.7756589733588,
+				0.802937551187753, 0, 10, 438, t, null);
+		Step s439 = new Step("step_varrados_439", "step", 42.775658332895,
+				0.803490691317206, 0, 10, 439, t, null);
+		Step s440 = new Step("step_varrados_440", "step", 42.7756744217956,
+				0.803859886157333, 0, 10, 440, t, null);
+		Step s441 = new Step("step_varrados_441", "step", 42.7756422933383,
+				0.804062711187519, 0, 10, 441, t, null);
+		Step s442 = new Step("step_varrados_442", "step", 42.7755843047292,
+				0.804208388075337, 0, 10, 442, t, null);
+		Step s443 = new Step("step_varrados_443", "step", 42.7754874265838,
+				0.804321824439771, 0, 10, 443, t, null);
+		Step s444 = new Step("step_varrados_444", "step", 42.7754263093,
+				0.804421772996898, 0, 10, 444, t, null);
+		Step s445 = new Step("step_varrados_445", "step", 42.7753792034483,
+				0.804900155803276, 0, 10, 445, t, null);
+		Step s446 = new Step("step_varrados_446", "step", 42.7753474830112,
+				0.80512435609702, 0, 10, 446, t, null);
+		Step s447 = new Step("step_varrados_447", "step", 42.7752670297324,
+				0.805390004234243, 0, 10, 447, t, null);
+		Step s448 = new Step("step_varrados_448", "step", 42.7751615948705,
+				0.80564431061667, 0, 10, 448, t, null);
+		Step s449 = new Step("step_varrados_449", "step", 42.7750454962375,
+				0.805929551445099, 0, 10, 449, t, null);
+		Step s450 = new Step("step_varrados_450", "step", 42.7750035787098,
+				0.806209115708045, 0, 10, 450, t, null);
+		Step s451 = new Step("step_varrados_451", "step", 42.7750116222369,
+				0.806511362424659, 0, 10, 451, t, null);
+		Step s452 = new Step("step_varrados_452", "step", 42.7751073451084,
+				0.80680745788484, 0, 10, 452, t, null);
+		Step s453 = new Step("step_varrados_453", "step", 42.7752064550642,
+				0.807045373048572, 0, 10, 453, t, null);
+		Step s454 = new Step("step_varrados_454", "step", 42.7752945499883,
+				0.807295901289179, 0, 10, 454, t, null);
+		Step s455 = new Step("step_varrados_455", "step", 42.7753378526142,
+				0.807441055201133, 0, 10, 455, t, null);
+		Step s456 = new Step("step_varrados_456", "step", 42.7753339696393,
+				0.807590930486194, 0, 10, 456, t, null);
+		Step s457 = new Step("step_varrados_457", "step", 42.775312003035,
+				0.807854511530735, 0, 10, 457, t, null);
+		Step s458 = new Step("step_varrados_458", "step", 42.7753154534439,
+				0.808034686783989, 0, 10, 458, t, null);
+		Step s459 = new Step("step_varrados_459", "step", 42.7753623219862,
+				0.80836612436825, 0, 10, 459, t, null);
+		Step s460 = new Step("step_varrados_460", "step", 42.7753722868652,
+				0.808533846453008, 0, 10, 460, t, null);
+		Step s461 = new Step("step_varrados_461", "step", 42.7753597261427,
+				0.80881848675547, 0, 10, 461, t, null);
+		Step s462 = new Step("step_varrados_462", "step", 42.7753273562275,
+				0.809244396161309, 0, 10, 462, t, null);
+		Step s463 = new Step("step_varrados_463", "step", 42.7753179490309,
+				0.809458639643713, 0, 10, 463, t, null);
+		Step s464 = new Step("step_varrados_464", "step", 42.7753207249547,
+				0.809721347616641, 0, 10, 464, t, null);
+		Step s465 = new Step("step_varrados_465", "step", 42.7752951303944,
+				0.810030893991682, 0, 10, 465, t, null);
+		Step s466 = new Step("step_varrados_466", "step", 42.7752618213004,
+				0.810407941380881, 0, 10, 466, t, null);
+		Step s467 = new Step("step_varrados_467", "step", 42.7751296403066,
+				0.810794584414833, 0, 10, 467, t, null);
+		Step s468 = new Step("step_varrados_468", "step", 42.7751042206386,
+				0.810877988745142, 0, 10, 468, t, null);
+		Step s469 = new Step("step_varrados_469", "step", 42.7751178023864,
+				0.811235047198648, 0, 10, 469, t, null);
+		Step s470 = new Step("step_varrados_470", "step", 42.7750959985646,
+				0.811743090053863, 0, 10, 470, t, null);
+		Step s471 = new Step("step_varrados_471", "step", 42.7751696144567,
+				0.812296666181634, 0, 10, 471, t, null);
+		Step s472 = new Step("step_varrados_472", "step", 42.7752334442038,
+				0.81269168250887, 0, 10, 472, t, null);
+		Step s473 = new Step("step_varrados_473", "step", 42.7752976552614,
+				0.812988898023178, 0, 10, 473, t, null);
+		Step s474 = new Step("step_varrados_474", "step", 42.7754012775451,
+				0.813345844591932, 0, 10, 474, t, null);
+		Step s475 = new Step("step_varrados_475", "step", 42.775501507522,
+				0.813760973681991, 0, 10, 475, t, null);
+		Step s476 = new Step("step_varrados_476", "step", 42.775560633222,
+				0.81402781159088, 0, 10, 476, t, null);
+		Step s477 = new Step("step_varrados_477", "step", 42.7756599617077,
+				0.814277955994017, 0, 10, 477, t, null);
+		Step s478 = new Step("step_varrados_478", "step", 42.7757383424968,
+				0.814492167313064, 0, 10, 478, t, null);
+		Step s479 = new Step("step_varrados_479", "step", 42.7757933990937,
+				0.814899721762458, 0, 10, 479, t, null);
+		Step s480 = new Step("step_varrados_480", "step", 42.7758929823953,
+				0.815281263712942, 0, 10, 480, t, null);
+		Step s481 = new Step("step_varrados_481", "step", 42.775972258676,
+				0.815660465028408, 0, 10, 481, t, null);
+		Step s482 = new Step("step_varrados_482", "step", 42.7760100481753,
+				0.815989175273752, 0, 10, 482, t, null);
+		Step s483 = new Step("step_varrados_483", "step", 42.7760195447374,
+				0.816486955956657, 0, 10, 483, t, null);
+		Step s484 = new Step("step_varrados_484", "step", 42.7760726722223,
+				0.816793736481651, 0, 10, 484, t, null);
+		Step s485 = new Step("step_varrados_485", "step", 42.7760927302982,
+				0.817019169716828, 0, 10, 485, t, null);
+		Step s486 = new Step("step_varrados_486", "step", 42.7760844945573,
+				0.817413672927407, 0, 10, 486, t, null);
+		Step s487 = new Step("step_varrados_487", "step", 42.7760476514336,
+				0.817842796085849, 0, 10, 487, t, null);
+		Step s488 = new Step("step_varrados_488", "step", 42.7760216651029,
+				0.818014840334125, 0, 10, 488, t, null);
+		Step s489 = new Step("step_varrados_489", "step", 42.7760043281568,
+				0.818168245150497, 0, 10, 489, t, null);
+		Step s490 = new Step("step_varrados_490", "step", 42.7760497526734,
+				0.818661708661911, 0, 10, 490, t, null);
+		Step s491 = new Step("step_varrados_491", "step", 42.776017501126,
+				0.818977600704243, 0, 10, 491, t, null);
+		Step s492 = new Step("step_varrados_492", "step", 42.7760711455972,
+				0.819311868528207, 0, 10, 492, t, null);
+		Step s493 = new Step("step_varrados_493", "step", 42.7761117180697,
+				0.819432681163947, 0, 10, 493, t, null);
+		Step s494 = new Step("step_varrados_494", "step", 42.7762931885548,
+				0.819741072043309, 0, 10, 494, t, null);
+		Step s495 = new Step("step_varrados_495", "step", 42.7763512349266,
+				0.819833768719272, 0, 10, 495, t, null);
+		Step s496 = new Step("step_varrados_496", "step", 42.7763905458871,
+				0.820006577428274, 0, 10, 496, t, null);
+		Step s497 = new Step("step_varrados_497", "step", 42.7763570510796,
+				0.820139158071436, 0, 10, 497, t, null);
+		Step s498 = new Step("step_varrados_498", "step", 42.7762628316443,
+				0.820393050617975, 0, 10, 498, t, null);
+		Step s499 = new Step("step_varrados_499", "step", 42.7762184494235,
+				0.821018017182332, 0, 10, 499, t, null);
+		Step s500 = new Step("step_varrados_500", "step", 42.7762371622563,
+				0.821173213174239, 0, 10, 500, t, null);
+		Step s501 = new Step("step_varrados_501", "step", 42.7765568073295,
+				0.822473002064509, 0, 10, 501, t, null);
+		Step s502 = new Step("step_varrados_502", "step", 42.7765589408704,
+				0.822466815385324, 0, 10, 502, t, null);
+		Step s503 = new Step("step_varrados_503", "step", 42.7765484052475,
+				0.822623037875871, 0, 10, 503, t, null);
+		Step s504 = new Step("step_varrados_504", "step", 42.7765341674711,
+				0.822702991472857, 0, 10, 504, t, null);
+		Step s505 = new Step("step_varrados_505", "step", 42.7764800308892,
+				0.82293408456318, 0, 10, 505, t, null);
+		Step s506 = new Step("step_varrados_506", "step", 42.7764636165972,
+				0.823136351897984, 0, 10, 506, t, null);
+		Step s507 = new Step("step_varrados_507", "step", 42.7764795112157,
+				0.823380270206765, 0, 10, 507, t, null);
+		Step s508 = new Step("step_varrados_508", "step", 42.7764806008795,
+				0.823792784118838, 0, 10, 508, t, null);
+		Step s509 = new Step("step_varrados_509", "step", 42.7764430810115,
+				0.82406913310175, 0, 10, 509, t, null);
+		Step s510 = new Step("step_varrados_510", "step", 42.776343322474,
+				0.824387388721933, 0, 10, 510, t, null);
+		Step s511 = new Step("step_varrados_511", "step", 42.7763429712083,
+				0.824842735311837, 0, 10, 511, t, null);
+		Step s512 = new Step("step_varrados_512", "step", 42.7763042168889,
+				0.824935770299625, 0, 10, 512, t, null);
+		Step s513 = new Step("step_varrados_513", "step", 42.7762284935527,
+				0.82509732998596, 0, 10, 513, t, null);
+		Step s514 = new Step("step_varrados_514", "step", 42.7761689952813,
+				0.825401949798703, 0, 10, 514, t, null);
+		Step s515 = new Step("step_varrados_515", "step", 42.7761490052893,
+				0.825653235456425, 0, 10, 515, t, null);
+		Step s516 = new Step("step_varrados_516", "step", 42.7761749955355,
+				0.825954862487439, 0, 10, 516, t, null);
+		Step s517 = new Step("step_varrados_517", "step", 42.7761988391526,
+				0.826143495556443, 0, 10, 517, t, null);
+		Step s518 = new Step("step_varrados_518", "step", 42.7761796474808,
+				0.82631835499656, 0, 10, 518, t, null);
+		Step s519 = new Step("step_varrados_519", "step", 42.776170034366,
+				0.826523438455042, 0, 10, 519, t, null);
+		Step s520 = new Step("step_varrados_520", "step", 42.7762287697869,
+				0.827245638711149, 0, 10, 520, t, null);
+		Step s521 = new Step("step_varrados_521", "step", 42.7764283441946,
+				0.827678713523929, 0, 10, 521, t, null);
+		Step s522 = new Step("step_varrados_522", "step", 42.7766734051224,
+				0.828492194711843, 0, 10, 522, t, null);
+		Step s523 = new Step("step_varrados_523", "step", 42.7769212224383,
+				0.829213907078676, 0, 10, 523, t, null);
+		Step s524 = new Step("step_varrados_524", "step", 42.7769706765796,
+				0.829447488283819, 0, 10, 524, t, null);
+		Step s525 = new Step("step_varrados_525", "step", 42.7769468814774,
+				0.829854763125599, 0, 10, 525, t, null);
+		Step s526 = new Step("step_varrados_526", "step", 42.7769234901335,
+				0.830283415310618, 0, 10, 526, t, null);
+		Step s527 = new Step("step_varrados_527", "step", 42.7769578305941,
+				0.830551140858247, 0, 10, 527, t, null);
+		Step s528 = new Step("step_varrados_528", "step", 42.7770048007902,
+				0.830772586149133, 0, 10, 528, t, null);
+		Step s529 = new Step("step_varrados_529", "step", 42.7770553441433,
+				0.830945011477055, 0, 10, 529, t, null);
+		Step s530 = new Step("step_varrados_530", "step", 42.7771137359068,
+				0.831175226558588, 0, 10, 530, t, null);
+		Step s531 = new Step("step_varrados_531", "step", 42.7771387792926,
+				0.831308815086685, 0, 10, 531, t, null);
+		Step s532 = new Step("step_varrados_532", "step", 42.7771187763774,
+				0.831560103310123, 0, 10, 532, t, null);
+		Step s533 = new Step("step_varrados_533", "step", 42.7770540093798,
+				0.831825177706942, 0, 10, 533, t, null);
+		Step s534 = new Step("step_varrados_534", "step", 42.776934097034,
+				0.832150239429747, 0, 10, 534, t, null);
+		Step s535 = new Step("step_varrados_535", "step", 42.7768034498415,
+				0.832383995701556, 0, 10, 535, t, null);
+		Step s536 = new Step("step_varrados_536", "step", 42.7766970812424,
+				0.832473274070256, 0, 10, 536, t);
+		Step s537 = new Step("step_varrados_537", "step", 42.7764305757402,
+				0.832546747917371, 0, 10, 537, t, null);
+		Step s538 = new Step("step_varrados_538", "step", 42.7763261097903,
+				0.832617623450312, 0, 10, 538, t, null);
+		Step s539 = new Step("step_varrados_539", "step", 42.7762241352266,
+				0.832938998098033, 0, 10, 539, t, null);
+		Step s540 = new Step("step_varrados_540", "step", 42.7761700355568,
+				0.83317313585596, 0, 10, 540, t, null);
+		Step s541 = new Step("step_varrados_541", "step", 42.7762295788758,
+				0.833464428260158, 0, 10, 541, t, null);
+		Step s542 = new Step("step_varrados_542", "step", 42.7762748095106,
+				0.833594255890246, 0, 10, 542, t, null);
+		Step s543 = new Step("step_varrados_543", "step", 42.7762873918613,
+				0.833783284967075, 0, 10, 543, t, null);
+		Step s544 = new Step("step_varrados_544", "step", 42.7763574849622,
+				0.83391835788763, 0, 10, 544, t, null);
+		Step s545 = new Step("step_varrados_545", "step", 42.7763171090475,
+				0.834045059100275, 0, 10, 545, t, null);
+		Step s546 = new Step("step_varrados_546", "step", 42.7763111185418,
+				0.834323358036312, 0, 10, 546, t, null);
+		Step s547 = new Step("step_varrados_547", "step", 42.7763196046106,
+				0.834533921720014, 0, 10, 547, t, null);
+		Step s548 = new Step("step_varrados_548", "step", 42.7763563034808,
+				0.834926858306302, 0, 10, 548, t, null);
+		Step s549 = new Step("step_varrados_549", "step", 42.7763887876225,
+				0.835216040315766, 0, 10, 549, t);
+		Step s550 = new Step("step_varrados_550", "step", 42.7769300506112,
+				0.835029099821934, 0, 10, 550, t, null);
+		Step s551 = new Step("step_varrados_551", "step", 42.7771585489586,
+				0.835207550715466, 0, 10, 551, t, null);
+		Step s552 = new Step("step_varrados_552", "step", 42.7774050424153,
+				0.835266192252793, 0, 10, 552, t, null);
+		Step s553 = new Step("step_varrados_553", "step", 42.7774917457864,
+				0.835327346591656, 0, 10, 553, t, null);
+		Step s554 = new Step("step_varrados_554", "step", 42.7775566393055,
+				0.835187565350371, 0, 10, 554, t, null);
+		Step s555 = new Step("step_varrados_555", "step", 42.7776458178069,
+				0.835022489414666, 0, 10, 555, t, null);
+		Step s556 = new Step("step_varrados_556", "step", 42.7777065033012,
+				0.835017318334268, 0, 10, 556, t);
+		Step s557 = new Step("step_varrados_557", "step", 42.7777066188254,
+				0.835023426315142, 0, 10, 557, t, null);
+		Step s558 = new Step("step_varrados_558", "step", 42.7777299999833,
+				0.835029999549526, 0, 10, 558, t, null);
+		Step s559 = new Step("step_varrados_559", "step", 42.7777499999833,
+				0.835039999549541, 0, 10, 559, t, null);
+		Step s560 = new Step("step_varrados_560", "step", 42.7777399999834,
+				0.835259999549861, 0, 10, 560, t, null);
+		Step s561 = new Step("step_varrados_561", "step", 42.7777699999833,
+				0.835199999549774, 0, 10, 561, t, null);
+		Step s562 = new Step("step_varrados_562", "step", 42.7777799999833,
+				0.835249999549846, 0, 10, 562, t, null);
+		Step s563 = new Step("step_varrados_563", "step", 42.7777699999833,
+				0.835329999549962, 0, 10, 563, t, null);
+		Step s564 = new Step("step_varrados_564", "step", 42.7777999999834,
+				0.83536999955002, 0, 10, 564, t, null);
+		Step s565 = new Step("step_varrados_565", "step", 42.7778599999834,
+				0.835399999550062, 0, 10, 565, t, null);
+		Step s566 = new Step("step_varrados_566", "step", 42.7779099999834,
+				0.835419999550091, 0, 10, 566, t, null);
+		Step s567 = new Step("step_varrados_567", "step", 42.7780399999833,
+				0.835309999549929, 0, 10, 567, t, null);
+		Step s568 = new Step("step_varrados_568", "step", 42.7780899999834,
+				0.835569999550307, 0, 10, 568, t, null);
+		Step s569 = new Step("step_varrados_569", "step", 42.7780899999834,
+				0.835879999550756, 0, 10, 569, t, null);
+		Step s570 = new Step("step_varrados_570", "step", 42.7780699999834,
+				0.835969999550888, 0, 10, 570, t, null);
+		Step s571 = new Step("step_varrados_571", "step", 42.7780699999834,
+				0.836049999551003, 0, 10, 571, t, null);
+		Step s572 = new Step("step_varrados_572", "step", 42.7780499999834,
+				0.836149999551148, 0, 10, 572, t, null);
+		Step s573 = new Step("step_varrados_573", "step", 42.7779999999834,
+				0.836369999551467, 0, 10, 573, t, null);
+		Step s574 = new Step("step_varrados_574", "step", 42.7779599999834,
+				0.836479999551628, 0, 10, 574, t, null);
+		Step s575 = new Step("step_varrados_575", "step", 42.7779499999834,
+				0.836649999551873, 0, 10, 575, t, null);
+		Step s576 = new Step("step_varrados_576", "step", 42.7779499999834,
+				0.836729999551989, 0, 10, 576, t, null);
+		Step s577 = new Step("step_varrados_577", "step", 42.7779499999834,
+				0.836729999551989, 0, 10, 577, t, null);
+		Step s578 = new Step("step_varrados_578", "step", 42.7779399999834,
+				0.836819999552119, 0, 10, 578, t, null);
+		Step s579 = new Step("step_varrados_579", "step", 42.7778999999834,
+				0.83688999955222, 0, 10, 579, t, null);
+		Step s580 = new Step("step_varrados_580", "step", 42.7778499999834,
+				0.836929999552279, 0, 10, 580, t, null);
+		Step s581 = new Step("step_varrados_581", "step", 42.7779399999834,
+				0.837039999552436, 0, 10, 581, t, null);
+		Step s582 = new Step("step_varrados_582", "step", 42.7779499999834,
+				0.837139999552582, 0, 10, 582, t, null);
+		Step s583 = new Step("step_varrados_583", "step", 42.7779199999834,
+				0.837219999552698, 0, 10, 583, t, null);
+		Step s584 = new Step("step_varrados_584", "step", 42.7779099999834,
+				0.837379999552927, 0, 10, 584, t, null);
+		Step s585 = new Step("step_varrados_585", "step", 42.7779199999834,
+				0.837449999553028, 0, 10, 585, t, null);
+		Step s586 = new Step("step_varrados_586", "step", 42.7779199999834,
+				0.837539999553159, 0, 10, 586, t, null);
+		Step s587 = new Step("step_varrados_587", "step", 42.7779599999835,
+				0.837599999553244, 0, 10, 587, t, null);
+		Step s588 = new Step("step_varrados_588", "step", 42.7779199999835,
+				0.837739999553447, 0, 10, 588, t, null);
+		Step s589 = new Step("step_varrados_589", "step", 42.7778999999835,
+				0.837799999553534, 0, 10, 589, t, null);
+		Step s590 = new Step("step_varrados_590", "step", 42.7779999999835,
+				0.838169999554065, 0, 10, 590, t, null);
+		Step s591 = new Step("step_varrados_591", "step", 42.7780399999835,
+				0.838249999554181, 0, 10, 591, t, null);
+		Step s592 = new Step("step_varrados_592", "step", 42.7780599999835,
+				0.838329999554295, 0, 10, 592, t, null);
+		Step s593 = new Step("step_varrados_593", "step", 42.7780499999835,
+				0.838489999554526, 0, 10, 593, t, null);
+		Step s594 = new Step("step_varrados_594", "step", 42.7780299999835,
+				0.838559999554625, 0, 10, 594, t, null);
+		Step s595 = new Step("step_varrados_595", "step", 42.7780199999835,
+				0.838689999554815, 0, 10, 595, t, null);
+		Step s596 = new Step("step_varrados_596", "step", 42.7780299999835,
+				0.838759999554914, 0, 10, 596, t, null);
+		Step s597 = new Step("step_varrados_597", "step", 42.7780599999835,
+				0.838829999555015, 0, 10, 597, t, null);
+		Step s598 = new Step("step_varrados_598", "step", 42.7780299999835,
+				0.83913999955546, 0, 10, 598, t, null);
+		Step s599 = new Step("step_varrados_599", "step", 42.7780099999835,
+				0.839239999555605, 0, 10, 599, t, null);
+		Step s600 = new Step("step_varrados_600", "step", 42.7779899999835,
+				0.839319999555719, 0, 10, 600, t, null);
+		Step s601 = new Step("step_varrados_601", "step", 42.7780299999835,
+				0.839399999555834, 0, 10, 601, t, null);
+		Step s602 = new Step("step_varrados_602", "step", 42.7780499999835,
+				0.839569999556078, 0, 10, 602, t, null);
+		Step s603 = new Step("step_varrados_603", "step", 42.7780699999835,
+				0.839649999556192, 0, 10, 603, t, null);
+		Step s604 = new Step("step_varrados_604", "step", 42.7780799999835,
+				0.839719999556292, 0, 10, 604, t, null);
+		Step s605 = new Step("step_varrados_605", "step", 42.7780799999835,
+				0.839979999556665, 0, 10, 605, t, null);
+		Step s606 = new Step("step_varrados_606", "step", 42.7780699999836,
+				0.840069999556794, 0, 10, 606, t, null);
+		Step s607 = new Step("step_varrados_607", "step", 42.7780699999836,
+				0.840189999556966, 0, 10, 607, t, null);
+		Step s608 = new Step("step_varrados_608", "step", 42.7780599999836,
+				0.84026999955708, 0, 10, 608, t, null);
+		Step s609 = new Step("step_varrados_609", "step", 42.7779899999836,
+				0.840569999557511, 0, 10, 609, t, null);
+		Step s610 = new Step("step_varrados_610", "step", 42.7780299999836,
+				0.840689999557681, 0, 10, 610, t, null);
+		Step s611 = new Step("step_varrados_611", "step", 42.7780299999836,
+				0.840769999557796, 0, 10, 611, t, null);
+		Step s612 = new Step("step_varrados_612", "step", 42.7780399999836,
+				0.840849999557911, 0, 10, 612, t, null);
+		Step s613 = new Step("step_varrados_613", "step", 42.7780899999836,
+				0.840969999558081, 0, 10, 613, t, null);
+		Step s614 = new Step("step_varrados_614", "step", 42.7780799999836,
+				0.841119999558296, 0, 10, 614, t, null);
+		Step s615 = new Step("step_varrados_615", "step", 42.7780899999836,
+				0.841259999558495, 0, 10, 615, t, null);
+		Step s616 = new Step("step_varrados_616", "step", 42.7780999999836,
+				0.841399999558695, 0, 10, 616, t, null);
+		Step s617 = new Step("step_varrados_617", "step", 42.7781299999836,
+				0.841459999558781, 0, 10, 617, t, null);
+		Step s618 = new Step("step_varrados_618", "step", 42.7781599999836,
+				0.841579999558951, 0, 10, 618, t, null);
+		Step s619 = new Step("step_varrados_619", "step", 42.7781699999836,
+				0.84166999955908, 0, 10, 619, t, null);
+		Step s620 = new Step("step_varrados_620", "step", 42.7781999999836,
+				0.841839999559322, 0, 10, 620, t, null);
+		Step s621 = new Step("step_varrados_621", "step", 42.7781799999836,
+				0.841969999559508, 0, 10, 621, t, null);
+		Step s622 = new Step("step_varrados_622", "step", 42.7781399999836,
+				0.842029999559593, 0, 10, 622, t, null);
+		Step s623 = new Step("step_varrados_623", "step", 42.7780999999836,
+				0.842119999559723, 0, 10, 623, t, null);
+		Step s624 = new Step("step_varrados_624", "step", 42.7780999999836,
+				0.842219999559864, 0, 10, 624, t, null);
+		Step s625 = new Step("step_varrados_625", "step", 42.7781199999836,
+				0.842289999559963, 0, 10, 625, t, null);
+		Step s626 = new Step("step_varrados_626", "step", 42.7781699999836,
+				0.84239999956012, 0, 10, 626, t, null);
+		Step s627 = new Step("step_varrados_627", "step", 42.7781799999836,
+				0.84246999956022, 0, 10, 627, t, null);
+		Step s628 = new Step("step_varrados_628", "step", 42.7782199999837,
+				0.842679999560517, 0, 10, 628, t, null);
+		Step s629 = new Step("step_varrados_629", "step", 42.7782299999837,
+				0.842769999560644, 0, 10, 629, t, null);
+		Step s630 = new Step("step_varrados_630", "step", 42.7782699999837,
+				0.842849999560758, 0, 10, 630, t, null);
+		Step s631 = new Step("step_varrados_631", "step", 42.7783099999837,
+				0.842919999560858, 0, 10, 631, t, null);
+		Step s632 = new Step("step_varrados_632", "step", 42.7783299999837,
+				0.842979999560943, 0, 10, 632, t, null);
+		Step s633 = new Step("step_varrados_633", "step", 42.7783299999837,
+				0.843009999560985, 0, 10, 633, t);
+		Step s634 = new Step("step_varrados_634", "step", 42.7783099999837,
+				0.843059999561057, 0, 10, 634, t, null);
+		Step s635 = new Step("step_varrados_635", "step", 42.7782399999837,
+				0.843029999561015, 0, 10, 635, t, null);
+		Step s636 = new Step("step_varrados_636", "step", 42.7781799999837,
+				0.843009999560988, 0, 10, 636, t, null);
+		Step s637 = new Step("step_varrados_637", "step", 42.7781399999837,
+				0.843019999561002, 0, 10, 637, t, null);
+		Step s638 = new Step("step_varrados_638", "step", 42.7781799999837,
+				0.843239999561314, 0, 10, 638, t, null);
+		Step s639 = new Step("step_varrados_639", "step", 42.7781599999837,
+				0.84334999956147, 0, 10, 639, t, null);
+		Step s640 = new Step("step_varrados_640", "step", 42.7781499999837,
+				0.843449999561613, 0, 10, 640, t, null);
+		Step s641 = new Step("step_varrados_641", "step", 42.7781799999837,
+				0.843589999561811, 0, 10, 641, t, null);
+		Step s642 = new Step("step_varrados_642", "step", 42.7781799999837,
+				0.84365999956191, 0, 10, 642, t, null);
+		Step s643 = new Step("step_varrados_643", "step", 42.7782199999837,
+				0.84377999956208, 0, 10, 643, t, null);
+		Step s644 = new Step("step_varrados_644", "step", 42.7782599999837,
+				0.843839999562164, 0, 10, 644, t, null);
+		Step s645 = new Step("step_varrados_645", "step", 42.7783099999837,
+				0.844049999562461, 0, 10, 645, t, null);
+		Step s646 = new Step("step_varrados_646", "step", 42.7783099999837,
+				0.844169999562632, 0, 10, 646, t, null);
+		Step s647 = new Step("step_varrados_647", "step", 42.7782799999837,
+				0.844299999562816, 0, 10, 647, t, null);
+		Step s648 = new Step("step_varrados_648", "step", 42.7783299999837,
+				0.844469999563056, 0, 10, 648, t, null);
+		Step s649 = new Step("step_varrados_649", "step", 42.7783399999837,
+				0.844549999563169, 0, 10, 649, t, null);
+		Step s650 = new Step("step_varrados_650", "step", 42.7783099999837,
+				0.844629999563282, 0, 10, 650, t, null);
+		Step s651 = new Step("step_varrados_651", "step", 42.7783199999838,
+				0.844779999563493, 0, 10, 651, t, null);
+		Step s652 = new Step("step_varrados_652", "step", 42.7783299999837,
+				0.844869999563622, 0, 10, 652, t, null);
+		Step s653 = new Step("step_varrados_653", "step", 42.7783299999838,
+				0.844989999563791, 0, 10, 653, t, null);
+		Step s654 = new Step("step_varrados_654", "step", 42.7783499999838,
+				0.845099999563946, 0, 10, 654, t, null);
+		Step s655 = new Step("step_varrados_655", "step", 42.7783699999838,
+				0.845139999564003, 0, 10, 655, t, null);
+		Step s656 = new Step("step_varrados_656", "step", 42.7782199999837,
+				0.845119999563976, 0, 10, 656, t, null);
+		Step s657 = new Step("step_varrados_657", "step", 42.778193924612,
+				0.845219303130673, 0, 10, 657, t);
+		Step s658 = new Step("step_varrados_658", "step", 42.7781906144428,
+				0.845276512469736, 0, 10, 658, t, null);
+		Step s659 = new Step("step_varrados_659", "step", 42.7781999999838,
+				0.845309999564245, 0, 10, 659, t, null);
+		Step s660 = new Step("step_varrados_660", "step", 42.7782299999838,
+				0.845409999564385, 0, 10, 660, t, null);
+		Step s661 = new Step("step_varrados_661", "step", 42.7782899999838,
+				0.84546999956447, 0, 10, 661, t, null);
+		Step s662 = new Step("step_varrados_662", "step", 42.7783299999838,
+				0.845589999564637, 0, 10, 662, t, null);
+		Step s663 = new Step("step_varrados_663", "step", 42.7783199999838,
+				0.845659999564736, 0, 10, 663, t, null);
+		Step s664 = new Step("step_varrados_664", "step", 42.7782799999838,
+				0.845719999564823, 0, 10, 664, t, null);
+		Step s665 = new Step("step_varrados_665", "step", 42.7782799999838,
+				0.845809999564949, 0, 10, 665, t, null);
+		Step s666 = new Step("step_varrados_666", "step", 42.7782299999838,
+				0.845889999565062, 0, 10, 666, t, null);
+		Step s667 = new Step("step_varrados_667", "step", 42.7781399999838,
+				0.846029999565261, 0, 10, 667, t, null);
+		Step s668 = new Step("step_varrados_668", "step", 42.7781299999838,
+				0.846099999565359, 0, 10, 668, t, null);
+		Step s669 = new Step("step_varrados_669", "step", 42.7781099999838,
+				0.8461999995655, 0, 10, 669, t, null);
+		Step s670 = new Step("step_varrados_670", "step", 42.7780699999838,
+				0.846309999565656, 0, 10, 670, t, null);
+		Step s671 = new Step("step_varrados_671", "step", 42.7780399999838,
+				0.84636999956574, 0, 10, 671, t, null);
+		Step s672 = new Step("step_varrados_672", "step", 42.7779999999838,
+				0.846419999565811, 0, 10, 672, t, null);
+		Step s673 = new Step("step_varrados_673", "step", 42.7779799999838,
+				0.846489999565911, 0, 10, 673, t, null);
+		Step s674 = new Step("step_varrados_674", "step", 42.7778999999838,
+				0.846539999565981, 0, 10, 674, t, null);
+		Step s675 = new Step("step_varrados_675", "step", 42.7778499999838,
+				0.846589999566052, 0, 10, 675, t, null);
+		Step s676 = new Step("step_varrados_676", "step", 42.7778499999838,
+				0.846659999566151, 0, 10, 676, t, null);
+		Step s677 = new Step("step_varrados_677", "step", 42.7778199999838,
+				0.846779999566321, 0, 10, 677, t, null);
+		Step s678 = new Step("step_varrados_678", "step", 42.7778099999838,
+				0.846909999566503, 0, 10, 678, t, null);
+		Step s679 = new Step("step_varrados_679", "step", 42.7777799999838,
+				0.846989999566615, 0, 10, 679, t, null);
+		Step s680 = new Step("step_varrados_680", "step", 42.7777899999839,
+				0.847079999566741, 0, 10, 680, t);
+		Step s681 = new Step("step_varrados_681", "step", 42.7777743908828,
+				0.847330664240011, 0, 10, 681, t, null);
+		Step s682 = new Step("step_varrados_682", "step", 42.7777662906937,
+				0.847618209753621, 0, 10, 682, t, null);
+		Step s683 = new Step("step_varrados_683", "step", 42.7778267163819,
+				0.847958389282735, 0, 10, 683, t, null);
+		Step s684 = new Step("step_varrados_684", "step", 42.77796005223,
+				0.848344940200717, 0, 10, 684, t, null);
+		Step s685 = new Step("step_varrados_685", "step", 42.7781883363357,
+				0.848752652692298, 0, 10, 685, t, null);
+		Step s686 = new Step("step_varrados_686", "step", 42.7784078495049,
+				0.849172896023431, 0, 10, 686, t, null);
+		Step s687 = new Step("step_varrados_687", "step", 42.7785863155844,
+				0.849325630997836, 0, 10, 687, t, null);
+		Step s688 = new Step("step_varrados_688", "step", 42.7788581001006,
+				0.849652387636669, 0, 10, 688, t, null);
+		Step s689 = new Step("step_varrados_689", "step", 42.7790680623843,
+				0.849804034759551, 0, 10, 689, t, null);
+		Step s690 = new Step("step_varrados_690", "step", 42.7792129656676,
+				0.849847915968234, 0, 10, 690, t, null);
+		Step s691 = new Step("step_varrados_691", "step", 42.779295448997,
+				0.84992451890576, 0, 10, 691, t, null);
+		Step s692 = new Step("step_varrados_692", "step", 42.779505181498,
+				0.850063951535098, 0, 10, 692, t, null);
+		Step s693 = new Step("step_varrados_693", "step", 42.7796262995609,
+				0.850279798513893, 0, 10, 693, t, null);
+		Step s694 = new Step("step_varrados_694", "step", 42.7796808416743,
+				0.850546847921519, 0, 10, 694, t, null);
+		Step s695 = new Step("step_varrados_695", "step", 42.7797702326602,
+				0.850751569834354, 0, 10, 695, t, null);
+		Step s696 = new Step("step_varrados_696", "step", 42.7799053068193,
+				0.850991385114767, 0, 10, 696, t, null);
+		Step s697 = new Step("step_varrados_697", "step", 42.780057576022,
+				0.851187820863933, 0, 10, 697, t, null);
+		Step s698 = new Step("step_varrados_698", "step", 42.7800969840978,
+				0.85160820262647, 0, 10, 698, t, null);
+		Step s699 = new Step("step_varrados_699", "step", 42.7800902778279,
+				0.851730679534439, 0, 10, 699, t, null);
+		Step s700 = new Step("step_varrados_700", "step", 42.7801930507754,
+				0.851928829438331, 0, 10, 700, t, null);
+		Step s701 = new Step("step_varrados_701", "step", 42.7802027082405,
+				0.852203547081022, 0, 10, 701, t, null);
+		Step s702 = new Step("step_varrados_702", "step", 42.7802428304992,
+				0.852422201132553, 0, 10, 702, t, null);
+		Step s703 = new Step("step_varrados_703", "step", 42.7803490704996,
+				0.852565222342275, 0, 10, 703, t, null);
+		Step s704 = new Step("step_varrados_704", "step", 42.7805039724491,
+				0.852902154948675, 0, 10, 704, t, null);
+		Step s705 = new Step("step_varrados_705", "step", 42.7806143361502,
+				0.853265077805767, 0, 10, 705, t, null);
+		Step s706 = new Step("step_varrados_706", "step", 42.7807388024506,
+				0.853419696008476, 0, 10, 706, t, null);
+		Step s707 = new Step("step_varrados_707", "step", 42.7809600499328,
+				0.853693216922956, 0, 10, 707, t, null);
+		Step s708 = new Step("step_varrados_708", "step", 42.7811599442205,
+				0.8540286010906, 0, 10, 708, t, null);
+		Step s709 = new Step("step_varrados_709", "step", 42.7813090487819,
+				0.854536888283475, 0, 10, 709, t, null);
+		Step s710 = new Step("step_varrados_710", "step", 42.7813740684705,
+				0.854883047663739, 0, 10, 710, t, null);
+		Step s711 = new Step("step_varrados_711", "step", 42.7815447873424,
+				0.855103309921731, 0, 10, 711, t, null);
+		Step s712 = new Step("step_varrados_712", "step", 42.7816968208779,
+				0.855287544154884, 0, 10, 712, t, null);
+		Step s713 = new Step("step_varrados_713", "step", 42.7818153753182,
+				0.855607408470042, 0, 10, 713, t, null);
+		Step s714 = new Step("step_varrados_714", "step", 42.7819559690084,
+				0.855902063448126, 0, 10, 714, t, null);
+		Step s715 = new Step("step_varrados_715", "step", 42.7820725768879,
+				0.856118085904114, 0, 10, 715, t, null);
+		Step s716 = new Step("step_varrados_716", "step", 42.7821616150266,
+				0.85630449847388, 0, 10, 716, t, null);
+		Step s717 = new Step("step_varrados_717", "step", 42.7821608517515,
+				0.856744621422754, 0, 10, 717, t, null);
+		Step s718 = new Step("step_varrados_718", "step", 42.7822677332258,
+				0.857162693076775, 0, 10, 718, t, null);
+		Step s719 = new Step("step_varrados_719", "step", 42.7820915877997,
+				0.85833624765761, 0, 10, 719, t, null);
+		Step s720 = new Step("step_varrados_720", "step", 42.781906405239,
+				0.859027225215981, 0, 10, 720, t, null);
+		Step s721 = new Step("step_varrados_721", "step", 42.7817128130731,
+				0.860231930867915, 0, 10, 721, t);
+		Step s722 = new Step("step_varrados_722", "step", 42.781705581511,
+				0.861772507172661, 0, 10, 722, t, null);
+		Step s723 = new Step("step_varrados_723", "step", 42.78218558005,
+				0.862642288379833, 0, 10, 723, t, null);
+		Step s724 = new Step("step_varrados_724", "step", 42.7823879129296,
+				0.863833370920577, 0, 10, 724, t, null);
+		Step s725 = new Step("step_varrados_725", "step", 42.7826355686355,
+				0.864558353109902, 0, 10, 725, t, null);
+		Step s726 = new Step("step_varrados_726", "step", 42.7828043906573,
+				0.864919299584165, 0, 10, 726, t, null);
+		Step s727 = new Step("step_varrados_727", "step", 42.7828968889682,
+				0.865050595330602, 0, 10, 727, t, null);
+		Step s728 = new Step("step_varrados_728", "step", 42.7831021046226,
+				0.865190242059001, 0, 10, 728, t, null);
+		Step s729 = new Step("step_varrados_729", "step", 42.7832552616738,
+				0.865435592593108, 0, 10, 729, t, null);
+		Step s730 = new Step("step_varrados_730", "step", 42.7833616562951,
+				0.865829253137265, 0, 10, 730, t, null);
+		Step s731 = new Step("step_varrados_731", "step", 42.7836339649767,
+				0.866186651642873, 0, 10, 731, t, null);
+		Step s732 = new Step("step_varrados_732", "step", 42.7838946546472,
+				0.866403861972128, 0, 10, 732, t, null);
+		Step s733 = new Step("step_varrados_733", "step", 42.7840763461002,
+				0.866489309620539, 0, 10, 733, t, null);
+		Step s734 = new Step("step_varrados_734", "step", 42.7841837617688,
+				0.866937955973928, 0, 10, 734, t, null);
+		Step s735 = new Step("step_varrados_735", "step", 42.7842236818478,
+				0.867388921647377, 0, 10, 735, t, null);
+		Step s736 = new Step("step_varrados_736", "step", 42.7844630614356,
+				0.867912504872536, 0, 10, 736, t, null);
+		Step s737 = new Step("step_varrados_737", "step", 42.7846410487183,
+				0.868040873731418, 0, 10, 737, t, null);
+		Step s738 = new Step("step_varrados_738", "step", 42.7848566878145,
+				0.868015132759172, 0, 10, 738, t);
+		Step s739 = new Step("step_varrados_739", "step", 42.7850416881734,
+				0.867794835741044, 0, 10, 739, t, null);
+		Step s740 = new Step("step_varrados_740", "step", 42.7851526461063,
+				0.867467050307945, 0, 10, 740, t, null);
+		Step s741 = new Step("step_varrados_741", "step", 42.7853719346968,
+				0.867153881422759, 0, 10, 741, t, null);
+		Step s742 = new Step("step_varrados_742", "step", 42.7855315892755,
+				0.866781630835407, 0, 10, 742, t, null);
+		Step s743 = new Step("step_varrados_743", "step", 42.7857749128277,
+				0.866308698710837, 0, 10, 743, t, null);
+		Step s744 = new Step("step_varrados_744", "step", 42.7860111713883,
+				0.865939923846105, 0, 10, 744, t, null);
+		Step s745 = new Step("step_varrados_745", "step", 42.7863172576237,
+				0.865452601641779, 0, 10, 745, t, null);
+		Step s746 = new Step("step_varrados_746", "step", 42.7867065547263,
+				0.864840155601482, 0, 10, 746, t, null);
+		Step s747 = new Step("step_varrados_747", "step", 42.7871232672078,
+				0.864258321216513, 0, 10, 747, t, null);
+		Step s748 = new Step("step_varrados_748", "step", 42.7872250751744,
+				0.863673091419051, 0, 10, 748, t, null);
+		Step s749 = new Step("step_varrados_749", "step", 42.7870660357844,
+				0.862871654968839, 0, 10, 749, t, null);
+		Step s750 = new Step("step_varrados_750", "step", 42.7872323293287,
+				0.862132377312593, 0, 10, 750, t, null);
+		Step s751 = new Step("step_varrados_751", "step", 42.7876293996571,
+				0.861213983917439, 0, 10, 751, t, null);
+		Step s752 = new Step("step_varrados_752", "step", 42.7879096092201,
+				0.860788647165056, 0, 10, 752, t, null);
+		Step s753 = new Step("step_varrados_753", "step", 42.7880638292242,
+				0.860367647793654, 0, 10, 753, t, null);
+		Step s754 = new Step("step_varrados_754", "step", 42.7882180476298,
+				0.859946646377445, 0, 10, 754, t, null);
+		Step s755 = new Step("step_varrados_755", "step", 42.7883633092681,
+				0.859287542080679, 0, 10, 755, t, null);
+		Step s756 = new Step("step_varrados_756", "step", 42.788572432533,
+				0.858913547391222, 0, 10, 756, t, null);
+		Step s757 = new Step("step_varrados_757", "step", 42.7886293386215,
+				0.85810465720313, 0, 10, 757, t, null);
+		Step s758 = new Step("step_varrados_758", "step", 42.7887173927825,
+				0.857276351421657, 0, 10, 758, t, null);
+		Step s759 = new Step("step_varrados_759", "step", 42.7889440499654,
+				0.856877290152976, 0, 10, 759, t, null);
+		Step s760 = new Step("step_varrados_760", "step", 42.7892898283524,
+				0.856107324400259, 0, 10, 760, t, null);
+		Step s761 = new Step("step_varrados_761", "step", 42.7895346201181,
+				0.854753972925662, 0, 10, 761, t, null);
+		Step s762 = new Step("step_varrados_762", "step", 42.7896621146797,
+				0.853869268488976, 0, 10, 762, t, null);
+		Step s763 = new Step("step_varrados_763", "step", 42.7903876672934,
+				0.853183957719014, 0, 10, 763, t, null);
+		Step s764 = new Step("step_varrados_764", "step", 42.7908493188203,
+				0.851871974290023, 0, 10, 764, t, null);
+		Step s765 = new Step("step_varrados_765", "step", 42.7912873468876,
+				0.851221030950311, 0, 10, 765, t, null);
+		Step s766 = new Step("step_varrados_766", "step", 42.7916358392038,
+				0.850597631536814, 0, 10, 766, t);
+		Step s767 = new Step("step_varrados_767", "step", 42.79136392681,
+				0.851462914946149, 0, 10, 767, t, null);
+		Step s768 = new Step("step_varrados_768", "step", 42.7912567422093,
+				0.852469213065517, 0, 10, 768, t, null);
+		Step s769 = new Step("step_varrados_769", "step", 42.791381691836,
+				0.853369668572236, 0, 10, 769, t, null);
+		Step s770 = new Step("step_varrados_770", "step", 42.7914535560984,
+				0.854320869293166, 0, 10, 770, t, null);
+		Step s771 = new Step("step_varrados_771", "step", 42.791472928553,
+				0.854393560241215, 0, 10, 771, t, null);
+		Step s772 = new Step("step_varrados_772", "step", 42.7918396232009,
+				0.855701383738248, 0, 10, 772, t, null);
+		Step s773 = new Step("step_varrados_773", "step", 42.791943346071,
+				0.856431411452408, 0, 10, 773, t, null);
+		Step s774 = new Step("step_varrados_774", "step", 42.7919630202251,
+				0.857482240247933, 0, 10, 774, t, null);
+		Step s775 = new Step("step_varrados_775", "step", 42.7919254895003,
+				0.858363867209495, 0, 10, 775, t, null);
+		Step s776 = new Step("step_varrados_776", "step", 42.7918312148422,
+				0.859100727909447, 0, 10, 776, t, null);
+		Step s777 = new Step("step_varrados_777", "step", 42.7910550126868,
+				0.860209552007539, 0, 10, 777, t, null);
+		Step s778 = new Step("step_varrados_778", "step", 42.790584132224,
+				0.861032733463832, 0, 10, 778, t, null);
+		Step s779 = new Step("step_varrados_779", "step", 42.79064021665,
+				0.862106740412443, 0, 10, 779, t, null);
+		Step s780 = new Step("step_varrados_780", "step", 42.791208660015,
+				0.862649595159584, 0, 10, 780, t, null);
+		Step s781 = new Step("step_varrados_781", "step", 42.7919769069564,
+				0.863283397903733, 0, 10, 781, t, null);
+		Step s782 = new Step("step_varrados_782", "step", 42.7924644741081,
+				0.864318135009438, 0, 10, 782, t, null);
+		Step s783 = new Step("step_varrados_783", "step", 42.7928173837804,
+				0.864892891734061, 0, 10, 783, t, null);
+		Step s784 = new Step("step_varrados_784", "step", 42.79314562801,
+				0.865352345737581, 0, 10, 784, t, null);
+		Step s785 = new Step("step_varrados_785", "step", 42.7935677920574,
+				0.865778008049059, 0, 10, 785, t, null);
+		Step s786 = new Step("step_varrados_786", "step", 42.7935440965955,
+				0.866439089002562, 0, 10, 786, t, null);
+		Step s787 = new Step("step_varrados_787", "step", 42.7934290394676,
+				0.867029945423603, 0, 10, 787, t, null);
+		Step s788 = new Step("step_varrados_788", "step", 42.793441333406,
+				0.86768978837989, 0, 10, 788, t);
+		Step s789 = new Step("step_varrados_789", "step", 42.793218734803,
+				0.86830878825355, 0, 10, 789, t, null);
+		Step s790 = new Step("step_varrados_790", "step", 42.7930063954668,
+				0.868511711790476, 0, 10, 790, t, null);
+		Step s791 = new Step("step_varrados_791", "step", 42.7928384055643,
+				0.869403937978139, 0, 10, 791, t, null);
+		Step s792 = new Step("step_varrados_792", "step", 42.7926315219247,
+				0.869900116736355, 0, 10, 792, t, null);
+		Step s793 = new Step("step_varrados_793", "step", 42.7924870802089,
+				0.869880618482486, 0, 10, 793, t, null);
+		Step s794 = new Step("step_varrados_794", "step", 42.7924521814484,
+				0.870908879012247, 0, 10, 794, t, null);
+		Step s795 = new Step("step_varrados_795", "step", 42.7921197568489,
+				0.871433807479138, 0, 10, 795, t, null);
+		Step s796 = new Step("step_varrados_796", "step", 42.7917059521334,
+				0.871698643425879, 0, 10, 796, t, null);
+		Step s797 = new Step("step_varrados_797", "step", 42.7912448091214,
+				0.872081251914902, 0, 10, 797, t, null);
+		Step s798 = new Step("step_varrados_798", "step", 42.7913426794132,
+				0.872744254192972, 0, 10, 798, t, null);
+		Step s799 = new Step("step_varrados_799", "step", 42.7916259779579,
+				0.873694350187148, 0, 10, 799, t, null);
+		Step s800 = new Step("step_varrados_800", "step", 42.7914903133744,
+				0.874389807909378, 0, 10, 800, t, null);
+		Step s801 = new Step("step_varrados_801", "step", 42.7913977494549,
+				0.875224395008848, 0, 10, 801, t, null);
+		Step s802 = new Step("step_varrados_802", "step", 42.7913298382217,
+				0.875446800087101, 0, 10, 802, t, null);
+		Step s803 = new Step("step_varrados_803", "step", 42.7907169842163,
+				0.875418864040742, 0, 10, 803, t, null);
+		Step s804 = new Step("step_varrados_804", "step", 42.7903601904137,
+				0.875602244099836, 0, 10, 804, t, null);
+		Step s805 = new Step("step_varrados_805", "step", 42.7900381812964,
+				0.875961715764307, 0, 10, 805, t, null);
+		Step s806 = new Step("step_varrados_806", "step", 42.789655827681,
+				0.875980908479342, 0, 10, 806, t, null);
+		Step s807 = new Step("step_varrados_807", "step", 42.7888787201491,
+				0.875836323453298, 0, 10, 807, t, null);
+		Step s808 = new Step("step_varrados_808", "step", 42.7885695720514,
+				0.875675732448398, 0, 10, 808, t, null);
+		Step s809 = new Step("step_varrados_809", "step", 42.7882505946022,
+				0.875228165516202, 0, 10, 809, t, null);
+		Step s810 = new Step("step_varrados_810", "step", 42.7876389516565,
+				0.874295466603189, 0, 10, 810, t, null);
+		Step s811 = new Step("step_varrados_811", "step", 42.7871015559418,
+				0.872755061633696, 0, 10, 811, t, null);
+		Step s812 = new Step("step_varrados_812", "step", 42.7868223213976,
+				0.871297527062438, 0, 10, 812, t, null);
+		Step s813 = new Step("step_varrados_813", "step", 42.7864730768667,
+				0.87085325702052, 0, 10, 813, t, null);
+		Step s814 = new Step("step_varrados_814", "step", 42.7862369824473,
+				0.870290270242631, 0, 10, 814, t, null);
+		Step s815 = new Step("step_varrados_815", "step", 42.7859857204915,
+				0.86979761608405, 0, 10, 815, t, null);
+		Step s816 = new Step("step_varrados_816", "step", 42.7855346813597,
+				0.869335926723184, 0, 10, 816, t, null);
+		Step s817 = new Step("step_varrados_817", "step", 42.7850673239389,
+				0.868634820051698, 0, 10, 817, t, null);
+		Step s818 = new Step("step_varrados_818", "step", 42.7848584865535,
+				0.868045418969845, 0, 10, 818, t, null);
+
+		try {
+			stepDataDao.create(s1);
+			stepDataDao.create(s2);
+			stepDataDao.create(s3);
+			stepDataDao.create(s4);
+			stepDataDao.create(s5);
+			stepDataDao.create(s6);
+			stepDataDao.create(s7);
+			stepDataDao.create(s8);
+			stepDataDao.create(s9);
+			stepDataDao.create(s10);
+			stepDataDao.create(s11);
+			stepDataDao.create(s12);
+			stepDataDao.create(s13);
+			stepDataDao.create(s14);
+			stepDataDao.create(s15);
+			stepDataDao.create(s16);
+			stepDataDao.create(s17);
+			stepDataDao.create(s18);
+			stepDataDao.create(s19);
+			stepDataDao.create(s20);
+			stepDataDao.create(s21);
+			stepDataDao.create(s22);
+			stepDataDao.create(s23);
+			stepDataDao.create(s24);
+			stepDataDao.create(s25);
+			stepDataDao.create(s26);
+			stepDataDao.create(s27);
+			stepDataDao.create(s28);
+			stepDataDao.create(s29);
+			stepDataDao.create(s30);
+			stepDataDao.create(s31);
+			stepDataDao.create(s32);
+			stepDataDao.create(s33);
+			stepDataDao.create(s34);
+			stepDataDao.create(s35);
+			stepDataDao.create(s36);
+			stepDataDao.create(s37);
+			stepDataDao.create(s38);
+			stepDataDao.create(s39);
+			stepDataDao.create(s40);
+			stepDataDao.create(s41);
+			stepDataDao.create(s42);
+			stepDataDao.create(s43);
+			stepDataDao.create(s44);
+			stepDataDao.create(s45);
+			stepDataDao.create(s46);
+			stepDataDao.create(s47);
+			stepDataDao.create(s48);
+			stepDataDao.create(s49);
+			stepDataDao.create(s50);
+			stepDataDao.create(s51);
+			stepDataDao.create(s52);
+			stepDataDao.create(s53);
+			stepDataDao.create(s54);
+			stepDataDao.create(s55);
+			stepDataDao.create(s56);
+			stepDataDao.create(s57);
+			stepDataDao.create(s58);
+			stepDataDao.create(s59);
+			stepDataDao.create(s60);
+			stepDataDao.create(s61);
+			stepDataDao.create(s62);
+			stepDataDao.create(s63);
+			stepDataDao.create(s64);
+			stepDataDao.create(s65);
+			stepDataDao.create(s66);
+			stepDataDao.create(s67);
+			stepDataDao.create(s68);
+			stepDataDao.create(s69);
+			stepDataDao.create(s70);
+			stepDataDao.create(s71);
+			stepDataDao.create(s72);
+			stepDataDao.create(s73);
+			stepDataDao.create(s74);
+			stepDataDao.create(s75);
+			stepDataDao.create(s76);
+			stepDataDao.create(s77);
+			stepDataDao.create(s78);
+			stepDataDao.create(s79);
+			stepDataDao.create(s80);
+			stepDataDao.create(s81);
+			stepDataDao.create(s82);
+			stepDataDao.create(s83);
+			stepDataDao.create(s84);
+			stepDataDao.create(s85);
+			stepDataDao.create(s86);
+			stepDataDao.create(s87);
+			stepDataDao.create(s88);
+			stepDataDao.create(s89);
+			stepDataDao.create(s90);
+			stepDataDao.create(s91);
+			stepDataDao.create(s92);
+			stepDataDao.create(s93);
+			stepDataDao.create(s94);
+			stepDataDao.create(s95);
+			stepDataDao.create(s96);
+			stepDataDao.create(s97);
+			stepDataDao.create(s98);
+			stepDataDao.create(s99);
+			stepDataDao.create(s100);
+			stepDataDao.create(s101);
+			stepDataDao.create(s102);
+			stepDataDao.create(s103);
+			stepDataDao.create(s104);
+			stepDataDao.create(s105);
+			stepDataDao.create(s106);
+			stepDataDao.create(s107);
+			stepDataDao.create(s108);
+			stepDataDao.create(s109);
+			stepDataDao.create(s110);
+			stepDataDao.create(s111);
+			stepDataDao.create(s112);
+			stepDataDao.create(s113);
+			stepDataDao.create(s114);
+			stepDataDao.create(s115);
+			stepDataDao.create(s116);
+			stepDataDao.create(s117);
+			stepDataDao.create(s118);
+			stepDataDao.create(s119);
+			stepDataDao.create(s120);
+			stepDataDao.create(s121);
+			stepDataDao.create(s122);
+			stepDataDao.create(s123);
+			stepDataDao.create(s124);
+			stepDataDao.create(s125);
+			stepDataDao.create(s126);
+			stepDataDao.create(s127);
+			stepDataDao.create(s128);
+			stepDataDao.create(s129);
+			stepDataDao.create(s130);
+			stepDataDao.create(s131);
+			stepDataDao.create(s132);
+			stepDataDao.create(s133);
+			stepDataDao.create(s134);
+			stepDataDao.create(s135);
+			stepDataDao.create(s136);
+			stepDataDao.create(s137);
+			stepDataDao.create(s138);
+			stepDataDao.create(s139);
+			stepDataDao.create(s140);
+			stepDataDao.create(s141);
+			stepDataDao.create(s142);
+			stepDataDao.create(s143);
+			stepDataDao.create(s144);
+			stepDataDao.create(s145);
+			stepDataDao.create(s146);
+			stepDataDao.create(s147);
+			stepDataDao.create(s148);
+			stepDataDao.create(s149);
+			stepDataDao.create(s150);
+			stepDataDao.create(s151);
+			stepDataDao.create(s152);
+			stepDataDao.create(s153);
+			stepDataDao.create(s154);
+			stepDataDao.create(s155);
+			stepDataDao.create(s156);
+			stepDataDao.create(s157);
+			stepDataDao.create(s158);
+			stepDataDao.create(s159);
+			stepDataDao.create(s160);
+			stepDataDao.create(s161);
+			stepDataDao.create(s162);
+			stepDataDao.create(s163);
+			stepDataDao.create(s164);
+			stepDataDao.create(s165);
+			stepDataDao.create(s166);
+			stepDataDao.create(s167);
+			stepDataDao.create(s168);
+			stepDataDao.create(s169);
+			stepDataDao.create(s170);
+			stepDataDao.create(s171);
+			stepDataDao.create(s172);
+			stepDataDao.create(s173);
+			stepDataDao.create(s174);
+			stepDataDao.create(s175);
+			stepDataDao.create(s176);
+			stepDataDao.create(s177);
+			stepDataDao.create(s178);
+			stepDataDao.create(s179);
+			stepDataDao.create(s180);
+			stepDataDao.create(s181);
+			stepDataDao.create(s182);
+			stepDataDao.create(s183);
+			stepDataDao.create(s184);
+			stepDataDao.create(s185);
+			stepDataDao.create(s186);
+			stepDataDao.create(s187);
+			stepDataDao.create(s188);
+			stepDataDao.create(s189);
+			stepDataDao.create(s190);
+			stepDataDao.create(s191);
+			stepDataDao.create(s192);
+			stepDataDao.create(s193);
+			stepDataDao.create(s194);
+			stepDataDao.create(s195);
+			stepDataDao.create(s196);
+			stepDataDao.create(s197);
+			stepDataDao.create(s198);
+			stepDataDao.create(s199);
+			stepDataDao.create(s200);
+			stepDataDao.create(s201);
+			stepDataDao.create(s202);
+			stepDataDao.create(s203);
+			stepDataDao.create(s204);
+			stepDataDao.create(s205);
+			stepDataDao.create(s206);
+			stepDataDao.create(s207);
+			stepDataDao.create(s208);
+			stepDataDao.create(s209);
+			stepDataDao.create(s210);
+			stepDataDao.create(s211);
+			stepDataDao.create(s212);
+			stepDataDao.create(s213);
+			stepDataDao.create(s214);
+			stepDataDao.create(s215);
+			stepDataDao.create(s216);
+			stepDataDao.create(s217);
+			stepDataDao.create(s218);
+			stepDataDao.create(s219);
+			stepDataDao.create(s220);
+			stepDataDao.create(s221);
+			stepDataDao.create(s222);
+			stepDataDao.create(s223);
+			stepDataDao.create(s224);
+			stepDataDao.create(s225);
+			stepDataDao.create(s226);
+			stepDataDao.create(s227);
+			stepDataDao.create(s228);
+			stepDataDao.create(s229);
+			stepDataDao.create(s230);
+			stepDataDao.create(s231);
+			stepDataDao.create(s232);
+			stepDataDao.create(s233);
+			stepDataDao.create(s234);
+			stepDataDao.create(s235);
+			stepDataDao.create(s236);
+			stepDataDao.create(s237);
+			stepDataDao.create(s238);
+			stepDataDao.create(s239);
+			stepDataDao.create(s240);
+			stepDataDao.create(s241);
+			stepDataDao.create(s242);
+			stepDataDao.create(s243);
+			stepDataDao.create(s244);
+			stepDataDao.create(s245);
+			stepDataDao.create(s246);
+			stepDataDao.create(s247);
+			stepDataDao.create(s248);
+			stepDataDao.create(s249);
+			stepDataDao.create(s250);
+			stepDataDao.create(s251);
+			stepDataDao.create(s252);
+			stepDataDao.create(s253);
+			stepDataDao.create(s254);
+			stepDataDao.create(s255);
+			stepDataDao.create(s256);
+			stepDataDao.create(s257);
+			stepDataDao.create(s258);
+			stepDataDao.create(s259);
+			stepDataDao.create(s260);
+			stepDataDao.create(s261);
+			stepDataDao.create(s262);
+			stepDataDao.create(s263);
+			stepDataDao.create(s264);
+			stepDataDao.create(s265);
+			stepDataDao.create(s266);
+			stepDataDao.create(s267);
+			stepDataDao.create(s268);
+			stepDataDao.create(s269);
+			stepDataDao.create(s270);
+			stepDataDao.create(s271);
+			stepDataDao.create(s272);
+			stepDataDao.create(s273);
+			stepDataDao.create(s274);
+			stepDataDao.create(s275);
+			stepDataDao.create(s276);
+			stepDataDao.create(s277);
+			stepDataDao.create(s278);
+			stepDataDao.create(s279);
+			stepDataDao.create(s280);
+			stepDataDao.create(s281);
+			stepDataDao.create(s282);
+			stepDataDao.create(s283);
+			stepDataDao.create(s284);
+			stepDataDao.create(s285);
+			stepDataDao.create(s286);
+			stepDataDao.create(s287);
+			stepDataDao.create(s288);
+			stepDataDao.create(s289);
+			stepDataDao.create(s290);
+			stepDataDao.create(s291);
+			stepDataDao.create(s292);
+			stepDataDao.create(s293);
+			stepDataDao.create(s294);
+			stepDataDao.create(s295);
+			stepDataDao.create(s296);
+			stepDataDao.create(s297);
+			stepDataDao.create(s298);
+			stepDataDao.create(s299);
+			stepDataDao.create(s300);
+			stepDataDao.create(s301);
+			stepDataDao.create(s302);
+			stepDataDao.create(s303);
+			stepDataDao.create(s304);
+			stepDataDao.create(s305);
+			stepDataDao.create(s306);
+			stepDataDao.create(s307);
+			stepDataDao.create(s308);
+			stepDataDao.create(s309);
+			stepDataDao.create(s310);
+			stepDataDao.create(s311);
+			stepDataDao.create(s312);
+			stepDataDao.create(s313);
+			stepDataDao.create(s314);
+			stepDataDao.create(s315);
+			stepDataDao.create(s316);
+			stepDataDao.create(s317);
+			stepDataDao.create(s318);
+			stepDataDao.create(s319);
+			stepDataDao.create(s320);
+			stepDataDao.create(s321);
+			stepDataDao.create(s322);
+			stepDataDao.create(s323);
+			stepDataDao.create(s324);
+			stepDataDao.create(s325);
+			stepDataDao.create(s326);
+			stepDataDao.create(s327);
+			stepDataDao.create(s328);
+			stepDataDao.create(s329);
+			stepDataDao.create(s330);
+			stepDataDao.create(s331);
+			stepDataDao.create(s332);
+			stepDataDao.create(s333);
+			stepDataDao.create(s334);
+			stepDataDao.create(s335);
+			stepDataDao.create(s336);
+			stepDataDao.create(s337);
+			stepDataDao.create(s338);
+			stepDataDao.create(s339);
+			stepDataDao.create(s340);
+			stepDataDao.create(s341);
+			stepDataDao.create(s342);
+			stepDataDao.create(s343);
+			stepDataDao.create(s344);
+			stepDataDao.create(s345);
+			stepDataDao.create(s346);
+			stepDataDao.create(s347);
+			stepDataDao.create(s348);
+			stepDataDao.create(s349);
+			stepDataDao.create(s350);
+			stepDataDao.create(s351);
+			stepDataDao.create(s352);
+			stepDataDao.create(s353);
+			stepDataDao.create(s354);
+			stepDataDao.create(s355);
+			stepDataDao.create(s356);
+			stepDataDao.create(s357);
+			stepDataDao.create(s358);
+			stepDataDao.create(s359);
+			stepDataDao.create(s360);
+			stepDataDao.create(s361);
+			stepDataDao.create(s362);
+			stepDataDao.create(s363);
+			stepDataDao.create(s364);
+			stepDataDao.create(s365);
+			stepDataDao.create(s366);
+			stepDataDao.create(s367);
+			stepDataDao.create(s368);
+			stepDataDao.create(s369);
+			stepDataDao.create(s370);
+			stepDataDao.create(s371);
+			stepDataDao.create(s372);
+			stepDataDao.create(s373);
+			stepDataDao.create(s374);
+			stepDataDao.create(s375);
+			stepDataDao.create(s376);
+			stepDataDao.create(s377);
+			stepDataDao.create(s378);
+			stepDataDao.create(s379);
+			stepDataDao.create(s380);
+			stepDataDao.create(s381);
+			stepDataDao.create(s382);
+			stepDataDao.create(s383);
+			stepDataDao.create(s384);
+			stepDataDao.create(s385);
+			stepDataDao.create(s386);
+			stepDataDao.create(s387);
+			stepDataDao.create(s388);
+			stepDataDao.create(s389);
+			stepDataDao.create(s390);
+			stepDataDao.create(s391);
+			stepDataDao.create(s392);
+			stepDataDao.create(s393);
+			stepDataDao.create(s394);
+			stepDataDao.create(s395);
+			stepDataDao.create(s396);
+			stepDataDao.create(s397);
+			stepDataDao.create(s398);
+			stepDataDao.create(s399);
+			stepDataDao.create(s400);
+			stepDataDao.create(s401);
+			stepDataDao.create(s402);
+			stepDataDao.create(s403);
+			stepDataDao.create(s404);
+			stepDataDao.create(s405);
+			stepDataDao.create(s406);
+			stepDataDao.create(s407);
+			stepDataDao.create(s408);
+			stepDataDao.create(s409);
+			stepDataDao.create(s410);
+			stepDataDao.create(s411);
+			stepDataDao.create(s412);
+			stepDataDao.create(s413);
+			stepDataDao.create(s414);
+			stepDataDao.create(s415);
+			stepDataDao.create(s416);
+			stepDataDao.create(s417);
+			stepDataDao.create(s418);
+			stepDataDao.create(s419);
+			stepDataDao.create(s420);
+			stepDataDao.create(s421);
+			stepDataDao.create(s422);
+			stepDataDao.create(s423);
+			stepDataDao.create(s424);
+			stepDataDao.create(s425);
+			stepDataDao.create(s426);
+			stepDataDao.create(s427);
+			stepDataDao.create(s428);
+			stepDataDao.create(s429);
+			stepDataDao.create(s430);
+			stepDataDao.create(s431);
+			stepDataDao.create(s432);
+			stepDataDao.create(s433);
+			stepDataDao.create(s434);
+			stepDataDao.create(s435);
+			stepDataDao.create(s436);
+			stepDataDao.create(s437);
+			stepDataDao.create(s438);
+			stepDataDao.create(s439);
+			stepDataDao.create(s440);
+			stepDataDao.create(s441);
+			stepDataDao.create(s442);
+			stepDataDao.create(s443);
+			stepDataDao.create(s444);
+			stepDataDao.create(s445);
+			stepDataDao.create(s446);
+			stepDataDao.create(s447);
+			stepDataDao.create(s448);
+			stepDataDao.create(s449);
+			stepDataDao.create(s450);
+			stepDataDao.create(s451);
+			stepDataDao.create(s452);
+			stepDataDao.create(s453);
+			stepDataDao.create(s454);
+			stepDataDao.create(s455);
+			stepDataDao.create(s456);
+			stepDataDao.create(s457);
+			stepDataDao.create(s458);
+			stepDataDao.create(s459);
+			stepDataDao.create(s460);
+			stepDataDao.create(s461);
+			stepDataDao.create(s462);
+			stepDataDao.create(s463);
+			stepDataDao.create(s464);
+			stepDataDao.create(s465);
+			stepDataDao.create(s466);
+			stepDataDao.create(s467);
+			stepDataDao.create(s468);
+			stepDataDao.create(s469);
+			stepDataDao.create(s470);
+			stepDataDao.create(s471);
+			stepDataDao.create(s472);
+			stepDataDao.create(s473);
+			stepDataDao.create(s474);
+			stepDataDao.create(s475);
+			stepDataDao.create(s476);
+			stepDataDao.create(s477);
+			stepDataDao.create(s478);
+			stepDataDao.create(s479);
+			stepDataDao.create(s480);
+			stepDataDao.create(s481);
+			stepDataDao.create(s482);
+			stepDataDao.create(s483);
+			stepDataDao.create(s484);
+			stepDataDao.create(s485);
+			stepDataDao.create(s486);
+			stepDataDao.create(s487);
+			stepDataDao.create(s488);
+			stepDataDao.create(s489);
+			stepDataDao.create(s490);
+			stepDataDao.create(s491);
+			stepDataDao.create(s492);
+			stepDataDao.create(s493);
+			stepDataDao.create(s494);
+			stepDataDao.create(s495);
+			stepDataDao.create(s496);
+			stepDataDao.create(s497);
+			stepDataDao.create(s498);
+			stepDataDao.create(s499);
+			stepDataDao.create(s500);
+			stepDataDao.create(s501);
+			stepDataDao.create(s502);
+			stepDataDao.create(s503);
+			stepDataDao.create(s504);
+			stepDataDao.create(s505);
+			stepDataDao.create(s506);
+			stepDataDao.create(s507);
+			stepDataDao.create(s508);
+			stepDataDao.create(s509);
+			stepDataDao.create(s510);
+			stepDataDao.create(s511);
+			stepDataDao.create(s512);
+			stepDataDao.create(s513);
+			stepDataDao.create(s514);
+			stepDataDao.create(s515);
+			stepDataDao.create(s516);
+			stepDataDao.create(s517);
+			stepDataDao.create(s518);
+			stepDataDao.create(s519);
+			stepDataDao.create(s520);
+			stepDataDao.create(s521);
+			stepDataDao.create(s522);
+			stepDataDao.create(s523);
+			stepDataDao.create(s524);
+			stepDataDao.create(s525);
+			stepDataDao.create(s526);
+			stepDataDao.create(s527);
+			stepDataDao.create(s528);
+			stepDataDao.create(s529);
+			stepDataDao.create(s530);
+			stepDataDao.create(s531);
+			stepDataDao.create(s532);
+			stepDataDao.create(s533);
+			stepDataDao.create(s534);
+			stepDataDao.create(s535);
+			stepDataDao.create(s536);
+			stepDataDao.create(s537);
+			stepDataDao.create(s538);
+			stepDataDao.create(s539);
+			stepDataDao.create(s540);
+			stepDataDao.create(s541);
+			stepDataDao.create(s542);
+			stepDataDao.create(s543);
+			stepDataDao.create(s544);
+			stepDataDao.create(s545);
+			stepDataDao.create(s546);
+			stepDataDao.create(s547);
+			stepDataDao.create(s548);
+			stepDataDao.create(s549);
+			stepDataDao.create(s550);
+			stepDataDao.create(s551);
+			stepDataDao.create(s552);
+			stepDataDao.create(s553);
+			stepDataDao.create(s554);
+			stepDataDao.create(s555);
+			stepDataDao.create(s556);
+			stepDataDao.create(s557);
+			stepDataDao.create(s558);
+			stepDataDao.create(s559);
+			stepDataDao.create(s560);
+			stepDataDao.create(s561);
+			stepDataDao.create(s562);
+			stepDataDao.create(s563);
+			stepDataDao.create(s564);
+			stepDataDao.create(s565);
+			stepDataDao.create(s566);
+			stepDataDao.create(s567);
+			stepDataDao.create(s568);
+			stepDataDao.create(s569);
+			stepDataDao.create(s570);
+			stepDataDao.create(s571);
+			stepDataDao.create(s572);
+			stepDataDao.create(s573);
+			stepDataDao.create(s574);
+			stepDataDao.create(s575);
+			stepDataDao.create(s576);
+			stepDataDao.create(s577);
+			stepDataDao.create(s578);
+			stepDataDao.create(s579);
+			stepDataDao.create(s580);
+			stepDataDao.create(s581);
+			stepDataDao.create(s582);
+			stepDataDao.create(s583);
+			stepDataDao.create(s584);
+			stepDataDao.create(s585);
+			stepDataDao.create(s586);
+			stepDataDao.create(s587);
+			stepDataDao.create(s588);
+			stepDataDao.create(s589);
+			stepDataDao.create(s590);
+			stepDataDao.create(s591);
+			stepDataDao.create(s592);
+			stepDataDao.create(s593);
+			stepDataDao.create(s594);
+			stepDataDao.create(s595);
+			stepDataDao.create(s596);
+			stepDataDao.create(s597);
+			stepDataDao.create(s598);
+			stepDataDao.create(s599);
+			stepDataDao.create(s600);
+			stepDataDao.create(s601);
+			stepDataDao.create(s602);
+			stepDataDao.create(s603);
+			stepDataDao.create(s604);
+			stepDataDao.create(s605);
+			stepDataDao.create(s606);
+			stepDataDao.create(s607);
+			stepDataDao.create(s608);
+			stepDataDao.create(s609);
+			stepDataDao.create(s610);
+			stepDataDao.create(s611);
+			stepDataDao.create(s612);
+			stepDataDao.create(s613);
+			stepDataDao.create(s614);
+			stepDataDao.create(s615);
+			stepDataDao.create(s616);
+			stepDataDao.create(s617);
+			stepDataDao.create(s618);
+			stepDataDao.create(s619);
+			stepDataDao.create(s620);
+			stepDataDao.create(s621);
+			stepDataDao.create(s622);
+			stepDataDao.create(s623);
+			stepDataDao.create(s624);
+			stepDataDao.create(s625);
+			stepDataDao.create(s626);
+			stepDataDao.create(s627);
+			stepDataDao.create(s628);
+			stepDataDao.create(s629);
+			stepDataDao.create(s630);
+			stepDataDao.create(s631);
+			stepDataDao.create(s632);
+			stepDataDao.create(s633);
+			stepDataDao.create(s634);
+			stepDataDao.create(s635);
+			stepDataDao.create(s636);
+			stepDataDao.create(s637);
+			stepDataDao.create(s638);
+			stepDataDao.create(s639);
+			stepDataDao.create(s640);
+			stepDataDao.create(s641);
+			stepDataDao.create(s642);
+			stepDataDao.create(s643);
+			stepDataDao.create(s644);
+			stepDataDao.create(s645);
+			stepDataDao.create(s646);
+			stepDataDao.create(s647);
+			stepDataDao.create(s648);
+			stepDataDao.create(s649);
+			stepDataDao.create(s650);
+			stepDataDao.create(s651);
+			stepDataDao.create(s652);
+			stepDataDao.create(s653);
+			stepDataDao.create(s654);
+			stepDataDao.create(s655);
+			stepDataDao.create(s656);
+			stepDataDao.create(s657);
+			stepDataDao.create(s658);
+			stepDataDao.create(s659);
+			stepDataDao.create(s660);
+			stepDataDao.create(s661);
+			stepDataDao.create(s662);
+			stepDataDao.create(s663);
+			stepDataDao.create(s664);
+			stepDataDao.create(s665);
+			stepDataDao.create(s666);
+			stepDataDao.create(s667);
+			stepDataDao.create(s668);
+			stepDataDao.create(s669);
+			stepDataDao.create(s670);
+			stepDataDao.create(s671);
+			stepDataDao.create(s672);
+			stepDataDao.create(s673);
+			stepDataDao.create(s674);
+			stepDataDao.create(s675);
+			stepDataDao.create(s676);
+			stepDataDao.create(s677);
+			stepDataDao.create(s678);
+			stepDataDao.create(s679);
+			stepDataDao.create(s680);
+			stepDataDao.create(s681);
+			stepDataDao.create(s682);
+			stepDataDao.create(s683);
+			stepDataDao.create(s684);
+			stepDataDao.create(s685);
+			stepDataDao.create(s686);
+			stepDataDao.create(s687);
+			stepDataDao.create(s688);
+			stepDataDao.create(s689);
+			stepDataDao.create(s690);
+			stepDataDao.create(s691);
+			stepDataDao.create(s692);
+			stepDataDao.create(s693);
+			stepDataDao.create(s694);
+			stepDataDao.create(s695);
+			stepDataDao.create(s696);
+			stepDataDao.create(s697);
+			stepDataDao.create(s698);
+			stepDataDao.create(s699);
+			stepDataDao.create(s700);
+			stepDataDao.create(s701);
+			stepDataDao.create(s702);
+			stepDataDao.create(s703);
+			stepDataDao.create(s704);
+			stepDataDao.create(s705);
+			stepDataDao.create(s706);
+			stepDataDao.create(s707);
+			stepDataDao.create(s708);
+			stepDataDao.create(s709);
+			stepDataDao.create(s710);
+			stepDataDao.create(s711);
+			stepDataDao.create(s712);
+			stepDataDao.create(s713);
+			stepDataDao.create(s714);
+			stepDataDao.create(s715);
+			stepDataDao.create(s716);
+			stepDataDao.create(s717);
+			stepDataDao.create(s718);
+			stepDataDao.create(s719);
+			stepDataDao.create(s720);
+			stepDataDao.create(s721);
+			stepDataDao.create(s722);
+			stepDataDao.create(s723);
+			stepDataDao.create(s724);
+			stepDataDao.create(s725);
+			stepDataDao.create(s726);
+			stepDataDao.create(s727);
+			stepDataDao.create(s728);
+			stepDataDao.create(s729);
+			stepDataDao.create(s730);
+			stepDataDao.create(s731);
+			stepDataDao.create(s732);
+			stepDataDao.create(s733);
+			stepDataDao.create(s734);
+			stepDataDao.create(s735);
+			stepDataDao.create(s736);
+			stepDataDao.create(s737);
+			stepDataDao.create(s738);
+			stepDataDao.create(s739);
+			stepDataDao.create(s740);
+			stepDataDao.create(s741);
+			stepDataDao.create(s742);
+			stepDataDao.create(s743);
+			stepDataDao.create(s744);
+			stepDataDao.create(s745);
+			stepDataDao.create(s746);
+			stepDataDao.create(s747);
+			stepDataDao.create(s748);
+			stepDataDao.create(s749);
+			stepDataDao.create(s750);
+			stepDataDao.create(s751);
+			stepDataDao.create(s752);
+			stepDataDao.create(s753);
+			stepDataDao.create(s754);
+			stepDataDao.create(s755);
+			stepDataDao.create(s756);
+			stepDataDao.create(s757);
+			stepDataDao.create(s758);
+			stepDataDao.create(s759);
+			stepDataDao.create(s760);
+			stepDataDao.create(s761);
+			stepDataDao.create(s762);
+			stepDataDao.create(s763);
+			stepDataDao.create(s764);
+			stepDataDao.create(s765);
+			stepDataDao.create(s766);
+			stepDataDao.create(s767);
+			stepDataDao.create(s768);
+			stepDataDao.create(s769);
+			stepDataDao.create(s770);
+			stepDataDao.create(s771);
+			stepDataDao.create(s772);
+			stepDataDao.create(s773);
+			stepDataDao.create(s774);
+			stepDataDao.create(s775);
+			stepDataDao.create(s776);
+			stepDataDao.create(s777);
+			stepDataDao.create(s778);
+			stepDataDao.create(s779);
+			stepDataDao.create(s780);
+			stepDataDao.create(s781);
+			stepDataDao.create(s782);
+			stepDataDao.create(s783);
+			stepDataDao.create(s784);
+			stepDataDao.create(s785);
+			stepDataDao.create(s786);
+			stepDataDao.create(s787);
+			stepDataDao.create(s788);
+			stepDataDao.create(s789);
+			stepDataDao.create(s790);
+			stepDataDao.create(s791);
+			stepDataDao.create(s792);
+			stepDataDao.create(s793);
+			stepDataDao.create(s794);
+			stepDataDao.create(s795);
+			stepDataDao.create(s796);
+			stepDataDao.create(s797);
+			stepDataDao.create(s798);
+			stepDataDao.create(s799);
+			stepDataDao.create(s800);
+			stepDataDao.create(s801);
+			stepDataDao.create(s802);
+			stepDataDao.create(s803);
+			stepDataDao.create(s804);
+			stepDataDao.create(s805);
+			stepDataDao.create(s806);
+			stepDataDao.create(s807);
+			stepDataDao.create(s808);
+			stepDataDao.create(s809);
+			stepDataDao.create(s810);
+			stepDataDao.create(s811);
+			stepDataDao.create(s812);
+			stepDataDao.create(s813);
+			stepDataDao.create(s814);
+			stepDataDao.create(s815);
+			stepDataDao.create(s816);
+			stepDataDao.create(s817);
+			stepDataDao.create(s818);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting step", "Insert error " + ex.toString());
+		}
+		
+		// HL
+		HighLight h1 = new HighLight("hl_varrados_poiv01",
+				"poiV01-Mola deth Batan", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s69);
+		HighLight h2 = new HighLight("hl_varrados_poiv02",
+				"poiV02-Hònt deth Sofre", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s71);
+		HighLight h3 = new HighLight("hl_varrados_poiv03",
+				"poiV03-desguàs conducció Varradòs", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s73);
+		HighLight h4 = new HighLight("hl_varrados_poiv04",
+				"poiV04-vista barranc Nere", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s161);
+		HighLight h5 = new HighLight("hl_varrados_poiv05",
+				"poiV05-Barranc Salies", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s256);
+		HighLight h6 = new HighLight("hl_varrados_poiv06",
+				"poiV06-Barratge de Varradòs", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s549);
+		HighLight h7 = new HighLight("hl_varrados_poiv07",
+				"poiV07-Saut deth Pish", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s556);
+		HighLight h8 = new HighLight("hl_varrados_poiv08",
+				"poiV08-Hònt dera Pila", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s680);
+		HighLight h9 = new HighLight("hl_varrados_poiv09",
+				"poiV09-Nere de Uèrri", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s766);
+		HighLight h10 = new HighLight("hl_varrados_poiv10",
+				"poiV10-Estanh Pica Palomèra", null, 10,
+				HighLight.POINT_OF_INTEREST_OFFICIAL,s788);
+
+		// WP
+		HighLight h11 = new HighLight("hl_varrados_wpv01",
+				"wpV01-sortida rotonda", null, 10, HighLight.WAYPOINT,s1);
+		HighLight h12 = new HighLight("hl_varrados_wpv02",
+				"wpV02-inici pista Varradòs", null, 10, HighLight.WAYPOINT,s4);
+		HighLight h13 = new HighLight("hl_varrados_wpv03", "wpV03-aparcament",
+				null, 10, HighLight.WAYPOINT,s536);
+//		HighLight h14 = new HighLight("hl_varrados_wpv04",
+//				"wpV04-Barratge Varradòs", null, 10, HighLight.WAYPOINT);
+//		HighLight h15 = new HighLight("hl_varrados_wpv05",
+//				"wpV05-Saut deth Pish", null, 10, HighLight.WAYPOINT);
+		HighLight h16 = new HighLight("hl_varrados_wpv06",
+				"wpV06-trencall amunt camí", null, 10, HighLight.WAYPOINT,s633);
+		HighLight h17 = new HighLight("hl_varrados_wpv07",
+				"wpV07-tronc caigut", null, 10, HighLight.WAYPOINT,s657);
+		HighLight h18 = new HighLight("hl_varrados_wpv08",
+				"wpV08-barranc de Siesso", null, 10, HighLight.WAYPOINT,s721);
+		HighLight h19 = new HighLight("hl_varrados_wpv09",
+				"wpV09-inici/final circuit estanys", null, 10,
+				HighLight.WAYPOINT,s738);
+//		HighLight h20 = new HighLight("hl_varrados_wpv10",
+//				"wpV10-Nere de Uèrri", null, 10, HighLight.WAYPOINT);
+//		HighLight h21 = new HighLight("hl_varrados_wpv11",
+//				"wpV11-Estanh Pica Palomèra", null, 10, HighLight.WAYPOINT);
+
+		try {
+			hlDataDao.create(h1);
+			hlDataDao.create(h2);
+			hlDataDao.create(h3);
+			hlDataDao.create(h4);
+			hlDataDao.create(h5);
+			hlDataDao.create(h6);
+			hlDataDao.create(h7);
+			hlDataDao.create(h8);
+			hlDataDao.create(h9);
+			hlDataDao.create(h10);
+			hlDataDao.create(h11);
+			hlDataDao.create(h12);
+			hlDataDao.create(h13);
+			//hlDataDao.create(h14);
+			//hlDataDao.create(h15);
+			hlDataDao.create(h16);
+			hlDataDao.create(h17);
+			hlDataDao.create(h18);
+			hlDataDao.create(h19);
+			//hlDataDao.create(h20);
+			//hlDataDao.create(h21);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting highlight", "Insert error " + ex.toString());
+		}
+
+		
+		Route r = new Route();
+		r.setId("ROUTE_VARRADOS");
+		r.setName("Vall de Varradós");
+		r.setDescription("Itinerari en dues parts: primer 10 km de pista asfaltada amb 695 m de desnivell (30 minuts, anada), per recòrrer el riu de Varradòs i visitar el Saut deth Pish i el Barratge de Varradòs; després, itinerari circular de 12.3 km amb 980 m de desnivell (6-7 hores a peu), per visitar els estanhs Nere de Uèrri i de Pica Palomèra. El camí a peu transcorre per senders poc marcats i zones on la progressió es fa dificultosa, en una de les zones més recòndites i salvatges de l’Aran. És imprescindible tenir un bon sentit de l’orientació, bona forma física i experiència en alta muntanya. El riu de Varradòs està encaixonant en una vall de relleu escarpat, que dona lloca lloc a una intensa activitat d’allaus i a cascades impressionants, com el Saut deth Pish. Els estanys a visitar són un exemple d’hàbitats extrems, degut a l’acidesa de les seves aigües i l’alt contingut de metalls que provenen de les roques que els envolten.");
+		r.setUserId("1");
+		// Ph_ch parameters
+		// r.setReference(r6);
+		// Interactive image
+		// r.setInteractiveImage(img);
+		r.setTrack(t);
+		r.setLocalCarto("OSMPublicTransport_HiRes.mbtiles");
+
+		try {
+			routeDataDao.create(r);
+		} catch (RuntimeException ex) {
+			Log.e("Inserting route", "Insert error " + ex.toString());
+		}
+
+
+	}
 
 //	public static void loadGaronaPeu(DataBaseHelper db, Context context) {
 //		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
@@ -10798,7 +10803,7 @@ public class DataContainer {
 //			Log.e("Inserting route", "Insert error " + ex.toString());
 //		}
 //
-//	}
+//	}		
 
 	public static void loadRedonCompact(DataBaseHelper db, Context context) {
 		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
@@ -11020,18 +11025,36 @@ public class DataContainer {
 		r6.setTextContent("fisics_er.html");
 
 		try {
-
-			referenceDataDao.create(r1);
-			referenceDataDao.create(r2);
-			referenceDataDao.create(r3);
-			referenceDataDao.create(r4);
-			referenceDataDao.create(r5);
-			referenceDataDao.create(r6);
-
+			referenceDataDao.create(r1);			
 		} catch (RuntimeException ex) {
 			Log.e("Inserting reference", "Insert error " + ex.toString());
 		}
-		
+		try {
+			referenceDataDao.create(r2);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
+		try {
+			referenceDataDao.create(r3);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
+		try {
+			referenceDataDao.create(r4);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
+		try {
+			referenceDataDao.create(r5);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
+		try {
+			referenceDataDao.create(r6);			
+		} catch (RuntimeException ex) {
+			Log.e("Inserting reference", "Insert error " + ex.toString());
+		}
+				
 		// Interactive image
 		// Create image
 		InteractiveImage img = new InteractiveImage("intimg_redon");

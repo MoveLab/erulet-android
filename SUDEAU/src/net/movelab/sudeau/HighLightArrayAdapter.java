@@ -38,7 +38,9 @@ public class HighLightArrayAdapter extends ArrayAdapter<HighLight> {
 		    TextView secondLine = (TextView) rowView.findViewById(R.id.secondLine);
 		    ImageView icon = (ImageView) rowView.findViewById(R.id.hl_lv_icon);
 		    if(currentHighLight!=null){		    	
-		    	icon.setImageBitmap( BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_empty) );
+		    	icon.setImageBitmap(
+		    			MapObjectsFactory.getBitmap(currentHighLight.getType(), context)		    			
+		    			);
 		    }
 		    firstLine.setText(currentHighLight.getName());
 		    secondLine.setText(currentHighLight.getLongText());

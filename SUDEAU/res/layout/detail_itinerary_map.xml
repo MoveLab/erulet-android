@@ -27,49 +27,44 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|right"        
-        android:orientation="horizontal"
+        android:orientation="horizontal"        
         android:padding="5dp" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" >
             
-            <ImageButton 
-                android:id="@+id/btn_stop_tracking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:background="@color/white"
-                android:src="@drawable/stop"
-                />
+          <ImageButton 
+              android:id="@+id/btn_stop_tracking"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5dp"
+              android:background="#00ffffff"
+              android:src="@drawable/stop"
+              />
 
-            <ImageButton
-                android:id="@+id/btn_add_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:background="@color/white"
-                android:src="@drawable/add_location_btn"
-                />
+          <ImageButton
+              android:id="@+id/btn_add_content"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5dp"
+              android:background="#00ffffff"              
+              android:src="@drawable/add_location_btn"
+              />
 
-            <ImageButton
-                android:id="@+id/btn_compass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:background="@color/white"
-                android:src="@drawable/compass_btn" />
+          <ImageButton
+              android:id="@+id/btn_compass"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5dp"
+              android:background="#00ffffff"              
+              android:src="@drawable/compass_btn" />
 
-            <ImageButton
-                android:id="@+id/btn_whereami"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:background="@color/white"
-                android:src="@drawable/whereami_btn_alt"  />
-
-        </LinearLayout>
+          <ImageButton
+              android:id="@+id/btn_whereami"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="5dp"
+			  android:background="#00ffffff"
+              android:src="@drawable/whereami_btn_alt"  />
+        
             
     </LinearLayout>
 

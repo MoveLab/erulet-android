@@ -385,6 +385,8 @@ public class DetailItineraryActivity extends Activity implements
 		if (requestCode == END_TRIP) { //
 			// Clear map
 			fixReceiver.clearTrackObjects();
+			// Remove route in progress markers
+			clearRouteMarkers();
 			// Set working mode to map
 			routeMode = 0;
 			// Adjust interface
@@ -397,6 +399,17 @@ public class DetailItineraryActivity extends Activity implements
 			// Re-display selected route
 			resetSelectedRouteMarkers();
 			updateSelectedRoute();
+		}
+	}
+	
+	private void clearRouteMarkers(){
+		if(routeInProgressMarkers!=null){
+			Enumeration<Marker> e = routeInProgressMarkers.keys();
+			while(e.hasMoreElements()){
+				Marker m = e.nextElement();
+				m.remove();
+			}
+			routeInProgressMarkers.clear();
 		}
 	}
 
@@ -816,7 +829,9 @@ public class DetailItineraryActivity extends Activity implements
 						} else { // Go to highlight detail (if there's some
 									// media to show)
 							if (s != null && s.getHighlights() != null) {
-								if (s.hasSingleHighLight()) {
+								List<HighLight> highlights = DataContainer.getStepHighLights(s,app.getDataBaseHelper());
+								if (s.hasSingleHighLight()) {									
+									HighLight h = highlights.get(0);
 									JSONObject hl_s;
 									try {
 										hl_s = JSONConverter
@@ -827,6 +842,7 @@ public class DetailItineraryActivity extends Activity implements
 													DetailItineraryActivity.this,
 													DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
+											i.putExtra("highlight_id", h.getId());
 											startActivity(i);
 										}
 									} catch (JSONException e) {
@@ -843,11 +859,11 @@ public class DetailItineraryActivity extends Activity implements
 						if (marker.equals(startMarker)
 								|| marker.equals(arrivalMarker)) {
 							// //Do nothing in special
-						} else if (s.hasHighLights()) {
+						} else if (s!= null && s.hasHighLights()) {
 							List<HighLight> highlights = DataContainer
 									.getStepHighLights(s,
 											app.getDataBaseHelper());
-							if (s.hasSingleHighLight()) {
+							if (s!= null && s.hasSingleHighLight()) {
 								HighLight h = highlights.get(0);
 								if (h.getInteractiveImage() != null) {
 									// Interactive image
@@ -864,16 +880,36 @@ public class DetailItineraryActivity extends Activity implements
 									Intent i = new Intent(
 											DetailItineraryActivity.this,
 											HTMLViewerActivity.class);
-									i.putExtra("idReference", r.getId());
+									i.putExtra("idReference", h.getReference().getId());
 									startActivity(i);
+								}else{
+									JSONObject hl_s;
+									try {
+										hl_s = JSONConverter
+												.stepToJSONObject(s);
+										if (hl_s != null) {
+											String s_j_string = hl_s.toString();
+											Intent i = new Intent(
+													DetailItineraryActivity.this,
+													DetailHighLightActivity.class);
+											i.putExtra("step_j", s_j_string);
+											i.putExtra("highlight_id", h.getId());
+											startActivity(i);
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 								}
 							} else { // Multiple HighLights
 										// ·$$· Open multiple highlights menu
-								Intent i = new Intent(
-										DetailItineraryActivity.this,
-										MultipleHighLightSelection.class);
-								i.putExtra("step_id", s.getId());
-								startActivity(i);
+								if(s!=null){
+									Intent i = new Intent(
+											DetailItineraryActivity.this,
+											MultipleHighLightSelection.class);
+									i.putExtra("step_id", s.getId());
+									startActivity(i);
+								}
 							}
 						}
 					}
@@ -1239,7 +1275,14 @@ public class DetailItineraryActivity extends Activity implements
 					});
 			dialog.show();
 		} else { // There's a marker on the step
-
+			selectedMarker = alreadyThereMarker;
+			if (s.hasHighLights()) {
+				// Show multiple highlight dialog			
+				showEditMultipleHighLightDialog(s);
+			} else {
+				// New highlight
+				launchHighLightEditIntent(s, null);
+			}
 		}
 	}
 

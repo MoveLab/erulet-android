@@ -35,7 +35,6 @@ import android.widget.Toast;
 public class EditHighLightActivity extends Activity {	
 	
 	//TODO Enable default name for highlight
-	//TODO Correctly scale image thumbnail (especially on edit)	
 	//TODO Create input validation
 	
 	static final int REQUEST_IMAGE_CAPTURE = 1;

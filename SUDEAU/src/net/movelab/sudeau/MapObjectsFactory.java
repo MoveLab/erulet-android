@@ -2,6 +2,9 @@ package net.movelab.sudeau;
 
 import net.movelab.sudeau.model.HighLight;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -34,7 +37,7 @@ public class MapObjectsFactory {
 		.snippet(snippet)
 		.position(new LatLng(-27, 133))
 		.icon(BitmapDescriptorFactory
-				.fromResource(R.drawable.ic_erulet_new)));
+				.fromResource(R.drawable.ic_erulet_v2)));
 	}
 	
 	public static Marker addEmptyUserMarker(
@@ -49,6 +52,41 @@ public class MapObjectsFactory {
 		.title(title)
 		.snippet(snippet)
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_empty_bw)));
+	}
+	
+	public static Bitmap getBitmap(int hlType, Context context){
+		Bitmap bm = null;
+		switch(hlType){
+			case HighLight.WAYPOINT:				
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_chart);
+				break;			
+			case HighLight.ALERT:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_warning);
+				break;
+			case HighLight.POINT_OF_INTEREST_OFFICIAL:				
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_drop);
+				break;
+			case HighLight.POINT_OF_INTEREST_SHARED:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_shared);
+				break;
+			case HighLight.POINT_OF_INTEREST:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_drop);
+				break;
+			case HighLight.CONTAINER_N:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_multiple);
+				break;
+			case HighLight.INTERACTIVE_IMAGE:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_interactiveimage);
+				break;
+			case HighLight.REFERENCE:
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_reference);
+				break;
+			default:
+				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+				bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.pin_empty);
+				break;
+		}
+		return bm;
 	}
 	
 	public static BitmapDescriptor getUserBitmapDescriptor(int hlType){
@@ -70,10 +108,13 @@ public class MapObjectsFactory {
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop);
 				break;
 			case HighLight.CONTAINER_N:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_multiple);
 				break;
 			case HighLight.INTERACTIVE_IMAGE:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_interactiveimage);
+				break;
+			case HighLight.REFERENCE:
+				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_reference);
 				break;
 			default:
 				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -91,21 +132,11 @@ public class MapObjectsFactory {
 				break;			
 			case HighLight.ALERT:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_warning_bw);
-				break;
-			case HighLight.POINT_OF_INTEREST_OFFICIAL:
-				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop_bw);
-				break;
-			case HighLight.POINT_OF_INTEREST_SHARED:
-				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_shared);
-				break;
+				break;			
 			case HighLight.POINT_OF_INTEREST:
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_drop_bw);
 				break;				
-			case HighLight.CONTAINER_N:
-				bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-				break;
 			default:
-				//bm = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 				bm = BitmapDescriptorFactory.fromResource(R.drawable.pin_empty_bw);
 				break;
 		}
