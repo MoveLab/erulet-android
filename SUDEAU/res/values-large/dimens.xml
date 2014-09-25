@@ -14,5 +14,11 @@
     <dimen name="label_infoblock_normal">12dp</dimen>
     
     <dimen name="block_margin_top_separator">20dp</dimen> 
+    
+    <dimen name="route_item_name">14dp</dimen> 
+    <dimen name="route_item_name_width">125dp</dimen>
+    <dimen name="route_item_description">14dp</dimen>
+    <dimen name="route_item_description_width">150dp</dimen>
+    
 
 </resources>

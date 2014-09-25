@@ -110,6 +110,9 @@ public class DetailHighLightActivity extends Activity {
 				case HighLight.POINT_OF_INTEREST:
 					ivType.setImageResource(R.drawable.pin_drop);
 					break;
+				case HighLight.POINT_OF_INTEREST_OFFICIAL:
+					ivType.setImageResource(R.drawable.pin_drop);
+					break;
 				case HighLight.WAYPOINT:
 					ivType.setImageResource(R.drawable.pin_chart);
 					break;
@@ -147,7 +150,10 @@ public class DetailHighLightActivity extends Activity {
 			picSeparator.setVisibility(View.GONE);
 		}
 		
-		String date = app.formatDateDayMonthYear(s.getAbsoluteTime()) + " " + app.formatDateHoursMinutesSeconds(new Date(s.getAbsoluteTimeMillis()));
+		String date = "";
+		if(s.getAbsoluteTime() != null){
+			date = app.formatDateDayMonthYear(s.getAbsoluteTime()) + " " + app.formatDateHoursMinutesSeconds(new Date(s.getAbsoluteTimeMillis()));
+		}
 		String lat = Double.toString(s.getLatitude());
 		String llong = Double.toString(s.getLongitude());
 		String alt = Double.toString(s.getAltitude());

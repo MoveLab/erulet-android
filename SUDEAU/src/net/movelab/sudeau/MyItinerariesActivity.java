@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -103,8 +104,9 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 		    View rowView = inflater.inflate(R.layout.local_route_list_item, parent, false);		    
 		    TextView nom = (TextView) rowView.findViewById(R.id.route_name);
 		    TextView description = (TextView) rowView.findViewById(R.id.route_description);
-		    ImageButton edit = (ImageButton) rowView.findViewById(R.id.route_edit);		    
+		    ImageButton edit = (ImageButton) rowView.findViewById(R.id.route_edit);
 		    ImageButton delete = (ImageButton) rowView.findViewById(R.id.route_delete);		    
+		    ImageButton upload = (ImageButton) rowView.findViewById(R.id.route_upload);
 		    final Route currentRoute = routes.get(position);
 		    nom.setText(currentRoute.getName());
 		    description.setText(currentRoute.getDescription());

@@ -47,23 +47,12 @@ public class EruletApp extends Application{
 //    		if(!loaded){
 //    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
 //    		reloadRedonCompact();
-    		reloadEscunHau();
-//    			Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
-//    			if(r!=null){
-//    				DataContainer.deleteRouteCascade(r,this);
-//			}
-//    			DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
-//    			DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
-//    			getPrefs().edit().putBoolean("redon_loaded", true).apply();
-//    		}
-//    			DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
-//    			DataContainer.loadBassaOles(dataBaseHelper, this.getBaseContext());
-    		//reloadEscunHau();
-    		//reloadBassaOles();
-    		//reloadVarrados();
-    		//reloadGaronaPeu();
+//    		reloadEscunHau();
+//    		reloadBassaOles();
+//    		reloadVarrados();
+//    		reloadGaronaPeu();
     		//reloadArtigaDeLin();
-//    			DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
+
     	}
 
 	}
@@ -76,15 +65,15 @@ public class EruletApp extends Application{
 //		DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
 //	}
 	
-//	private void reloadGaronaPeu(){
-//		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
-//		if(r!=null){
-//			//DataContainer.deleteRouteCascade(r,this);
-//			r.setLocalCarto("Garona_hires.mbtiles");
-//			DataContainer.updateRoute(r, dataBaseHelper);
-//		}
-//		//DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
-//	}
+	private void reloadGaronaPeu(){
+		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
+		if(r!=null){
+			//DataContainer.deleteRouteCascade(r,this);
+			r.setLocalCarto("Garona_hires.mbtiles");
+			DataContainer.updateRoute(r, dataBaseHelper);
+		}
+		DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
+	}
 	
 	private void reloadVarrados(){
 		Route r = DataContainer.findRouteById("ROUTE_VARRADOS", dataBaseHelper);

@@ -483,51 +483,51 @@ public class DetailItineraryActivity extends Activity implements
 		}
 	}
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (selectedRoute != null) {
-			if (selectedRoute.getReference() == null) {
-				menu.getItem(0).setVisible(false);
-			}
-			// if(selectedRoute.getInteractiveImage()==null){
-			// menu.getItem(1).setVisible(false);
-			// }
-			// for (int i = 0; i < menu.size(); i++) {
-			// menu.getItem(i).setVisible(false);
-			// }
-		}
-		return true;
-	}
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
+//		if (selectedRoute != null) {
+////			if (selectedRoute.getReference() == null) {
+////				menu.getItem(0).setVisible(false);
+////			}
+//			// if(selectedRoute.getInteractiveImage()==null){
+//			// menu.getItem(1).setVisible(false);
+//			// }
+//			// for (int i = 0; i < menu.size(); i++) {
+//			// menu.getItem(i).setVisible(false);
+//			// }
+//		}
+//		return true;
+//	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(group1, first_id, first_id, getString(R.string.envir_data));
-		menu.add(group1, second_id, second_id,
-				getString(R.string.interactive_pic));
-		return super.onCreateOptionsMenu(menu);
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+////		menu.add(group1, first_id, first_id, getString(R.string.envir_data));
+////		menu.add(group1, second_id, second_id,
+////				getString(R.string.interactive_pic));
+//		return super.onCreateOptionsMenu(menu);
+//	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 1:
-			Intent ihtml = new Intent(DetailItineraryActivity.this,
-					HTMLViewerActivity.class);
-			ihtml.putExtra("idReference", selectedRoute.getReference().getId());
-			startActivity(ihtml);
-			return true;
-			// case 2:
-			// Intent i = new Intent(DetailItineraryActivity.this,
-			// InteractiveImageActivityHeatMap.class);
-			// i.putExtra("int_image_id",
-			// selectedRoute.getInteractiveImage().getId());
-			// startActivity(i);
-			// return true;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		switch (item.getItemId()) {
+//		case 1:
+//			Intent ihtml = new Intent(DetailItineraryActivity.this,
+//					HTMLViewerActivity.class);
+//			ihtml.putExtra("idReference", selectedRoute.getReference().getId());
+//			startActivity(ihtml);
+//			return true;
+//			// case 2:
+//			// Intent i = new Intent(DetailItineraryActivity.this,
+//			// InteractiveImageActivityHeatMap.class);
+//			// i.putExtra("int_image_id",
+//			// selectedRoute.getInteractiveImage().getId());
+//			// startActivity(i);
+//			// return true;
+//		default:
+//			break;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 
 	private void startOrResumeTracking() {
 		if (routeMode > 0) {

@@ -74,6 +74,9 @@ public class MultipleHighLightSelection extends Activity {
 					case HighLight.WAYPOINT:
 						launchStandardUserPointInfo(h.getId());
 						break;						
+					case HighLight.ALERT:
+						launchStandardUserPointInfo(h.getId());
+						break;
 					default:
 						break;
 				}
