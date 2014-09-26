@@ -38,7 +38,6 @@ CREATE TABLE `step`
 	`hlId` VARCHAR , 
 	`id` VARCHAR , 
 	`referenceId` VARCHAR , 
-	`name` VARCHAR , 
 	`order` INTEGER , 
 	`longitude` DOUBLE PRECISION , 
 	`precision` DOUBLE PRECISION , 
@@ -71,7 +70,6 @@ CREATE TABLE `reference`
 
 CREATE TABLE `interactiveimage` 
 (
-	`heatPath` VARCHAR , 
 	`id` VARCHAR , 
 	`mediaPath` VARCHAR , 
 	`originalHeight` INTEGER , 
