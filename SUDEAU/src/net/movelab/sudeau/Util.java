@@ -215,10 +215,10 @@ public class Util {
 	public static long listenerTimer = LISTENER_WINDOW;
 	
 	
-	public static String baseFolder = "Erulet";
-	public static String picturesFolder = "EruletFotos";
-	public static String videosFolder = "EruletVideos";
-	public static String othersFolder = "EruletMaterials";
+	public static String baseFolder = "Holet";
+	public static String picturesFolder = "HoletFotos";
+	public static String videosFolder = "HoletVideos";
+	public static String othersFolder = "HoletMaterials";
 
 	/**
 	 * Surrounds the given string in quotation marks. Taken from Human Mobility

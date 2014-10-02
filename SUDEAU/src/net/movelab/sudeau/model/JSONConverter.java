@@ -31,7 +31,7 @@ public class JSONConverter {
 	public static Route jsonObjectToRoute(JSONObject j) throws JSONException{
 		Route r = new Route();
 		if(j.has("id")){
-			r.setId(j.getString("id"));
+			r.setId("R" + "_" + j.getString("id") + "_" + j.getString("id"));
 		}
         // for now, just using Catalan -- will  update models for multlingual
 		if(j.has("name_ca")){
@@ -66,8 +66,8 @@ public class JSONConverter {
 		if(j.has("isuploaded")){
 			r.setUpLoaded(j.getBoolean("isuploaded"));
 		}		
-		if(j.has("local_carto")){
-			r.setLocalCarto(j.getString("local_carto"));
+		if(j.has("local_carto_name")){
+			r.setLocalCarto(j.getString("local_carto_name"));
 		}
         // We will need to change this and instead grab just the calcualted global rating
 		if(j.has("userrating")){
@@ -146,10 +146,8 @@ public class JSONConverter {
 		if(j.has("longitude")){
 			s.setLongitude(j.getDouble("longitude"));
 		}
-        // again, more languages to be added
-		if(j.has("name_ca")){
-			s.setName(j.getString("name_ca"));
-		}
+        // since steps are not named on server, setting name to id
+		s.setName("steps" + s.getId());
 //		if(j.has("highlight")){
 //			JSONObject hl = j.getJSONObject("highlight");
 //			s.setHighlight(jsonObjectToHighLight(hl));
@@ -190,47 +188,36 @@ public class JSONConverter {
 			h.setId(j.getString("id"));
 		}
         // languages...
-		if(j.has("long_text_ca")){
-			h.setLongText(j.getString("long_text_ca"));
-		}
-		if(j.has("name_ca")){
-			h.setName(j.getString("name_ca"));
-		}
-		if(j.has("imagePath")){
-			h.setMediaPath(j.getString("imagePath"));
-		}
+			h.setLongText(j.optString("long_text_ca", "none"));
+			h.setName(j.optString("name_ca", "none"));
+
+        // TODO add this to server
+			h.setMediaPath(j.optString("imagePath", "none"));
 
         // check if this makes sense and come up with good default radius
 		h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));
 
-		if(j.has("type")){
-			h.setType(j.getInt("type"));
-		}
-		if(j.has("userrating")){
-			h.setUserRating(j.getInt("userrating"));
-		}
-		if(j.has("globalrating")){
-			h.setGlobalRating(j.getInt("globalrating"));
-		}
-        // this will need to become multiple references
-		if(j.has("reference")){
-			JSONObject ref = j.getJSONObject("reference");
-			h.setReference(jsonObjectToReference(ref));
-		}
+			h.setType(j.optInt("type", 0));
+
+        // TODO fix this
+			h.setUserRating(j.optInt("userrating", 5));
+			h.setGlobalRating(j.optInt("globalrating", 5));
+
+        //  TODO this will need to become multiple references
+
+			JSONArray refs = j.optJSONArray("references");
+            if(refs.length() > 0){
+			h.setReference(jsonObjectToReference(refs.getJSONObject(0)));
+            }
 		return h;
 	}
 	
 	public static Reference jsonObjectToReference(JSONObject j) throws JSONException{		
 		Reference r = new Reference();
-		if(j.has("id")){
-			r.setId(j.getString("id"));
-		}
-		if(j.has("name_ca")){
-			r.setName(j.getString("name_ca"));
-		}
-		if(j.has("textContent")){
-			r.setTextContent(j.getString("textContent"));
-		}
+			r.setId(j.optString("id", "none"));
+			r.setName(j.optString("name_ca", "none"));
+    // TODO deal with this
+			r.setTextContent("none");
 		return r;
 	}
 	

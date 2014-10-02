@@ -519,7 +519,23 @@ public class DataContainer {
 		return retVal;
 	}
 
-	// public static byte[] getStepMedia(Step s, DataBaseHelper db){
+    public static List<Step> getTrackOrderedSteps(Track track, DataBaseHelper db) {
+        db.getTrackDataDao().refresh(track);
+        ArrayList<Step> retVal = new ArrayList<Step>();
+        Iterator<Step> stepIt = track.getSteps().iterator();
+        while (stepIt.hasNext()) {
+            Step s = stepIt.next();
+            if(s.getOrder() != -1){
+            retVal.add(s);
+            }
+        }
+        Collections.sort(retVal);
+        return retVal;
+    }
+
+
+
+    // public static byte[] getStepMedia(Step s, DataBaseHelper db){
 	// if(s!=null && s.getHighlight()!=null){
 	// HighLight hl = s.getHighlight();
 	// db.getHlDataDao().refresh(hl);
@@ -531,7 +547,7 @@ public class DataContainer {
 	// }
 	// return null;
 	// }
-	
+
 	public static void loadBassaOles(DataBaseHelper db, Context context) {
 		RuntimeExceptionDao<Route, String> routeDataDao = db.getRouteDataDao();
 		RuntimeExceptionDao<Track, String> trackDataDao = db.getTrackDataDao();
@@ -916,7 +932,7 @@ public class DataContainer {
 		HighLight h3 = new HighLight("hl_bassaoles_wpo03","wpO03-vista canal",null,10,HighLight.WAYPOINT,s27);
 		HighLight h4 = new HighLight("hl_bassaoles_wpo04","wpO04-arbre tombat",null,10,HighLight.WAYPOINT,s39);
 		HighLight h5 = new HighLight("hl_bassaoles_wpo05","wpO05-extrem N bassa",null,10,HighLight.WAYPOINT,s44);
-		HighLight h6 = new HighLight("hl_bassaoles_wpo06","wpO06-cruïlla pista",null,10,HighLight.WAYPOINT,s66);
+		HighLight h6 = new HighLight("hl_bassaoles_wpo06","wpO06-cruï¿½lla pista",null,10,HighLight.WAYPOINT,s66);
 		HighLight h7 = new HighLight("hl_bassaoles_wpo07","wpO07-desviament pista",null,10,HighLight.WAYPOINT);
 		HighLight h8 = new HighLight("hl_bassaoles_wpo08","wpO08-basseta",null,10,HighLight.WAYPOINT,s75);
 		HighLight h9 = new HighLight("hl_bassaoles_wpo09","wpO09-sortida sender",null,10,HighLight.WAYPOINT,s81);
@@ -932,7 +948,7 @@ public class DataContainer {
 		HighLight h17 = new HighLight("hl_bassaoles_poio03","poiO03-vista bassa N",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s43);
 		HighLight h18 = new HighLight("hl_bassaoles_poio04","poiO04-basseta",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s74);
 		HighLight h19 = new HighLight("hl_bassaoles_poio05","poiO05-aiguamoll",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s103);
-		HighLight h20 = new HighLight("hl_bassaoles_poio06","poiO06-illots càrex",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s148);
+		HighLight h20 = new HighLight("hl_bassaoles_poio06","poiO06-illots cï¿½rex",null,10,HighLight.POINT_OF_INTEREST_OFFICIAL,s148);
 				
 		
 		try {
@@ -964,7 +980,7 @@ public class DataContainer {
 		Route r = new Route();
 		r.setId("ROUTE_BASSAOLES");
 		r.setName("Bassa d'Oles");
-		r.setDescription("Itinerari circular de 1.7 km amb 50 m de desnivell (30 minuts a peu) al voltant del complex de la  Bassa d’Oles, una altra petita bassa i un aiguamoll propers. El camí segueix una pista i senders força planers, i travessa algun prat. Sense cap dificultat, l’itinerari és apte per a tots els públics. La Bassa d’Oles és una bassa d’origen natural que posteriorment es va represar. Es practica la pesca intensiva, i la bassa és repoblada regularment amb truites. És per tant un exemple d’ecosistema aquàtic fortament humanitzat. Està envoltada d’una pineda de pi roig de gran valor paisatgístic. L’interés principal rau en l’important entapissat de vegetació aqüàtica submergida i les illes de joncs que s’hi troben. Degut a l’accessibilitat a les vores i la poca fondària, és fàcil observar la vegetació submergida.");
+		r.setDescription("Itinerari circular de 1.7 km amb 50 m de desnivell (30 minuts a peu) al voltant del complex de la  Bassa dï¿½Oles, una altra petita bassa i un aiguamoll propers. El camï¿½ segueix una pista i senders forï¿½a planers, i travessa algun prat. Sense cap dificultat, lï¿½itinerari ï¿½s apte per a tots els pï¿½blics. La Bassa dï¿½Oles ï¿½s una bassa dï¿½origen natural que posteriorment es va represar. Es practica la pesca intensiva, i la bassa ï¿½s repoblada regularment amb truites. ï¿½s per tant un exemple dï¿½ecosistema aquï¿½tic fortament humanitzat. Estï¿½ envoltada dï¿½una pineda de pi roig de gran valor paisatgï¿½stic. Lï¿½interï¿½s principal rau en lï¿½important entapissat de vegetaciï¿½ aqï¿½ï¿½tica submergida i les illes de joncs que sï¿½hi troben. Degut a lï¿½accessibilitat a les vores i la poca fondï¿½ria, ï¿½s fï¿½cil observar la vegetaciï¿½ submergida.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
@@ -987,7 +1003,7 @@ public class DataContainer {
 		RuntimeExceptionDao<Step, String> stepDataDao = db.getStepDataDao();
 		RuntimeExceptionDao<HighLight, String> hlDataDao = db.getHlDataDao();
 
-		Track t = new Track("TRACK_VARRADOS", "Waypoints recorregut Varradòs");
+		Track t = new Track("TRACK_VARRADOS", "Waypoints recorregut Varradï¿½s");
 		try {
 			trackDataDao.create(t);
 		} catch (RuntimeException ex) {
@@ -3460,10 +3476,10 @@ public class DataContainer {
 				"poiV01-Mola deth Batan", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s69);
 		HighLight h2 = new HighLight("hl_varrados_poiv02",
-				"poiV02-Hònt deth Sofre", null, 10,
+				"poiV02-Hï¿½nt deth Sofre", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s71);
 		HighLight h3 = new HighLight("hl_varrados_poiv03",
-				"poiV03-desguàs conducció Varradòs", null, 10,
+				"poiV03-desguï¿½s conducciï¿½ Varradï¿½s", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s73);
 		HighLight h4 = new HighLight("hl_varrados_poiv04",
 				"poiV04-vista barranc Nere", null, 10,
@@ -3472,34 +3488,34 @@ public class DataContainer {
 				"poiV05-Barranc Salies", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s256);
 		HighLight h6 = new HighLight("hl_varrados_poiv06",
-				"poiV06-Barratge de Varradòs", null, 10,
+				"poiV06-Barratge de Varradï¿½s", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s549);
 		HighLight h7 = new HighLight("hl_varrados_poiv07",
 				"poiV07-Saut deth Pish", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s556);
 		HighLight h8 = new HighLight("hl_varrados_poiv08",
-				"poiV08-Hònt dera Pila", null, 10,
+				"poiV08-Hï¿½nt dera Pila", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s680);
 		HighLight h9 = new HighLight("hl_varrados_poiv09",
-				"poiV09-Nere de Uèrri", null, 10,
+				"poiV09-Nere de Uï¿½rri", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s766);
 		HighLight h10 = new HighLight("hl_varrados_poiv10",
-				"poiV10-Estanh Pica Palomèra", null, 10,
+				"poiV10-Estanh Pica Palomï¿½ra", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s788);
 
 		// WP
 		HighLight h11 = new HighLight("hl_varrados_wpv01",
 				"wpV01-sortida rotonda", null, 10, HighLight.WAYPOINT,s1);
 		HighLight h12 = new HighLight("hl_varrados_wpv02",
-				"wpV02-inici pista Varradòs", null, 10, HighLight.WAYPOINT,s4);
+				"wpV02-inici pista Varradï¿½s", null, 10, HighLight.WAYPOINT,s4);
 		HighLight h13 = new HighLight("hl_varrados_wpv03", "wpV03-aparcament",
 				null, 10, HighLight.WAYPOINT,s536);
 //		HighLight h14 = new HighLight("hl_varrados_wpv04",
-//				"wpV04-Barratge Varradòs", null, 10, HighLight.WAYPOINT);
+//				"wpV04-Barratge Varradï¿½s", null, 10, HighLight.WAYPOINT);
 //		HighLight h15 = new HighLight("hl_varrados_wpv05",
 //				"wpV05-Saut deth Pish", null, 10, HighLight.WAYPOINT);
 		HighLight h16 = new HighLight("hl_varrados_wpv06",
-				"wpV06-trencall amunt camí", null, 10, HighLight.WAYPOINT,s633);
+				"wpV06-trencall amunt camï¿½", null, 10, HighLight.WAYPOINT,s633);
 		HighLight h17 = new HighLight("hl_varrados_wpv07",
 				"wpV07-tronc caigut", null, 10, HighLight.WAYPOINT,s657);
 		HighLight h18 = new HighLight("hl_varrados_wpv08",
@@ -3508,9 +3524,9 @@ public class DataContainer {
 				"wpV09-inici/final circuit estanys", null, 10,
 				HighLight.WAYPOINT,s738);
 //		HighLight h20 = new HighLight("hl_varrados_wpv10",
-//				"wpV10-Nere de Uèrri", null, 10, HighLight.WAYPOINT);
+//				"wpV10-Nere de Uï¿½rri", null, 10, HighLight.WAYPOINT);
 //		HighLight h21 = new HighLight("hl_varrados_wpv11",
-//				"wpV11-Estanh Pica Palomèra", null, 10, HighLight.WAYPOINT);
+//				"wpV11-Estanh Pica Palomï¿½ra", null, 10, HighLight.WAYPOINT);
 
 		try {
 			hlDataDao.create(h1);
@@ -3541,8 +3557,8 @@ public class DataContainer {
 		
 		Route r = new Route();
 		r.setId("ROUTE_VARRADOS");
-		r.setName("Vall de Varradós");
-		r.setDescription("Itinerari en dues parts: primer 10 km de pista asfaltada amb 695 m de desnivell (30 minuts, anada), per recòrrer el riu de Varradòs i visitar el Saut deth Pish i el Barratge de Varradòs; després, itinerari circular de 12.3 km amb 980 m de desnivell (6-7 hores a peu), per visitar els estanhs Nere de Uèrri i de Pica Palomèra. El camí a peu transcorre per senders poc marcats i zones on la progressió es fa dificultosa, en una de les zones més recòndites i salvatges de l’Aran. És imprescindible tenir un bon sentit de l’orientació, bona forma física i experiència en alta muntanya. El riu de Varradòs està encaixonant en una vall de relleu escarpat, que dona lloca lloc a una intensa activitat d’allaus i a cascades impressionants, com el Saut deth Pish. Els estanys a visitar són un exemple d’hàbitats extrems, degut a l’acidesa de les seves aigües i l’alt contingut de metalls que provenen de les roques que els envolten.");
+		r.setName("Vall de Varradï¿½s");
+		r.setDescription("Itinerari en dues parts: primer 10 km de pista asfaltada amb 695 m de desnivell (30 minuts, anada), per recï¿½rrer el riu de Varradï¿½s i visitar el Saut deth Pish i el Barratge de Varradï¿½s; desprï¿½s, itinerari circular de 12.3 km amb 980 m de desnivell (6-7 hores a peu), per visitar els estanhs Nere de Uï¿½rri i de Pica Palomï¿½ra. El camï¿½ a peu transcorre per senders poc marcats i zones on la progressiï¿½ es fa dificultosa, en una de les zones mï¿½s recï¿½ndites i salvatges de lï¿½Aran. ï¿½s imprescindible tenir un bon sentit de lï¿½orientaciï¿½, bona forma fï¿½sica i experiï¿½ncia en alta muntanya. El riu de Varradï¿½s estï¿½ encaixonant en una vall de relleu escarpat, que dona lloca lloc a una intensa activitat dï¿½allaus i a cascades impressionants, com el Saut deth Pish. Els estanys a visitar sï¿½n un exemple dï¿½hï¿½bitats extrems, degut a lï¿½acidesa de les seves aigï¿½es i lï¿½alt contingut de metalls que provenen de les roques que els envolten.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
@@ -5079,27 +5095,27 @@ public class DataContainer {
 		}
 		
 		HighLight h1 = new HighLight("hl_garonap_poig01",
-				"poiG01-Pònt d'Arròs", null, 10,
+				"poiG01-Pï¿½nt d'Arrï¿½s", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s16);
 		HighLight h2 = new HighLight("hl_garonap_poig02",
 				"poiG02-Macroinvertebrats", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s63);
 		HighLight h3 = new HighLight("hl_garonap_poig03",
-				"poiG03-Perfil sòl al·luvial", null, 10,
+				"poiG03-Perfil sï¿½l alï¿½luvial", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s95);
 		HighLight h4 = new HighLight("hl_garonap_poig04", "poiG04-Mirador riu",
 				null, 10, HighLight.POINT_OF_INTEREST_OFFICIAL,s150);
 		HighLight h5 = new HighLight("hl_garonap_poig05",
-				"poiG05-Pònt de Beussa", null, 10,
+				"poiG05-Pï¿½nt de Beussa", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s175);
 		HighLight h6 = new HighLight("hl_garonap_poig06",
-				"poiG06-Respirador conducció", null, 10,
+				"poiG06-Respirador conducciï¿½", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s201);
 		HighLight h7 = new HighLight("hl_garonap_poig07",
-				"poiG07-Assut i captació central Benós", null, 10,
+				"poiG07-Assut i captaciï¿½ central Benï¿½s", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s221);
 		HighLight h8 = new HighLight("hl_garonap_poig08",
-				"poiG08-Pònt i Mòla de Betren", null, 10,
+				"poiG08-Pï¿½nt i Mï¿½la de Betren", null, 10,
 				HighLight.POINT_OF_INTEREST_OFFICIAL,s330);
 		HighLight h9 = new HighLight("hl_garonap_poig09",
 				"poiG09-Vista Es Cants", null, 10,
@@ -5107,127 +5123,127 @@ public class DataContainer {
 
 		HighLight h10 = new 
 				HighLight("hl_garonap_wpG01",
-				"wpG01 - Parada de l’autobus a la rotonda (N-230) de Pònt d’Arròs (sortida)", 
-				"Prendre la primera sortida de la rotonda, en direcció a Arres, i desviar-se cap a l’esquerra just desprès dels edificis, seguint la indicació per anar cap a l’Airau de Servicis del Conselh d’Aran, fins arribar al pont sobre la Garona (0.3 km, desnivell -13 m)", 10, HighLight.WAYPOINT,s1);
+				"wpG01 - Parada de lï¿½autobus a la rotonda (N-230) de Pï¿½nt dï¿½Arrï¿½s (sortida)", 
+				"Prendre la primera sortida de la rotonda, en direcciï¿½ a Arres, i desviar-se cap a lï¿½esquerra just desprï¿½s dels edificis, seguint la indicaciï¿½ per anar cap a lï¿½Airau de Servicis del Conselh dï¿½Aran, fins arribar al pont sobre la Garona (0.3 km, desnivell -13 m)", 10, HighLight.WAYPOINT,s1);
 		// Ja hi ha poi
 		HighLight h11 = new
 		HighLight("hl_garonap_wpG02",
-				"wpG02-Pònt d'Arròs",
-				"Travessar el pont, girar a l’esquerra i continuar pel camí de ferradura fins als prats que queden entre el camí i el riu aprop d’Aubèrt (1.5 km, desnivell 32 m)",10,HighLight.WAYPOINT,s15);
+				"wpG02-Pï¿½nt d'Arrï¿½s",
+				"Travessar el pont, girar a lï¿½esquerra i continuar pel camï¿½ de ferradura fins als prats que queden entre el camï¿½ i el riu aprop dï¿½Aubï¿½rt (1.5 km, desnivell 32 m)",10,HighLight.WAYPOINT,s15);
 		
 		HighLight h12 = new HighLight("hl_garonap_wpG03",
 				"wpG03-Prats de Plaus", 
-				"Continuar pel camí fins arribar a les primeres cases d’Aubèrt, abans de travessar el pont (0.6 km, desnivell 11 m)", 10, HighLight.WAYPOINT,s62);
+				"Continuar pel camï¿½ fins arribar a les primeres cases dï¿½Aubï¿½rt, abans de travessar el pont (0.6 km, desnivell 11 m)", 10, HighLight.WAYPOINT,s62);
 		
 		HighLight h13 = new HighLight("hl_garonap_wpG04",
-				"wpG04 - trencall al Pònt d’Aubèrt", 
-				"Continuar pel carrer que va paral•lel al riu, fins que al final de les cases (0.2 km)", 10, HighLight.WAYPOINT,s86);
+				"wpG04 - trencall al Pï¿½nt dï¿½Aubï¿½rt", 
+				"Continuar pel carrer que va paralï¿½lel al riu, fins que al final de les cases (0.2 km)", 10, HighLight.WAYPOINT,s86);
 		
 		// Ja hi ha poi
 		HighLight h14 = new
 		HighLight("hl_garonap_wpG05",
-				"wpG05 - perfil sòl al·luvial",
-				"Continuar per camí de terra fins la tanca d’un prat, on el camí es desvia cap a la dreta en pujada (0.1 km)",10,HighLight.WAYPOINT,s93);
+				"wpG05 - perfil sï¿½l alï¿½luvial",
+				"Continuar per camï¿½ de terra fins la tanca dï¿½un prat, on el camï¿½ es desvia cap a la dreta en pujada (0.1 km)",10,HighLight.WAYPOINT,s93);
 		
 		HighLight h15 = new HighLight("hl_garonap_wpG06",
 				"wpG06 - sender per pujar al Camin Reiau", 
-				"Reseguir el sender, primer una curta pujada y després cap a l’esquerra, seguint el curs del riu a una certa altura, fins arribar al punt més alt des d’on hi ha una vista panoràmica del riu i la vall (1.3 km, desnivell 50 m)", 10, HighLight.WAYPOINT,s97);
+				"Reseguir el sender, primer una curta pujada y desprï¿½s cap a lï¿½esquerra, seguint el curs del riu a una certa altura, fins arribar al punt mï¿½s alt des dï¿½on hi ha una vista panorï¿½mica del riu i la vall (1.3 km, desnivell 50 m)", 10, HighLight.WAYPOINT,s97);
 		
 		// Ja hi ha poi
 		HighLight h16 = new
 		HighLight("hl_garonap_wpG07",
 				"wpG07 - Mirador sobre el riu",
-				"Continuar pel sender, en baixada suau, fins al Pònt de Beussa (0.5 km, desnivell -20 m)",10,HighLight.WAYPOINT,
+				"Continuar pel sender, en baixada suau, fins al Pï¿½nt de Beussa (0.5 km, desnivell -20 m)",10,HighLight.WAYPOINT,
 				s149);
 		
 		// Ja hi ha poi
 		HighLight h17 = new
 		HighLight("hl_garonap_wpG08",
-				"wpG08 - Pònt de Beussa",
-				"A l’extrem del pont i pel cantó on hem arribat, prendre el camí senyalitzat cap a Gausac, on hi ha una barana de fusta, fins arribar a una reixa al terra que protegeix el respirador d’una conducció d’aigua (0.6 km, desnivell 15 m)",
+				"wpG08 - Pï¿½nt de Beussa",
+				"A lï¿½extrem del pont i pel cantï¿½ on hem arribat, prendre el camï¿½ senyalitzat cap a Gausac, on hi ha una barana de fusta, fins arribar a una reixa al terra que protegeix el respirador dï¿½una conducciï¿½ dï¿½aigua (0.6 km, desnivell 15 m)",
 				10,HighLight.WAYPOINT,s173);
 		
 		// Ja hi ha poi
 		HighLight h18 = new
 		HighLight("hl_garonap_wpG09",
-				"wpG09 - respirador conducció",
-				"Continuar pel camí, que ja s’ha eixamplat per convertir-se en un camí de ferradura, fins una clariana en els arbres al costat esquerre on s’obre un prat (0.4 km, desnivell 16 m)",
+				"wpG09 - respirador conducciï¿½",
+				"Continuar pel camï¿½, que ja sï¿½ha eixamplat per convertir-se en un camï¿½ de ferradura, fins una clariana en els arbres al costat esquerre on sï¿½obre un prat (0.4 km, desnivell 16 m)",
 				10,HighLight.WAYPOINT,s202);
 		
 		HighLight h19 = new HighLight("hl_garonap_wpG10",
-				"wpG10 - trencall a l’assut", 
-				"Travessar el prat fins a la vora del riu, on hi ha l’assut i la captació d’aigua de la central de Benòs (50 m, desnivell -10 m)", 
+				"wpG10 - trencall a lï¿½assut", 
+				"Travessar el prat fins a la vora del riu, on hi ha lï¿½assut i la captaciï¿½ dï¿½aigua de la central de Benï¿½s (50 m, desnivell -10 m)", 
 				10, HighLight.WAYPOINT,s223);
 		
 		// Ja hi ha poi
 		HighLight h20 = new
 		HighLight("hl_garonap_wpG11",
-				"wpG11 - Assut i captació central de Benòs",
-				"Tornar enrere fins el camí de ferradura que haviem deixat, i continuar fins arribar a la carretera (0.5 km, desnivell 37 m)",
+				"wpG11 - Assut i captaciï¿½ central de Benï¿½s",
+				"Tornar enrere fins el camï¿½ de ferradura que haviem deixat, i continuar fins arribar a la carretera (0.5 km, desnivell 37 m)",
 				10,HighLight.WAYPOINT,s222);
 		
 		HighLight h21 = new HighLight("hl_garonap_wpG12",
 				"wpG12 - Carretera de Gausac", 
-				"Continuar cap a l’esquerra per la carretera, fins arribar a la cruïlla amb el carrer Anglada (0.2 km)", 
+				"Continuar cap a lï¿½esquerra per la carretera, fins arribar a la cruï¿½lla amb el carrer Anglada (0.2 km)", 
 				10, HighLight.WAYPOINT,s249);
 		
 		HighLight h22 = new HighLight("hl_garonap_wpG13",
 				"wpG13 - carrer Anglada", 
-				"Girar a l’esquerra i baixar pel carrer Anglada, fins arribar a la carretera nacional. Travessar la carretera pel pas de zebra que queda a l’esquerra, i seguir per la continuació del carrer Anglada fins que acaba al Passeig dera Libertat (0.4 km, desnivell -20 m)", 
+				"Girar a lï¿½esquerra i baixar pel carrer Anglada, fins arribar a la carretera nacional. Travessar la carretera pel pas de zebra que queda a lï¿½esquerra, i seguir per la continuaciï¿½ del carrer Anglada fins que acaba al Passeig dera Libertat (0.4 km, desnivell -20 m)", 
 				10, HighLight.WAYPOINT,s256);
 		
 		HighLight h23 = new HighLight("hl_garonap_wpG14",
 				"wpG14 - Passeig dera Libertat", 
-				"Girar a la dreta tot pujant el Passeig, caminar 35 m i prendre el carreró que queda a l’esquerra i va cap a la Plaça del Conselh Generau d’Aran", 
+				"Girar a la dreta tot pujant el Passeig, caminar 35 m i prendre el carrerï¿½ que queda a lï¿½esquerra i va cap a la Plaï¿½a del Conselh Generau dï¿½Aran", 
 				10, HighLight.WAYPOINT,s270);
 		
 		HighLight h24 = new HighLight("hl_garonap_wpG15",
-				"wpG15 - Carreró Conselh Aran", 
-				"Passar el carreró i travessar la plaça fins arribar al riu Nere (60 m), i buscar el pont que queda a uns 20 m a l’esquerra.", 
+				"wpG15 - Carrerï¿½ Conselh Aran", 
+				"Passar el carrerï¿½ i travessar la plaï¿½a fins arribar al riu Nere (60 m), i buscar el pont que queda a uns 20 m a lï¿½esquerra.", 
 				10, HighLight.WAYPOINT,s271);
 		
 		HighLight h25 = new HighLight("hl_garonap_wpG16", 
 				"wpG16 - Pont Nere",
-				"Travessar el pont i passar pel passadís que hi ha al front i continuar recte, primer pel davant de l’hospital i després pel carrer Dr. Manel Vidal, fins arribar al carrer Querimònia, davant de l’explanada d’aparcament (0.2 km)", 
+				"Travessar el pont i passar pel passadï¿½s que hi ha al front i continuar recte, primer pel davant de lï¿½hospital i desprï¿½s pel carrer Dr. Manel Vidal, fins arribar al carrer Querimï¿½nia, davant de lï¿½explanada dï¿½aparcament (0.2 km)", 
 				10, HighLight.WAYPOINT,s273);
 		
 		HighLight h26 = new HighLight("hl_garonap_wpG17",
-				"wpG17 - carrer Querimònia", 
-				"Girar a l’esquerra pel carrer Querimònia, i continuar fins arribar al pont sobre la Garona (45 m)", 
+				"wpG17 - carrer Querimï¿½nia", 
+				"Girar a lï¿½esquerra pel carrer Querimï¿½nia, i continuar fins arribar al pont sobre la Garona (45 m)", 
 				10, HighLight.WAYPOINT,s276);
 		
 		HighLight h27 = new HighLight("hl_garonap_wpG18", 
 				"wpG18-Pont Garona",
-				"Abans de travessar el pont, girar a la dreta i continuar pel camí del parc que ressegueix la vora del riu, fins arribar a l’avinguda deth Solan, amb doble carril. Travessar pel pas zebra i buscar l’inici del passeig fluvial que queda uns 20 m a l’esquerra, darrere dels edificis i per la mateixa vora del riu que veniem (0.5 km, desnivell 8 m)", 
+				"Abans de travessar el pont, girar a la dreta i continuar pel camï¿½ del parc que ressegueix la vora del riu, fins arribar a lï¿½avinguda deth Solan, amb doble carril. Travessar pel pas zebra i buscar lï¿½inici del passeig fluvial que queda uns 20 m a lï¿½esquerra, darrere dels edificis i per la mateixa vora del riu que veniem (0.5 km, desnivell 8 m)", 
 				10, HighLight.WAYPOINT,s278);
 		
 		HighLight h28 = new HighLight("hl_garonap_wpG19",
 				"wpG19 - Inici passeig fluvial", 
-				"Seguir el passeig fins el final, al Pònt i la Mòla de Betren (0.6 km, desnivell 8 m)", 
+				"Seguir el passeig fins el final, al Pï¿½nt i la Mï¿½la de Betren (0.6 km, desnivell 8 m)", 
 				10, HighLight.WAYPOINT,s308);
 
 		// Ja hi ha poi
 		HighLight h29 = new
 		HighLight("hl_garonap_wpG20",
-				"wpG20 - Pònt dera Mòla de Betren",
-				"Travessar el pont, fer una curta pujada fins al camí (GR-211) i girar a la dreta. El camí és ben marcat. Va primer per uns prats de pastura i després es converteix en un sender per zona de matollar i roca. Continuar fins arribar a una zona amb vistes sobre la plana fluvial, una mica més enllà d’Escunhau (1.4 km, desnivell 58 m)",
+				"wpG20 - Pï¿½nt dera Mï¿½la de Betren",
+				"Travessar el pont, fer una curta pujada fins al camï¿½ (GR-211) i girar a la dreta. El camï¿½ ï¿½s ben marcat. Va primer per uns prats de pastura i desprï¿½s es converteix en un sender per zona de matollar i roca. Continuar fins arribar a una zona amb vistes sobre la plana fluvial, una mica mï¿½s enllï¿½ dï¿½Escunhau (1.4 km, desnivell 58 m)",
 				10,HighLight.WAYPOINT,s331);
 		
 		// Ja hi ha poi
 		HighLight h30 = new
 		HighLight("hl_garonap_wpG21",
 				"wpG21 - vista Es Cants",
-				"Seguir sempre pel camí, fins arribar a un trencall a la dreta que baixa cap el riu, una mica passat Casarilh (0.9 km, desnivell 68 m)",
+				"Seguir sempre pel camï¿½, fins arribar a un trencall a la dreta que baixa cap el riu, una mica passat Casarilh (0.9 km, desnivell 68 m)",
 				10,HighLight.WAYPOINT,s393);
 		
 		HighLight h31 = new HighLight("hl_garonap_wpG22",
-				"wpG22 -  trencall baixada al Pònt de Casarilh", 
+				"wpG22 -  trencall baixada al Pï¿½nt de Casarilh", 
 				"Prendre el trencall de baixada, quasi en sentit contrari al que veniem fins el pont de Casarilh (0.4 km, desnivell -78 m)", 
 				10,HighLight.WAYPOINT,s446);
 		
 		HighLight h32 = new HighLight("hl_garonap_wpG23",
-				"wpG23 - Pònt de Casarilh", 
-				"Travessar el pont i continuar pel camí que puja a Casarilh, i en arribar al poble seguir recte cap amunt, primer pel carrer de Sant Antòni i després pel de Sant Tomàs, fins arribar al final al Carrèr Major. Girar a la dreta fins arribar a la carretera C-28 on hi ha la parada d’autobus (0.25 km, desnivell 17 m)", 
+				"wpG23 - Pï¿½nt de Casarilh", 
+				"Travessar el pont i continuar pel camï¿½ que puja a Casarilh, i en arribar al poble seguir recte cap amunt, primer pel carrer de Sant Antï¿½ni i desprï¿½s pel de Sant Tomï¿½s, fins arribar al final al Carrï¿½r Major. Girar a la dreta fins arribar a la carretera C-28 on hi ha la parada dï¿½autobus (0.25 km, desnivell 17 m)", 
 				10, HighLight.WAYPOINT,s475);
 		
 		HighLight h33 = new HighLight("hl_garonap_wpG24",
@@ -5276,7 +5292,7 @@ public class DataContainer {
 		Route r = new Route();
 		r.setId("ROUTE_GARONAP");
 		r.setName("La Garona");
-		r.setDescription("Aquest itinerari té dues variants: en cotxe seguint la N-230 i la C-28, i a peu o BTT seguint el Camin Reiau i el GR-211, entre el Pont d’Arròs i Casarilh. La distància total és de 11 km, amb un desnivell acumulat de 184 m (3-4 h a peu). Per fer el recorregut a peu, el servei d’autobus intern de la Val d’Aran permet anar o retornar del punt de sortida o arribada. Aixímateix, és possible prendre l’autobús en diversos punts intermitjos del recorregut, cosa que fa possible fer recorreguts parcials de l’itinerari. El camí no presenta cap dificultat, i és adequat per a qualsevol persona amb una forma física mitja. La variant en cotxe fa l’itinerari accesible a tot tipus de visitants. La Garona ofereix la possibilitat de conèixer un ecosistema fluvial, els usos i aprofitaments humans que s’han fet des d’antic, i com aquests han modificat i configurat el riu actual.");
+		r.setDescription("Aquest itinerari tï¿½ dues variants: en cotxe seguint la N-230 i la C-28, i a peu o BTT seguint el Camin Reiau i el GR-211, entre el Pont dï¿½Arrï¿½s i Casarilh. La distï¿½ncia total ï¿½s de 11 km, amb un desnivell acumulat de 184 m (3-4 h a peu). Per fer el recorregut a peu, el servei dï¿½autobus intern de la Val dï¿½Aran permet anar o retornar del punt de sortida o arribada. Aixï¿½mateix, ï¿½s possible prendre lï¿½autobï¿½s en diversos punts intermitjos del recorregut, cosa que fa possible fer recorreguts parcials de lï¿½itinerari. El camï¿½ no presenta cap dificultat, i ï¿½s adequat per a qualsevol persona amb una forma fï¿½sica mitja. La variant en cotxe fa lï¿½itinerari accesible a tot tipus de visitants. La Garona ofereix la possibilitat de conï¿½ixer un ecosistema fluvial, els usos i aprofitaments humans que sï¿½han fet des dï¿½antic, i com aquests han modificat i configurat el riu actual.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		// r.setReference(r6);
@@ -7884,7 +7900,7 @@ public class DataContainer {
 			Log.e("Inserting interact img geo", "Insert error " + ex.toString());
 		}
 		
-		String msg_arenoses = "Pedres arenoses (gresos i lutites) formades fa 350 milions d’anys (Carbonífer)"; 
+		String msg_arenoses = "Pedres arenoses (gresos i lutites) formades fa 350 milions dï¿½anys (Carbonï¿½fer)"; 
 		
 		Box b13 = new Box("b_escunh_13",0,74,331,480,geo);
 		b13.setMessage(msg_arenoses);
@@ -7897,9 +7913,9 @@ public class DataContainer {
 		Box b17 = new Box("b_escunh_17",1247,11,1553,308,geo);
 		b17.setMessage(msg_arenoses);
 		Box b18 = new Box("b_escunh_18",331,142,1247,276,geo);
-		b18.setMessage("Marbres, formats fa 400 milions d’anys (Devonià-Carbonífer) i metamorfitzats fa 300 milions d’anys (Carbonífer-Permià)");
+		b18.setMessage("Marbres, formats fa 400 milions dï¿½anys (Devoniï¿½-Carbonï¿½fer) i metamorfitzats fa 300 milions dï¿½anys (Carbonï¿½fer-Permiï¿½)");
 		Box b19 = new Box("b_escunh_19",331,80,1092,142,geo);
-		b19.setMessage("Roques granítiques, formades fa 300 milions d’anys (Carbonífer-Permià)");
+		b19.setMessage("Roques granï¿½tiques, formades fa 300 milions dï¿½anys (Carbonï¿½fer-Permiï¿½)");
 
 		try {
 			boxDataDao.create(b13);
@@ -7934,7 +7950,7 @@ public class DataContainer {
 		b3.setMessage("Cap dera Aubeta, 2532 m");
 		
 		Box b4 = new Box("b_escunh_4", 915,25,964,90, img);
-		b4.setMessage("Sèrra de Rius");
+		b4.setMessage("Sï¿½rra de Rius");
 		
 		Box b5 = new Box("b_escunh_5", 1209,25,1256,89, img);
 		b5.setMessage("Tuca de Betren o des Molassi, 2518 m");
@@ -7943,22 +7959,22 @@ public class DataContainer {
 		b6.setMessage("Tuc de Roca Blanca, 2460 m");
 		
 		Box b7 = new Box("b_escunh_7", 702,199,752,265, img);
-		b7.setMessage("Vessant d’esbadregalls: És una acumulació de blocs i graves, causada per la fragmentació de la roca de les zones de més altitud, que van baixant pel vessant. En els llocs molt pendents es pot formar un conus d’acumulació com el que veiem, que en aquest cas arriba a penetrar en l’estany. Són les formes del relleu més recent, produides després de que es fonessin els gels de l’última glaciació (fa 15.000 anys) i encara actives.");
+		b7.setMessage("Vessant dï¿½esbadregalls: ï¿½s una acumulaciï¿½ de blocs i graves, causada per la fragmentaciï¿½ de la roca de les zones de mï¿½s altitud, que van baixant pel vessant. En els llocs molt pendents es pot formar un conus dï¿½acumulaciï¿½ com el que veiem, que en aquest cas arriba a penetrar en lï¿½estany. Sï¿½n les formes del relleu mï¿½s recent, produides desprï¿½s de que es fonessin els gels de lï¿½ï¿½ltima glaciaciï¿½ (fa 15.000 anys) i encara actives.");
 		
 		Box b8 = new Box("b_escunh_8", 805,230,851,300, img);
-		b8.setMessage("Avenc de desguàs de l’estany: Aquest estany no te una sortida d’aigua superficial, sino que s’escola cap el subsòl i surt per filtració en zones més baixes cap el riu. El punt marcat en el mapa és el desguàs principal de l’estany. Es tracta d’un avenc causat per l’erosió de tipus kàrstic, típica de les roques calcàries que formen la vora on es troba.");
+		b8.setMessage("Avenc de desguï¿½s de lï¿½estany: Aquest estany no te una sortida dï¿½aigua superficial, sino que sï¿½escola cap el subsï¿½l i surt per filtraciï¿½ en zones mï¿½s baixes cap el riu. El punt marcat en el mapa ï¿½s el desguï¿½s principal de lï¿½estany. Es tracta dï¿½un avenc causat per lï¿½erosiï¿½ de tipus kï¿½rstic, tï¿½pica de les roques calcï¿½ries que formen la vora on es troba.");
 		
 		Box b9 = new Box("b_escunh_9", 866,148,918,210, img);
-		b9.setMessage("Penyasegats: Són de roca calcària, tipus marbre. Aquest tipus de roques es van formar per sedimentació fa uns 400 milions d’anys, en el fons d’un antic mar. Fa uns 300 milions d’anys es van transformar (metamorfitzar) en marbres per efecte d’altes temperatures. Quan es van formar, aquestes roques es disposaven en estrats o capes horitzontals. Però fa uns 30 milions d’anys, quan l’escorça terrestre es va plegar per formar els Pirineus, aquests estrats es van posar en posició vertical. Alguns fragments han quedat exposats i han resistit a l’erosió, i formen parets com la que veiem aquí.");
+		b9.setMessage("Penyasegats: Sï¿½n de roca calcï¿½ria, tipus marbre. Aquest tipus de roques es van formar per sedimentaciï¿½ fa uns 400 milions dï¿½anys, en el fons dï¿½un antic mar. Fa uns 300 milions dï¿½anys es van transformar (metamorfitzar) en marbres per efecte dï¿½altes temperatures. Quan es van formar, aquestes roques es disposaven en estrats o capes horitzontals. Perï¿½ fa uns 30 milions dï¿½anys, quan lï¿½escorï¿½a terrestre es va plegar per formar els Pirineus, aquests estrats es van posar en posiciï¿½ vertical. Alguns fragments han quedat exposats i han resistit a lï¿½erosiï¿½, i formen parets com la que veiem aquï¿½.");
 		
 		Box b10 = new Box("b_escunh_10", 1004,264,1053,330, img);
-		b10.setMessage("Bassal: Aquesta àrea queda separada de la cubeta principal de l’estany. La poca fondària i l’entrada d’aigua per filtració des de la vora dreta li donen característiques molt diferenciades de la resta de l’estany: aigües molt fredes i tèrboles, i una vegetació espesa i diferent de la de la resta de l’estany que cobreix quasi tot el bassal.");
+		b10.setMessage("Bassal: Aquesta ï¿½rea queda separada de la cubeta principal de lï¿½estany. La poca fondï¿½ria i lï¿½entrada dï¿½aigua per filtraciï¿½ des de la vora dreta li donen caracterï¿½stiques molt diferenciades de la resta de lï¿½estany: aigï¿½es molt fredes i tï¿½rboles, i una vegetaciï¿½ espesa i diferent de la de la resta de lï¿½estany que cobreix quasi tot el bassal.");
 		
 		Box b11 = new Box("b_escunh_11", 1165,165,1215,231, img);
-		b11.setMessage("Tot aquest vessant està format per fragments de roca, graves i sorra, sobre els que s’ha format una fina capa de sòl que permet que s’estableixin uns prats en pendent. El subsòl és molt porós, i conté una quantitat d’aigua subterrània important que es recarrega durant el desglaç i va fluint lentament cap a l’estany. Fins i tot durant l’estiu arriba a l’estany aigua freda que prové d’aquest dipòsit ocult sota terra.");
+		b11.setMessage("Tot aquest vessant estï¿½ format per fragments de roca, graves i sorra, sobre els que sï¿½ha format una fina capa de sï¿½l que permet que sï¿½estableixin uns prats en pendent. El subsï¿½l ï¿½s molt porï¿½s, i contï¿½ una quantitat dï¿½aigua subterrï¿½nia important que es recarrega durant el desglaï¿½ i va fluint lentament cap a lï¿½estany. Fins i tot durant lï¿½estiu arriba a lï¿½estany aigua freda que provï¿½ dï¿½aquest dipï¿½sit ocult sota terra.");
 
 		Box b12 = new Box("b_escunh_12", 863,400,909,459, img);
-		b12.setMessage("Morrena: Les morrenes son acumulacions de pedres, que poden tenir sorres i llims, que arrosegaven les antigues glaceres i quedaven dipositades en la part frontal. Quan es van fondre les glaceres, aquestes morrenes formaven moltes vegades represaments naturals que han donat lloc a estanys. Aquest és el cas de l’Estanho d’Escunhau, i ara mateix esteu a sobre de la morrena que va tancar i formar l’estany.");
+		b12.setMessage("Morrena: Les morrenes son acumulacions de pedres, que poden tenir sorres i llims, que arrosegaven les antigues glaceres i quedaven dipositades en la part frontal. Quan es van fondre les glaceres, aquestes morrenes formaven moltes vegades represaments naturals que han donat lloc a estanys. Aquest ï¿½s el cas de lï¿½Estanho dï¿½Escunhau, i ara mateix esteu a sobre de la morrena que va tancar i formar lï¿½estany.");
 		
 		try {
 			boxDataDao.create(b1);
@@ -7982,95 +7998,95 @@ public class DataContainer {
 		 * HighLights
 		 */		
 		HighLight h1 = new HighLight("hl_escunhau_poi01",
-				"poiE01-Hònt des Audèths", "Fes clic per més informació", 10,
+				"poiE01-Hï¿½nt des Audï¿½ths", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,
 				s503);
 		h1.setReference(r3);
 		
 		HighLight h2 = new HighLight("hl_escunhau_poi02",
-				"poiE02-vista barranc Malh Nere", "Fes clic per més informació", 10,
+				"poiE02-vista barranc Malh Nere", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,
 				s571);
 		h2.setReference(r4);
 		
 		HighLight h3 = new HighLight("hl_escunhau_poi03",
-				"poiE03-vista panoràmica", 
+				"poiE03-vista panorï¿½mica", 
 				"Fes clic per la foto interactiva...", 10,
 				HighLight.INTERACTIVE_IMAGE,s645);
 		h3.setInteractiveImage(img);
 		
 		HighLight h3b = new HighLight("hl_escunhau_poi03b",
-				"poiE03-vista panoràmica geologia", 
+				"poiE03-vista panorï¿½mica geologia", 
 				"Fes clic per la foto interactiva...", 10,
 				HighLight.INTERACTIVE_IMAGE,s645);
 		h3b.setInteractiveImage(geo);
 		
 		HighLight h4 = new HighLight("hl_escunhau_poi04",
-				"poiE04-bassal sortida potamogeton petit", "Fes clic per més informació", 10,
+				"poiE04-bassal sortida potamogeton petit", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s662);
 		h4.setReference(r5);
 		
 		HighLight h5 = new HighLight("hl_escunhau_poi05",
-				"poiE05 potamogeton gros", "Fes clic per més informació", 10,
+				"poiE05 potamogeton gros", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s684);
 		h5.setReference(r6);
 		
 		HighLight h6 = new HighLight("hl_escunhau_poi06", "poiE06-esparganis",
-				"Fes clic per més informació", 10, HighLight.REFERENCE,s691);
+				"Fes clic per mï¿½s informaciï¿½", 10, HighLight.REFERENCE,s691);
 		h6.setReference(r7);
 		
 		HighLight h7 = new HighLight("hl_escunhau_poi07",
-				"poiE07-badia caròfits", "Fes clic per més informació", 10,
+				"poiE07-badia carï¿½fits", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s710);
 		h7.setReference(r8);
 		
 		HighLight h8 = new HighLight("hl_escunhau_poi08",
-				"poiE08-engolidor sortida", "Fes clic per més informació", 10,
+				"poiE08-engolidor sortida", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s728);
 		h8.setReference(r9);
 		
 		HighLight h9 = new HighLight("hl_escunhau_poi09",
-				"poiE09-roca volantins+potamogetons", "Fes clic per més informació", 10,
+				"poiE09-roca volantins+potamogetons", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s739);
 		h9.setReference(r10);
 		
 		HighLight h10 = new HighLight("hl_escunhau_poi10", "poiE10-tartera",
-				"Fes clic per més informació", 10, HighLight.REFERENCE,s753);
+				"Fes clic per mï¿½s informaciï¿½", 10, HighLight.REFERENCE,s753);
 		h10.setReference(r11);
 		
 		HighLight h11 = new HighLight("hl_escunhau_poi11",
-				"poiE11-potamogeton mig", "Fes clic per més informació", 10,
+				"poiE11-potamogeton mig", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s763);
 		h11.setReference(r12);
 		
 		HighLight h12 = new HighLight("hl_escunhau_poi12",
-				"poiE12-zonació macròfits", "Fes clic per més informació", 10,
+				"poiE12-zonaciï¿½ macrï¿½fits", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s790);
 		h12.setReference(r13);
 		
 		HighLight h13 = new HighLight("hl_escunhau_poi13",
-				"poiE13-potamogeton fi en superfície", "Fes clic per més informació", 10,
+				"poiE13-potamogeton fi en superfï¿½cie", "Fes clic per mï¿½s informaciï¿½", 10,
 				HighLight.REFERENCE,s800);
 		h13.setReference(r14);
 		//, h13, r14
 		
 		//WP Escunhau
 		
-		HighLight h14 = new HighLight("hl_escunhau_wpe01","wpE01 - inici", "Entrada a Escunhau per la sortida de la dreta de la rotonda a la C-28 (km 26, de Vielha en direcció a la Bonaigua), i pujada al cap del poble pels carrers principals de Santa Anna i Sant Pere, fins a l’esglèsia de Sant Pèir (0.37 km, desnivell 26 m)", 10,HighLight.WAYPOINT, 
+		HighLight h14 = new HighLight("hl_escunhau_wpe01","wpE01 - inici", "Entrada a Escunhau per la sortida de la dreta de la rotonda a la C-28 (km 26, de Vielha en direcciï¿½ a la Bonaigua), i pujada al cap del poble pels carrers principals de Santa Anna i Sant Pere, fins a lï¿½esglï¿½sia de Sant Pï¿½ir (0.37 km, desnivell 26 m)", 10,HighLight.WAYPOINT, 
 				s1);
-		HighLight h15 = new HighLight("hl_escunhau_wpe02","wpE02 - esglèsia de Sant Pèir", "Inici de la pista darrere de l’esglèsia, cap a l’esquerra, fins a la bifurcació de Casarilh (0.2 km, desnivell 20 m)", 10,HighLight.WAYPOINT, 
+		HighLight h15 = new HighLight("hl_escunhau_wpe02","wpE02 - esglï¿½sia de Sant Pï¿½ir", "Inici de la pista darrere de lï¿½esglï¿½sia, cap a lï¿½esquerra, fins a la bifurcaciï¿½ de Casarilh (0.2 km, desnivell 20 m)", 10,HighLight.WAYPOINT, 
 				s23);
-		HighLight h16 = new HighLight("hl_escunhau_wpe03","wpE03 - trencall Casarilh", "Agafar el ramal de la dreta i seguir per la pista. Després d’una corba molt tancada i una ziga-zaga (primer esquerra i després dreta), hi ha una nova bifurcació (0.36 km, desnivell 32 m)", 10,HighLight.WAYPOINT, 
+		HighLight h16 = new HighLight("hl_escunhau_wpe03","wpE03 - trencall Casarilh", "Agafar el ramal de la dreta i seguir per la pista. Desprï¿½s dï¿½una corba molt tancada i una ziga-zaga (primer esquerra i desprï¿½s dreta), hi ha una nova bifurcaciï¿½ (0.36 km, desnivell 32 m)", 10,HighLight.WAYPOINT, 
 				s33);
-		HighLight h17 = new HighLight("hl_escunhau_wpe04","wpE04 - entrada prat", "Seguir recte i deixar la pista que surt cap a l’esquerra, fins la propera corba molt tancada (1.2 km, desnivell 93 m)", 10,HighLight.WAYPOINT, 
+		HighLight h17 = new HighLight("hl_escunhau_wpe04","wpE04 - entrada prat", "Seguir recte i deixar la pista que surt cap a lï¿½esquerra, fins la propera corba molt tancada (1.2 km, desnivell 93 m)", 10,HighLight.WAYPOINT, 
 				s60);
-		HighLight h18 = new HighLight("hl_escunhau_wpe05","wpE05 - trencall Tuca", "Completar la corba a l’esquerra i deixar la pista que surt cap a la dreta. Passar una nova corba tancada i continuar fins el proper desviament (2.7 km, desnivell 139 m)", 10,HighLight.WAYPOINT, 
+		HighLight h18 = new HighLight("hl_escunhau_wpe05","wpE05 - trencall Tuca", "Completar la corba a lï¿½esquerra i deixar la pista que surt cap a la dreta. Passar una nova corba tancada i continuar fins el proper desviament (2.7 km, desnivell 139 m)", 10,HighLight.WAYPOINT, 
 				s112);
-		HighLight h19 = new HighLight("hl_escunhau_wpe06","wpE06 - entrada prat", "Continuar recte, deixant el ramal de la dreta. Seguir la pista, sense trobar cap més bifurcació fin a la Plèta dera Lana (5.7 km, desnivell 485 m)", 10,HighLight.WAYPOINT, 
+		HighLight h19 = new HighLight("hl_escunhau_wpe06","wpE06 - entrada prat", "Continuar recte, deixant el ramal de la dreta. Seguir la pista, sense trobar cap mï¿½s bifurcaciï¿½ fin a la Plï¿½ta dera Lana (5.7 km, desnivell 485 m)", 10,HighLight.WAYPOINT, 
 				s242);
-		HighLight h20 = new HighLight("hl_escunhau_wpe07","wpE07 - Plèta dera Lana", "Aparcar el cotxe i continuar a peu en la mateixa direcció que veiem, pel sender que surt des de la tanca en el mur de pedra seca que queda al davant, fins arribar a on el sender creua el riu (0.3 km, desnivell 20 m)", 10,HighLight.WAYPOINT,
+		HighLight h20 = new HighLight("hl_escunhau_wpe07","wpE07 - Plï¿½ta dera Lana", "Aparcar el cotxe i continuar a peu en la mateixa direcciï¿½ que veiem, pel sender que surt des de la tanca en el mur de pedra seca que queda al davant, fins arribar a on el sender creua el riu (0.3 km, desnivell 20 m)", 10,HighLight.WAYPOINT,
 				s511);
-		HighLight h21 = new HighLight("hl_escunhau_wpe08","wpE08 - gual riu", "Seguir el sender marcat, fins arribar al pletiu on es troba la Cabana d’Estanho i un poc més amunt la colladeta que tanca l’estany (1.5 km, desnivell 203 m). A partir d’aquí baixar a l’estany i recòrrer la vora començant per la banda dreta.", 10,HighLight.WAYPOINT,
+		HighLight h21 = new HighLight("hl_escunhau_wpe08","wpE08 - gual riu", "Seguir el sender marcat, fins arribar al pletiu on es troba la Cabana dï¿½Estanho i un poc mï¿½s amunt la colladeta que tanca lï¿½estany (1.5 km, desnivell 203 m). A partir dï¿½aquï¿½ baixar a lï¿½estany i recï¿½rrer la vora comenï¿½ant per la banda dreta.", 10,HighLight.WAYPOINT,
 				s531);
 		HighLight h22 = new HighLight("hl_escunhau_wpe09","wpE09 - final",null, 10,HighLight.WAYPOINT,
 				s644);
@@ -8110,8 +8126,8 @@ public class DataContainer {
 
 		Route r = new Route();
 		r.setId("ROUTE_ESCUNHAU");
-		r.setName("Estanho d’Escunhau");
-		r.setDescription("Itinerari de 10 km i 795 m de desnivell per pista (30-45 min en cotxe, anada), seguit de 1.8 km i 200 m de desnivell a peu (30-45 min, anada), per acabar amb un circuit (1 km) al voltant de l’Estanho d’Escunhau. La pista és de terra i està en bon estat, tret d’algun pas concret. Amb molta precaució és possible fer-la amb un cotxe que no sigui 4x4. El camí a peu és un sender força ben marcat, sense dificultat i amb un pendent moderat. L’itinerari és adequat per a qualsevol persona amb un mínim de forma física. L’Estanho d’Escunhau está situat sota unes escarpades parets de roca calcària, amb formes erosives peculiars, com ara l’avenc per on l’estany desaigua.  La seva característica principal és l’abundància de diverses plantes aquàtiques, que es poden distingir des de les vores, i que arriben al màxim desenvolupament a partir de mitjans d’agost.");
+		r.setName("Estanho dï¿½Escunhau");
+		r.setDescription("Itinerari de 10 km i 795 m de desnivell per pista (30-45 min en cotxe, anada), seguit de 1.8 km i 200 m de desnivell a peu (30-45 min, anada), per acabar amb un circuit (1 km) al voltant de lï¿½Estanho dï¿½Escunhau. La pista ï¿½s de terra i estï¿½ en bon estat, tret dï¿½algun pas concret. Amb molta precauciï¿½ ï¿½s possible fer-la amb un cotxe que no sigui 4x4. El camï¿½ a peu ï¿½s un sender forï¿½a ben marcat, sense dificultat i amb un pendent moderat. Lï¿½itinerari ï¿½s adequat per a qualsevol persona amb un mï¿½nim de forma fï¿½sica. Lï¿½Estanho dï¿½Escunhau estï¿½ situat sota unes escarpades parets de roca calcï¿½ria, amb formes erosives peculiars, com ara lï¿½avenc per on lï¿½estany desaigua.  La seva caracterï¿½stica principal ï¿½s lï¿½abundï¿½ncia de diverses plantes aquï¿½tiques, que es poden distingir des de les vores, i que arriben al mï¿½xim desenvolupament a partir de mitjans dï¿½agost.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		r.setReference(r2);	
@@ -8145,29 +8161,29 @@ public class DataContainer {
 //		}
 //
 //		/**
-//		 * Punts d'interès
+//		 * Punts d'interï¿½s
 //		 */
 //		HighLight h1 = new HighLight("hl_artiga_poi01",
-//				"POIA01 - Panoràmica Artiga", null, 10,
+//				"POIA01 - Panorï¿½mica Artiga", null, 10,
 //				HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		HighLight h2 = new HighLight("hl_artiga_poi02",
-//				"POIA02 - Estanyó petit", null, 10,
+//				"POIA02 - Estanyï¿½ petit", null, 10,
 //				HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		HighLight h3 = new HighLight("hl_artiga_poi03",
-//				"POIA03 - Panoràmica Estanho Pois", null, 10,
+//				"POIA03 - Panorï¿½mica Estanho Pois", null, 10,
 //				HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		HighLight h4 = new HighLight("hl_artiga_poi04", "POIA04 - Platja Pois",
 //				null, 10, HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		HighLight h5 = new HighLight("hl_artiga_poi05",
-//				"POIA05 - Panoràmica Aneto", null, 10,
+//				"POIA05 - Panorï¿½mica Aneto", null, 10,
 //				HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		HighLight h6 = new HighLight("hl_artiga_poi06",
-//				"POIA06 - Estanh Còth deth Hòro", null, 10,
+//				"POIA06 - Estanh Cï¿½th deth Hï¿½ro", null, 10,
 //				HighLight.POINT_OF_INTEREST_OFFICIAL);
 //
 //		try {
@@ -10782,16 +10798,16 @@ public class DataContainer {
 //	
 //		Route r = new Route();
 //		r.setId("ROUTE_ARTIGA");
-//		r.setName("Estanys de l’Artiga de Lin: Estanhons de Pois i Estanh deth Còth deth Hòro");
+//		r.setName("Estanys de lï¿½Artiga de Lin: Estanhons de Pois i Estanh deth Cï¿½th deth Hï¿½ro");
 //		r.setDescription("Itinerari circular de 10 km amb 1040 m de desnivell (5-6 h a peu), per visitar " + 
-//		"els Estanhons de Pois i l’Estanh de Còth deth Hòro. Sortida des de l’aparcament del Plan dera Artiga " + 
-//		"de Lin. El camí segueix corriols de muntanya, de vegades poc marcats i de pendents molt acusades, " + 
-//		"amb alguns trams de tartera i grimpades amb poca dificultat. L’itinerari és adequat per persones amb " + 
-//		"un bon entrenament i experiència en alta muntanya. Alternativament, es pot visitar només un dels estanys, " + 
-//		"sense completar el circuit: Pois, 3 km (anada) i 595 m de desnivell; Coth deth Hòro, 3.25 km (anada, " + 
-//		"seguint la part final de l’itinerari a l’inversa) i 770 m de desnivell. Són estanys típicament alpins i " +
-//		"amb aigües de tipus carbonatat, en un paisatge de roques calcàries i sorrenques de formes " + 
-//		"espectaculars i vistes sobre el massís i glacera de l’Aneto.");
+//		"els Estanhons de Pois i lï¿½Estanh de Cï¿½th deth Hï¿½ro. Sortida des de lï¿½aparcament del Plan dera Artiga " + 
+//		"de Lin. El camï¿½ segueix corriols de muntanya, de vegades poc marcats i de pendents molt acusades, " + 
+//		"amb alguns trams de tartera i grimpades amb poca dificultat. Lï¿½itinerari ï¿½s adequat per persones amb " + 
+//		"un bon entrenament i experiï¿½ncia en alta muntanya. Alternativament, es pot visitar nomï¿½s un dels estanys, " + 
+//		"sense completar el circuit: Pois, 3 km (anada) i 595 m de desnivell; Coth deth Hï¿½ro, 3.25 km (anada, " + 
+//		"seguint la part final de lï¿½itinerari a lï¿½inversa) i 770 m de desnivell. Sï¿½n estanys tï¿½picament alpins i " +
+//		"amb aigï¿½es de tipus carbonatat, en un paisatge de roques calcï¿½ries i sorrenques de formes " + 
+//		"espectaculars i vistes sobre el massï¿½s i glacera de lï¿½Aneto.");
 //		r.setUserId("1");
 //		// Ph_ch parameters
 //		// r.setReference(r6);
@@ -11074,13 +11090,13 @@ public class DataContainer {
 		Box tuc = new Box("b_redon_tuc", 132, 42, 178, 78, img);
 		// ORANGE
 		// Box tuc = new Box("b_redon_tuc",Color.argb(255, 255, 127, 0) ,img);
-		tuc.setMessage("Tuc deth Pòrt de Vielha, 2605m");
+		tuc.setMessage("Tuc deth Pï¿½rt de Vielha, 2605m");
 		Box tartera = new Box("b_redon_tartera", 113, 106, 155, 137, img);
 		// RED
 		// Box tartera = new Box("b_redon_tartera",Color.argb(255, 255, 0, 0)
 		// ,img);
-		tartera.setMessage("TARTERA: és una extensió de roca fragmentada. La fragmentació augmenta la "
-				+ "superfície de roca exposada a l'intemperie. Per tant, facilita la dissolució de les sals minerals de les "
+		tartera.setMessage("TARTERA: ï¿½s una extensiï¿½ de roca fragmentada. La fragmentaciï¿½ augmenta la "
+				+ "superfï¿½cie de roca exposada a l'intemperie. Per tant, facilita la dissoluciï¿½ de les sals minerals de les "
 				+ "roques, que van a parar a l'aigua de l'estany. Les tarteres ocupen un 36% de la conca del Redon.");
 		Box serra = new Box("b_redon_serra", 598, 43, 629, 64, img);
 		// YELLOW
@@ -11090,20 +11106,20 @@ public class DataContainer {
 		Box prats = new Box("b_redon_prats", 937, 162, 971, 190, img);
 		// GREEN
 		// Box prats = new Box("b_redon_prats",Color.argb(255, 0, 255, 0),img);
-		prats.setMessage("PRATS ALPINS: Formats per herbes de port baix. Depenent de l'orientació dominen gramínies (Festuco) "
-				+ "o ciperàcies (Corex). Poden ocupar zones amb fort pendent, on les seves arrels ajuden a fixar un sòl molt "
-				+ "orgànic i poc profund, sovint de menys de 30 cm. Les plantes i microbis que viuen al sòl tenen una forta "
-				+ "influència sobre l'aigua que s'escorre. Els prats ocupen el 45% de la conca del Redon.");
+		prats.setMessage("PRATS ALPINS: Formats per herbes de port baix. Depenent de l'orientaciï¿½ dominen gramï¿½nies (Festuco) "
+				+ "o ciperï¿½cies (Corex). Poden ocupar zones amb fort pendent, on les seves arrels ajuden a fixar un sï¿½l molt "
+				+ "orgï¿½nic i poc profund, sovint de menys de 30 cm. Les plantes i microbis que viuen al sï¿½l tenen una forta "
+				+ "influï¿½ncia sobre l'aigua que s'escorre. Els prats ocupen el 45% de la conca del Redon.");
 		Box roca = new Box("b_redon_roca", 1189, 155, 1227, 187, img);
 		// BLUE
 		// Box roca = new Box("b_redon_roca",Color.argb(255, 0, 0, 255),img);
-		roca.setMessage("ROCA EXPOSADA: La roca mare de la conca queda en superfície en afloraments i escarpaments. "
-				+ "L'aigua circula ràpidament i el temps de contacte en aquestes zones és curt. Les zones de roca nua ocupen el "
+		roca.setMessage("ROCA EXPOSADA: La roca mare de la conca queda en superfï¿½cie en afloraments i escarpaments. "
+				+ "L'aigua circula rï¿½pidament i el temps de contacte en aquestes zones ï¿½s curt. Les zones de roca nua ocupen el "
 				+ "19% de la conca del Redon.");
 		Box sarra = new Box("b_redon_sarra", 1309, 24, 1345, 53, img);
 		// MAGENTA
 		// Box sarra = new Box("b_redon_sarra",Color.argb(255, 75, 0, 130),img);
-		sarra.setMessage("Tuc de Sarrahèra, 2630m");
+		sarra.setMessage("Tuc de Sarrahï¿½ra, 2630m");
 
 		try {
 			boxDataDao.create(tuc);
@@ -11119,13 +11135,13 @@ public class DataContainer {
 		
 		
 		/**
-		 * Punts d'interès
+		 * Punts d'interï¿½s
 		 */
 		HighLight h1 = new HighLight(
 				"hl_redon_wp01",
 				"WP01 - Espitau de Vielha (sortida)",
-				"Des del pàrquing de l’Espitau de Vielha, passar pel carrer que formen "
-						+ "el complex d’edificacions de l’Espitau per trobar al fons un corriol que puja "
+				"Des del pï¿½rquing de lï¿½Espitau de Vielha, passar pel carrer que formen "
+						+ "el complex dï¿½edificacions de lï¿½Espitau per trobar al fons un corriol que puja "
 						+ "fins a a la pista de Conangles (0.2 km, desnivell 60 m)",
 				10, HighLight.WAYPOINT,
 				s1);
@@ -11133,15 +11149,15 @@ public class DataContainer {
 		HighLight h2 = new HighLight(
 				"hl_redon_wp02",
 				"WP02 - Pista de Conangles",
-				"Seguir la pista cap a la dreta, fins arribar a una bifurcació abans del pont "
+				"Seguir la pista cap a la dreta, fins arribar a una bifurcaciï¿½ abans del pont "
 						+ "que travessa el riu de Conangles (0.7 km, desnivell 40 m)",
 				10, HighLight.WAYPOINT,
 				s2);
 
 		HighLight h3 = new HighLight(
 				"hl_redon_wp03",
-				"WP03 - Bifurcació",
-				"Pendre el ramal de l’esquerra fins arribar al final on hi ha un pas de pedres "
+				"WP03 - Bifurcaciï¿½",
+				"Pendre el ramal de lï¿½esquerra fins arribar al final on hi ha un pas de pedres "
 						+ "per travessar el barranc del Redon (0.2 km, desnivell -10 m)",
 				10, HighLight.WAYPOINT,
 				s9);
@@ -11150,8 +11166,8 @@ public class DataContainer {
 				"hl_redon_wp04",
 				"WP04 - Pas del barranc del Redon",
 				"Travessar el riu i seguir el corriol balisat amb les marques blanques i "
-						+ "vermelles del GR-11, que travessa una fageda que més adalt del camí es converteix "
-						+ "en un bosc de pins més obert, fins arribar a un ressalt empinat on el camí fa "
+						+ "vermelles del GR-11, que travessa una fageda que mï¿½s adalt del camï¿½ es converteix "
+						+ "en un bosc de pins mï¿½s obert, fins arribar a un ressalt empinat on el camï¿½ fa "
 						+ "diverses marrades (0.75 km, desnivell 90 m)", 10,
 				HighLight.WAYPOINT,
 				s10);
@@ -11159,8 +11175,8 @@ public class DataContainer {
 		HighLight h5 = new HighLight(
 				"hl_redon_wp05",
 				"WP05 - Ressalt",
-				"Pujar el resalt, travessar el pletiu que s’obre al cap d’amunt i pujar suaument "
-						+ "en direcció al barranc que queda al davant per anar a trobar el pas per creuar-ho "
+				"Pujar el resalt, travessar el pletiu que sï¿½obre al cap dï¿½amunt i pujar suaument "
+						+ "en direcciï¿½ al barranc que queda al davant per anar a trobar el pas per creuar-ho "
 						+ "(0.2 km, desnivell 40 m)", 10, 
 						HighLight.WAYPOINT,
 						s23);
@@ -11168,15 +11184,15 @@ public class DataContainer {
 		HighLight h6 = new HighLight(
 				"hl_redon_wp06",
 				"WP06 - Pas del barranc",
-				"Travessar el rierol i pujar cap a l’esquerra i pendent pronunciada, en direcció "
-						+ "a un vell pi solitari on comencen els Marrècs (marrades) de l’Escaleta "
+				"Travessar el rierol i pujar cap a lï¿½esquerra i pendent pronunciada, en direcciï¿½ "
+						+ "a un vell pi solitari on comencen els Marrï¿½cs (marrades) de lï¿½Escaleta "
 						+ "( 0.1 km, desnivell 50 m)", 10, HighLight.WAYPOINT, s29);
 
 		HighLight h7 = new HighLight(
 				"hl_redon_wp07",
-				"WP07 - Marrècs de l’Escaleta",
+				"WP07 - Marrï¿½cs de lï¿½Escaleta",
 				"Seguir el corriol que puja amb pendent forta fent diverses marrades, per arribar "
-						+ "al punt on torna a travessar el barranc més amunt, ja convertit en una canal molt "
+						+ "al punt on torna a travessar el barranc mï¿½s amunt, ja convertit en una canal molt "
 						+ "dreta (0.3 km, desnivell 100 m)", 10,
 				HighLight.WAYPOINT, s31);
 
@@ -11184,25 +11200,25 @@ public class DataContainer {
 				"hl_redon_wp08",
 				"WP08 - Pas de la canal",
 				"Travessar la canal, sortir per un pas amb una petita grimpada sense dificultat i "
-						+ "continuar pel corriol que uns pocs metres més amunt flanqueja unes amples pales "
+						+ "continuar pel corriol que uns pocs metres mï¿½s amunt flanqueja unes amples pales "
 						+ "herboses, fins arribar on el GR-11 es desvia cap a la dreta per anar al "
-						+ "Pòrt de Rius (0.3 km, desnivell 20 m) ", 10,
+						+ "Pï¿½rt de Rius (0.3 km, desnivell 20 m) ", 10,
 				HighLight.WAYPOINT,s37);
 
 		HighLight h9 = new HighLight(
 				"hl_redon_wp09",
 				"WP09 - desviament GR11",
-				"Deixar el desviament a la dreta i continuar en la mateixa direcció que portem, "
+				"Deixar el desviament a la dreta i continuar en la mateixa direcciï¿½ que portem, "
 						+ "tot continuant el llarg flanqueig, fins arribar a un ressalt de roca que queda per "
-						+ "sobre del camí (0.2 km, desnivell 40 m)", 10,
+						+ "sobre del camï¿½ (0.2 km, desnivell 40 m)", 10,
 				HighLight.WAYPOINT,s39);
 
 		HighLight h10 = new HighLight(
 				"hl_redon_wp10",
 				"WP10 - ressalt de roca",
-				"Passar per sota del resalt, però de seguida pujar pel corriol que s’enfila cap "
-						+ "a la dreta, per continuar pel camí que va es va apropant al barranc del Redon en un "
-						+ "llarg flanqueig, fins a trobar-ho i resseguir-ho fins arribar a l’estany "
+				"Passar per sota del resalt, perï¿½ de seguida pujar pel corriol que sï¿½enfila cap "
+						+ "a la dreta, per continuar pel camï¿½ que va es va apropant al barranc del Redon en un "
+						+ "llarg flanqueig, fins a trobar-ho i resseguir-ho fins arribar a lï¿½estany "
 						+ "(0.7 km, desnivell 100 m)", 10, HighLight.WAYPOINT,s42);
 
 		HighLight h11 = new HighLight("hl_redon_wp11", "WP11 - Arribada", null,
@@ -11210,7 +11226,7 @@ public class DataContainer {
 		h11.setInteractiveImage(img);
 
 		HighLight h12 = new HighLight("hl_redon_poi01",
-				"POI1 - Estació limnològica", "Fes clic per detalls...", 10,
+				"POI1 - Estaciï¿½ limnolï¿½gica", "Fes clic per detalls...", 10,
 				HighLight.REFERENCE,s52);
 		h12.setReference(r1);
 
@@ -11255,7 +11271,7 @@ public class DataContainer {
 		Route r = new Route();
 		r.setId("ROUTE_REDON");
 		r.setName("Estanh Redon");
-		r.setDescription("Itinerari de 3.6 km amb 600 m de desnivell (1.5 - 2 h a peu), per visitar l’Estanh Redon.\nSortida des de l’Espitau de Vielha, a la boca sud del túnel. El camí és al començament una pista forestal, i després un corriol ben fresat per on es pot caminar amb poca dificultat. Segueix inicialment la ruta GR-11, però cap a l’útim terç el camí pren una variant. L’itinerari és adequat per a persones a partir de 10 anys, acostumades a caminar per la muntanya i amb una condició física mitja. El Redon és un exemple d’estany de gran mida i aigües molt transparents, encaixonat en un circ de parets escarpades. Ha estat objecte de recerca científica des de fa dècades, i a la vora hi ha un petit laboratori de camp i una estació meteorològica.");
+		r.setDescription("Itinerari de 3.6 km amb 600 m de desnivell (1.5 - 2 h a peu), per visitar lï¿½Estanh Redon.\nSortida des de lï¿½Espitau de Vielha, a la boca sud del tï¿½nel. El camï¿½ ï¿½s al comenï¿½ament una pista forestal, i desprï¿½s un corriol ben fresat per on es pot caminar amb poca dificultat. Segueix inicialment la ruta GR-11, perï¿½ cap a lï¿½ï¿½tim terï¿½ el camï¿½ pren una variant. Lï¿½itinerari ï¿½s adequat per a persones a partir de 10 anys, acostumades a caminar per la muntanya i amb una condiciï¿½ fï¿½sica mitja. El Redon ï¿½s un exemple dï¿½estany de gran mida i aigï¿½es molt transparents, encaixonat en un circ de parets escarpades. Ha estat objecte de recerca cientï¿½fica des de fa dï¿½cades, i a la vora hi ha un petit laboratori de camp i una estaciï¿½ meteorolï¿½gica.");
 		r.setUserId("1");
 		// Ph_ch parameters
 		r.setReference(r6);
@@ -11283,9 +11299,14 @@ public class DataContainer {
 		// Track t = new Track();
 		if (editedRoute.getTrack() != null) {
 			Track t = editedRoute.getTrack();
-			editedRoute.getTrack().setId(
-					DataContainer.getTrackId(dataBaseHelper, android_id));			
-			Log.d("insertRoute", "Adding track - id " + t.getId());			
+            if(t.getId() == null || t.getId().equals("")){
+    			t.setId(
+					DataContainer.getTrackId(dataBaseHelper, android_id));
+            }
+            if(t.getName() == null || t.getName().equals("")){
+                t.setName(editedRoute.getName());
+            }
+			Log.d("insertRoute", "Adding track - id " + t.getId() + " name " + t.getName());
 			try {
 				dataBaseHelper.getTrackDataDao().create(t);
 			} catch (RuntimeException ex) {
@@ -11296,8 +11317,11 @@ public class DataContainer {
 				List<Step> currentSteps = (List<Step>) t.getSteps();
 				for (int i = 0; i < currentSteps.size(); i++) {
 					Step s = currentSteps.get(i);
-					s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
-					s.setTrack(t);
+                    if(s.getId() == null){
+    					s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
+                    }
+                    s.setTrack(t);
+
 //					if (s.getHighlight() != null) {
 //						HighLight h = s.getHighlight();
 //						h.setId(DataContainer.getHighLightId(dataBaseHelper,
@@ -11313,8 +11337,10 @@ public class DataContainer {
 //					}
 					if(s.getHighlights()!=null){
 						for( HighLight h : s.getHighlights() ){
-							h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
-							s.getHighlights().add(h);
+							if(h.getId() == null){
+                                h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
+                            }
+	    					s.getHighlights().add(h);
 							h.setStep(s);
 							Log.d("insertRoute", "Adding highlight - id " + h.getId());
 							try{
