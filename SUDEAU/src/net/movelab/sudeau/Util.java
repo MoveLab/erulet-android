@@ -3,19 +3,20 @@
 
 package net.movelab.sudeau;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.StatFs;
+import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,20 +25,34 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import net.movelab.sudeau.TrackingContentContract.Fixes;
 import net.movelab.sudeau.model.HighLight;
-import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Environment;
-import android.os.StatFs;
-import android.view.Display;
-import android.view.WindowManager;
-import android.widget.Toast;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+
+
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Various static fields and methods used in the application, some taken from
@@ -49,7 +64,12 @@ import android.widget.Toast;
  */
 public class Util {
 
-	public final static int PRIVACY_ZONE_RADIUS = 500;
+    public final static boolean DEBUG_MODE = true;
+
+	public final static int DEFAULT_HIGHLIGHT_RADIUS = 10;
+    public final static int DEFAULT_PRECISION = 0;
+    public final static int DEFAULT_ORDER = -1;
+    public final static int DEFAULT_ALTITUDE = -1;
 
 	public final static String MESSAGE_STOP_FIXGET = ".STOP_FIXGET";
 	public final static String MESSAGE_LONGSTOP_FIXGET = ".LONGSTOP_FIXGET";
@@ -59,7 +79,6 @@ public class Util {
 	public final static String MESSAGE_FIX_UPLOADED = ".NEW_FIX_UPLOADED";
 
 	public final static int TRACKING_NOTIFICATION = 0;
-	public final static int PRO_CONVERSION_NOTIFICATION = 1;
 
 	public final static long SECONDS = 1000;
 	public final static long MINUTES = SECONDS * 60;
@@ -70,10 +89,6 @@ public class Util {
 	public static long UPLOAD_INTERVAL = 1 * HOURS;
 
 	public static boolean PASSED_INTRO = false;
-
-	public static long TIME_TO_PRO = 1 * WEEKS;
-
-	public static int UPLOADS_TO_PRO = 1000;
 
 	public static int MAX_FILE_STORAGE_NUMBER = 10000;
 	
@@ -1025,5 +1040,73 @@ public class Util {
     	}
     	return retVal.toString();
     }
+
+    public static String getJSON(String apiEndpoint, Context context) {
+
+        if (!isOnline(context)) {
+            return "";
+        } else {
+
+            HttpParams httpParameters = new BasicHttpParams();
+            int timeoutConnection = 8000;
+            HttpConnectionParams.setConnectionTimeout(httpParameters,
+                    timeoutConnection);
+            int timeoutSocket = 8000;
+            HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+
+            StringBuilder builder = new StringBuilder();
+            HttpClient client = new DefaultHttpClient(httpParameters);
+            HttpGet httpGet = new HttpGet(UtilLocal.URL_SERVULET_API_ROOT + apiEndpoint);
+
+            httpGet.setHeader("Accept", "application/json");
+            httpGet.setHeader("Content-type", "application/json");
+            httpGet.setHeader("Authorization", UtilLocal.SERVULET_AUTHORIZATION);
+
+            try {
+                HttpResponse response = client.execute(httpGet);
+                StatusLine statusLine = response.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+                Util.logInfo(context, TAG, "Status code:" + statusCode);
+
+                if (statusCode == 200) {
+                    HttpEntity entity = response.getEntity();
+                    InputStream content = entity.getContent();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(content));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        builder.append(line);
+                    }
+                } else {
+                    Util.logInfo(context, TAG, "failed to get JSON data");
+                }
+            } catch (ClientProtocolException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IOException e) {
+                Util.logError(context, TAG, "error: " + e);
+            }
+
+            return builder.toString();
+        }
+    }
+
+
+    public static boolean debugMode(Context context) {
+        boolean result = false;
+        if (DEBUG_MODE)
+            result = true;
+        return result;
+    }
+
+    public static void logError(Context context, String tag, String message) {
+        if (debugMode(context))
+            Log.e(tag, message);
+    }
+
+    public static void logInfo(Context context, String tag, String message) {
+        if (debugMode(context))
+            Log.i(tag, message);
+    }
+
 
 }

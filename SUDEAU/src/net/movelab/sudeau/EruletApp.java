@@ -34,8 +34,7 @@ public class EruletApp extends Application{
 	
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
-		super.onCreate();		
+		super.onCreate();
 		EruletApp.context = getApplicationContext();
 		deviceLocale = getResources().getConfiguration().locale;
 		applyLocaleSettings();

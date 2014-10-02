@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import net.movelab.sudeau.Util;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,23 +13,38 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSONConverter {
-	
+
+    public static ArrayList<Route> jsonArrayToRouteArray(JSONArray ja)
+     throws JSONException{
+        ArrayList<Route> ra = new ArrayList<Route>();
+        if (ja != null && ja.length() > 0){
+            for(int i = 0; i < ja.length(); i++){
+                JSONObject this_j = ja.getJSONObject(i);
+                Route this_r = jsonObjectToRoute(this_j);
+                ra.add(this_r);
+            }
+        }
+        return ra;
+    }
+
+
 	public static Route jsonObjectToRoute(JSONObject j) throws JSONException{
 		Route r = new Route();
 		if(j.has("id")){
 			r.setId(j.getString("id"));
 		}
-		if(j.has("name")){
-			r.setName(j.getString("name"));
+        // for now, just using Catalan -- will  update models for multlingual
+		if(j.has("name_ca")){
+			r.setName(j.getString("name_ca"));
 		}
-		if(j.has("description")){
-			r.setDescription(j.getString("description"));
+		if(j.has("description_ca")){
+			r.setDescription(j.getString("description_ca"));
 		}
-		if(j.has("idroutebasedon")){
-			r.setIdRouteBasedOn(j.getString("idroutebasedon"));
+		if(j.has("id_route_based_on")){
+			r.setIdRouteBasedOn(j.getString("id_route_based_on"));
 		}
 		if(j.has("reference")){
-			if(j.getJSONObject("reference")!=null){
+			if(j.optJSONObject("reference")!=null){
 				Reference ref = jsonObjectToReference(j.getJSONObject("reference"));
 				r.setReference(ref);
 			}else{
@@ -42,18 +59,21 @@ public class JSONConverter {
 				r.setTrack(null);
 			}
 		}			
-		if(j.has("userid")){
-			r.setUserId(j.getString("userid"));
+		if(j.has("created_by")){
+			r.setUserId(j.getString("created_by"));
 		}
+        // this is irrelevant - will never have this on the server
 		if(j.has("isuploaded")){
 			r.setUpLoaded(j.getBoolean("isuploaded"));
 		}		
-		if(j.has("localcarto")){
-			r.setLocalCarto(j.getString("localcarto"));
+		if(j.has("local_carto")){
+			r.setLocalCarto(j.getString("local_carto"));
 		}
+        // We will need to change this and instead grab just the calcualted global rating
 		if(j.has("userrating")){
 			r.setUserRating(j.getInt("userrating"));
 		}
+
 		if(j.has("globalrating")){
 			r.setGlobalRating(j.getInt("globalrating"));
 		}
@@ -72,9 +92,11 @@ public class JSONConverter {
 		if(j.has("id")){
 			t.setId(j.getString("id"));
 		}
-		if(j.has("name")){
-			t.setName(j.getString("name"));
+        // again just using ca for now
+		if(j.has("name_ca")){
+			t.setName(j.getString("name_ca"));
 		}
+        // tracks will not have references
 		if(j.has("reference")){
 			if(j.getJSONObject("reference")!=null){
 				Reference ref = jsonObjectToReference(j.getJSONObject("reference"));
@@ -116,17 +138,17 @@ public class JSONConverter {
 		if(j.has("id")){
 			s.setId(j.getString("id"));
 		}
-		if(j.has("altitude")){
-			s.setAltitude(j.getDouble("altitude"));
-		}		
+
+		s.setAltitude(j.optDouble("altitude", Util.DEFAULT_ALTITUDE));
 		if(j.has("latitude")){
 			s.setLatitude(j.getDouble("latitude"));
 		}
 		if(j.has("longitude")){
 			s.setLongitude(j.getDouble("longitude"));
 		}
-		if(j.has("name")){
-			s.setName(j.getString("name"));
+        // again, more languages to be added
+		if(j.has("name_ca")){
+			s.setName(j.getString("name_ca"));
 		}
 //		if(j.has("highlight")){
 //			JSONObject hl = j.getJSONObject("highlight");
@@ -136,12 +158,13 @@ public class JSONConverter {
 			JSONArray highLights = j.getJSONArray("highlights");
 			s.setHighlights(jsonArrayToHighLightList(highLights));
 		}
-		if(j.has("order")){
-			s.setOrder(j.getInt("order"));
-		}
-		if(j.has("precision")){
-			s.setPrecision(j.getDouble("precision"));
-		}
+
+		s.setOrder(j.optInt("order", Util.DEFAULT_ORDER));
+
+        // check this
+    	s.setPrecision(j.optDouble("precision", Util.DEFAULT_PRECISION));
+
+        // Will need to change model so that we can have multiple references and also interactive images
 		if(j.has("reference")){
 			JSONObject ref = j.getJSONObject("reference");
 			s.setReference(jsonObjectToReference(ref));
@@ -166,18 +189,20 @@ public class JSONConverter {
 		if(j.has("id")){
 			h.setId(j.getString("id"));
 		}
-		if(j.has("longText")){
-			h.setLongText(j.getString("longText"));
+        // languages...
+		if(j.has("long_text_ca")){
+			h.setLongText(j.getString("long_text_ca"));
 		}
-		if(j.has("name")){
-			h.setName(j.getString("name"));
+		if(j.has("name_ca")){
+			h.setName(j.getString("name_ca"));
 		}
 		if(j.has("imagePath")){
 			h.setMediaPath(j.getString("imagePath"));
 		}
-		if(j.has("radius")){
-			h.setRadius(j.getDouble("radius"));
-		}
+
+        // check if this makes sense and come up with good default radius
+		h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));
+
 		if(j.has("type")){
 			h.setType(j.getInt("type"));
 		}
@@ -187,6 +212,7 @@ public class JSONConverter {
 		if(j.has("globalrating")){
 			h.setGlobalRating(j.getInt("globalrating"));
 		}
+        // this will need to become multiple references
 		if(j.has("reference")){
 			JSONObject ref = j.getJSONObject("reference");
 			h.setReference(jsonObjectToReference(ref));
@@ -199,8 +225,8 @@ public class JSONConverter {
 		if(j.has("id")){
 			r.setId(j.getString("id"));
 		}
-		if(j.has("name")){
-			r.setName(j.getString("name"));
+		if(j.has("name_ca")){
+			r.setName(j.getString("name_ca"));
 		}
 		if(j.has("textContent")){
 			r.setTextContent(j.getString("textContent"));

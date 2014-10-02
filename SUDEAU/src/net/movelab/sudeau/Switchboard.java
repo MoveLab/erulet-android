@@ -1,8 +1,13 @@
 package net.movelab.sudeau;
 
+import net.movelab.sudeau.database.DataBaseHelper;
+import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Step;
+import net.movelab.sudeau.model.Route;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -13,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 
 public class Switchboard extends Activity {
 	
@@ -26,12 +32,19 @@ public class Switchboard extends Activity {
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST + 1;
-	
+
+    Context context;
+
+    DataBaseHelper dataBaseHelper;
+
 	static final int REGISTRATION_REQUEST = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        context = getApplicationContext();
+
 		if (app == null) { app = (EruletApp) getApplicationContext(); }
 		setContentView(R.layout.activity_switchboard);
 		initButtons();
@@ -47,8 +60,11 @@ public class Switchboard extends Activity {
         	//Toast.makeText(this, "First time!", Toast.LENGTH_SHORT).show();
         	mPreferences.edit().putBoolean("first_time", false).apply();
         }
-                
-	}
+
+        // JUST FOR TESTING
+        Intent i = new Intent(context, ServerSync.class);
+        startService(i);
+    }
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

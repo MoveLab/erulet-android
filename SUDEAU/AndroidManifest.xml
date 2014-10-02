@@ -110,8 +110,9 @@
             </intent-filter>
         </receiver>
         
-        <service android:name="net.movelab.sudeau.TrackingFixGet" />        
-<!--         <service android:name="net.movelab.sudeau.FileUploader" /> -->
+        <service android:name="net.movelab.sudeau.TrackingFixGet" />
+        <service android:name="net.movelab.sudeau.ServerSync" />
+        <!--         <service android:name="net.movelab.sudeau.FileUploader" /> -->
 <!--         <service android:name="net.movelab.sudeau.TrackingUpload" />           -->
 
 <!--         <provider -->
