@@ -7,35 +7,35 @@ import java.net.HttpURLConnection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -43,35 +43,23 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.maps.model.TileProvider;
 import com.google.maps.android.ui.IconGenerator;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 public class ChooseItineraryActivity extends Activity {
 
@@ -100,7 +88,12 @@ public class ChooseItineraryActivity extends Activity {
 	private ProgressBar progressBar;
 	
 	private EruletApp app;
-	
+
+    private SharedPreferences mPreferences;
+
+// TODO fix this... move all this logic to DB
+	public boolean r7downloaded;
+
 	private static final String TAG = "ChooseItineraryActivity";
 
 	@Override
@@ -114,7 +107,12 @@ public class ChooseItineraryActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
+
+        mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
+
+        r7downloaded = mPreferences.getBoolean("r7d", false);
+
+        progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
 		//setUpDBIfNeeded();
 		setUpMapIfNeeded();
 		setUpCamera();
@@ -168,14 +166,9 @@ public class ChooseItineraryActivity extends Activity {
 			items = new CharSequence[]{OPTION_1,OPTION_2};
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(TITLE);
-        builder.setPositiveButton("Download media", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                startDownload();
-            }
-        });
-		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {			
+        if(r7downloaded){
+            builder.setTitle(TITLE);
+            builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
@@ -189,6 +182,16 @@ public class ChooseItineraryActivity extends Activity {
 				}
 			}
 		);
+        } else{
+            builder.setTitle("Get Route Content");
+            builder.setMessage("You have not yet downloaded the content for this route to your phone. Would you like to download it now?");
+            builder.setPositiveButton("Download content", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startDownload();
+                }
+            });
+        }
 		builder.show();		
 	}
 	
@@ -368,7 +371,7 @@ public class ChooseItineraryActivity extends Activity {
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
-		File f = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder + "/Vista_general_vielha.mbtiles");
+		File f = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder + "/Vista_general_vielha.mbtiles");
 		//File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
 //		if (!f.exists())
 //			try {
@@ -395,7 +398,7 @@ public class ChooseItineraryActivity extends Activity {
 
     private void startDownload() {
         // TODO unhardcode the route number and pass it instead
-        String url = UtilLocal.URL_SERVULET_API_ROOT + UtilLocal.API_ROUTE_CONTENT + "7";
+        String url = "http://107.170.174.182/media/holet/zipped_routes/content_route7.zip";
         new DownloadFileAsync().execute(url);
     }
     @Override
@@ -403,7 +406,7 @@ public class ChooseItineraryActivity extends Activity {
         switch (id) {
             case DIALOG_DOWNLOAD_PROGRESS:
                 mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setMessage("Downloading media...please wait");
+                mProgressDialog.setMessage("Downloading route content...please wait");
                 mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
@@ -454,25 +457,95 @@ public class ChooseItineraryActivity extends Activity {
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    publishProgress(""+(int)((total*100)/lenghtOfFile));
+                    publishProgress(""+(int)((total*90)/lenghtOfFile));
                     output.write(data, 0, count);
                 }
 
                 output.flush();
                 output.close();
                 input.close();
+
+
+                // NOW UNZIP IT
+                ZipFile thisZipfile = new ZipFile(destinationPath);
+                int nEntries = thisZipfile.size();
+                int zipCounter = 0;
+
+                String zipFilePath = destinationPath;
+                Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
+// TODO take out hard coded route 7
+                File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route7");
+                String destDirectory = target_directory.getPath();
+                Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
+
+                UnzipUtility unzipper = new UnzipUtility();
+                try {
+//                    unzipper.unzip(zipFilePath, destDirectory);
+//                    publishProgress(""+100);
+
+                    final int BUFFER_SIZE = 4096;
+
+                    File destDir = new File(destDirectory);
+                    if (!destDir.exists()) {
+                        destDir.mkdirs();
+                    }
+                    ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+                    ZipEntry entry = zipIn.getNextEntry();
+                    // iterates over entries in the zip file
+                    while (entry != null) {
+                        String filePath = destDirectory + File.separator + entry.getName();
+                        if (!entry.isDirectory()) {
+                            // if the entry is a file, extracts it
+//                            extractFile(zipIn, filePath);
+
+                            File f = new File(filePath);
+                            File dir = new File(f.getParent());
+                            dir.mkdirs();
+                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+                            byte[] bytesIn = new byte[BUFFER_SIZE];
+                            int read = 0;
+                            while ((read = zipIn.read(bytesIn)) != -1) {
+                                bos.write(bytesIn, 0, read);
+
+                            }
+                            bos.close();
+
+
+                        } else {
+                            // if the entry is a directory, make the directory
+                            File dir = new File(filePath);
+                            dir.mkdirs();
+                        }
+
+                        publishProgress(""+(int)(90+ ((++zipCounter*10)/nEntries)));
+
+                        zipIn.closeEntry();
+                        entry = zipIn.getNextEntry();
+                    }
+                    zipIn.close();
+
+                    mPreferences.edit().putBoolean("r7d", true).apply();
+                    r7downloaded = true;
+
+                } catch (Exception ex) {
+                    // some errors occurred
+                    ex.printStackTrace();
+                }
+
             } catch (Exception e) {}
+
+
             return null;
 
         }
         protected void onProgressUpdate(String... progress) {
-            Log.d("ANDRO_ASYNC",progress[0]);
             mProgressDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
         @Override
         protected void onPostExecute(String unused) {
             dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+            showItineraryOptions();
         }
     }
 

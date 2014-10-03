@@ -4,14 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
@@ -19,52 +17,33 @@ import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
-import net.movelab.sudeau.util.MarkerAnimationTest;
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Debug;
 import android.os.Environment;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.os.Vibrator;
 import android.provider.Settings;
-import android.provider.Settings.Secure;
-import android.telephony.TelephonyManager;
-import android.telephony.cdma.CdmaCellLocation;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -77,31 +56,20 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.maps.model.TileProvider;
 import com.google.maps.android.SphericalUtil;
-import com.google.maps.android.geometry.Point;
-import com.google.maps.android.projection.SphericalMercatorProjection;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.LazyForeignCollection;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 public class DetailItineraryActivity extends Activity implements
@@ -1479,7 +1447,7 @@ public class DetailItineraryActivity extends Activity implements
 		PolylineOptions rectOptions = new PolylineOptions();
 		Track t = selectedRoute.getTrack();
 		selectedRouteSteps = DataContainer.getTrackSteps(t,
-				app.getDataBaseHelper());
+                app.getDataBaseHelper());
 		refreshDecorations(selectedRouteSteps);
 		for (int j = 0; j < selectedRouteSteps.size(); j++) {
 			Step step = selectedRouteSteps.get(j);
@@ -1548,7 +1516,7 @@ public class DetailItineraryActivity extends Activity implements
 	private MapBoxOfflineTileProvider initTileProvider() {
 		// File sdcard = Environment.getExternalStorageDirectory();
 		File sdcard = new File(Environment.getExternalStorageDirectory(),
-				Util.baseFolder + "/" + Util.othersFolder);
+				Util.baseFolder + "/" + Util.routeMapsFolder);
 		if (selectedRoute.getLocalCarto() != null) {
 			File f = new File(sdcard, selectedRoute.getLocalCarto());
 			// File f = new File(getCacheDir() +

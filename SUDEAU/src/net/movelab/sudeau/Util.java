@@ -216,9 +216,9 @@ public class Util {
 	
 	
 	public static String baseFolder = "Holet";
-	public static String picturesFolder = "HoletFotos";
-	public static String videosFolder = "HoletVideos";
-	public static String othersFolder = "HoletMaterials";
+	public static String routeMapsFolder = "route_maps";
+    public static String generalReferencesFolder = "general_references";
+    public static String routeMediaFolder = "route_media";
 
 	/**
 	 * Surrounds the given string in quotation marks. Taken from Human Mobility

@@ -10,19 +10,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
 public class InteractiveImageActivityHeatMap extends Activity implements View.OnTouchListener{
@@ -59,7 +54,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		if(interactiveImage!=null && 
 				interactiveImage.getMediaPath()!= null && 
 				!interactiveImage.getMediaPath().equalsIgnoreCase("")){			
-			File root = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder);
+			File root = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder);
 			File f = new File(root,interactiveImage.getMediaPath());
 			if(f.exists()){
 				int[] screenSize = Util.getScreenSize(getBaseContext());

@@ -1,21 +1,14 @@
 package net.movelab.sudeau;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.Reference;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -57,7 +50,7 @@ public class HTMLViewerActivity extends Activity {
 		if(extras!=null){
 			String idReference = extras.getString("idReference");
 			Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-			File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.othersFolder);
+			File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder);
 			return "file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
 			//return "file:///android_asset/" + r.getTextContent();
 		}

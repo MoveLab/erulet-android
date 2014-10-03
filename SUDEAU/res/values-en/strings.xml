@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Erulet</string>
+    <string name="app_name">Eth Holet</string>
     <string name="current_language">Anglès</string>
     <string name="action_settings">Settings</string>
     <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
-    <string name="tracking_notification_initial">Erulet tracking!</string>
-    <string name="tracking_notification_subject">Erulet tracking</string>
-    <string name="tracking_notification">Erulet is tracking your trip.</string>
+    <string name="tracking_notification_initial">Eth Holet tracking!</string>
+    <string name="tracking_notification_subject">Eth Holet tracking</string>
+    <string name="tracking_notification">Eth Holet is tracking your trip.</string>
     <string name="content_provider_authority_uploadqueue">net.movelab.sudeau.content_provider.uploadqueue</string>
     <string name="content_provider_authority_fixes">net.movelab.sudeau.content_provider.fixes</string>
     
@@ -128,8 +128,8 @@
     <string name="already_registered">Ja estàs registrat.</string>
     <string name="register_user">Registrar usuari</string>
     
-    <string name="erulet">Erulet</string>
-    <string name="erulet_lore">És un personatge de la mitologia aranesa. És un follet que viu amagat als boscos, i representa l’esperit de la Natura. Aquesta aplicació permet a Erulet introduïr-se en el vostre dispositiu, i guiar-vos al llarg de diversos itineraris en espais naturals en els que l’aigua és protagonista.</string>
+    <string name="erulet">Eth Holet</string>
+    <string name="erulet_lore">És un personatge de la mitologia aranesa. És un follet que viu amagat als boscos, i representa l’esperit de la Natura. Aquesta aplicació permet a Eth Holet introduïr-se en el vostre dispositiu, i guiar-vos al llarg de diversos itineraris en espais naturals en els que l’aigua és protagonista.</string>
     <string name="user_manual">Manual d\'ús</string>
     <string name="security_recomm">Normes de comportament i recomanacions de seguretat</string>
     <string name="credits">Crèdits</string>

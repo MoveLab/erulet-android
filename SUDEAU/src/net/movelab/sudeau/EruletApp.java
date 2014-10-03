@@ -117,9 +117,9 @@ public class EruletApp extends Application{
 	
 	public void createAppFolders(){
 		createFolder(Util.baseFolder);
-		createFolder(Util.baseFolder + "/" + Util.picturesFolder);
-		createFolder(Util.baseFolder + "/" + Util.videosFolder);
-		createFolder(Util.baseFolder + "/" + Util.othersFolder);
+		createFolder(Util.baseFolder + "/" + Util.routeMediaFolder);
+		createFolder(Util.baseFolder + "/" + Util.generalReferencesFolder);
+		createFolder(Util.baseFolder + "/" + Util.routeMapsFolder);
 	}
 	
 	public void applyLocaleSettings(){
