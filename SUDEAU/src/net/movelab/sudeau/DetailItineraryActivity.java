@@ -816,7 +816,7 @@ public class DetailItineraryActivity extends Activity implements
 							// We are editing. On click, if it's an user marker
 							// we go to
 							// Edit highlight activity
-							// ·$$·
+							// ï¿½$$ï¿½
 							if (s.hasHighLights()) {
 								// Show multiple highlight dialog
 								// add new
@@ -851,7 +851,7 @@ public class DetailItineraryActivity extends Activity implements
 									}
 								} else { // if multiple highlights, open
 											// highlight menu
-											// ·$$·
+											// ï¿½$$ï¿½
 								}
 							}
 						}
@@ -902,7 +902,7 @@ public class DetailItineraryActivity extends Activity implements
 									}
 								}
 							} else { // Multiple HighLights
-										// ·$$· Open multiple highlights menu
+										// ï¿½$$ï¿½ Open multiple highlights menu
 								if(s!=null){
 									Intent i = new Intent(
 											DetailItineraryActivity.this,
@@ -948,7 +948,7 @@ public class DetailItineraryActivity extends Activity implements
 					// //Edit highlight activity
 					// if ( (routeMode == 1 || routeMode == 2) && isUserMarker)
 					// {
-					// //·$$·
+					// //ï¿½$$ï¿½
 					// //launchHighLightEditIntent(s);
 					// }else{ //Go to highlight detail (if there's some media to
 					// show)
@@ -969,7 +969,7 @@ public class DetailItineraryActivity extends Activity implements
 					// e.printStackTrace();
 					// }
 					// }else{ //if multiple highlights, open highlight menu
-					// //·$$·
+					// //ï¿½$$ï¿½
 					// }
 					// }
 					// }
@@ -1038,8 +1038,8 @@ public class DetailItineraryActivity extends Activity implements
 									picture.setImageResource(R.drawable.ic_itinerary_icon);
 								}
 							} else { // Has multiple highlights
-								// ·$$·
-								title.setText("Multiples elements d'interès");
+								// ï¿½$$ï¿½
+								title.setText("Multiples elements d'interï¿½s");
 								snippet.setText("Fes clic per veure la llista...");
 							}
 						} else { // Not user marker
@@ -1080,8 +1080,8 @@ public class DetailItineraryActivity extends Activity implements
 									picture.setImageResource(R.drawable.ic_itinerary_icon);
 								}
 							} else { // Multiple highlights
-										// ·$$·
-								title.setText("Multiples elements d'interès");
+										// ï¿½$$ï¿½
+								title.setText("Multiples elements d'interï¿½s");
 								snippet.setText("Fes clic per veure la llista...");
 							}
 						}
@@ -1194,14 +1194,14 @@ public class DetailItineraryActivity extends Activity implements
 		builderSingle.setTitle("Tria per editar, o afegeix nou...");
 		final HighLightArrayAdapter arrayAdapter = new HighLightArrayAdapter(DetailItineraryActivity.this, highLights);
 		
-		builderSingle.setNegativeButton("Cancel·lar",
+		builderSingle.setNegativeButton("Cancelï¿½lar",
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 					}
 				});
-		builderSingle.setPositiveButton("Afegir nou punt d'interès", 
+		builderSingle.setPositiveButton("Afegir nou punt d'interï¿½s", 
 				new DialogInterface.OnClickListener() {					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -1257,7 +1257,7 @@ public class DetailItineraryActivity extends Activity implements
 								selectedMarker.remove();
 							}
 							selectedMarker = m;
-							// ·$$·
+							// ï¿½$$ï¿½
 							launchHighLightEditIntent(s, null);
 						}
 					});
@@ -1399,7 +1399,7 @@ public class DetailItineraryActivity extends Activity implements
 						new LatLng(step.getLatitude(), step.getLongitude()),
 						hl.getName(), hl.getLongText(), hl.getType());
 			} else { // Multiple highlights
-						// ·$$·
+						// ï¿½$$ï¿½
 				m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
 						new LatLng(step.getLatitude(), step.getLongitude()),
 						"Multiples punts d'interes", "", HighLight.CONTAINER_N);
@@ -1483,10 +1483,12 @@ public class DetailItineraryActivity extends Activity implements
 		refreshDecorations(selectedRouteSteps);
 		for (int j = 0; j < selectedRouteSteps.size(); j++) {
 			Step step = selectedRouteSteps.get(j);
+            if(step.getOrder() != -1){
 			rectOptions
 					.add(new LatLng(step.getLatitude(), step.getLongitude()));
 			// Enable this maybe on options, obscures map too much
 			// addPrecisionRadius(step);
+            }
 			addMarkerIfNeeded(step);
 		}
 		rectOptions.zIndex(1);

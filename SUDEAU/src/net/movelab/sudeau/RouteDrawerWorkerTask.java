@@ -45,7 +45,7 @@ public class RouteDrawerWorkerTask extends AsyncTask<String, Void, List<Polyline
 				Route selectedRoute = JSONConverter.jsonObjectToRoute( routeList.getJSONObject(i) );
 				Track t = selectedRoute.getTrack();
 				final EruletApp app = appReference.get();
-				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t,app.getDataBaseHelper());
+				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app.getDataBaseHelper());
 				PolylineOptions rectOptions = new PolylineOptions();
 				for (int j = 0; j < selectedRouteSteps.size(); j++) {
 					Step step = selectedRouteSteps.get(j);
