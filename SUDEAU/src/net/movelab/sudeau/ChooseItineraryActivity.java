@@ -3,6 +3,7 @@ package net.movelab.sudeau;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -55,7 +56,27 @@ import com.google.android.gms.maps.model.TileProvider;
 import com.google.maps.android.ui.IconGenerator;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
 public class ChooseItineraryActivity extends Activity {
+
+    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
+    private ProgressDialog mProgressDialog;
 
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
@@ -67,9 +88,9 @@ public class ChooseItineraryActivity extends Activity {
 	private Marker selectedMarker;
 	private List<Route> routes;
 	
-	//private static final String TITLE = "Tria la opció de ruta que prefereixes:";
+	//private static final String TITLE = "Tria la opciï¿½ de ruta que prefereixes:";
 	private String TITLE;
-	private String OPTION_1;
+ 	private String OPTION_1;
 	private String OPTION_2;
 	private String OPTION_3;
 	
@@ -86,7 +107,7 @@ public class ChooseItineraryActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TITLE = getString(R.string.trip_option);
-		OPTION_1 = getString(R.string.trip_option_1);
+        OPTION_1 = getString(R.string.trip_option_1);
 		OPTION_2 = getString(R.string.trip_option_2);
 		OPTION_3 = getString(R.string.trip_option_3);
 		setContentView(R.layout.choose_itinerary_map);
@@ -142,12 +163,18 @@ public class ChooseItineraryActivity extends Activity {
 	public void showItineraryOptions(){
 		CharSequence[] items = null;
 		if(app.isPrivilegedUser()){
-			items = new CharSequence[]{OPTION_1,OPTION_2,OPTION_3}; 
+			items = new CharSequence[]{OPTION_1,OPTION_2,OPTION_3};
 		}else{
 			items = new CharSequence[]{OPTION_1,OPTION_2};
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(TITLE);
+        builder.setPositiveButton("Download media", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startDownload();
+            }
+        });
 		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -364,5 +391,89 @@ public class ChooseItineraryActivity extends Activity {
 		}
 		return null;
 	}
+
+
+    private void startDownload() {
+        // TODO unhardcode the route number and pass it instead
+        String url = UtilLocal.URL_SERVULET_API_ROOT + UtilLocal.API_ROUTE_CONTENT + "7";
+        new DownloadFileAsync().execute(url);
+    }
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_DOWNLOAD_PROGRESS:
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage("Downloading media...please wait");
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+                return mProgressDialog;
+            default:
+                return null;
+        }
+    }
+
+
+    class DownloadFileAsync extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+
+        @Override
+        protected String doInBackground(String... aurl) {
+            int count;
+
+            try {
+
+                URL url = new URL(aurl[0]);
+                Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setDoOutput(true);
+                conn.connect();
+
+               int lenghtOfFile = conn.getContentLength();
+                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+
+                Log.d("ANDRO_ASYNC", "SD path: " + Environment.getExternalStorageDirectory().getPath());
+
+                File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route.zip");
+                String destinationPath = destinationFile.getPath();
+                Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
+
+                InputStream input = new BufferedInputStream(url.openStream());
+                OutputStream output = new FileOutputStream(destinationPath);
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress(""+(int)((total*100)/lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+
+                output.flush();
+                output.close();
+                input.close();
+            } catch (Exception e) {}
+            return null;
+
+        }
+        protected void onProgressUpdate(String... progress) {
+            Log.d("ANDRO_ASYNC",progress[0]);
+            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String unused) {
+            dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+    }
 
 }

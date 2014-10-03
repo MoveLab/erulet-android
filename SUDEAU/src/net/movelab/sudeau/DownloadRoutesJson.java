@@ -27,7 +27,7 @@ package net.movelab.sudeau;
  * @author John R.B. Palmer
  *
  */
-public class ServerSync extends Service {
+public class DownloadRoutesJson extends Service {
 
     private static String TAG = "SyncData";
 

@@ -1,17 +1,11 @@
 package net.movelab.sudeau;
 
 import net.movelab.sudeau.database.DataBaseHelper;
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Step;
-import net.movelab.sudeau.model.Route;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,7 +56,7 @@ public class Switchboard extends Activity {
         }
 
         // JUST FOR TESTING
-        Intent i = new Intent(context, ServerSync.class);
+        Intent i = new Intent(context, DownloadRoutesJson.class);
         startService(i);
     }
 	
