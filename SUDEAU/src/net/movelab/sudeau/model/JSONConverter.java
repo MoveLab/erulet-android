@@ -43,9 +43,11 @@ public class JSONConverter {
 		if(j.has("id_route_based_on")){
 			r.setIdRouteBasedOn(j.getString("id_route_based_on"));
 		}
+
+// TODO more languages
 		if(j.has("reference")){
 			if(j.optJSONObject("reference")!=null){
-				Reference ref = jsonObjectToReference(j.getJSONObject("reference"));
+				Reference ref = jsonObjectToReference(j.getJSONObject("reference"), r.getId(), "ca");
 				r.setReference(ref);
 			}else{
 				r.setReference(null);
@@ -53,7 +55,7 @@ public class JSONConverter {
 		}
 		if(j.has("track")){
 			if(j.getJSONObject("track")!=null){
-				Track t = jsonObjectToTrack(j.getJSONObject("track"));
+				Track t = jsonObjectToTrack(j.getJSONObject("track"), r.getId());
 				r.setTrack(t);
 			}else{
 				r.setTrack(null);
@@ -87,7 +89,7 @@ public class JSONConverter {
 	}
 		
 	
-	public static Track jsonObjectToTrack(JSONObject j) throws JSONException{		
+	public static Track jsonObjectToTrack(JSONObject j, String route_id) throws JSONException{
 		Track t = new Track();
 		if(j.has("id")){
 			t.setId(j.getString("id"));
@@ -96,43 +98,38 @@ public class JSONConverter {
 		if(j.has("name_ca")){
 			t.setName(j.getString("name_ca"));
 		}
-        // tracks will not have references
+        // TODO tracks will not have references
 		if(j.has("reference")){
-			if(j.getJSONObject("reference")!=null){
-				Reference ref = jsonObjectToReference(j.getJSONObject("reference"));
-				t.setReference(ref);
-			}else{
-				t.setReference(null);
+
 			}
-		}
 		if(j.has("steps")){
 			if(j.getJSONArray("steps")!=null){
-				List<Step> steps = jsonArrayToStepList(j.getJSONArray("steps"));
+				List<Step> steps = jsonArrayToStepList(j.getJSONArray("steps"), route_id);
 				t.setSteps(steps);
 			}
 		}
 		return t;
 	}
 	
-	public static List<HighLight> jsonArrayToHighLightList(JSONArray a) throws JSONException{
+	public static List<HighLight> jsonArrayToHighLightList(JSONArray a, String route_id) throws JSONException{
 		ArrayList<HighLight> retVal = new ArrayList<HighLight>();
 		for(int i = 0; i < a.length(); i++){
 			JSONObject jsonHighLight = a.getJSONObject(i);
-			retVal.add(jsonObjectToHighLight(jsonHighLight));
+			retVal.add(jsonObjectToHighLight(jsonHighLight, route_id));
 		}
 		return retVal;
 	}
 	
-	public static List<Step> jsonArrayToStepList(JSONArray a) throws JSONException{
+	public static List<Step> jsonArrayToStepList(JSONArray a, String route_id) throws JSONException{
 		ArrayList<Step> retVal = new ArrayList<Step>();
 		for(int i = 0; i < a.length(); i++){
 			JSONObject jsonStep = a.getJSONObject(i);
-			retVal.add(jsonObjectToStep(jsonStep));
+			retVal.add(jsonObjectToStep(jsonStep, route_id));
 		}
 		return retVal;
 	}
 	
-	public static Step jsonObjectToStep(JSONObject j) throws JSONException{
+	public static Step jsonObjectToStep(JSONObject j,String route_id) throws JSONException{
 		Step s = new Step();
 		SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
 		if(j.has("id")){
@@ -154,7 +151,7 @@ public class JSONConverter {
 //		}
 		if(j.has("highlights")){
 			JSONArray highLights = j.getJSONArray("highlights");
-			s.setHighlights(jsonArrayToHighLightList(highLights));
+			s.setHighlights(jsonArrayToHighLightList(highLights, route_id));
 		}
 
 		s.setOrder(j.optInt("order", Util.DEFAULT_ORDER));
@@ -163,9 +160,8 @@ public class JSONConverter {
     	s.setPrecision(j.optDouble("precision", Util.DEFAULT_PRECISION));
 
         // Will need to change model so that we can have multiple references and also interactive images
+        // TODO Step should not have referecence
 		if(j.has("reference")){
-			JSONObject ref = j.getJSONObject("reference");
-			s.setReference(jsonObjectToReference(ref));
 		}
 		if(j.has("absoluteTime")){
 			String dateString = j.getString("absoluteTime");			
@@ -182,7 +178,7 @@ public class JSONConverter {
 		return s;
 	}
 	
-	public static HighLight jsonObjectToHighLight(JSONObject j) throws JSONException{
+	public static HighLight jsonObjectToHighLight(JSONObject j, String route_id) throws JSONException{
 		HighLight h = new HighLight();
 		if(j.has("id")){
 			h.setId(j.getString("id"));
@@ -192,8 +188,9 @@ public class JSONConverter {
 			h.setName(j.optString("name_ca", "none"));
 
         // TODO add this to server
-			h.setMediaPath(j.optString("imagePath", "none"));
-
+        if(j.has("image_name")){
+			h.setMediaPath(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("image_name", "")));
+        }
         // check if this makes sense and come up with good default radius
 		h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));
 
@@ -207,21 +204,31 @@ public class JSONConverter {
 
 			JSONArray refs = j.optJSONArray("references");
             if(refs.length() > 0){
-			h.setReference(jsonObjectToReference(refs.getJSONObject(0)));
+			h.setReference(jsonObjectToReference(refs.getJSONObject(0), route_id, h.getId(),"ca" ));
             }
 		return h;
 	}
 	
-	public static Reference jsonObjectToReference(JSONObject j) throws JSONException{		
+	public static Reference jsonObjectToReference(JSONObject j, String route_id, String lang_code) throws JSONException{
 		Reference r = new Reference();
+        // TODO language issue
 			r.setId(j.optString("id", "none"));
 			r.setName(j.optString("name_ca", "none"));
     // TODO deal with this
-			r.setTextContent("none");
+			r.setTextContent(Util.makeReferencePath(route_id, lang_code));
 		return r;
 	}
-	
-	public static JSONObject highLightToJSONObject(HighLight h) throws JSONException{
+
+    public static Reference jsonObjectToReference(JSONObject j, String route_id, String highlight_id, String lang_code) throws JSONException{
+        Reference r = new Reference();
+        r.setId(j.optString("id", "none"));
+        r.setName(j.optString("name_ca", "none"));
+        // TODO deal with this
+        r.setTextContent(Util.makeReferencePath(route_id, highlight_id, r.getId(), lang_code));
+        return r;
+    }
+
+    public static JSONObject highLightToJSONObject(HighLight h) throws JSONException{
 		if(h == null)
 			return null;
 		JSONObject j = new JSONObject();

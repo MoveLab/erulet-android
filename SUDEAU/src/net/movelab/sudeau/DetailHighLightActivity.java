@@ -52,8 +52,9 @@ public class DetailHighLightActivity extends Activity {
 		if (extras != null) {
 			String step_json = extras.getString("step_j");
 			highLight_id = extras.getString("highlight_id");
-			try {
-				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json));
+            String route_id = extras.getString("route_id");
+            try {
+				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json), route_id);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

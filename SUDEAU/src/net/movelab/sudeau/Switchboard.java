@@ -97,9 +97,9 @@ public class Switchboard extends Activity {
 
 
         // TODO JUST FOR TESTING
-        mPreferences.edit().putBoolean("has_maps", false).apply();
-        mPreferences.edit().putBoolean("has_grs", false).apply();
-        mPreferences.edit().putBoolean("has_json", false).apply();
+//        mPreferences.edit().putBoolean("has_maps", false).apply();
+  //      mPreferences.edit().putBoolean("has_grs", false).apply();
+    //    mPreferences.edit().putBoolean("has_json", false).apply();
 
 
         hasMaps = mPreferences.getBoolean("has_maps", false);

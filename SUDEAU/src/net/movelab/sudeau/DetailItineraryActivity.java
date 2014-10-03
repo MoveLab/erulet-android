@@ -861,6 +861,7 @@ public class DetailItineraryActivity extends Activity implements
 													DetailItineraryActivity.this,
 													DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
+                                            i.putExtra("route_id", routeInProgress.getId());
 											i.putExtra("highlight_id", h.getId());
 											startActivity(i);
 										}

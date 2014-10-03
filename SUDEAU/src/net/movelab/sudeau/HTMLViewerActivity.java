@@ -50,9 +50,12 @@ public class HTMLViewerActivity extends Activity {
 		if(extras!=null){
 			String idReference = extras.getString("idReference");
 			Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-			File file = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder);
-			return "file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
+            if(r != null && r.getTextContent() != null && r.getTextContent() != ""){
+			return r.getTextContent();
+                    //"file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
 			//return "file:///android_asset/" + r.getTextContent();
+            } else
+                return null;
 		}
 		return null;
 	}

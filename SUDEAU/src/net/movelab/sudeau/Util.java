@@ -220,7 +220,29 @@ public class Util {
     public static String generalReferencesFolder = "general_references";
     public static String routeMediaFolder = "route_media";
 
-	/**
+    public static String makeHighlightMediaPath(String highlight_id, String route_id, String media_name){
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route" + route_id + "/" + "highlight" + highlight_id + "/media/" + media_name);
+        return f.getAbsolutePath();
+    }
+
+    public static String makeInteractiveImageImagePath(String interactive_image_id, String highlight_id, String route_id, String image_name){
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route" + route_id + "/" + "highlight" + highlight_id + "/interactive_image/" + interactive_image_id + "/" + image_name);
+        return f.getAbsolutePath();
+    }
+
+    public static String makeReferencePath(String route_id, String lang_code){
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route" + route_id + "/" + "route_reference/reference_" + lang_code + ".html");
+        return f.getAbsolutePath();
+    }
+
+    public static String makeReferencePath(String route_id, String highlight_id, String reference_id, String lang_code){
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route" + route_id + "/" + "highlight" + highlight_id + "/reference" + reference_id + "/reference_" + lang_code + ".html");
+        return f.getAbsolutePath();
+    }
+
+
+
+    /**
 	 * Surrounds the given string in quotation marks. Taken from Human Mobility
 	 * Project code written by Chang Y. Chung and Necati E. Ozgencil.
 	 * 
