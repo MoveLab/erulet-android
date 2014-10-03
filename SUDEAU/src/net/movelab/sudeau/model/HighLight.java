@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -123,7 +125,8 @@ public class HighLight {
 
 	public void setMediaPath(String imagePath) {
 		this.mediaPath = imagePath;
-	}
+        Log.d("HighlightMediaPath: ",imagePath);
+    }
 
 	public int getType() {
 		return type;

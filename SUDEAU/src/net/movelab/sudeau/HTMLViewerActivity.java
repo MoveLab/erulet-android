@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -49,8 +50,10 @@ public class HTMLViewerActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
 			String idReference = extras.getString("idReference");
-			Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
+            Log.d("Reference ID: ", idReference);
+            Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
             if(r != null && r.getTextContent() != null && r.getTextContent() != ""){
+                Log.d("Reference URL: ", r.getTextContent());
 			return r.getTextContent();
                     //"file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
 			//return "file:///android_asset/" + r.getTextContent();

@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import android.util.Log;
+
 import net.movelab.sudeau.Util;
 
 import java.text.ParseException;
@@ -163,8 +165,8 @@ public class JSONConverter {
         // TODO Step should not have referecence
 		if(j.has("reference")){
 		}
-		if(j.has("absoluteTime")){
-			String dateString = j.getString("absoluteTime");			
+		if(j.has("absolute_time")){
+			String dateString = j.getString("absolute_time");
 			try {
 				s.setAbsoluteTime(spdf.parse(dateString));
 			} catch (ParseException e) {
@@ -172,8 +174,8 @@ public class JSONConverter {
 				e.printStackTrace();
 			}
 		}		
-		if(j.has("relativeTime")){			
-			s.setAbsoluteTimeMillis(j.getLong("relativeTime"));
+		if(j.has("relative_time")){
+			s.setAbsoluteTimeMillis(j.getLong("relative_time"));
 		}		
 		return s;
 	}
@@ -188,7 +190,7 @@ public class JSONConverter {
 			h.setName(j.optString("name_ca", "none"));
 
         // TODO add this to server
-        if(j.has("image_name")){
+        if(j.has("media_name")){
 			h.setMediaPath(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("image_name", "")));
         }
         // check if this makes sense and come up with good default radius
@@ -203,8 +205,10 @@ public class JSONConverter {
         //  TODO this will need to become multiple references
 
 			JSONArray refs = j.optJSONArray("references");
+        Log.d("REFERENCES JSON ARRAY: ", refs.toString());
             if(refs.length() > 0){
 			h.setReference(jsonObjectToReference(refs.getJSONObject(0), route_id, h.getId(),"ca" ));
+                Log.d("REFERENCES JSON OBJECT 0: ", h.getReference().toString());
             }
 		return h;
 	}
@@ -233,13 +237,13 @@ public class JSONConverter {
 			return null;
 		JSONObject j = new JSONObject();
 		j.put("id", h.getId());
-		j.put("longText", h.getLongText());
-		j.put("imagePath",h.getMediaPath());
+		j.put("long_text", h.getLongText());
+		j.put("image_path",h.getMediaPath());
 		j.put("name", h.getName());
 		j.put("radius", h.getRadius());
 		j.put("type", h.getType());
-		j.put("userrating", h.getUserRating());
-		j.put("globalrating", h.getGlobalRating());
+		j.put("user_rating", h.getUserRating());
+		j.put("global_rating", h.getGlobalRating());
 		j.put("reference", h.getReference());
 		return j;
 	}

@@ -97,9 +97,9 @@ public class Switchboard extends Activity {
 
 
         // TODO JUST FOR TESTING
-//        mPreferences.edit().putBoolean("has_maps", false).apply();
-  //      mPreferences.edit().putBoolean("has_grs", false).apply();
-    //    mPreferences.edit().putBoolean("has_json", false).apply();
+        mPreferences.edit().putBoolean("has_maps", false).apply();
+        mPreferences.edit().putBoolean("has_grs", false).apply();
+        mPreferences.edit().putBoolean("has_json", false).apply();
 
 
         hasMaps = mPreferences.getBoolean("has_maps", false);
@@ -318,7 +318,7 @@ if(!hasJson){
 if(!hasMaps){
             try {
 
-                URL url = new URL("http://107.170.174.182//media/holet/route_maps/map_route7.zip");
+                URL url = new URL("http://107.170.174.182/media/holet/route_maps/map_route7.zip");
 
                 Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
 
