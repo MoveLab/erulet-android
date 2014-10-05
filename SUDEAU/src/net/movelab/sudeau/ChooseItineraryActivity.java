@@ -477,7 +477,7 @@ public class ChooseItineraryActivity extends Activity {
                 String zipFilePath = destinationPath;
                 Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
 // TODO take out hard coded route 7
-                File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route7");
+                File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route_7");
                 String destDirectory = target_directory.getPath();
                 Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
 

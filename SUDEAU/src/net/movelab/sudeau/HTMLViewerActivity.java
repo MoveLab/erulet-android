@@ -53,10 +53,8 @@ public class HTMLViewerActivity extends Activity {
             Log.d("Reference ID: ", idReference);
             Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
             if(r != null && r.getTextContent() != null && r.getTextContent() != ""){
-                Log.d("Reference URL: ", r.getTextContent());
-			return r.getTextContent();
-                    //"file:///" + file.getAbsolutePath() + "/" + r.getTextContent();
-			//return "file:///android_asset/" + r.getTextContent();
+                Log.d("Reference URL: ", "file://" + r.getTextContent());
+			return "file://" + r.getTextContent();
             } else
                 return null;
 		}

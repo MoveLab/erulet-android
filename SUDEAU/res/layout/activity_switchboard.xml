@@ -81,7 +81,7 @@
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_reference"
                 android:text="@string/security_recomm"
-                android:textSize="@dimen/label_button_small" >
+                android:textSize="@dimen/label_button" >
             </Button>
 
             <Button

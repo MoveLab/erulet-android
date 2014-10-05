@@ -33,7 +33,7 @@ public class JSONConverter {
 	public static Route jsonObjectToRoute(JSONObject j) throws JSONException{
 		Route r = new Route();
 		if(j.has("id")){
-			r.setId("R" + "_" + j.getString("id") + "_" + j.getString("id"));
+			r.setId(j.getString("id"));
 		}
         // for now, just using Catalan -- will  update models for multlingual
 		if(j.has("name_ca")){
@@ -191,7 +191,7 @@ public class JSONConverter {
 
         // TODO add this to server
         if(j.has("media_name")){
-			h.setMediaPath(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("image_name", "")));
+			h.setMediaPath(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("media_name", "")));
         }
         // check if this makes sense and come up with good default radius
 		h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));

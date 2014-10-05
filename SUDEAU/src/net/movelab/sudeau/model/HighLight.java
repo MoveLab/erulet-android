@@ -125,7 +125,7 @@ public class HighLight {
 
 	public void setMediaPath(String imagePath) {
 		this.mediaPath = imagePath;
-        Log.d("HighlightMediaPath: ",imagePath);
+        Log.d("HighlightMediaPath SET: ",imagePath);
     }
 
 	public int getType() {
@@ -166,7 +166,9 @@ public class HighLight {
 
 	public void setReference(Reference reference) {
 		this.reference = reference;
-	}
+        Log.d("HIGHLIGHT REFERENCE SET: REFID: ", reference.getId());
+
+    }
 
 	public InteractiveImage getInteractiveImage() {
 		return interactiveImage;
@@ -174,6 +176,8 @@ public class HighLight {
 
 	public void setInteractiveImage(InteractiveImage interactiveImage) {
 		this.interactiveImage = interactiveImage;
-	}
+        Log.d("HIGHLIGHT II SET: II ID: ", interactiveImage.getId());
+
+    }
 
 }

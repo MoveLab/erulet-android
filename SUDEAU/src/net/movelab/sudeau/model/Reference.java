@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 
 public class Reference {
@@ -16,7 +18,8 @@ public class Reference {
 	}
 	
 	public Reference(String id) {
-		this.setId(id); 
+		this.setId(id);
+        Log.d("REFERENCE ID SET IN CONSTRUCTOR: ", id);
 	}
 
 	public String getTextContent() {
@@ -24,7 +27,7 @@ public class Reference {
 	}
 
 	public void setTextContent(String textContent) {
-		this.textContent = textContent;
+		this.textContent = textContent;        Log.d("REFERENCE TEXT CONTENT SET: ", textContent);
 	}
 	
 	public String getId() {
@@ -32,7 +35,7 @@ public class Reference {
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.id = id;        Log.d("REFERENCE ID SET: ", id);
 	}
 
 	public String getName() {

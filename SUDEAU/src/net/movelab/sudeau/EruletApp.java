@@ -56,56 +56,7 @@ public class EruletApp extends Application{
 
 	}
 	
-//	private void reloadArtigaDeLin(){
-//		Route r = DataContainer.findRouteById("ROUTE_ARTIGA", dataBaseHelper);
-//		if(r!=null){
-//			DataContainer.deleteRouteCascade(r,this);
-//		}
-//		DataContainer.loadArtigaDeLin(dataBaseHelper, this.getBaseContext());
-//	}
-	
-	private void reloadGaronaPeu(){
-		Route r = DataContainer.findRouteById("ROUTE_GARONAP", dataBaseHelper);
-		if(r!=null){
-			//DataContainer.deleteRouteCascade(r,this);
-			r.setLocalCarto("Garona_hires.mbtiles");
-			DataContainer.updateRoute(r, dataBaseHelper);
-		}
-		DataContainer.loadGaronaPeu(dataBaseHelper, this.getBaseContext());
-	}
-	
-	private void reloadVarrados(){
-		Route r = DataContainer.findRouteById("ROUTE_VARRADOS", dataBaseHelper);
-		if(r!=null){
-			DataContainer.deleteRouteCascade(r,this);
-		}
-		DataContainer.loadVarrados(dataBaseHelper, this.getBaseContext());
-	}
 
-	private void reloadBassaOles(){
-		Route r = DataContainer.findRouteById("ROUTE_BASSAOLES", dataBaseHelper);
-		if(r!=null){
-			DataContainer.deleteRouteCascade(r,this);
-		}
-		DataContainer.loadBassaOles(dataBaseHelper, this.getBaseContext());
-	}
-//	
-	private void reloadEscunHau(){
-		Route r = DataContainer.findRouteById("ROUTE_ESCUNHAU", dataBaseHelper);
-		if(r!=null){
-			DataContainer.deleteRouteCascade(r,this);
-		}
-		DataContainer.loadEscunhau(dataBaseHelper, this.getBaseContext());
-	}
-	
-	private void reloadRedonCompact(){
-		Route r = DataContainer.findRouteById("ROUTE_REDON", dataBaseHelper);
-		if(r!=null){
-			DataContainer.deleteRouteCascade(r,this);
-		}
-		DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
-	}
-	
 	public void createFolder(String path){
 		File file = new File(Environment.getExternalStorageDirectory(), path);
 	    if (!file.exists()) {

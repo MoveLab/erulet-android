@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import android.util.Log;
+
 import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -34,7 +36,9 @@ public class InteractiveImage {
 
 	public void setId(String id) {
 		this.id = id;
-	}
+        Log.d("II ID SET: ", id);
+
+    }
 
 	public String getMediaPath() {
 		return mediaPath;
@@ -42,7 +46,9 @@ public class InteractiveImage {
 
 	public void setMediaPath(String mediaPath) {
 		this.mediaPath = mediaPath;
-	}
+        Log.d("HIGHLIGHT MEDIA PATH SET: ", mediaPath);
+
+    }
 
 	public Collection<Box> getBoxes() {
 		return boxes;
