@@ -12,6 +12,8 @@ public class Reference {
 	private String name;
 	@DatabaseField
 	private String textContent;
+    @DatabaseField(foreign=true, columnName="highlightId")
+    private HighLight highlight;
 
 	public Reference(){
 		
@@ -45,5 +47,13 @@ public class Reference {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+
+    public HighLight getHighlight(){
+        return highlight;
+    }
+    public void setHighlight(HighLight highlight){
+        this.highlight = highlight;
+    }
 
 }

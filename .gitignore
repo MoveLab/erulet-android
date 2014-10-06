@@ -1,3 +1,6 @@
+# api key file
+SUDEAU/res/values/api_keys.xml
+
 # local utilities - in order to not push keys to public repo
 SUDEAU/src/net/movelab/sudeau/UtilLocal.java
 

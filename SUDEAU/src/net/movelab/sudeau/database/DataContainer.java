@@ -1,6 +1,7 @@
 package net.movelab.sudeau.database;
 
 import java.io.IOException;
+import java.sql.Ref;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -230,12 +231,15 @@ public class DataContainer {
 	}
 
 	public static void deleteHighLight(HighLight h, EruletApp app) {
-		if(h.getReference()!=null){
-			app.getDataBaseHelper().getReferenceDataDao().delete(h.getReference());
+		if(h.getReferences()!=null){
+            for(Reference ref : h.getReferences()){
+			app.getDataBaseHelper().getReferenceDataDao().delete(ref);
 		}
-		if(h.getInteractiveImage() != null){
-			deleteInteractiveImageCascade(h.getInteractiveImage(), app);
-		}
+        }
+		if(h.getInteractiveImages() != null){
+            for(InteractiveImage ii : h.getInteractiveImages()){
+			deleteInteractiveImageCascade(ii, app);
+		}}
 		app.getDataBaseHelper().getHlDataDao().delete(h);
 		SharedPreferences.Editor ed = app.getPrefsEditor();
 		ed.remove(h.getId());
@@ -577,14 +581,15 @@ public class DataContainer {
 						for( HighLight h : s.getHighlights() ){
 							if(h.getId() == null){
                                 h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
+                                Log.e("HIGHLIGHT MISSING ID", h.getName());
+
                             }
-	    					s.getHighlights().add(h);
+	    				//	s.getHighlights().add(h);
 							h.setStep(s);
 
-                            if(h.getReference()!=null){
+                            if(h.getReferences()!=null){
 
-                                // TODO change this for multiple references later
-                                Reference ref = h.getReference();
+                                for(Reference ref : h.getReferences()){
                                 Log.e("Inserting reference",
                                         "Adding reference: " + ref.getId());
                                 try{
@@ -593,10 +598,11 @@ public class DataContainer {
                                     Log.e("Inserting reference",
                                             "Insert error " + ex.toString());
                                 }
+                                }
 
                             }
-                            if(h.getInteractiveImage() != null){
-                                InteractiveImage ii = h.getInteractiveImage();
+                            if(h.getInteractiveImages() != null){
+                                for(InteractiveImage ii : h.getInteractiveImages()){
                                 Log.e("Inserting ii",
                                         "Adding ii: " + ii.getId());
 
@@ -605,6 +611,7 @@ public class DataContainer {
                                 }catch (RuntimeException ex){
                                     Log.e("Inserting ii",
                                             "Insert error " + ex.toString());
+                                }
                                 }
 
                             }

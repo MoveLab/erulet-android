@@ -123,6 +123,38 @@
             android:textSize="@dimen/label_infoblock_normal" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/refbuttonarea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/iibuttonarea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+
+    </LinearLayout>
+
+
     <View
     android:layout_width="fill_parent"
     android:layout_height="1dp"

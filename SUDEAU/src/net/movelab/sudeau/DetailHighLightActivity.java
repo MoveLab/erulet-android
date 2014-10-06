@@ -1,5 +1,6 @@
 package net.movelab.sudeau;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,9 +9,12 @@ import org.json.JSONObject;
 
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory.Options;
@@ -21,8 +25,11 @@ import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -166,15 +173,80 @@ public class DetailHighLightActivity extends Activity {
 			}
 			globalRating.setRating( hl.getGlobalRating() );
 		}
-		String description = getString(R.string.point_no_description);		
-		
+		String description = getString(R.string.point_no_description);
+        if(hl!=null && hl.getLongText()!=null){
+            if(!hl.getLongText().trim().equalsIgnoreCase("")){
+                description = hl.getLongText();
+            }
+        }
+
 		nameTxt.setText(getString(R.string.point_name) + " " + name);
 		descriptionTxt.setText(getString(R.string.description) + " " + description);
 		datatxt.setText(getString(R.string.date) + " " + date);
 		lattxt.setText(getString(R.string.latitude) + " " +  lat);
 		longtxt.setText(getString(R.string.longitude) + " " +  llong);
-		alttxt.setText(getString(R.string.altitude) + " " +  alt);		
-	}
+		alttxt.setText(getString(R.string.altitude) + " " +  alt);
+
+        LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
+        LinearLayout refbuttonarea = (LinearLayout) findViewById(R.id.refbuttonarea);
+
+
+        if (hl.getInteractiveImages() != null) {
+            iibuttonarea.setVisibility(View.VISIBLE);
+            ArrayList<InteractiveImage> these_iis = new ArrayList<InteractiveImage>(hl.getInteractiveImages());
+            for(InteractiveImage ii : these_iis){
+                Button iiButton = new Button(this);
+                iiButton.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+                iiButton.setPadding(5, 5, 5, 5);
+                iiButton.setText("Interactive Image");
+                iiButton.setGravity(Gravity.CENTER);
+                iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+
+                final String this_ii_id = ii.getId();
+
+                iibuttonarea.addView(iiButton);
+                iiButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(
+                                DetailHighLightActivity.this,
+                                InteractiveImageActivityHeatMap.class);
+                        i.putExtra("int_image_id", this_ii_id);
+                        startActivity(i);
+                    }
+               });
+
+            }
+        }
+            // Interactive image
+        if (hl.getReferences() != null) {
+            refbuttonarea.setVisibility(View.VISIBLE);
+            ArrayList<Reference> refs = new ArrayList<Reference>(hl.getReferences());
+            for(Reference ref : hl.getReferences()){
+                Button refButton = new Button(this);
+                refButton.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+                refButton.setPadding(5, 5, 5, 5);
+                refButton.setText("Reference: " + ref.getName());
+                refButton.setGravity(Gravity.CENTER);
+                refButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+                final String this_ref_id = ref.getId();
+
+                refbuttonarea.addView(refButton);
+                refButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+           Intent i = new Intent(DetailHighLightActivity.this, HTMLViewerActivity.class);
+            i.putExtra("idReference", this_ref_id);
+            startActivity(i);
+            }
+                });
+
+            }
+	}}
 	
 	private void loadBitmapThumbnailToImageView(
 			String path, 

@@ -97,9 +97,9 @@ public class Switchboard extends Activity {
 
 
         // TODO JUST FOR TESTING
-        mPreferences.edit().putBoolean("has_maps", false).apply();
-        mPreferences.edit().putBoolean("has_grs", false).apply();
-        mPreferences.edit().putBoolean("has_json", false).apply();
+//        mPreferences.edit().putBoolean("has_maps", false).apply();
+//        mPreferences.edit().putBoolean("has_grs", false).apply();
+ //       mPreferences.edit().putBoolean("has_json", false).apply();
 
 
         hasMaps = mPreferences.getBoolean("has_maps", false);
@@ -297,7 +297,7 @@ if(!hasJson){
                     publishProgress(""+5);
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
                 }
                 ArrayList<Route> routes = JSONConverter.jsonArrayToRouteArray(ja);
                 int nDone = 0;
@@ -311,7 +311,11 @@ if(!hasJson){
                 mPreferences.edit().putBoolean("has_json", true).apply();
 
 
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
+
+            }
+
 
 }
             // MAPS

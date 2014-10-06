@@ -19,6 +19,8 @@ public class InteractiveImage {
 	private int originalWidth;
 	@DatabaseField
 	private int originalHeight;
+    @DatabaseField(foreign=true, columnName = "highlightId")
+    private HighLight highlight;
 	@ForeignCollectionField
 	private Collection<Box> boxes;	
 	
@@ -73,6 +75,11 @@ public class InteractiveImage {
 	public void setOriginalHeight(int originalHeight) {
 		this.originalHeight = originalHeight;
 	}
-	
 
+    public HighLight getHighlight(){
+        return highlight;
+    }
+    public void setHighlight(HighLight highlight){
+        this.highlight = highlight;
+    }
 }

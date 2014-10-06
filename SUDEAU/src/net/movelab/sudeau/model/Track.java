@@ -17,6 +17,8 @@ public class Track {
 	private String name;
 	@ForeignCollectionField
 	private Collection<Step> steps;
+    @DatabaseField(foreign = true, columnName = "routeId")
+    private Route route;
 	private Reference reference;
 
 	public Track(){
@@ -50,13 +52,22 @@ public class Track {
 		this.steps = steps;
 	}
 
-	public String getId() {
-		return id;
+	public Route getRoute() {
+		return route;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setRoute(Route route) {
+		this.route = route;
 	}
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
 	public String getName() {
 		return name;

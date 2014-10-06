@@ -33,9 +33,9 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o" />
+            android:value="@string/maps_api_key_production" />
 
-<!--for signed APK            android:value="AIzaSyBsiA8tXhQ3ghemBxV6X-mAzYc0xVzq2LQ" /> -->
+        <!-- for usb testing           android:value="AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o" />-->
 
 <!--Old API Key         AIzaSyD7IGO6UXX5bzDDidjLdO8wBt3JcZJ1u4o -->
         <activity

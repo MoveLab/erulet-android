@@ -833,24 +833,7 @@ public class DetailItineraryActivity extends Activity implements
 											app.getDataBaseHelper());
 							if (s!= null && s.hasSingleHighLight()) {
 								HighLight h = highlights.get(0);
-								if (h.getInteractiveImage() != null) {
-									// Interactive image
-									Intent i = new Intent(
-											DetailItineraryActivity.this,
-											InteractiveImageActivityHeatMap.class);
-									i.putExtra("int_image_id", h
-											.getInteractiveImage().getId());
-									startActivity(i);
-								} else if (h.getReference() != null) {
-									Reference r = DataContainer
-											.refreshReference(h.getReference(),
-													app.getDataBaseHelper());
-									Intent i = new Intent(
-											DetailItineraryActivity.this,
-											HTMLViewerActivity.class);
-									i.putExtra("idReference", h.getReference().getId());
-									startActivity(i);
-								}else{
+                                // if highlight has single interactive image or single reference
 									JSONObject hl_s;
 									try {
 										hl_s = JSONConverter
@@ -861,7 +844,7 @@ public class DetailItineraryActivity extends Activity implements
 													DetailItineraryActivity.this,
 													DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
-                                            i.putExtra("route_id", routeInProgress.getId());
+                                            i.putExtra("route_id", s.getTrack().getRoute().getId());
 											i.putExtra("highlight_id", h.getId());
 											startActivity(i);
 										}
@@ -869,7 +852,7 @@ public class DetailItineraryActivity extends Activity implements
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
-								}
+
 							} else { // Multiple HighLights
 										// �$$� Open multiple highlights menu
 								if(s!=null){
@@ -877,6 +860,7 @@ public class DetailItineraryActivity extends Activity implements
 											DetailItineraryActivity.this,
 											MultipleHighLightSelection.class);
 									i.putExtra("step_id", s.getId());
+                                    i.putExtra("route_id", routeInProgress.getId());
 									startActivity(i);
 								}
 							}
@@ -1620,8 +1604,8 @@ public class DetailItineraryActivity extends Activity implements
 									new LatLng(step.getLatitude(), step
 											.getLongitude()), step
 											.getPrecision(), last, i);
-
-					pointsInProgress.add(mMap.addCircle(copt));
+// removing accuracy circle for tracked route display
+//					pointsInProgress.add(mMap.addCircle(copt));
 
 					if (routeMode == 1 || routeMode == 2) {
 						rectOptions.add(new LatLng(step.getLatitude(), step

@@ -3,7 +3,10 @@ package net.movelab.sudeau.model;
 import android.util.Log;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.Collection;
 
 @DatabaseTable(tableName = "highlight")
 public class HighLight {
@@ -26,10 +29,10 @@ public class HighLight {
 	private int userRating;
 	@DatabaseField(foreign=true, columnName="stepId")
     private Step step;
-	@DatabaseField(foreign=true, columnName="referenceId")
-	private Reference reference;
-	@DatabaseField(foreign=true, columnName="interactiveImageId")
-	private InteractiveImage interactiveImage;
+    @ForeignCollectionField
+	private Collection<Reference> references;
+    @ForeignCollectionField
+	private Collection<InteractiveImage> interactiveImages;
 	
 	public static final int WAYPOINT = 1;
 	public static final int POINT_OF_INTEREST = 2;
@@ -160,23 +163,20 @@ public class HighLight {
 		this.step = step;
 	}
 
-	public Reference getReference() {
-		return reference;
+	public Collection<Reference> getReferences() {
+		return references;
 	}
 
-	public void setReference(Reference reference) {
-		this.reference = reference;
-        Log.d("HIGHLIGHT REFERENCE SET: REFID: ", reference.getId());
-
+	public void setReferences(Collection<Reference> references) {
+		this.references = references;
     }
 
-	public InteractiveImage getInteractiveImage() {
-		return interactiveImage;
+	public Collection<InteractiveImage> getInteractiveImages() {
+		return interactiveImages;
 	}
 
-	public void setInteractiveImage(InteractiveImage interactiveImage) {
-		this.interactiveImage = interactiveImage;
-        Log.d("HIGHLIGHT II SET: II ID: ", interactiveImage.getId());
+	public void setInteractiveImages(Collection<InteractiveImage> interactiveImage) {
+		this.interactiveImages = interactiveImages;
 
     }
 

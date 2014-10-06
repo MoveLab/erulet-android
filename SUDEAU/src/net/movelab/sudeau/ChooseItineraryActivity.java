@@ -111,7 +111,7 @@ public class ChooseItineraryActivity extends Activity {
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
         // TODO just for testing
-        mPreferences.edit().putBoolean("r7d", false).apply();
+//        mPreferences.edit().putBoolean("r7d", false).apply();
 
         r7downloaded = mPreferences.getBoolean("r7d", false);
 

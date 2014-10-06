@@ -52,34 +52,8 @@ public class MultipleHighLightSelection extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
 				HighLight h = (HighLight) parent.getItemAtPosition(position);
-				switch(h.getType()){
-					case HighLight.INTERACTIVE_IMAGE:
-						Intent i = new Intent(MultipleHighLightSelection.this,
-								InteractiveImageActivityHeatMap.class);			
-						i.putExtra("int_image_id", h.getInteractiveImage().getId());
-						startActivity(i);
-						break;
-					case HighLight.REFERENCE:
-						Reference r = DataContainer.refreshReference(h.getReference(), app.getDataBaseHelper());
-						if(r!=null){
-							Intent ir = new Intent(MultipleHighLightSelection.this,
-									HTMLViewerActivity.class);
-							ir.putExtra("idReference", r.getId());
-							startActivity(ir);
-						}
-						break;
-					case HighLight.POINT_OF_INTEREST:
 						launchStandardUserPointInfo(h.getId());
-						break;
-					case HighLight.WAYPOINT:
-						launchStandardUserPointInfo(h.getId());
-						break;						
-					case HighLight.ALERT:
-						launchStandardUserPointInfo(h.getId());
-						break;
-					default:
-						break;
-				}
+
 			}			
 		});		 
 	}
