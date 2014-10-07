@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -46,7 +47,9 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
 			String imgId = extras.getString("int_image_id");
-			if(imgId!=null){
+            Log.i("IIMAP imgId: ", imgId);
+
+            if(imgId!=null){
 				interactiveImage = DataContainer.findInteractiveImageById(imgId, app.getDataBaseHelper());
 				initBoxes(interactiveImage);
 			}
@@ -54,8 +57,8 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		if(interactiveImage!=null && 
 				interactiveImage.getMediaPath()!= null && 
 				!interactiveImage.getMediaPath().equalsIgnoreCase("")){			
-			File root = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder);
-			File f = new File(root,interactiveImage.getMediaPath());
+			File f = new File(interactiveImage.getMediaPath());
+            Log.i("IIMAP: ", f.getPath());
 			if(f.exists()){
 				int[] screenSize = Util.getScreenSize(getBaseContext());
 				originalHeight = interactiveImage.getOriginalHeight();
@@ -97,7 +100,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		dialog = builder.create();
 		dialog.setTitle( getString(R.string.info) );
-		dialog.setMessage( b.getMessage() );
+		dialog.setMessage( Html.fromHtml(b.getMessage()) );
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
         wmlp.gravity = Gravity.TOP | Gravity.LEFT;

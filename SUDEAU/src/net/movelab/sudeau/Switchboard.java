@@ -99,7 +99,7 @@ public class Switchboard extends Activity {
         // TODO JUST FOR TESTING
 //        mPreferences.edit().putBoolean("has_maps", false).apply();
 //        mPreferences.edit().putBoolean("has_grs", false).apply();
- //       mPreferences.edit().putBoolean("has_json", false).apply();
+//        mPreferences.edit().putBoolean("has_json", false).apply();
 
 
         hasMaps = mPreferences.getBoolean("has_maps", false);
@@ -196,7 +196,7 @@ public class Switchboard extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Intent i = new Intent(Switchboard.this,
-						SecurityRules.class);
+						BeforeLeaving.class);
 				startActivity(i);
 			}
 		});

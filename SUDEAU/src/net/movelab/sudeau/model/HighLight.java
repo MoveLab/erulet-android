@@ -175,7 +175,7 @@ public class HighLight {
 		return interactiveImages;
 	}
 
-	public void setInteractiveImages(Collection<InteractiveImage> interactiveImage) {
+	public void setInteractiveImages(Collection<InteractiveImage> interactiveImages) {
 		this.interactiveImages = interactiveImages;
 
     }

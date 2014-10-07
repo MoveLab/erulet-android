@@ -15,7 +15,8 @@ public class Reference {
     @DatabaseField(foreign=true, columnName="highlightId")
     private HighLight highlight;
 
-	public Reference(){
+
+    public Reference(){
 		
 	}
 	

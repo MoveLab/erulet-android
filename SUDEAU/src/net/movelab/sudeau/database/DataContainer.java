@@ -145,10 +145,8 @@ public class DataContainer {
 		// Track is already created
 		s.setTrack(t);
 		String stepId = getStepId(db, userId);		
-		Log.d("addStepToTrack", "Getting step id " + stepId);		
 		s.setId(stepId);
 		db.getStepDataDao().create(s);		
-		Log.d("addStepToTrack", "step " + stepId + " saved");		
 		t.getSteps().add(s);
 	}
 
@@ -159,12 +157,9 @@ public class DataContainer {
 		String hlId = getHighLightId(db, userId);
 		h.setId(hlId);		
 		db.getHlDataDao().create(h);		
-		Log.d("addHighLightToStep", "highlight " + hlId + " saved");
 //		s.getHighlights().add(h);
 //		s.setHighlight(h);
 		db.getStepDataDao().update(s);		
-		Log.d("addHighLightToStep", "step " + s.getId()
-				+ " updated (added highlight)");		
 	}
 
 	public static Route refreshRoute(Route r, DataBaseHelper db) {
@@ -602,9 +597,20 @@ public class DataContainer {
 
                             }
                             if(h.getInteractiveImages() != null){
+
                                 for(InteractiveImage ii : h.getInteractiveImages()){
-                                Log.e("Inserting ii",
-                                        "Adding ii: " + ii.getId());
+
+                                    if(ii.getBoxes() != null){
+                                        for(Box b:ii.getBoxes()){
+                                            try{
+                                                dataBaseHelper.getBoxDataDao().create(b);
+                                            }catch (RuntimeException ex){
+                                                Log.e("Inserting box",
+                                                        "Insert error " + ex.toString());
+                                            }
+
+                                        }
+                                    }
 
                                 try{
                                     dataBaseHelper.getInteractiveImageDataDao().create(ii);
@@ -627,8 +633,6 @@ public class DataContainer {
 							}
 						}
 					}
-					Log.d("insertRoute", "Adding step - id " + s.getId()
-							+ " order " + s.getOrder());					
 					try {
 						dataBaseHelper.getStepDataDao().create(s);
 					} catch (RuntimeException ex) {

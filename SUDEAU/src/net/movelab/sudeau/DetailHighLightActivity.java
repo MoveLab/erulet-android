@@ -24,6 +24,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -190,17 +191,25 @@ public class DetailHighLightActivity extends Activity {
         LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
         LinearLayout refbuttonarea = (LinearLayout) findViewById(R.id.refbuttonarea);
 
+Log.i("DetailHighlightActivity: ", "1");
 
-        if (hl.getInteractiveImages() != null) {
+        // interactive images
+        if (hl.getInteractiveImages() != null && hl.getInteractiveImages().size() > 0) {
+            Log.i("DetailHighlightActivity: ", "2");
+            Log.i("DetailHighlightActivity: ", hl.getInteractiveImages().size() + "");
+
             iibuttonarea.setVisibility(View.VISIBLE);
             ArrayList<InteractiveImage> these_iis = new ArrayList<InteractiveImage>(hl.getInteractiveImages());
-            for(InteractiveImage ii : these_iis){
+            for(InteractiveImage ii : hl.getInteractiveImages()){
+                Log.i("DetailHighlightActivity: ", "2.1");
+
                 Button iiButton = new Button(this);
                 iiButton.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT));
-                iiButton.setPadding(5, 5, 5, 5);
+                iiButton.setPadding(10, 10, 10, 10);
                 iiButton.setText("Interactive Image");
+                iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
                 iiButton.setGravity(Gravity.CENTER);
                 iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 
@@ -220,8 +229,10 @@ public class DetailHighLightActivity extends Activity {
 
             }
         }
-            // Interactive image
+            // reference
         if (hl.getReferences() != null) {
+            Log.i("DetailHighlightActivity: ", "3");
+
             refbuttonarea.setVisibility(View.VISIBLE);
             ArrayList<Reference> refs = new ArrayList<Reference>(hl.getReferences());
             for(Reference ref : hl.getReferences()){
@@ -229,8 +240,9 @@ public class DetailHighLightActivity extends Activity {
                 refButton.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT));
-                refButton.setPadding(5, 5, 5, 5);
-                refButton.setText("Reference: " + ref.getName());
+                refButton.setPadding(10, 10, 10, 10);
+                refButton.setText("Reference");
+                refButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_reference, 0, 0, 0);
                 refButton.setGravity(Gravity.CENTER);
                 refButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
                 final String this_ref_id = ref.getId();

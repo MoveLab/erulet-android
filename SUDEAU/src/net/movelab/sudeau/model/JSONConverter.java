@@ -172,7 +172,7 @@ public class JSONConverter {
         // TODO Step should not have referecence
         if (j.has("reference")) {
         }
-        if (j.has("absolute_time")) {
+        if (j.has("absolute_time") && j.optString("absolute_time") != "null"){
             String dateString = j.getString("absolute_time");
             try {
                 s.setAbsoluteTime(spdf.parse(dateString));
@@ -181,13 +181,15 @@ public class JSONConverter {
                 e.printStackTrace();
             }
         }
-        if (j.has("relative_time")) {
+        if (j.has("relative_time") && j.optString("relative_time") != "null") {
             s.setAbsoluteTimeMillis(j.getLong("relative_time"));
         }
         return s;
     }
 
     public static HighLight jsonObjectToHighLight(JSONObject j, String route_id, Step s) throws JSONException {
+
+        Log.e("II: highlighjson", "top");
 
         HighLight h = new HighLight();
         h.setStep(s);
@@ -206,6 +208,7 @@ public class JSONConverter {
         JSONArray refs = j.optJSONArray("references");
         JSONArray iis = j.optJSONArray("interactive_images");
 
+
         if (refs != null) {
             ArrayList<Reference> reflist = new ArrayList<Reference>();
             for (int i = 0; i < refs.length(); i++) {
@@ -216,15 +219,20 @@ public class JSONConverter {
             h.setReferences(reflist);
         }
         // Now the interactive images
+        Log.e("II: ", "About to start JSON iis");
 
         if (iis != null) {
+            Log.e("II: ", "ii not null");
             ArrayList<InteractiveImage> iilist = new ArrayList<InteractiveImage>();
             for (int i = 0; i < iis.length(); i++) {
                 InteractiveImage ii = jsonObjectToInteractiveImage(iis.getJSONObject(i), route_id, h.getId());
                 ii.setHighlight(h);
                 iilist.add(ii);
+                Log.e("II: ", "just added ii");
             }
             h.setInteractiveImages(iilist);
+            Log.e("II: ", "just set ii");
+
         }
         return h;
     }
@@ -251,7 +259,9 @@ public class JSONConverter {
     public static InteractiveImage jsonObjectToInteractiveImage(JSONObject j, String route_id, String highlight_id) throws JSONException {
         InteractiveImage ii = new InteractiveImage();
         ii.setId(j.optString("id", "none"));
-        ii.setMediaPath(Util.makeInteractiveImageImagePath(ii.getId(), route_id, highlight_id, j.optString("image_name")));
+        ii.setMediaPath(Util.makeInteractiveImageImagePath(ii.getId(), highlight_id, route_id, j.optString("image_name")));
+        ii.setOriginalHeight(j.optInt("original_height"));
+        ii.setOriginalWidth(j.optInt("original_width"));
         JSONArray boxArray = j.optJSONArray("boxes");
         if (boxArray != null) {
             ii.setBoxes(jsonArrayToBoxes(boxArray, ii));

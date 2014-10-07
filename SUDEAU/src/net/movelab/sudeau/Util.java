@@ -226,7 +226,7 @@ public class Util {
     }
 
     public static String makeInteractiveImageImagePath(String interactive_image_id, String highlight_id, String route_id, String image_name){
-        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "highlight_" + highlight_id + "/interactive_image/" + interactive_image_id + "/" + image_name);
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "highlight_" + highlight_id + "/interactive_image_" + interactive_image_id + "/" + image_name);
         return f.getAbsolutePath();
     }
 

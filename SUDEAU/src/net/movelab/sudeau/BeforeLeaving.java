@@ -1,41 +1,35 @@
 package net.movelab.sudeau;
 
-        import android.app.Activity;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.res.Resources;
-        import android.os.Build;
-        import android.os.Bundle;
-        import android.view.KeyEvent;
-        import android.support.v4.app.FragmentActivity;
-        import android.view.Menu;
-        import android.view.MenuInflater;
-        import android.view.MenuItem;
-        import android.webkit.WebSettings;
-        import android.webkit.WebView;
-        import android.webkit.WebViewClient;
-        import net.movelab.sudeau.R;
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * Main activity that user interacts with while performing the search..
  *
  * @author John R.B. Palmer
  */
-public class ManualActivity extends FragmentActivity {
+public class BeforeLeaving extends FragmentActivity {
 
     Context context = this;
 
-    private static final String MANUAL_URL_OC = UtilLocal.URL_SERVULET + "oc/manual/_mob/";
-    private static final String MANUAL_URL_ES = UtilLocal.URL_SERVULET + "es/manual/_mob/";
-    private static final String MANUAL_URL_CA = UtilLocal.URL_SERVULET + "ca/manual/_mob/";
-    private static final String MANUAL_URL_FR = UtilLocal.URL_SERVULET + "fr/manual/_mob/";
-    private static final String MANUAL_URL_EN = UtilLocal.URL_SERVULET + "en/manual/_mob/";
+    private static final String BEFORE_LEAVING_URL_OC = UtilLocal.URL_SERVULET + "oc/before_leaving/_mob/";
+    private static final String BEFORE_LEAVING_URL_ES = UtilLocal.URL_SERVULET + "es/before_leaving/_mob/";
+    private static final String BEFORE_LEAVING_URL_CA = UtilLocal.URL_SERVULET + "ca/before_leaving/_mob/";
+    private static final String BEFORE_LEAVING_URL_FR = UtilLocal.URL_SERVULET + "fr/before_leaving/_mob/";
+    private static final String BEFORE_LEAVING_URL_EN = UtilLocal.URL_SERVULET + "en/before_leaving/_mob/";
 
-    private static final String MANUAL_URL_OFFLINE_OC = "file:///android_asset/manual_oc.html";
-    private static final String MANUAL_URL_OFFLINE_ES = "file:///android_asset/manual_es.html";
-    private static final String MANUAL_URL_OFFLINE_CA = "file:///android_asset/manual_ca.html";
-    private static final String MANUAL_URL_OFFLINE_FR = "file:///android_asset/manual_fr.html";
-    private static final String MANUAL_URL_OFFLINE_EN = "file:///android_asset/manual_en.html";
+    private static final String BEFORE_LEAVING_URL_OFFLINE_OC = "file:///android_asset/before_leaving_oc.html";
+    private static final String BEFORE_LEAVING_URL_OFFLINE_ES = "file:///android_asset/before_leaving_es.html";
+    private static final String BEFORE_LEAVING_URL_OFFLINE_CA = "file:///android_asset/before_leaving_ca.html";
+    private static final String BEFORE_LEAVING_URL_OFFLINE_FR = "file:///android_asset/before_leaving_fr.html";
+    private static final String BEFORE_LEAVING_URL_OFFLINE_EN = "file:///android_asset/before_leaving_en.html";
 
     private WebView myWebView;
 
@@ -74,15 +68,15 @@ public class ManualActivity extends FragmentActivity {
                                         String description, String failingUrl) {
 
                 if (lang.equals("ca"))
-                    myWebView.loadUrl(MANUAL_URL_OFFLINE_CA);
+                    myWebView.loadUrl(BEFORE_LEAVING_URL_OFFLINE_CA);
                 else if (lang.equals("es"))
-                    myWebView.loadUrl(MANUAL_URL_OFFLINE_ES);
+                    myWebView.loadUrl(BEFORE_LEAVING_URL_OFFLINE_ES);
                 else if (lang.equals("en"))
-                    myWebView.loadUrl(MANUAL_URL_OFFLINE_EN);
+                    myWebView.loadUrl(BEFORE_LEAVING_URL_OFFLINE_EN);
                 else if (lang.equals("fr"))
-                    myWebView.loadUrl(MANUAL_URL_OFFLINE_FR);
+                    myWebView.loadUrl(BEFORE_LEAVING_URL_OFFLINE_FR);
                 else
-                    myWebView.loadUrl(MANUAL_URL_OFFLINE_OC);
+                    myWebView.loadUrl(BEFORE_LEAVING_URL_OFFLINE_OC);
 
             }
 
@@ -102,15 +96,15 @@ public class ManualActivity extends FragmentActivity {
         }
 
         if (lang.equals("ca"))
-            myWebView.loadUrl(MANUAL_URL_CA);
+            myWebView.loadUrl(BEFORE_LEAVING_URL_CA);
         else if (lang.equals("es"))
-            myWebView.loadUrl(MANUAL_URL_ES);
+            myWebView.loadUrl(BEFORE_LEAVING_URL_ES);
         else if (lang.equals("en"))
-            myWebView.loadUrl(MANUAL_URL_EN);
+            myWebView.loadUrl(BEFORE_LEAVING_URL_EN);
         else if (lang.equals("fr"))
-            myWebView.loadUrl(MANUAL_URL_FR);
+            myWebView.loadUrl(BEFORE_LEAVING_URL_FR);
         else
-            myWebView.loadUrl(MANUAL_URL_OC);
+            myWebView.loadUrl(BEFORE_LEAVING_URL_OC);
 
         super.onResume();
 

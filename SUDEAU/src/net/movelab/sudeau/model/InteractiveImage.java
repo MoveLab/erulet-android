@@ -48,7 +48,7 @@ public class InteractiveImage {
 
 	public void setMediaPath(String mediaPath) {
 		this.mediaPath = mediaPath;
-        Log.d("HIGHLIGHT MEDIA PATH SET: ", mediaPath);
+        Log.d("II MEDIA PATH SET: ", mediaPath);
 
     }
 
@@ -58,7 +58,9 @@ public class InteractiveImage {
 
 	public void setBoxes(Collection<Box> boxes) {
 		this.boxes = boxes;
-	}
+        Log.d("II Boxes SET: ", id);
+
+    }
 	
 	public int getOriginalWidth() {
 		return originalWidth;
@@ -81,5 +83,7 @@ public class InteractiveImage {
     }
     public void setHighlight(HighLight highlight){
         this.highlight = highlight;
+        Log.d("II HIGHLIGHT SET: ", id);
+
     }
 }
