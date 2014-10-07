@@ -111,7 +111,7 @@ public class ChooseItineraryActivity extends Activity {
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
         // TODO just for testing
- //       mPreferences.edit().putBoolean("r7d", false).apply();
+        mPreferences.edit().putBoolean("r7d", false).apply();
 
         r7downloaded = mPreferences.getBoolean("r7d", false);
 
@@ -169,31 +169,61 @@ public class ChooseItineraryActivity extends Activity {
 			items = new CharSequence[]{OPTION_1,OPTION_2};
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final Route r = routeTable.get(selectedMarker);
         if(r7downloaded){
-            builder.setTitle(TITLE);
-            builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-					Intent i = new Intent(ChooseItineraryActivity.this,
-						DetailItineraryActivity.class);
-					Route r = routeTable.get(selectedMarker);
-					i.putExtra("idRoute",r.getId());
-					i.putExtra("mode",which);
-					dialog.dismiss();
-					startActivity(i);					
-				}
-			}
-		);
+            builder.setTitle(r.getName());
+            builder.setIcon(R.drawable.ic_pin_info);
+            builder.setMessage(r.getDescription());
+            builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(ChooseItineraryActivity.this,
+                            DetailItineraryActivity.class);
+                    intent.putExtra("idRoute",r.getId());
+                    intent.putExtra("mode",0);
+                    dialogInterface.dismiss();
+                    startActivity(intent);				                }
+            });
+            builder.setNeutralButton(getString(R.string.trip_option_2), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(ChooseItineraryActivity.this,
+                            DetailItineraryActivity.class);
+                    intent.putExtra("idRoute",r.getId());
+                    intent.putExtra("mode",1);
+                    dialogInterface.dismiss();
+                    startActivity(intent);				                }
+            });
+            // this will be only for super users - need to set up check
+            if(false){
+            builder.setPositiveButton(getString(R.string.trip_option_3), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(ChooseItineraryActivity.this,
+                            DetailItineraryActivity.class);
+                    intent.putExtra("idRoute",r.getId());
+                    intent.putExtra("mode",2);
+                    dialogInterface.dismiss();
+                    startActivity(intent);				                }
+            });
+            }
         } else{
-            builder.setTitle("Get Route Content");
-            builder.setMessage("You have not yet downloaded the content for this route to your phone. Would you like to download it now?");
-            builder.setPositiveButton("Download content", new DialogInterface.OnClickListener() {
+            builder.setTitle(r.getName());
+            builder.setMessage(r.getDescription() + "\n\nYou have not yet downloaded the content for this route to your phone. Would you like to download it now?");
+            builder.setPositiveButton("Download", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     startDownload();
                 }
             });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            builder.setCancelable(true);
         }
 		builder.show();		
 	}
@@ -237,8 +267,9 @@ public class ChooseItineraryActivity extends Activity {
 				@Override
 				public boolean onMarkerClick(Marker marker) {
 					selectedMarker=marker;
-					Route r = routeTable.get(marker);					
-					return false;
+					Route r = routeTable.get(marker);
+                    showItineraryOptions();
+                    return true;
 				}
 			});
 			

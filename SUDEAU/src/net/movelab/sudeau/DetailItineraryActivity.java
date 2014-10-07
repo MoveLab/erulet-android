@@ -614,7 +614,34 @@ public class DetailItineraryActivity extends Activity implements
 			dialog.show();
 
 		} else {
-			startSaveRouteInProgressIntent();
+            // Route has more than 2 steps - still offer the chance to directly delete
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            // TODO externalize and translate
+            dialog.setMessage("Would you like to save the track you just created or discard it?");
+            dialog.setPositiveButton(getString(R.string.discard_trip),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(
+                                DialogInterface paramDialogInterface,
+                                int paramInt) {
+                            // Delete route and go to itinerary selection
+                            DataContainer.deleteRouteCascade(routeInProgress,
+                                    app);
+                            finish();
+                        }
+                    });
+            dialog.setNegativeButton(getString(R.string.save),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(
+                                DialogInterface paramDialogInterface,
+                                int paramInt) {
+                            // Go to save route
+                            startSaveRouteInProgressIntent();
+                        }
+                    });
+            dialog.show();
 		}
 	}
 
