@@ -18,6 +18,7 @@ import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,15 +38,19 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,6 +127,7 @@ public class DetailItineraryActivity extends Activity implements
 	private MapObjectsFactory mObjFactory;
 	private CountDownTimer countDown;
 	private ProximityWarning proximityWarning;
+    public int screenWidth = 200;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +138,10 @@ public class DetailItineraryActivity extends Activity implements
 		if (app == null) {
 			app = (EruletApp) getApplicationContext();
 		}
+
+        Display display = getWindowManager().getDefaultDisplay();
+        screenWidth = display.getWidth();  // deprecated
+
 		proximityWarning = new ProximityWarning(app);
 		mObjFactory = new MapObjectsFactory();
 		// Check availability of google play services
@@ -971,9 +981,12 @@ public class DetailItineraryActivity extends Activity implements
 							R.layout.custominfowindow, null);
 					TextView snippet = (TextView) myContentView
 							.findViewById(R.id.info_snippet);
-					TextView title = (TextView) myContentView
-							.findViewById(R.id.info_title);
-					Step s = selectedRouteMarkers.get(marker);					
+                    float maxwidthF = (float) screenWidth / 2;
+                    int maxwidth = (int) Math.round(maxwidthF);
+                    snippet.setMaxWidth(maxwidth);
+                    TextView title = (TextView) myContentView
+                            .findViewById(R.id.info_title);
+					Step s = selectedRouteMarkers.get(marker);
 					boolean isUserMarker = false;
 					if (s == null) {
 						if (routeInProgressMarkers == null) {
