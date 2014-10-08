@@ -12,8 +12,8 @@
     <string name="content_provider_authority_fixes">net.movelab.sudeau.content_provider.fixes</string>
     
     <string name="trip_option">Tria la opció de ruta que prefereixes:</string>
-    <string name="trip_option_1">Vull visualitzar la ruta, sense fer un seguiment de la meva posició.</string>
-    <string name="trip_option_2">Vull recórrer la ruta, fent un seguiment en tot moment de la meva posició.</string>
+    <string name="trip_option_1">Vull visualitzar la ruta.</string>
+    <string name="trip_option_2">Vull recórrer la ruta.</string>
     <string name="trip_option_3">Vull recórrer la ruta, fent un seguiment en tot moment i desar la meva pròpia versió de la ruta.</string>
     
     <string name="choose_it_my_itineraries">Els meus itineraris...</string>

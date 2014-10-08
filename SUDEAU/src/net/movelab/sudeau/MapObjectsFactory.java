@@ -192,17 +192,21 @@ public class MapObjectsFactory {
 		copt.strokeColor(Color.BLACK);
 		if(last){			
 			copt.strokeWidth(4);
-		}else{
+            copt.fillColor(0x5500FF00);
+        }else{
 			copt.strokeWidth(1);
-		}
-		// Fill color of the circle
-		// 0x represents, this is an hexadecimal code
-		// 55 represents percentage of transparency. For 100%
-		// transparency,
-		// specify 00.
-		// For 0% transparency ( ie, opaque ) , specify ff
-		// The remaining 6 characters(00ff00) specify the fill color
-		copt.fillColor(0x8000FFFF);
+            // Fill color of the circle
+            // 0x represents, this is an hexadecimal code
+            // 55 represents percentage of transparency. For 100%
+            // transparency,
+            // specify 00.
+            // For 0% transparency ( ie, opaque ) , specify ff
+            // The remaining 6 characters(00ff00) specify the fill color
+
+// SETTING TO TRANSPARENT FOR NOT LAST STEPS
+            copt.fillColor(0x0000FFFF);
+
+        }
 		return copt;
 		
 	}	

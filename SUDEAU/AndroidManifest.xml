@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.movelab.sudeau"
-    android:versionCode="1"
+    android:versionCode="2"
     android:installLocation="internalOnly"
-    android:versionName="1.0" >
+    android:versionName="1.01" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -33,7 +33,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/maps_api_key_debugging" />
+            android:value="@string/maps_api_key_production" />
         <activity
             android:name="net.movelab.sudeau.Switchboard"
             android:theme="@android:style/Theme.Holo"

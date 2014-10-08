@@ -135,8 +135,9 @@ public class ChooseItineraryActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){		
-		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));		
-		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
+		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));
+ // TODO decide if we want this in - I am removing it for now
+//		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -412,8 +413,14 @@ public class ChooseItineraryActivity extends Activity {
 
 	private MapBoxOfflineTileProvider initTileProvider(Context context) {
         AssetManager am = context.getAssets();
-		File f = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder + "/Vista_general_vielha.mbtiles");
-		//File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
+        File sdcard = new File(Environment.getExternalStorageDirectory(),
+                Util.baseFolder + "/" + Util.routeMapsFolder);
+
+// TODO fix this temporary hack
+        File f = new File(sdcard, "/route7/23734ba3-4624-4187-93cf-231f8252427a.mbtiles");
+        Log.e("CARTO CHOOSE", f.getPath());
+
+        //File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
 //		if (!f.exists())
 //			try {
 //				InputStream is = getAssets().open(
@@ -429,7 +436,9 @@ public class ChooseItineraryActivity extends Activity {
 //				throw new RuntimeException(e);
 //			}
 		if (f.exists()){
-			return new MapBoxOfflineTileProvider(f.getPath());
+            Log.e("CARTO CHOOSE EXISTS", f.getPath());
+
+            return new MapBoxOfflineTileProvider(f.getPath());
 		}else{
 			Log.d(TAG,"Fitxer cartografia no trobat " + f.getAbsolutePath());
 		}
@@ -449,7 +458,7 @@ public class ChooseItineraryActivity extends Activity {
                 mProgressDialog = new ProgressDialog(this);
                 mProgressDialog.setMessage("Downloading route content...please wait");
                 mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                mProgressDialog.setCancelable(false);
+                mProgressDialog.setCancelable(true);
                 mProgressDialog.show();
                 return mProgressDialog;
             default:

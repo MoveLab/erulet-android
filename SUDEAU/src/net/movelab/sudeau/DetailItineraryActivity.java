@@ -881,8 +881,12 @@ public class DetailItineraryActivity extends Activity implements
 													DetailItineraryActivity.this,
 													DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
+                                            if(s!=null){
                                             i.putExtra("route_id", s.getTrack().getRoute().getId());
+                                            }
+                                            if(h!=null){
 											i.putExtra("highlight_id", h.getId());
+                                            }
 											startActivity(i);
 										}
 									} catch (JSONException e) {
@@ -1474,7 +1478,7 @@ public class DetailItineraryActivity extends Activity implements
 		selectedRouteSteps = DataContainer.getTrackSteps(t,
                 app.getDataBaseHelper());
 		refreshDecorations(selectedRouteSteps);
-		for (int j = 0; j < selectedRouteSteps.size(); j++) {
+		for (int j = 0; j < (selectedRouteSteps.size()-1); j++) {
 			Step step = selectedRouteSteps.get(j);
             if(step.getOrder() != -1){
 			rectOptions
@@ -1484,7 +1488,7 @@ public class DetailItineraryActivity extends Activity implements
             }
 			addMarkerIfNeeded(step);
 		}
-		rectOptions.zIndex(1);
+        rectOptions.zIndex(1);
 		rectOptions.color(Color.GRAY);
 		selectedRoutePolyLine = mMap.addPolyline(rectOptions);
 	}
@@ -1540,14 +1544,18 @@ public class DetailItineraryActivity extends Activity implements
 
 	private MapBoxOfflineTileProvider initTileProvider() {
 		// File sdcard = Environment.getExternalStorageDirectory();
-		File sdcard = new File(Environment.getExternalStorageDirectory(),
-				Util.baseFolder + "/" + Util.routeMapsFolder);
-		if (selectedRoute.getLocalCarto() != null) {
-			File f = new File(sdcard, selectedRoute.getLocalCarto());
+        File sdcard = new File(Environment.getExternalStorageDirectory(),
+                Util.baseFolder + "/" + Util.routeMapsFolder);
+        if (selectedRoute.getLocalCarto() != null) {
+            File f = new File(sdcard, selectedRoute.getLocalCarto());
+            Log.e("CARTO", f.getPath());
+
 			// File f = new File(getCacheDir() +
 			// "/OSMPublicTransport_HiRes.mbtiles");
 			if (f.exists()) {
-				// try {
+                Log.e("CARTO EXISTS", f.getPath());
+
+                // try {
 				// InputStream is = getAssets().open(
 				// "OSMPublicTransport_HiRes.mbtiles");
 				// FileInputStream is = new FileInputStream(f);
@@ -1644,8 +1652,7 @@ public class DetailItineraryActivity extends Activity implements
 									new LatLng(step.getLatitude(), step
 											.getLongitude()), step
 											.getPrecision(), last, i);
-// removing accuracy circle for tracked route display
-//					pointsInProgress.add(mMap.addCircle(copt));
+					pointsInProgress.add(mMap.addCircle(copt));
 
 					if (routeMode == 1 || routeMode == 2) {
 						rectOptions.add(new LatLng(step.getLatitude(), step
