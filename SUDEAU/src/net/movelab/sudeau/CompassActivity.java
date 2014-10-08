@@ -63,6 +63,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
         // 
         image = (ImageView) findViewById(R.id.imageViewCompass);
         navArrow = (ImageView) findViewById(R.id.imageViewNav);
+        navArrow.setVisibility(View.GONE);
 
         // TextView that will tell the user what degree is he heading
         tvBearing = (TextView) findViewById(R.id.tvBearing);        
@@ -344,7 +345,9 @@ public class CompassActivity extends Activity implements SensorEventListener {
         raB.setFillAfter(true);
 
         // Start the animation
-        navArrow.startAnimation(raB);
+        if( currentLocation!=null && navLocation!=null ){
+        navArrow.setVisibility(View.VISIBLE);
+        navArrow.startAnimation(raB);}
         image.startAnimation(ra);
         currentCompassDegree = -sensorDeltaDegree;        
     }

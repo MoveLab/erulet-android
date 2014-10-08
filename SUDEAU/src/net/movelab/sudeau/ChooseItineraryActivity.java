@@ -22,9 +22,11 @@ import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -96,6 +98,8 @@ public class ChooseItineraryActivity extends Activity {
 
 	private static final String TAG = "ChooseItineraryActivity";
 
+    Context context;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -108,10 +112,12 @@ public class ChooseItineraryActivity extends Activity {
             app = (EruletApp) getApplicationContext();
         }
 
+        context = getApplicationContext();
+
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
         // TODO just for testing
-  //      mPreferences.edit().putBoolean("r7d", false).apply();
+   //     mPreferences.edit().putBoolean("r7d", false).apply();
 
         r7downloaded = mPreferences.getBoolean("r7d", false);
 
@@ -248,7 +254,7 @@ public class ChooseItineraryActivity extends Activity {
 				addRouteMarkersFromDB();
 			}
 			if (mMap != null) {
-				tileProvider = initTileProvider();
+				tileProvider = initTileProvider(context);
 				if(tileProvider!=null){
 					TileOverlay tileOverlay = mMap
 							.addTileOverlay(new TileOverlayOptions()
@@ -336,7 +342,7 @@ public class ChooseItineraryActivity extends Activity {
 		if(tileProvider!=null){
 			tileProvider.close();
 		}
-		tileProvider = initTileProvider();
+		tileProvider = initTileProvider(context);
 		if(tileProvider!=null){
 			TileOverlay tileOverlay = mMap
 					.addTileOverlay(new TileOverlayOptions()
@@ -404,7 +410,8 @@ public class ChooseItineraryActivity extends Activity {
 		}
 	}
 
-	private MapBoxOfflineTileProvider initTileProvider() {
+	private MapBoxOfflineTileProvider initTileProvider(Context context) {
+        AssetManager am = context.getAssets();
 		File f = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMapsFolder + "/Vista_general_vielha.mbtiles");
 		//File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
 //		if (!f.exists())
@@ -557,6 +564,8 @@ public class ChooseItineraryActivity extends Activity {
                         entry = zipIn.getNextEntry();
                     }
                     zipIn.close();
+
+
 
                     mPreferences.edit().putBoolean("r7d", true).apply();
                     r7downloaded = true;

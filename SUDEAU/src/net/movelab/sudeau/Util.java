@@ -213,8 +213,7 @@ public class Util {
 	 * holder for current value of the listener window
 	 */
 	public static long listenerTimer = LISTENER_WINDOW;
-	
-	
+
 	public static String baseFolder = "Holet";
 	public static String routeMapsFolder = "route_maps";
     public static String generalReferencesFolder = "general_references";

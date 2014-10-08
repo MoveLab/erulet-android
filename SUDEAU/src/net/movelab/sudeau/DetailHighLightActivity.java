@@ -81,8 +81,8 @@ public class DetailHighLightActivity extends Activity {
 		TextView nameTxt =  (TextView)findViewById(R.id.tvHlNameLabel);
 		View picSeparator = findViewById(R.id.picture_separator);
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
-		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
-		globalRating.setStepSize(1.0f);
+//		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
+//		globalRating.setStepSize(1.0f);
 		
 		myRating = (RatingBar)findViewById(R.id.ratBarUser);
 		myRating.setStepSize(1.0f);
@@ -172,7 +172,7 @@ public class DetailHighLightActivity extends Activity {
 			if(!hl.getName().trim().equalsIgnoreCase("")){
 				name = hl.getName();
 			}
-			globalRating.setRating( hl.getGlobalRating() );
+//			globalRating.setRating( hl.getGlobalRating() );
 		}
 		String description = getString(R.string.point_no_description);
         if(hl!=null && hl.getLongText()!=null){

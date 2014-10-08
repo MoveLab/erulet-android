@@ -64,7 +64,8 @@
         </activity>
         <activity android:name="net.movelab.sudeau.SecurityRules" >
         </activity>
-        <activity android:name="net.movelab.sudeau.HTMLViewerActivity" >
+        <activity android:name="net.movelab.sudeau.HTMLViewerActivity"
+            android:hardwareAccelerated="true">
         </activity>
         <activity android:name="net.movelab.sudeau.InteractiveImageActivityHeatMap" 
             android:theme="@android:style/Theme.Holo">

@@ -128,7 +128,6 @@ public class HighLight {
 
 	public void setMediaPath(String imagePath) {
 		this.mediaPath = imagePath;
-        Log.d("HighlightMediaPath SET: ",imagePath);
     }
 
 	public int getType() {

@@ -90,7 +90,6 @@ public class DataContainer {
 			} else {
 				retVal = "H_" + userId + "_1";
 			}			
-			Log.d("getHighLightId", "Returning higlight id" + retVal);			
 			return retVal;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -553,11 +552,9 @@ public class DataContainer {
             if(t.getName() == null || t.getName().equals("")){
                 t.setName(editedRoute.getName());
             }
-			Log.d("insertRoute", "Adding track - id " + t.getId() + " name " + t.getName());
 			try {
 				dataBaseHelper.getTrackDataDao().create(t);
 
-                Log.d("insertRoute", "Added track - id " + t.getId() + " name " + t.getName());
 
             } catch (RuntimeException ex) {
 				Log.e("Inserting track", "Insert error " + ex.toString());
@@ -585,8 +582,6 @@ public class DataContainer {
                             if(h.getReferences()!=null){
 
                                 for(Reference ref : h.getReferences()){
-                                Log.e("Inserting reference",
-                                        "Adding reference: " + ref.getId());
                                 try{
                                     dataBaseHelper.getReferenceDataDao().create(ref);
                                 }catch (RuntimeException ex){
@@ -622,10 +617,8 @@ public class DataContainer {
 
                             }
 
-							Log.d("insertRoute", "Adding highlight - id " + h.getId());
 							try{
 								dataBaseHelper.getHlDataDao().create(h);
-                                Log.d("insertRoute", "Added highlight - id " + h.getId());
 
                             }catch (RuntimeException ex){
 								Log.e("Inserting step",

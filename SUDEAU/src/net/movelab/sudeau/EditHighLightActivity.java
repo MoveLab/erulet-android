@@ -25,6 +25,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
@@ -70,8 +71,13 @@ public class EditHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		setContentView(R.layout.highlight_activity);
-		setUpInterface();
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        setContentView(R.layout.highlight_activity);
+
+
+        setUpInterface();
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			String lat = extras.getString("lat");

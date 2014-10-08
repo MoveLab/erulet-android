@@ -83,10 +83,6 @@ public class Switchboard extends Activity {
 
         context = getApplicationContext();
 
-
-
-
-
         if (app == null) { app = (EruletApp) getApplicationContext(); }
 		setContentView(R.layout.activity_switchboard);
 		initButtons();
@@ -98,9 +94,11 @@ public class Switchboard extends Activity {
 
         // TODO JUST FOR TESTING
 //        mPreferences.edit().putBoolean("has_maps", false).apply();
-//        mPreferences.edit().putBoolean("has_grs", false).apply();
-//        mPreferences.edit().putBoolean("has_json", false).apply();
+ //       mPreferences.edit().putBoolean("has_grs", false).apply();
+  //      mPreferences.edit().putBoolean("has_json", false).apply();
 
+        // TODO TEMP TESTING
+        mPreferences.edit().putBoolean("registered_user", false).apply();
 
         hasMaps = mPreferences.getBoolean("has_maps", false);
         hasGRs = mPreferences.getBoolean("has_grs", false);
@@ -119,29 +117,7 @@ public class Switchboard extends Activity {
         }
     }
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REGISTRATION_REQUEST) {
-			if(resultCode == RESULT_OK){
-				//The user registered ok
-				//We write it to preferences, along with any other necessary data
-				mPreferences.edit().putBoolean("registered_user", true).apply();				
-				//And here we store all necessary tokens/etc for the user
-			} else if (resultCode == RESULT_CANCELED) {
-				//No luck
-				/** ************************************************************
-				 *  ************************************************************
-				 *               JUST FOR TEST
-				 *               REMOVE THIS ASAP
-				 *  ************************************************************
-				 *  ************************************************************
-				 */
-				mPreferences.edit().putBoolean("registered_user", true).apply();
-			}
-		}
-	}	
-	
-	
+
 	private void tryToRegister(){
 		boolean userIsRegistered = mPreferences.getBoolean("registered_user", false);        
         if(!userIsRegistered){        	

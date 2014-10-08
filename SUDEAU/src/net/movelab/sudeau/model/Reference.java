@@ -22,7 +22,6 @@ public class Reference {
 	
 	public Reference(String id) {
 		this.setId(id);
-        Log.d("REFERENCE ID SET IN CONSTRUCTOR: ", id);
 	}
 
 	public String getTextContent() {
@@ -30,7 +29,7 @@ public class Reference {
 	}
 
 	public void setTextContent(String textContent) {
-		this.textContent = textContent;        Log.d("REFERENCE TEXT CONTENT SET: ", textContent);
+		this.textContent = textContent;
 	}
 	
 	public String getId() {
@@ -38,7 +37,7 @@ public class Reference {
 	}
 
 	public void setId(String id) {
-		this.id = id;        Log.d("REFERENCE ID SET: ", id);
+		this.id = id;
 	}
 
 	public String getName() {
