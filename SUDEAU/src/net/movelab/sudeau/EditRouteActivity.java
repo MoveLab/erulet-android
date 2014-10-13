@@ -83,7 +83,7 @@ public class EditRouteActivity extends Activity {
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
-                                    save(DataContainer.getAndroidId(getContentResolver()));
+                                    save(PropertyHolder.getUserId());
                                     Intent returnIntent = new Intent();
                                     setResult(RESULT_OK, returnIntent);
                                     finish();
@@ -103,7 +103,7 @@ public class EditRouteActivity extends Activity {
         }
     }
 
-    private String save(String android_id) {
+    private String save(String userId) {
         editedRoute.setName(locale, routeName.getText().toString());
         editedRoute.setDescription(locale, routeDescription.getText().toString());
         DataContainer.editRoute(editedRoute, app.getDataBaseHelper());
@@ -209,7 +209,7 @@ public class EditRouteActivity extends Activity {
         btn_save.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (changed) {
-                    save(DataContainer.getAndroidId(getContentResolver()));
+                    save(PropertyHolder.getUserId());
                     Intent returnIntent = new Intent();
                     setResult(RESULT_OK, returnIntent);
                     finish();

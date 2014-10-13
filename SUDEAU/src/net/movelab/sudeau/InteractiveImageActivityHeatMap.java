@@ -63,9 +63,12 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 				int[] screenSize = Util.getScreenSize(getBaseContext());
 				originalHeight = interactiveImage.getOriginalHeight();
 				originalWidth = interactiveImage.getOriginalWidth();
-				scaledHeight = screenSize[1];
+                int downloadedWidth = 2*Util.getLargestScreenDimension(getApplicationContext()); // this is by definition of what I have on server
+                int downloadedHeight = (int) (downloadedWidth * originalHeight)/originalWidth;
+                // to avoid images that are to large and cause memory problems, I am doing the following: Scaled height will be the minimum of the actual downloaded height and the phone's smallest screen dimension. So if landscape, image is usually full height. But in portrait it is not (since otherwise it becomes huge in portrait).
+				scaledHeight = Math.min(downloadedHeight, Math.min(screenSize[1], screenSize[0]));
 				scaledWidth = Util.getScaledImageWidth(originalWidth, originalHeight, (float)scaledHeight);
-				image.setImageBitmap( Bitmap.createScaledBitmap(BitmapFactory.decodeFile(f.getAbsolutePath()), scaledWidth, scaledHeight, false) );
+                    image.setImageBitmap( Bitmap.createScaledBitmap(BitmapFactory.decodeFile(f.getAbsolutePath()), scaledWidth, scaledHeight, false) );
 			}
 		}				
 		image.setOnTouchListener(this);
@@ -102,6 +105,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		dialog.setTitle( getString(R.string.info) );
 		dialog.setMessage( Html.fromHtml(b.getMessage()) );
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(true);
         WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
         wmlp.gravity = Gravity.TOP | Gravity.LEFT;
         wmlp.x = 50;   //x position
@@ -109,7 +113,8 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
         dialog.show();
 	}
 
-	@Override
+
+        @Override
 	public boolean onTouch(View v, MotionEvent event) {
 		// TODO Auto-generated method stub
 		int x = (int) event.getX();

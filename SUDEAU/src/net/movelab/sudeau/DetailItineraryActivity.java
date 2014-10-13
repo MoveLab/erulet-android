@@ -10,6 +10,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
@@ -41,6 +42,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Property;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -417,7 +419,7 @@ public class DetailItineraryActivity extends Activity implements
 			Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);
 		} else {
 			DataContainer.addHighLightToStep(s, h,
-					DataContainer.getAndroidId(getContentResolver()),
+					PropertyHolder.getUserId(),
 					app.getDataBaseHelper());
 		}
 	}
@@ -767,7 +769,7 @@ public class DetailItineraryActivity extends Activity implements
 					.getId() : null;
 			routeInProgress = DataContainer.createEmptyRoute(locale,
 					app.getDataBaseHelper(),
-					DataContainer.getAndroidId(getContentResolver()),
+					PropertyHolder.getUserId(),
 					idRouteBasedOn);
 		}
 	}
@@ -892,6 +894,7 @@ public class DetailItineraryActivity extends Activity implements
 													DetailHighLightActivity.class);
 											i.putExtra("step_j", s_j_string);
                                             if(s!=null){
+                                                DataBaseHelper.
                                             i.putExtra("route_id", s.getTrack().getRoute().getId());
                                             }
                                             if(h!=null){
@@ -1554,39 +1557,32 @@ public class DetailItineraryActivity extends Activity implements
 	}
 
 	private MapBoxOfflineTileProvider initTileProvider() {
-		// File sdcard = Environment.getExternalStorageDirectory();
-        File sdcard = new File(Environment.getExternalStorageDirectory(),
-                Util.baseFolder + "/" + Util.routeMapsFolder);
-        if (selectedRoute.getLocalCarto() != null) {
-            File f = new File(sdcard, selectedRoute.getLocalCarto());
+        String mapPath = selectedRoute.getLocalCarto();
+        if (mapPath != null && !mapPath.isEmpty()) {
+            File f = new File(mapPath);
             Log.e("CARTO", f.getPath());
-
-			// File f = new File(getCacheDir() +
-			// "/OSMPublicTransport_HiRes.mbtiles");
 			if (f.exists()) {
                 Log.e("CARTO EXISTS", f.getPath());
-
-                // try {
-				// InputStream is = getAssets().open(
-				// "OSMPublicTransport_HiRes.mbtiles");
-				// FileInputStream is = new FileInputStream(f);
-				// int size = is.available();
-				// byte[] buffer = new byte[size];
-				// is.read(buffer);
-				// is.close();
-				// FileOutputStream fos = new FileOutputStream(f);
-				// fos.write(buffer);
-				// fos.close();
-				// } catch (Exception e) {
-				// throw new RuntimeException(e);
-				// }
-				return new MapBoxOfflineTileProvider(f.getPath());
+	return new MapBoxOfflineTileProvider(f.getPath());
 			} else {
 				Log.d(TAG,
 						"Fitxer cartografia no trobat " + f.getAbsolutePath());
 			}
 		}
-		return null;
+        // If not returned by now, try the general map path instead
+        mapPath = PropertyHolder.getGeneralMapPath();
+        if (mapPath != null && !mapPath.isEmpty()) {
+            File f = new File(mapPath);
+            Log.e("CARTO", f.getPath());
+            if (f.exists()) {
+                Log.e("CARTO EXISTS", f.getPath());
+                return new MapBoxOfflineTileProvider(f.getPath());
+            } else {
+                Log.d(TAG,
+                        "Fitxer cartografia no trobat " + f.getAbsolutePath());
+            }
+        }
+        return null;
 	}
 
 	public class FixReceiver extends BroadcastReceiver {
@@ -1768,7 +1764,7 @@ public class DetailItineraryActivity extends Activity implements
 					int order = stepsInProgress.size();
 					s.setOrder(order);
 					DataContainer.addStepToTrack(s, routeInProgress.getTrack(),
-							DataContainer.getAndroidId(getContentResolver()),
+                            PropertyHolder.getUserId(),
 							app.getDataBaseHelper());
 				}
 				Log.d("onReceive", "Received new location " + lat + " " + lng

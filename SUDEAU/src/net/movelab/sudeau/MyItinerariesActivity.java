@@ -51,16 +51,16 @@ public class MyItinerariesActivity extends Activity {
         locale = PropertyHolder.getLocale();
 
 		listView = (ListView) findViewById(R.id.lv_my_routes);
-		String android_id = DataContainer.getAndroidId(getBaseContext().getContentResolver());
-		List<Route> myRoutes = loadRoutes(android_id);
+		String userId = PropertyHolder.getUserId();
+		List<Route> myRoutes = loadRoutes(userId);
 		
 		routeArrayAdapter = new MyRouteArrayAdapter(this, locale, myRoutes,app);
 		listView.setAdapter(routeArrayAdapter);			
 
 	}
 	
-	private List<Route> loadRoutes(String android_id){
-		List<Route> myRoutes = DataContainer.getUserRoutes(app.getDataBaseHelper(),android_id);
+	private List<Route> loadRoutes(String userId){
+		List<Route> myRoutes = DataContainer.getUserRoutes(app.getDataBaseHelper(),userId);
 		for(Route r : myRoutes){
 			DataContainer.refreshRoute(r, app.getDataBaseHelper());
 			if(r.getTrack()!=null)
@@ -69,8 +69,8 @@ public class MyItinerariesActivity extends Activity {
 		return myRoutes;
 	}
 	
-	private void refreshListView(String android_id){
-		List<Route> newRoutes = loadRoutes(android_id);
+	private void refreshListView(String userId){
+		List<Route> newRoutes = loadRoutes(userId);
 		routeArrayAdapter = new MyRouteArrayAdapter(this, locale, newRoutes,app);
 		listView.setAdapter(routeArrayAdapter);
 	}
@@ -78,8 +78,8 @@ public class MyItinerariesActivity extends Activity {
 	@Override
 	protected void onResume() { 
 		super.onResume();
-		String android_id = DataContainer.getAndroidId(getBaseContext().getContentResolver());
-		refreshListView(android_id);
+		String userId = PropertyHolder.getUserId();
+		refreshListView(userId);
 	}
 
 }

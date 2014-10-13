@@ -61,6 +61,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -102,33 +103,25 @@ public class Switchboard extends Activity {
         }
         setContentView(R.layout.activity_switchboard);
         initButtons();
-        //See if we need to display the user registration
-        mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
-        boolean firstTime = mPreferences.getBoolean("first_time", true);
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
 
-        //TODO take this out; for testing only
-           Util.forceNewDownloads(context, app);
-        //  Util.forceNewMapDownloads(context, app);
 
-        // TODO TEMP TESTING
-        mPreferences.edit().putBoolean("registered_user", false).apply();
-
-        startInitialSync();
-
-        // TODO Put this back in -- I have it out just for initial testing
-//        tryToRegister();
-
-        if (firstTime) {
-            //Show user manual, maybe?
-            //Toast.makeText(this, "First time!", Toast.LENGTH_SHORT).show();
-            mPreferences.edit().putBoolean("first_time", false).apply();
-
+        if (PropertyHolder.isFirstTime()) {
+            // TODO tryToRegister();
+            String random_anon_id = UUID.randomUUID().toString();
+            PropertyHolder.setUserId(random_anon_id);
+            showWelcomeDialog();
+            PropertyHolder.setFirstTime(false);
         }
     }
 
-
     private void tryToRegister() {
+
+        // TODO take this out -- beta only
+        showNoRegistrationDialog();
+        if(false){
         boolean userIsRegistered = mPreferences.getBoolean("registered_user", false);
         if (!userIsRegistered) {
             if (Util.isOnline(getBaseContext())) {
@@ -140,7 +133,24 @@ public class Switchboard extends Activity {
         } else {
             Toast.makeText(this, getString(R.string.already_registered), Toast.LENGTH_SHORT).show();
         }
+        }
     }
+
+
+    public void showNoRegistrationDialog(){
+    AlertDialog.Builder b = new AlertDialog.Builder(
+            Switchboard.this);
+    b.setIcon(R.drawable.ic_launcher);
+    b.setTitle("Eth Holet Registration");
+    b.setMessage("The final version of this app will let you create an account on the Eth Holet server so that ou can synchronized your data across devices and share highlights and ratings. For beta testing, however, no information is being sent to the server.");
+    b.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.dismiss();
+        }
+    });
+    b.show();
+}
 
 
     @Override
@@ -232,6 +242,29 @@ public class Switchboard extends Activity {
 
         builderSingle.show();
     }
+
+    private void showWelcomeDialog() {
+        AlertDialog.Builder b = new AlertDialog.Builder(
+                Switchboard.this);
+        b.setIcon(R.drawable.ic_launcher);
+        b.setTitle("Welcome to Eth Holet!");
+        b.setMessage("Thanks for trying out the beta version of our app. You will see that the app communicates with you in a mixture of English and Catalan (regardless of the language setting you choose). This will change in the next few weeks once we have everything translated, so please bear with us for now.\n\nIn order to function offline in the mountains, Eth Holet needs to perform an initial sync with the server, which will take several minutes. If you have an internet connection and would like to do this now, please click 'OK'. Otherwise, you can always do it later by choosing the 'sync' option from the menu on this screen.");
+         b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialogInterface, int i) {
+                 startInitialSync();
+             }
+         });
+        b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        b.show();
+    }
+
+
 
 
     private void startInitialSync() {
@@ -325,9 +358,7 @@ public class Switchboard extends Activity {
 
             }
             }
-            //Maps
-
-
+            //General Maps
             boolean mapSuccess = true;
             try {
                 HttpResponse response = Util.getResponse(Util.getUrlGeneralMap(context[0]), 180000);
@@ -433,6 +464,120 @@ public class Switchboard extends Activity {
                 PropertyHolder.setLastUpdateGeneralMapNow();
             }
 
+
+//Route Maps
+List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+            boolean routeMapSuccess;
+            for(Route route: routes){
+                routeMapSuccess = true;
+            try {
+                HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
+                int statusCode = response.getStatusLine().getStatusCode();
+                Log.i("Route MAP Download", "Status code:" + statusCode);
+                if (statusCode == 200) {
+                    if (response.containsHeader("Content-Length")) {
+                        int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
+                        HttpEntity entity = response.getEntity();
+                        File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
+                        String destinationPath = destinationFile.getPath();
+                        Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
+                        InputStream input = new BufferedInputStream(entity.getContent());
+                        OutputStream output = new FileOutputStream(destinationPath);
+                        byte data[] = new byte[1024];
+                        int total = 0;
+                        while ((count = input.read(data)) != -1) {
+                            if (isCancelled()) {
+                                mapSuccess = false;
+                                break;
+                            } else {
+                                output.write(data, 0, count);
+                                total += count;
+                                myProgress = (int) ((total * 90) / fileSize);
+                                publishProgress(myProgress);
+                            }
+                        }
+                        output.flush();
+                        output.close();
+                        input.close();
+                        // NOW UNZIP IT
+                        ZipFile thisZipfile = new ZipFile(destinationPath);
+                        int nEntries = thisZipfile.size();
+                        int zipCounter = 0;
+                        String zipFilePath = destinationPath;
+                        Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
+                        File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMapsFolder);
+                        String destDirectory = target_directory.getPath();
+                        Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
+                        try {
+                            final int BUFFER_SIZE = 4096;
+                            File destDir = new File(destDirectory);
+                            if (!destDir.exists()) {
+                                destDir.mkdirs();
+                            }
+                            ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+                            ZipEntry entry = zipIn.getNextEntry();
+                            // iterates over entries in the zip file. THE server should put only one in it, and I will save only the last entry as the map destination in shared preferences. But I am keeping the iteration just in case that would change in future.
+                            while (entry != null) {
+                                if (isCancelled()) {
+                                    mapSuccess = false;
+                                    break;
+                                } else {
+                                    String filePath = destDirectory + File.separator + entry.getName();
+                                    PropertyHolder.setGeneralMapPath(filePath);
+                                    if (!entry.isDirectory()) {
+                                        // if the entry is a file, extracts it
+                                        File f = new File(filePath);
+                                        File dir = new File(f.getParent());
+                                        dir.mkdirs();
+                                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+                                        byte[] bytesIn = new byte[BUFFER_SIZE];
+                                        int read = 0;
+                                        while ((read = zipIn.read(bytesIn)) != -1) {
+                                            bos.write(bytesIn, 0, read);
+                                        }
+                                        bos.close();
+
+                                        // add it to route
+                                        route.setLocalCarto(filePath);
+                                        route.setLocalCartoLastUpdatedNow();
+                                        DataContainer.updateRoute(route, app.getDataBaseHelper());
+                                    } else {
+                                        // if the entry is a directory, make the directory
+                                        File dir = new File(filePath);
+                                        dir.mkdirs();
+                                    }
+                                }
+                                myProgress += (int) ((++zipCounter * 10) / nEntries);
+                                publishProgress(myProgress);
+                                zipIn.closeEntry();
+                                entry = zipIn.getNextEntry();
+                            }
+                            zipIn.close();
+                        } catch (Exception ex) {
+                            mapSuccess = false;
+                            Log.e("MAP ERROR 1: ", ex.getStackTrace().toString());
+                        }
+
+                    } else {
+                        Log.e("Maps", "entity: " + response.getEntity().getContent());
+                    }
+                } else {
+                    Log.e("NEWTRY", "failed to get map");
+                    mapSuccess = false;
+                }
+            } catch (ClientProtocolException e) {
+                Log.e("NEWTRY", "error: " + e);
+                mapSuccess = false;
+
+            } catch (IOException e) {
+                mapSuccess = false;
+                Log.e("NEWTRY", "error: " + e);
+            }
+            if (mapSuccess) {
+                PropertyHolder.setLastUpdateGeneralMapNow();
+            }
+
+            }
 // GENERAL REFS
 
 
@@ -557,7 +702,6 @@ public class Switchboard extends Activity {
             }
 
             // ROUTE MEDIA
-            List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
             Log.e("ROUTES:", "size: " + routes.size());
             for (Route route : routes) {
                 boolean routeSuccess = true;

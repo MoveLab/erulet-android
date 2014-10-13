@@ -1111,13 +1111,25 @@ public class Util {
         return result;
     }
 
+    public static String getUrlRouteMap(Route route) {
+        long last_update = route.getLocalCartoLastUpdated();
+        String result = UtilLocal.URL_ROUTE_MAP + route.getId() + "/" + last_update + "/";
+        return result;
+    }
+
+    public static int getLargestScreenDimension(Context context){
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager windowManager = (WindowManager) context
+                    .getSystemService(Context.WINDOW_SERVICE);
+            windowManager.getDefaultDisplay().getMetrics(metrics);
+            // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
+            return Math.max(metrics.widthPixels, metrics.heightPixels);
+        }
+
 
     public static String getUrlGeneralReferences(Context context) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        int screenWidthPixels = metrics.widthPixels;
+        // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
+        int screenWidthPixels = getLargestScreenDimension(context);
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         long last_update = PropertyHolder.getLastUpdateGeneralReferences();
@@ -1126,16 +1138,11 @@ public class Util {
     }
 
     public static String getUrlRouteContent(Context context, String routeId, long lastUpdate) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        int screenWidthPixels = metrics.widthPixels;
+        // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
+        int screenWidthPixels = getLargestScreenDimension(context);
         String result = UtilLocal.URL_ROUTE_CONTENT + routeId + "/" + screenWidthPixels + "/" + Long.toString(lastUpdate) + "/";
         return result;
     }
-
-
 
 
     public static boolean hasMinimumContents(Context context, EruletApp app) {

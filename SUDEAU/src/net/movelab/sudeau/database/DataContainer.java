@@ -187,6 +187,12 @@ public class DataContainer {
         return hl;
     }
 
+    public static Step refreshStepForHighlight(Step s, DataBaseHelper db) {
+        db.getHlDataDao().refresh(s.getHighlights());
+        Log.i("REFRESH", hl.getId());
+        return hl;
+    }
+
 
     public static Reference refreshReference(Reference r, DataBaseHelper db) {
         db.getReferenceDataDao().refresh(r);
@@ -353,11 +359,6 @@ public class DataContainer {
             ids.add(steps.get(i).getId());
         }
         return ids;
-    }
-
-    public static String getAndroidId(ContentResolver cr) {
-        String android_id = Secure.getString(cr, Secure.ANDROID_ID);
-        return android_id;
     }
 
     public static void editRoute(Route editedRoute, DataBaseHelper db) {
@@ -587,14 +588,14 @@ public class DataContainer {
     }
 
     public static void insertRoute(Route editedRoute,
-                                   DataBaseHelper dataBaseHelper, String android_id) {
+                                   DataBaseHelper dataBaseHelper, String userId) {
         // Save track
         // Track t = new Track();
         if (editedRoute.getTrack() != null) {
             Track t = editedRoute.getTrack();
             if (t.getId() == null || t.getId().equals("")) {
                 t.setId(
-                        DataContainer.getTrackId(dataBaseHelper, android_id));
+                        DataContainer.getTrackId(dataBaseHelper, userId));
             }
             if (t.getName() == null || t.getName().equals("")) {
                 //TODO change this once all track languages are in. Should be a line for each language.
@@ -613,14 +614,14 @@ public class DataContainer {
                 for (int i = 0; i < currentSteps.size(); i++) {
                     Step s = currentSteps.get(i);
                     if (s.getId() == null) {
-                        s.setId(DataContainer.getStepId(dataBaseHelper, android_id));
+                        s.setId(DataContainer.getStepId(dataBaseHelper, userId));
                     }
                     s.setTrack(t);
 
                     if (s.getHighlights() != null) {
                         for (HighLight h : s.getHighlights()) {
                             if (h.getId() == null) {
-                                h.setId(DataContainer.getHighLightId(dataBaseHelper, android_id));
+                                h.setId(DataContainer.getHighLightId(dataBaseHelper, userId));
                                 Log.e("HIGHLIGHT MISSING ID", h.getName());
 
                             }
@@ -683,7 +684,7 @@ public class DataContainer {
             }
         }
         if (editedRoute.getId() == null || editedRoute.getId().equals("")) {
-            editedRoute.setId(DataContainer.getRouteId(dataBaseHelper, android_id));
+            editedRoute.setId(DataContainer.getRouteId(dataBaseHelper, userId));
         }
 
         try {

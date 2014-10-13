@@ -93,9 +93,6 @@ public class ChooseItineraryActivity extends Activity {
 
     private SharedPreferences mPreferences;
 
-// TODO fix this... move all this logic to DB
-	public boolean r7downloaded;
-
 	private static final String TAG = "ChooseItineraryActivity";
 
     private String currentLocale;
@@ -120,11 +117,6 @@ public class ChooseItineraryActivity extends Activity {
             PropertyHolder.init(context);
         currentLocale = PropertyHolder.getLocale();
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
-
-        // TODO just for testing
-   //     mPreferences.edit().putBoolean("r7d", false).apply();
-
-        r7downloaded = mPreferences.getBoolean("r7d", false);
 
         progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
 		//setUpDBIfNeeded();
@@ -183,7 +175,6 @@ public class ChooseItineraryActivity extends Activity {
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final Route r = routeTable.get(selectedMarker);
-        if(r7downloaded){
             builder.setTitle(r.getName(currentLocale));
             builder.setIcon(R.drawable.ic_pin_info);
             builder.setMessage(r.getDescription(currentLocale));
@@ -220,24 +211,7 @@ public class ChooseItineraryActivity extends Activity {
                     startActivity(intent);				                }
             });
             }
-        } else{
-            builder.setTitle(r.getName(currentLocale));
-            builder.setMessage(r.getDescription(currentLocale) + "\n\nYou have not yet downloaded the content for this route to your phone. Would you like to download it now?");
-            builder.setPositiveButton("Download", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startDownload();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
 
-            builder.setCancelable(true);
-        }
 		builder.show();		
 	}
 	
@@ -452,159 +426,5 @@ public class ChooseItineraryActivity extends Activity {
 	}
 
 
-    private void startDownload() {
-        // TODO unhardcode the route number and pass it instead
-        String url = "http://107.170.174.182/media/holet/zipped_routes/content_route7.zip";
-        new DownloadFileAsync().execute(url);
-    }
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_DOWNLOAD_PROGRESS:
-                mProgressDialog = new ProgressDialog(this);
-                mProgressDialog.setMessage("Downloading route content...please wait");
-                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                mProgressDialog.setCancelable(true);
-                mProgressDialog.show();
-                return mProgressDialog;
-            default:
-                return null;
-        }
-    }
-
-
-    class DownloadFileAsync extends AsyncTask<String, String, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showDialog(DIALOG_DOWNLOAD_PROGRESS);
-        }
-
-        @Override
-        protected String doInBackground(String... aurl) {
-            int count;
-
-            try {
-
-                URL url = new URL(aurl[0]);
-                Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setDoOutput(true);
-                conn.connect();
-
-               int lenghtOfFile = conn.getContentLength();
-                Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
-
-                Log.d("ANDRO_ASYNC", "SD path: " + Environment.getExternalStorageDirectory().getPath());
-
-                File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route.zip");
-                String destinationPath = destinationFile.getPath();
-                Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
-
-                InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream(destinationPath);
-
-                byte data[] = new byte[1024];
-
-                long total = 0;
-
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    publishProgress(""+(int)((total*90)/lenghtOfFile));
-                    output.write(data, 0, count);
-                }
-
-                output.flush();
-                output.close();
-                input.close();
-
-
-                // NOW UNZIP IT
-                ZipFile thisZipfile = new ZipFile(destinationPath);
-                int nEntries = thisZipfile.size();
-                int zipCounter = 0;
-
-                String zipFilePath = destinationPath;
-                Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
-// TODO take out hard coded route 7
-                File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route_7");
-                String destDirectory = target_directory.getPath();
-                Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
-
-                UnzipUtility unzipper = new UnzipUtility();
-                try {
-//                    unzipper.unzip(zipFilePath, destDirectory);
-//                    publishProgress(""+100);
-
-                    final int BUFFER_SIZE = 4096;
-
-                    File destDir = new File(destDirectory);
-                    if (!destDir.exists()) {
-                        destDir.mkdirs();
-                    }
-                    ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-                    ZipEntry entry = zipIn.getNextEntry();
-                    // iterates over entries in the zip file
-                    while (entry != null) {
-                        String filePath = destDirectory + File.separator + entry.getName();
-                        if (!entry.isDirectory()) {
-                            // if the entry is a file, extracts it
-//                            extractFile(zipIn, filePath);
-
-                            File f = new File(filePath);
-                            File dir = new File(f.getParent());
-                            dir.mkdirs();
-                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-                            byte[] bytesIn = new byte[BUFFER_SIZE];
-                            int read = 0;
-                            while ((read = zipIn.read(bytesIn)) != -1) {
-                                bos.write(bytesIn, 0, read);
-
-                            }
-                            bos.close();
-
-
-                        } else {
-                            // if the entry is a directory, make the directory
-                            File dir = new File(filePath);
-                            dir.mkdirs();
-                        }
-
-                        publishProgress(""+(int)(90+ ((++zipCounter*10)/nEntries)));
-
-                        zipIn.closeEntry();
-                        entry = zipIn.getNextEntry();
-                    }
-                    zipIn.close();
-
-
-
-                    mPreferences.edit().putBoolean("r7d", true).apply();
-                    r7downloaded = true;
-
-                } catch (Exception ex) {
-                    // some errors occurred
-                    ex.printStackTrace();
-                }
-
-            } catch (Exception e) {}
-
-
-            return null;
-
-        }
-        protected void onProgressUpdate(String... progress) {
-            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
-        }
-
-        @Override
-        protected void onPostExecute(String unused) {
-            dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
-            showItineraryOptions();
-        }
-    }
 
 }

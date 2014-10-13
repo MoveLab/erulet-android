@@ -21,6 +21,8 @@ public class PropertyHolder {
     public static final String SHARED_PREFERENCES_NAME = "PROPERTIES";
     public static final String ALARM_INTERVAL = "ALARM_INTERVAL";
     public static final String SERVICE_ON = "SERVICE_ON";
+    public static final String IS_FIRST_TIME = "IS_FIRST_TIME";
+    public static final String USER_KEY = "USER_KEY";
     public static final String IS_REGISTERED = "IS_REGISTERED";
     public static final String USER_ID = "USER_ID";
     public static final String LAST_UPDATE_GENERAL_MAP = "LAST_UPDATE_GENERAL_MAP";
@@ -84,6 +86,15 @@ public class PropertyHolder {
 		editor.apply();
 	}
 
+    public static boolean isFirstTime() {
+        return sharedPreferences.getBoolean(IS_FIRST_TIME, true);
+    }
+
+    public static void setFirstTime(boolean _isFirstTime) {
+        editor.putBoolean(IS_FIRST_TIME, _isFirstTime);
+        editor.apply();
+    }
+
 	public static boolean isRegistered() {
 		return sharedPreferences.getBoolean(IS_REGISTERED, false);
 	}
@@ -101,6 +112,15 @@ public class PropertyHolder {
 		editor.putString(USER_ID, _userId);
 		editor.apply();
 	}
+
+    public static String getUserKey() {
+        return sharedPreferences.getString(USER_KEY, null);
+    }
+
+    public static void setUserKey(String _userKey) {
+        editor.putString(USER_KEY, _userKey);
+        editor.apply();
+    }
 
 
     public static String getGeneralMapPath() {
@@ -152,7 +172,6 @@ public class PropertyHolder {
         editor.putLong(LAST_UPDATE_GENERAL_REFERENCES, _update_unix_time);
         editor.apply();
     }
-
 
     public static String getLocale() {
         return sharedPreferences.getString(LOCALE, "oc");

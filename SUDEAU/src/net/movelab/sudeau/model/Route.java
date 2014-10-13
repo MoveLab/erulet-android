@@ -92,6 +92,11 @@ public class Route {
         this.localCartoLastUpdated = localCartoLastUpdated;
     }
 
+    public void setLocalCartoLastUpdatedNow() {
+        this.localCartoLastUpdated = System.currentTimeMillis()/1000;
+    }
+
+
     public long getRouteContentLastUpdated() {
         return routeContentLastUpdated;
     }

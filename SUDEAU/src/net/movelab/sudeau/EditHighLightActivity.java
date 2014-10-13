@@ -72,10 +72,10 @@ public class EditHighLightActivity extends Activity {
             app = (EruletApp) getApplicationContext();
         }
 
+        // To stop keyboard from popping up immediately and blocking everything
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         setContentView(R.layout.highlight_activity);
-
 
         setUpInterface();
 		Bundle extras = getIntent().getExtras();
