@@ -118,7 +118,7 @@ public class ChooseItineraryActivity extends Activity {
 
         if(!PropertyHolder.isInit())
             PropertyHolder.init(context);
-
+        currentLocale = PropertyHolder.getLocale();
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
         // TODO just for testing
@@ -423,7 +423,7 @@ public class ChooseItineraryActivity extends Activity {
                 Util.baseFolder + "/" + Util.routeMapsFolder);
 
 // TODO fix this temporary hack
-        File f = new File(sdcard, );
+        File f = new File(PropertyHolder.getGeneralMapPath());
         Log.e("CARTO CHOOSE", f.getPath());
 
         //File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");

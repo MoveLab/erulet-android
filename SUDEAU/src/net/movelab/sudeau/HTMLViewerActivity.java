@@ -74,7 +74,7 @@ public class HTMLViewerActivity extends Activity {
 			String idReference = extras.getString("idReference");
             Log.d("Reference ID: ", idReference);
             Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-            if(r != null && r.getTextContent() != null && r.getTextContent() != ""){
+            if(r != null && r.getTextContent() != null && !r.getTextContent().isEmpty()){
                 Log.d("Reference URL: ", "file://" + r.getTextContent());
 
                 String[] url_chop = r.getTextContent().split("/");
@@ -105,7 +105,7 @@ public class HTMLViewerActivity extends Activity {
                 }
 
 //                String modified_html_text = html_text.toString().replace("../", "" );
-                String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>");
+                String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("holet-ref-style.css", "erholet-ref-style.css");
 
 
 

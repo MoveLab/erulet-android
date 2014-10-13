@@ -45,23 +45,18 @@ public class JSONConverter {
             r.setId(j.getString("id"));
         }
 
-        Iterator it = Util.nameMap.entrySet().iterator();
-        while (it.hasNext()) {
-            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
-            if (j.has(pairs.getValue())) {
-                r.setName(pairs.getKey(), j.getString(pairs.getValue()));
-            }
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        r.setName("oc", j.optString("name_oc", ""));
+        r.setName("es", j.optString("name_es", ""));
+        r.setName("ca", j.optString("name_ca", ""));
+        r.setName("fr", j.optString("name_fr", ""));
+        r.setName("en", j.optString("name_en", ""));
 
-        it = Util.descriptionMap.entrySet().iterator();
-        while (it.hasNext()) {
-            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
-            if (j.has(pairs.getValue())) {
-                r.setDescription(pairs.getKey(), j.getString(pairs.getValue()));
-            }
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        r.setDescription("oc", j.optString("description_oc", ""));
+        r.setDescription("es", j.optString("description_es", ""));
+        r.setDescription("ca", j.optString("description_ca", ""));
+        r.setDescription("fr", j.optString("description_fr", ""));
+        r.setDescription("en", j.optString("description_en", ""));
+
 
         if (j.has("id_route_based_on")) {
             r.setIdRouteBasedOn(j.getString("id_route_based_on"));
@@ -341,18 +336,11 @@ public class JSONConverter {
         JSONObject j = new JSONObject();
         j.put("id", r.getId());
 
-        Iterator it = Util.nameMap.entrySet().iterator();
-        while (it.hasNext()) {
-            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
-            j.put(pairs.getValue(), r.getName(pairs.getKey()));
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        it = Util.descriptionMap.entrySet().iterator();
-        while (it.hasNext()) {
-            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
-            j.put(pairs.getValue(), r.getName(pairs.getKey()));
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        j.put("name_oc", r.getName("oc"));
+        j.put("name_es", r.getName("es"));
+        j.put("name_ca", r.getName("ca"));
+        j.put("name_fr", r.getName("fr"));
+        j.put("name_en", r.getName("en"));
         j.put("idroutebasedon", r.getIdRouteBasedOn());
         j.put("reference", referenceToJSONObject(r.getReference()));
         j.put("track", trackToJSONObject(r.getTrack()));

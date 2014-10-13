@@ -7,6 +7,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
@@ -130,9 +131,12 @@ public class DetailHighLightActivity extends Activity {
 		
 		ImageView ivPicture = (ImageView)findViewById(R.id.highLightPicture);
 		VideoView ivVideo = (VideoView)findViewById(R.id.highLightVideo);
-		if(hl!=null && hl.getMediaPath()!=null && !hl.getMediaPath().trim().equalsIgnoreCase("")){
-			String pathName = hl.getMediaPath().replace("file://", "");
-			if(pathName.contains("mp4")){
+        DataContainer.refreshHighlightForFileManifest(hl, app.getDataBaseHelper());
+        Log.i("MEDIAPATH: HAS FILE", "yes? " + hl.hasMediaFile());
+		if(hl!=null && hl.hasMediaFile()){
+			String pathName = hl.getFileManifest().getPath();
+            Log.i("MEDIAPATH: ", pathName);
+            if(pathName.contains("mp4")){
 				progressBar.setVisibility(View.GONE);
 				ivPicture.setVisibility(View.GONE);				
 				ivVideo.setVideoURI(Uri.parse(pathName));

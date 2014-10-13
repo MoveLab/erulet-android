@@ -21,7 +21,9 @@ public class InteractiveImage {
 	private int originalHeight;
     @DatabaseField(foreign=true, columnName = "highlightId")
     private HighLight highlight;
-	@ForeignCollectionField
+    @DatabaseField(foreign=true, columnName="fileManifestId")
+    private FileManifest file_manifest;
+    @ForeignCollectionField
 	private Collection<Box> boxes;	
 	
 	public InteractiveImage(){
@@ -61,8 +63,11 @@ public class InteractiveImage {
         Log.d("II Boxes SET: ", id);
 
     }
-	
-	public int getOriginalWidth() {
+
+    public FileManifest getFileManifest() { return file_manifest; }
+    public void setFileManifest(FileManifest file_manifest){ this.file_manifest = file_manifest;}
+
+    public int getOriginalWidth() {
 		return originalWidth;
 	}
 

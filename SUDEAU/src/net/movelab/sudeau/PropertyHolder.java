@@ -26,6 +26,10 @@ public class PropertyHolder {
     public static final String LAST_UPDATE_GENERAL_MAP = "LAST_UPDATE_GENERAL_MAP";
     public static final String LAST_UPDATE_GENERAL_REFERENCES = "LAST_UPDATE_GENERAL_REFERENCES";
     public static final String LOCALE = "pref_locale";
+    public static final String GENERAL_MAP_PATH = "GENERAL_MAP_PATH";
+    public static final String GENERAL_REFERENCE_PATH = "GENERAL_REFERENCE_PATH";
+
+
     public static final String ARANESE = "oc";
     public static final String SPANISH = "es";
     public static final String CATALAN = "ca";
@@ -99,6 +103,25 @@ public class PropertyHolder {
 	}
 
 
+    public static String getGeneralMapPath() {
+        return sharedPreferences.getString(GENERAL_MAP_PATH, null);
+    }
+
+    public static void setGeneralMapPath(String _path) {
+        editor.putString(GENERAL_MAP_PATH, _path);
+        editor.apply();
+    }
+
+    public static String getGeneralReferencePath() {
+        return sharedPreferences.getString(GENERAL_REFERENCE_PATH, null);
+    }
+
+    public static void setGeneralReferencePath(String _path) {
+        editor.putString(GENERAL_REFERENCE_PATH, _path);
+        editor.apply();
+    }
+
+
     public static long getLastUpdateGeneralMap(){
         return sharedPreferences.getLong(LAST_UPDATE_GENERAL_MAP, 0L);
     }
@@ -132,7 +155,7 @@ public class PropertyHolder {
 
 
     public static String getLocale() {
-        return sharedPreferences.getString(LOCALE, "");
+        return sharedPreferences.getString(LOCALE, "oc");
     }
 
     public static void setLocale(String _locale) {

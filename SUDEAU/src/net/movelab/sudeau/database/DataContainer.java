@@ -14,6 +14,7 @@ import net.movelab.sudeau.EruletApp;
 import net.movelab.sudeau.Util;
 import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
+import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.Reference;
@@ -143,6 +144,16 @@ public class DataContainer {
         return r;
     }
 
+    public static FileManifest createFileManifest(String path, DataBaseHelper db) {
+        FileManifest fm = new FileManifest();
+        fm.setPath(path);
+        Log.d("created FileManifest", "path: " + fm.getPath());
+        db.getFileManifestDataDao().create(fm);
+        Log.d("created FileManifest", "id " + fm.getId());
+        return fm;
+    }
+
+
     public static void addStepToTrack(Step s, Track t, String userId,
                                       DataBaseHelper db) {
         // Track is already created
@@ -169,6 +180,13 @@ public class DataContainer {
         db.getRouteDataDao().refresh(r);
         return r;
     }
+
+    public static HighLight refreshHighlightForFileManifest(HighLight hl, DataBaseHelper db) {
+        db.getFileManifestDataDao().refresh(hl.getFileManifest());
+        Log.i("REFRESH", hl.getId());
+        return hl;
+    }
+
 
     public static Reference refreshReference(Reference r, DataBaseHelper db) {
         db.getReferenceDataDao().refresh(r);
@@ -560,6 +578,12 @@ public class DataContainer {
 
     public static void updateHighLight(HighLight h, DataBaseHelper dataBaseHelper) {
         dataBaseHelper.getHlDataDao().update(h);
+    }
+    public static void updateFileManifest(FileManifest fm, DataBaseHelper dataBaseHelper) {
+        dataBaseHelper.getFileManifestDataDao().update(fm);
+    }
+    public static void updateInteractiveImage(InteractiveImage ii, DataBaseHelper dataBaseHelper) {
+        dataBaseHelper.getInteractiveImageDataDao().update(ii);
     }
 
     public static void insertRoute(Route editedRoute,

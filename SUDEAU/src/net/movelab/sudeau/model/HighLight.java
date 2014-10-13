@@ -6,6 +6,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.movelab.sudeau.database.DataBaseHelper;
+
 import java.util.Collection;
 
 @DatabaseTable(tableName = "highlight")
@@ -19,6 +21,8 @@ public class HighLight {
 	private String longText;	
 	@DatabaseField
 	private String mediaPath;
+    @DatabaseField(foreign=true, columnName="fileManifestId")
+    private FileManifest file_manifest;
 	@DatabaseField
 	private double radius;
 	@DatabaseField
@@ -84,6 +88,9 @@ public class HighLight {
 		this.type=type;
 		this.step=step;
 	}
+
+    public FileManifest getFileManifest() { return file_manifest; }
+    public void setFileManifest(FileManifest file_manifest){ this.file_manifest = file_manifest;}
 
 	public double getRadius() {
 		return radius;
@@ -177,6 +184,13 @@ public class HighLight {
 	public void setInteractiveImages(Collection<InteractiveImage> interactiveImages) {
 		this.interactiveImages = interactiveImages;
 
+    }
+
+    public boolean hasMediaFile(){
+        if(this.getFileManifest()!=null && this.getFileManifest().getPath() != null)
+            Log.d("MEDIA FILE MADNESS:", this.getFileManifest().getPath());
+
+        return this.getFileManifest()!=null && this.getFileManifest().getPath()!=null && !this.getFileManifest().getPath().isEmpty();
     }
 
 }

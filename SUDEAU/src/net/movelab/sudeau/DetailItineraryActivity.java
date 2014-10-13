@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
@@ -338,6 +339,9 @@ public class DetailItineraryActivity extends Activity implements
 				hl.setName(hlName);
 				hl.setLongText(hlLongText);
 				hl.setMediaPath(imagePath);
+                FileManifest new_file_manifest = new FileManifest();
+                new_file_manifest.setPath(imagePath);
+                hl.setFileManifest(new_file_manifest);
 				hl.setType(hlType);
 				Step s = fixReceiver.getStepById(stepBeingEditedId);
 				hl.setRadius(s.getPrecision());
@@ -1018,10 +1022,9 @@ public class DetailItineraryActivity extends Activity implements
 								snippet.setText(h1.getLongText());
 								ImageView picture = (ImageView) myContentView
 										.findViewById(R.id.info_pic);
-								if (h1.getMediaPath() != null
-										&& !h1.getMediaPath().trim()
-												.equalsIgnoreCase("")) {
-									String file = h1.getMediaPath();
+                                DataContainer.refreshHighlightForFileManifest(h1, app.getDataBaseHelper());
+								if (h1.hasMediaFile()) {
+									String file = h1.getFileManifest().getPath();
 									if (file.contains("mp4")) {
 										file = file.replace("file://", "");
 										Bitmap bm = ThumbnailUtils
@@ -1057,10 +1060,9 @@ public class DetailItineraryActivity extends Activity implements
 								snippet.setText(h1.getLongText());
 								ImageView picture = (ImageView) myContentView
 										.findViewById(R.id.info_pic);
-								if (h1.getMediaPath() != null
-										&& !h1.getMediaPath().trim()
-												.equalsIgnoreCase("")) {
-									String file = h1.getMediaPath();
+                                DataContainer.refreshHighlightForFileManifest(h1, app.getDataBaseHelper());
+								if (h1.hasMediaFile()) {
+									String file = h1.getFileManifest().getPath();
 									if (file.contains("mp4")) {
 										file = file.replace("file://", "");
 										Bitmap bm = ThumbnailUtils
@@ -1167,7 +1169,10 @@ public class DetailItineraryActivity extends Activity implements
 			i.putExtra("hlid", h.getId());
 			i.putExtra("hlname", h.getName());
 			i.putExtra("hllongtext", h.getLongText());
-			i.putExtra("hlimagepath", h.getMediaPath());
+            DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
+            if(h.hasMediaFile()){
+			i.putExtra("hlimagepath", h.getFileManifest().getPath());
+            }
 		}
 		startActivityForResult(i, HIGHLIGHT_EDIT_REQUEST);
 	}

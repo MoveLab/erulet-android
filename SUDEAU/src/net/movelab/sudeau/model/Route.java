@@ -144,35 +144,49 @@ public class Route {
 		this.id = id;
 	}
 
-    public static String[] langArray = new String[]{"oc", "es", "ca", "fr", "en"};
-    public static ArrayList<String> langArrayList = new ArrayList<String>(Arrays.asList(langArray));
-    String[] nameArray = new String[]{name_oc, name_es, name_ca, name_fr, name_en};
-    Object[] nameAttrArray = new Object[]{this.name_oc, this.name_es, this.name_ca, this.name_fr, this.name_en};
-    String[] descriptionArray = new String[]{description_oc, description_es, description_ca, description_fr, description_en};
-    Object[] descriptionAttrArray = new Object[]{this.description_oc, this.description_es, this.description_ca, this.description_fr, this.description_en};
+
+    public String getFirstfilledName(){
+        String result = name_oc;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_es;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_ca;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_fr;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_en;
+        if(result != null && !result.isEmpty())
+            return result;
+        return "";
+    }
 
     public String getName(String lang) {
-        Log.i("ROUTE GET NAME: ", "lang " + lang);
         String result = "";
-        // First see if desired lang is available
-        if(langArrayList.contains(lang)){
-            result = nameArray[langArrayList.indexOf(lang)];
-            if(result != null && !result.equals("")){
-                Log.i("ROUTE GET NAME: ", "result 1: " + result);
-                return result;
-            }
-        }
-        // If not, then go through and return first available
-        for(String this_lang:langArrayList){
-            result = nameArray[langArrayList.indexOf(this_lang)];
-            if(result != null && !result.equals("")){
-                Log.i("ROUTE GET NAME: ", "result 2: " + result);
-                    return result;
-            }
-            }
-        // if nothing yet, then return empty string
-        Log.i("ROUTE GET NAME: ", "result 3: " + result);
-        return result;
+        if(lang.equals("oc")){
+            result = name_oc;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("es")){
+            result = name_es;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("ca")){
+            result = name_ca;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("fr")){
+            result = name_fr;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("en"))
+            result = name_en;{
+            if(result != null && !result.isEmpty())
+                return result;}
+           return getFirstfilledName();
 	}
 
 	public void setName(String lang, String name) {
@@ -189,24 +203,48 @@ public class Route {
     }
 
 
+    public String getFirstfilledDescription(){
+        String result = description_oc;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = description_es;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = description_ca;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = description_fr;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = description_en;
+        if(result != null && !result.isEmpty())
+            return result;
+        return "";
+    }
+
     public String getDescription(String lang) {
         String result = "";
-        // First see if desired lang is available
-        if(langArrayList.contains(lang)){
-            result = descriptionArray[langArrayList.indexOf(lang)];
-            if(result != null && !result.equals("")){
-                return result;
-            }
-        }
-        // If not, then go through and return first available
-        for(String this_lang:langArrayList){
-            result = descriptionArray[langArrayList.indexOf(this_lang)];
-            if(result != null && !result.equals("")){
-                return result;
-            }
-        }
-        // if nothing yet, then return empty string
-        return result;
+        if(lang.equals("oc")){
+            result = description_oc;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("es")){
+            result = description_es;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("ca")){
+            result = description_ca;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("fr")){
+            result = description_fr;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("en"))
+            result = description_en;{
+            if(result != null && !result.isEmpty())
+                return result;}
+        return getFirstfilledDescription();
     }
 
     public void setDescription(String lang, String description) {
@@ -221,6 +259,7 @@ public class Route {
         if(lang.equals("en"))
             this.description_en = description;
     }
+
 
 
     public Track getTrack(){

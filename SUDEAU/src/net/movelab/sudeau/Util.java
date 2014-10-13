@@ -29,6 +29,7 @@ import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Route;
 
+import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -41,12 +42,14 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.BufferedReader;
@@ -1032,6 +1035,7 @@ public class Util {
         return retVal.toString();
     }
 
+
     public static String getJSON(String apiEndpoint, Context context) {
 
         if (!isOnline(context)) {
@@ -1132,29 +1136,7 @@ public class Util {
     }
 
 
-    public static HashMap<String, String> nameMap = new HashMap<String, String>() {{
-        put("oc", "name_oc");
-        put("es", "name_es");
-        put("ca", "name_ca");
-        put("fr", "name_fr");
-        put("en", "name_en");
-    }};
 
-    public static HashMap<String, String> descriptionMap = new HashMap<String, String>() {{
-        put("oc", "description_oc");
-        put("es", "description_es");
-        put("ca", "description_ca");
-        put("fr", "description_fr");
-        put("en", "description_en");
-    }};
-
-    public static HashMap<String, String> short_descriptionMap = new HashMap<String, String>() {{
-        put("oc", "short_description_oc");
-        put("es", "short_description_es");
-        put("ca", "short_description_ca");
-        put("fr", "short_description_fr");
-        put("en", "short_description_en");
-    }};
 
     public static boolean hasMinimumContents(Context context, EruletApp app) {
         if (!PropertyHolder.isInit())
@@ -1172,7 +1154,7 @@ public class Util {
         return hasGRs && hasMaps && hasJson && hasRouteMedia;
     }
 
-    public static void forceNewDownloads(Context context, EruletApp app){
+    public static void forceNewDownloads(Context context, EruletApp app) {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         PropertyHolder.setLastUpdateGeneralReferences(0);
@@ -1183,4 +1165,30 @@ public class Util {
         }
 
     }
+
+    public static void forceNewMapDownloads(Context context, EruletApp app) {
+        if (!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        PropertyHolder.setLastUpdateGeneralMap(0);
+
+    }
+
+    public static HttpResponse getResponse(String url, int timeout) throws IOException {
+        HttpParams httpParameters = new BasicHttpParams();
+        int timeoutConnection = timeout;
+        HttpConnectionParams.setConnectionTimeout(httpParameters,
+                timeoutConnection);
+        int timeoutSocket = timeout;
+        HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+        HttpClient client = new DefaultHttpClient(httpParameters);
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader("Accept", "application/zip");
+        httpGet.setHeader("Content-type", "application/zip");
+        httpGet.setHeader("Authorization", UtilLocal.SERVULET_AUTHORIZATION);
+
+        HttpResponse response = client.execute(httpGet);
+        return response;
+    }
+
+
 }
