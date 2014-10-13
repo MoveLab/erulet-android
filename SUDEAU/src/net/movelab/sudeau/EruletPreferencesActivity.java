@@ -31,7 +31,9 @@ public class EruletPreferencesActivity extends Activity {
 		setContentView(R.layout.preferences);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
-        }		
+        }
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
 		mPreferences = app.getPrefs();
 	    mPrefEditor = mPreferences.edit();
 	    rbPreferredLocaleSelector = (RadioGroup)findViewById(R.id.radioLang);
@@ -53,20 +55,20 @@ public class EruletPreferencesActivity extends Activity {
 	}
 	
 	private void updateRadioButtonState(){
-		String pref_locale = mPreferences.getString("pref_locale", "");
-		if(pref_locale.equalsIgnoreCase("ca")){
+		String pref_locale = PropertyHolder.getLocale();
+		if(pref_locale.equalsIgnoreCase(PropertyHolder.CATALAN)){
 			rbPreferredLocaleSelector.check(R.id.rbCatala);
 			formerSelectedRadioButton = R.id.rbCatala;
-		}else if(pref_locale.equalsIgnoreCase("ar")){
+		}else if(pref_locale.equalsIgnoreCase(PropertyHolder.ARANESE)){
 			rbPreferredLocaleSelector.check(R.id.rbAranes);
 			formerSelectedRadioButton = R.id.rbAranes;
-		}else if(pref_locale.equalsIgnoreCase("es")){
+		}else if(pref_locale.equalsIgnoreCase(PropertyHolder.SPANISH)){
 			rbPreferredLocaleSelector.check(R.id.rbSpanish);
 			formerSelectedRadioButton = R.id.rbSpanish;
-		}else if(pref_locale.equalsIgnoreCase("fr")){
+		}else if(pref_locale.equalsIgnoreCase(PropertyHolder.FRENCH)){
 			rbPreferredLocaleSelector.check(R.id.rbFrench);
 			formerSelectedRadioButton = R.id.rbFrench;
-		}else if(pref_locale.equalsIgnoreCase("en")){
+		}else if(pref_locale.equalsIgnoreCase(PropertyHolder.ENGLISH)){
 			rbPreferredLocaleSelector.check(R.id.rbEnglish);
 			formerSelectedRadioButton = R.id.rbEnglish;
 		}else{
@@ -88,39 +90,33 @@ public class EruletPreferencesActivity extends Activity {
 	            case DialogInterface.BUTTON_POSITIVE:
 	            	switch(selectedRadioButtonId) {
 		            case R.id.rbCatala:
-			            if (checked){	            	
-			            	mPrefEditor.putString("pref_locale", "ca");
-			            	mPrefEditor.commit();	            	
+			            if (checked){
+                            PropertyHolder.setLocale(PropertyHolder.CATALAN);
 			            }
 			            break;
 			        case R.id.rbAranes:
 			            if (checked){
-			            	mPrefEditor.putString("pref_locale", "ar");
-			            	mPrefEditor.commit();	            	
+                            PropertyHolder.setLocale(PropertyHolder.ARANESE);
 			            }
 			            break;
 			        case R.id.rbSpanish:
 			            if (checked){
-			            	mPrefEditor.putString("pref_locale", "es");
-			            	mPrefEditor.commit();	            	
+                            PropertyHolder.setLocale(PropertyHolder.SPANISH);
 			            }
 			            break;
 			        case R.id.rbFrench:
 			            if (checked){
-			            	mPrefEditor.putString("pref_locale", "fr");
-			            	mPrefEditor.commit();	            	
+                            PropertyHolder.setLocale(PropertyHolder.FRENCH);
 			            }
 			            break;
 			        case R.id.rbEnglish:
 			            if (checked){
-			            	mPrefEditor.putString("pref_locale", "en");
-			            	mPrefEditor.commit();
+                            PropertyHolder.setLocale(PropertyHolder.ENGLISH);
 			            }
 			            break;
 			        default:
 			        	if(checked){
-			        		mPrefEditor.putString("pref_locale", "");
-			            	mPrefEditor.commit();	            	
+                            PropertyHolder.setLocale("");
 			        	}
 			        	break;
 		            }

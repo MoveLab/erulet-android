@@ -15,6 +15,7 @@ import net.movelab.sudeau.model.RouteInfoFormatter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +43,7 @@ public class EditRouteActivity extends Activity {
     private SharedPreferences.Editor mPrefEditor;
     private boolean changed;
 
+    String locale;
     //TODO Improve default name, allow for multiple non-colliding defaults
     //TODO Create input validation
 
@@ -56,6 +58,13 @@ public class EditRouteActivity extends Activity {
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+
+        Context context = getApplication();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        locale = PropertyHolder.getLocale();
+
+
         mPrefEditor = app.getPrefs().edit();
         setEditedRoute();
         initInterface();
@@ -95,8 +104,8 @@ public class EditRouteActivity extends Activity {
     }
 
     private String save(String android_id) {
-        editedRoute.setName(routeName.getText().toString());
-        editedRoute.setDescription(routeDescription.getText().toString());
+        editedRoute.setName(locale, routeName.getText().toString());
+        editedRoute.setDescription(locale, routeDescription.getText().toString());
         DataContainer.editRoute(editedRoute, app.getDataBaseHelper());
         Toast.makeText(getApplicationContext(), getString(R.string.save_succesful), Toast.LENGTH_LONG).show();
         return editedRoute.getId();
@@ -106,8 +115,8 @@ public class EditRouteActivity extends Activity {
 
         routeName = (EditText) findViewById(R.id.et_RouteName);
         routeDescription = (EditText) findViewById(R.id.et_RouteDescription);
-        routeName.setText(editedRoute.getName());
-        routeDescription.setText(editedRoute.getDescription());
+        routeName.setText(editedRoute.getName(locale));
+        routeDescription.setText(editedRoute.getDescription(locale));
 
         myRating = (RatingBar) findViewById(R.id.ratBarUserRoute);
         myRating.setStepSize(1.0f);

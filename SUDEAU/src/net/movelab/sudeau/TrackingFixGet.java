@@ -406,8 +406,7 @@ public class TrackingFixGet extends Service {
 				R.string.internal_message_id)
 				+ Util.MESSAGE_FIX_RECORDED);
 		Bundle bundle = new Bundle();
-		bundle.putString("nFixes", String.valueOf(PropertyHolder.getNFixes()));
-		bundle.putBoolean(NEW_RECORD, newRecord);		
+		bundle.putBoolean(NEW_RECORD, newRecord);
 		bundle.putDouble("lat", location.getLatitude());
 		bundle.putDouble("long", location.getLongitude());
 		bundle.putDouble("alt", location.getAltitude());
@@ -646,61 +645,4 @@ public class TrackingFixGet extends Service {
 		}
 	}
 
-	@SuppressLint("NewApi")
-	private void saveCellData(Context context) {
-
-		if (PropertyHolder.getShareData()) {
-
-			String phoneTime = Util.iso8601(System.currentTimeMillis());
-			String cid = "n";
-			String lac = "n";
-			String countryISO = "n";
-			String sid = "n";
-			String bid = "n";
-			String nid = "n";
-			String bsLat = "n";
-			String bsLon = "n";
-
-			TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-
-			if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
-				GsmCellLocation loc = (GsmCellLocation) tm.getCellLocation();
-				if(loc != null){
-				cid = Integer.toHexString(loc.getCid());
-				lac = Integer.toHexString(loc.getLac());
-				}
-				countryISO = tm.getNetworkCountryIso();
-			}
-			if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA) {
-
-				if (Build.VERSION.SDK_INT >= 5) {
-					CdmaCellLocation loc = (CdmaCellLocation) tm
-							.getCellLocation();
-					if(loc != null){
-					sid = Integer.toHexString(loc.getSystemId());
-					bid = Integer.toHexString(loc.getBaseStationId());
-					nid = Integer.toHexString(loc.getNetworkId());
-					bsLat = Integer.toHexString(loc.getBaseStationLatitude());
-					bsLon = Integer.toHexString(loc.getBaseStationLongitude());
-					}
-				}
-			}
-
-			if (cid.equals("n") && lac.equals("n") && countryISO.equals("n")
-					&& bid.equals("n") && nid.equals("n") && sid.equals("n")
-					&& bsLat.equals("n") && bsLon.equals("n")) {
-				// do nothing
-			} else {
-				String thisCellInfo = phoneTime + "," + cid + "," + lac + ","
-						+ countryISO + "," + bid + "," + nid + "," + sid + ","
-						+ bsLat + "," + bsLon;
-
-				ContentResolver ucr = getContentResolver();
-				ucr.insert(Util.getUploadQueueUri(context),
-						TrackingUploadContentValues.createUpload("CEL", thisCellInfo));
-
-			}
-		}
-
-	}
 }

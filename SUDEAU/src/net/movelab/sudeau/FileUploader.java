@@ -32,16 +32,6 @@ public class FileUploader extends Service {
 	public void onStart(Intent intent, int startId) {
 
 		
-		// Delete old data
-		ContentResolver dcr = getContentResolver();
-		Calendar cal = Calendar.getInstance();
-		int currentDay = cal.get(Calendar.DAY_OF_MONTH);
-		cal.set(Calendar.DAY_OF_MONTH,
-				currentDay - PropertyHolder.getStorageDays());
-		dcr.delete(
-				Util.getFixesUri(context),
-				Fixes.KEY_STATION_DEPARTURE_TIMELONG + " < "
-						+ cal.getTimeInMillis(), null);
 
 		
 		if (!uploading) {
@@ -113,15 +103,6 @@ public class FileUploader extends Service {
 							Uploads.KEY_ROWID + " = " + String.valueOf(thisId),
 							null);
 
-					if (isFix) {
-
-						// increment nUploads
-						if (PropertyHolder.isInit() == false)
-							PropertyHolder.init(context);
-						int nUploads = PropertyHolder.incrementUploads();
-						announceUpload(nUploads);
-
-					}
 				}
 
 				c.moveToNext();

@@ -58,7 +58,6 @@ public class TrackingBroadcastReceiver extends BroadcastReceiver {
 				+ Util.MESSAGE_UNSCHEDULE)) {
 			startFixGetAlarm.cancel(pendingIntent2FixGet);
 			PropertyHolder.setServiceOn(false);
-			PropertyHolder.ptStop();
 			cancelNotification(context);
 		} else if (action.contains(context.getResources().getString(
 				R.string.internal_message_id)
@@ -74,8 +73,6 @@ public class TrackingBroadcastReceiver extends BroadcastReceiver {
 			PropertyHolder.setServiceOn(true);
 			createNotification(context);
 
-			if (PropertyHolder.getShareData())
-				PropertyHolder.ptStart();
 
 			long uploadAlarmInterval = Util.UPLOAD_INTERVAL;
 			startFileUploaderAlarm.setRepeating(alarmType, triggerTime,
@@ -83,20 +80,16 @@ public class TrackingBroadcastReceiver extends BroadcastReceiver {
 
 		} else if (action.contains("BOOT_COMPLETED")) {
 
-			PropertyHolder.ptStop();
 
 			if (PropertyHolder.isServiceOn()) {
 				Intent intent2broadcast = new Intent(
 						context.getString(R.string.internal_message_id)
 								+ Util.MESSAGE_SCHEDULE);
 				context.sendBroadcast(intent2broadcast);
-				if (PropertyHolder.getShareData())
-					PropertyHolder.ptStart();
 			}
 
 		} else if (action.contains("ACTION_SHUTDOWN")
 				|| action.contains("QUICKBOOT_POWEROFF")) {
-			PropertyHolder.ptStop();
 
 		} else {
 			// do nothing

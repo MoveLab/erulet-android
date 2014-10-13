@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 public class OtherItinerariesActivity extends Activity {
 
+    String locale;
+
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
@@ -25,14 +27,20 @@ public class OtherItinerariesActivity extends Activity {
 		ListView listView = (ListView) findViewById(R.id.lv_other_routes);
 		ArrayList<Route> sharedRoutes = new ArrayList<Route>();
 
-		Route r1 = new Route();
-		r1.setName("Una ruta");		
+        Context context = getApplication();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        locale = PropertyHolder.getLocale();
+
+        // TODO i18n string
+        Route r1 = new Route();
+		r1.setName(locale, "Una ruta");
 
 		Route r2 = new Route();
-		r2.setName("Una altra ruta");		
+		r2.setName(locale, "Una altra ruta");
 		
 		Route r3 = new Route();
-		r3.setName("I una altra");		
+		r3.setName(locale, "I una altra");
 
 		sharedRoutes.add(r1);
 		sharedRoutes.add(r2);

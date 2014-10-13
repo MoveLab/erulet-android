@@ -128,6 +128,7 @@ public class DetailItineraryActivity extends Activity implements
 	private CountDownTimer countDown;
 	private ProximityWarning proximityWarning;
     public int screenWidth = 200;
+    String locale;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,11 @@ public class DetailItineraryActivity extends Activity implements
 		if (app == null) {
 			app = (EruletApp) getApplicationContext();
 		}
+
+        Context context = getApplication();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        locale = PropertyHolder.getLocale();
 
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = display.getWidth();  // deprecated
@@ -755,7 +761,7 @@ public class DetailItineraryActivity extends Activity implements
 			// This is very important for the ratings system
 			String idRouteBasedOn = selectedRoute != null ? selectedRoute
 					.getId() : null;
-			routeInProgress = DataContainer.createEmptyRoute(
+			routeInProgress = DataContainer.createEmptyRoute(locale,
 					app.getDataBaseHelper(),
 					DataContainer.getAndroidId(getContentResolver()),
 					idRouteBasedOn);

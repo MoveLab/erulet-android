@@ -9,7 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,18 +34,35 @@ public class JSONConverter {
     }
 
 
+
     public static Route jsonObjectToRoute(JSONObject j) throws JSONException {
         Route r = new Route();
+
+        r.setRouteJsonLastUpdatedNow();
+        r.setOfficial(true);
+
         if (j.has("id")) {
             r.setId(j.getString("id"));
         }
-        // for now, just using Catalan -- will  update models for multlingual
-        if (j.has("name_ca")) {
-            r.setName(j.getString("name_ca"));
+
+        Iterator it = Util.nameMap.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
+            if (j.has(pairs.getValue())) {
+                r.setName(pairs.getKey(), j.getString(pairs.getValue()));
+            }
+            it.remove(); // avoids a ConcurrentModificationException
         }
-        if (j.has("description_ca")) {
-            r.setDescription(j.getString("description_ca"));
+
+        it = Util.descriptionMap.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
+            if (j.has(pairs.getValue())) {
+                r.setDescription(pairs.getKey(), j.getString(pairs.getValue()));
+            }
+            it.remove(); // avoids a ConcurrentModificationException
         }
+
         if (j.has("id_route_based_on")) {
             r.setIdRouteBasedOn(j.getString("id_route_based_on"));
         }
@@ -72,8 +92,13 @@ public class JSONConverter {
         if (j.has("isuploaded")) {
             r.setUpLoaded(j.getBoolean("isuploaded"));
         }
-        if (j.has("local_carto_name")) {
-            r.setLocalCarto(j.getString("local_carto_name"));
+        if (j.has("map")) {
+            if (j.getJSONObject("map") != null) {
+                JSONObject mapj = j.getJSONObject("map");
+                if(mapj.getString("map_file_name") != null){
+                r.setLocalCarto(mapj.getString("map_file_name"));
+                }
+            }
         }
         // We will need to change this and instead grab just the calcualted global rating
         if (j.has("userrating")) {
@@ -315,8 +340,19 @@ public class JSONConverter {
             return null;
         JSONObject j = new JSONObject();
         j.put("id", r.getId());
-        j.put("name", r.getName());
-        j.put("description", r.getDescription());
+
+        Iterator it = Util.nameMap.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
+            j.put(pairs.getValue(), r.getName(pairs.getKey()));
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        it = Util.descriptionMap.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry<String, String> pairs = (HashMap.Entry)it.next();
+            j.put(pairs.getValue(), r.getName(pairs.getKey()));
+            it.remove(); // avoids a ConcurrentModificationException
+        }
         j.put("idroutebasedon", r.getIdRouteBasedOn());
         j.put("reference", referenceToJSONObject(r.getReference()));
         j.put("track", trackToJSONObject(r.getTrack()));

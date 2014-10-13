@@ -77,8 +77,10 @@ public class EruletApp extends Application{
     	SharedPreferences settings = getPrefs();
 
         Configuration config = getBaseContext().getResources().getConfiguration();
-        
-        String lang = settings.getString("pref_locale", "");
+
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        String lang = PropertyHolder.getLocale();
         if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
         {
             locale = new Locale(lang);            

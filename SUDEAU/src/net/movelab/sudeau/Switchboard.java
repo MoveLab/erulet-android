@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,11 +68,6 @@ public class Switchboard extends Activity {
 
     Context context;
 
-    public boolean hasGRs;
-    public boolean hasMaps;
-    public boolean hasJson;
-    public boolean hasRouteMedia;
-
     DataBaseHelper dataBaseHelper;
 
     ContentResolver cr;
@@ -97,31 +93,13 @@ public class Switchboard extends Activity {
 
         boolean firstTime = mPreferences.getBoolean("first_time", true);
 
+        //TODO take this out; for testing only
+        Util.forceNewDownloads(context, app);
 
-        // FOR EASY TESTING UPDATES increment this number
-        String updateSetter = "update6";
-        boolean update = mPreferences.getBoolean(updateSetter, true);
-
-        if(update){
-        // TODO JUST FOR TESTING
-        mPreferences.edit().putBoolean("has_maps", false).apply();
-        mPreferences.edit().putBoolean("has_grs", false).apply();
-        mPreferences.edit().putBoolean("has_json", false).apply();
-        mPreferences.edit().putBoolean("r7d", false).apply();
-        mPreferences.edit().putBoolean(updateSetter, false).apply();
-        }
         // TODO TEMP TESTING
         mPreferences.edit().putBoolean("registered_user", false).apply();
 
-        hasMaps = mPreferences.getBoolean("has_maps", false);
-        hasGRs = mPreferences.getBoolean("has_grs", false);
-        hasJson = mPreferences.getBoolean("has_json", false);
-        hasRouteMedia = mPreferences.getBoolean("r7d", false);
-
-
-        if(!hasGRs || !hasRouteMedia || !hasMaps || !hasJson ){
         startInitialSync();
-        }
 
         // TODO Put this back in -- I have it out just for initial testing
 //        tryToRegister();
@@ -201,10 +179,7 @@ public class Switchboard extends Activity {
         btn_routes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (mPreferences.getBoolean("has_maps", false) &&
-                        mPreferences.getBoolean("has_grs", false) &&
-                        mPreferences.getBoolean("has_json", false)
-                        ) {
+                if (Util.hasMinimumContents(context, app)) {
                     Intent i = new Intent(Switchboard.this,
                             ChooseItineraryActivity.class);
                     startActivity(i);
@@ -297,8 +272,7 @@ public class Switchboard extends Activity {
             int count;
 
             // JSON
-            if (!hasJson) {
-                hasJson = true;
+
                 publishProgress("" + 1);
 
                 if (dataBaseHelper == null) {
@@ -314,7 +288,6 @@ public class Switchboard extends Activity {
                         publishProgress("" + 5);
 
                     } catch (JSONException e) {
-                        hasJson = false;
                         Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
                     }
                     ArrayList<Route> routes = JSONConverter.jsonArrayToRouteArray(ja);
@@ -322,7 +295,6 @@ public class Switchboard extends Activity {
                     int totalRoutes = routes.size();
                     for (Route route : routes) {
                         if (isCancelled()){
-                            hasJson = false;
                             break;}
                         else {
                             DataContainer.insertRoute(route, dataBaseHelper, "this_id");
@@ -332,22 +304,19 @@ public class Switchboard extends Activity {
 
 
                 } catch (Exception e) {
-                    hasJson = false;
 
                     Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
 
                 }
-                mPreferences.edit().putBoolean("has_json", hasJson).apply();
 
-            }
-            // MAPS
-            if (!hasMaps) {
-            hasMaps = true;
+            //Maps
+
+            boolean mapSuccess = true;
                 try {
 
-                    URL url = new URL("http://107.170.174.182/media/holet/route_maps/map_route7.zip");
+                    URL url = new URL(Util.getUrlGeneralMap(context));
 
-                    Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
+                    Log.d("ANDRO_ASYNC MAPS", "uRL: " + url.toString());
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
@@ -370,8 +339,10 @@ public class Switchboard extends Activity {
 
                     int total = 0;
                     while ((count = input.read(data)) != -1) {
-                        if (isCancelled())
+                        if (isCancelled()){
+                            mapSuccess = false;
                             break;
+                        }
                         else {
 
                             output.write(data, 0, count);
@@ -413,7 +384,7 @@ public class Switchboard extends Activity {
                         // iterates over entries in the zip file
                         while (entry != null) {
                             if (isCancelled()){
-                                hasMaps = false;
+                                mapSuccess = false;
                                 break;
                             }
                             else {
@@ -453,24 +424,25 @@ public class Switchboard extends Activity {
 
 
                     } catch (Exception ex) {
-                        hasMaps = false;
+                        mapSuccess = false;
                         ex.printStackTrace();
                     }
 
 
                 } catch (Exception e) {
-                    hasMaps = false;
+                    mapSuccess = false;
                 }
-                mPreferences.edit().putBoolean("has_maps", hasMaps).apply();
-            }
+if(mapSuccess){
+    PropertyHolder.setLastUpdateGeneralMapNow();
+}
+
 // GENERAL REFS
 
-            if (!hasGRs) {
 
-                hasGRs = true;
+                boolean grSuccess = true;
                 try {
 
-                    URL url = new URL("http://107.170.174.182/media/holet/zipped_general_references/general_references.zip");
+                    URL url = new URL(Util.getUrlGeneralReferences(context));
 
                     Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
 
@@ -496,7 +468,7 @@ public class Switchboard extends Activity {
                     int total = 0;
                     while ((count = input.read(data)) != -1) {
                         if (isCancelled()){
-                            hasGRs = false;
+                            grSuccess = false;
                             break;}
                         else {
                             output.write(data, 0, count);
@@ -537,8 +509,9 @@ public class Switchboard extends Activity {
                         ZipEntry entry = zipIn.getNextEntry();
                         // iterates over entries in the zip file
                         while (entry != null) {
-                            if (isCancelled())
-                                break;
+                            if (isCancelled()){
+                                grSuccess= false;
+                                break;}
                             else {
                                 String filePath = destDirectory + File.separator + entry.getName();
                                 if (!entry.isDirectory()) {
@@ -575,25 +548,32 @@ public class Switchboard extends Activity {
 
 
                     } catch (Exception ex) {
-                        hasGRs = false;
+                        grSuccess = false;
                         ex.printStackTrace();
                     }
 
                 } catch (Exception e) {
-                    hasGRs = false;
+                    grSuccess = false;
 
                 }
-                mPreferences.edit().putBoolean("has_grs", hasGRs).apply();
 
+            if(grSuccess){
+                PropertyHolder.setLastUpdateGeneralReferencesNow();
             }
 
-            // FOR NOW GETTING ALL ROUTE DATA HERE
-            if (!hasRouteMedia) {
-                hasRouteMedia = true;
+
+            // ROUTE MEDIA
+
+            List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+
+            Log.e("ROUTES:", "size: "  + routes.size());
+
+            for(Route route: routes){
+
+                boolean routeSuccess=true;
                 try {
 
-                    // TODO unhardcode this...
-                    URL url = new URL("http://107.170.174.182/media/holet/zipped_routes/content_route7.zip");
+                    URL url = new URL(Util.getUrlRouteContent(context, route.getId(), route.getRouteContentLastUpdated()));
                     Log.d("ANDRO_ASYNC", "uRL: " + url.toString());
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -619,7 +599,7 @@ public class Switchboard extends Activity {
 
                     while ((count = input.read(data)) != -1) {
                         if (isCancelled()){
-                         hasRouteMedia = false;
+                         routeSuccess = false;
                             break;
                         }
                         else {
@@ -642,8 +622,7 @@ public class Switchboard extends Activity {
 
                     String zipFilePath = destinationPath;
                     Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
-// TODO take out hard coded route 7
-                    File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route_7");
+                    File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/route_" + route.getId());
                     String destDirectory = target_directory.getPath();
                     Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
 
@@ -663,7 +642,7 @@ public class Switchboard extends Activity {
                         // iterates over entries in the zip file
                         while (entry != null) {
                             if (isCancelled()){
-                                hasRouteMedia = false;
+                                routeSuccess = false;
                                 break;}
                             else {
 
@@ -699,20 +678,24 @@ public class Switchboard extends Activity {
                         zipIn.close();
 
                     } catch (Exception ex) {
-                        hasRouteMedia = false;
+Log.e("Exception", "asdasd");
 
+                        routeSuccess = false;
                         ex.printStackTrace();
                     }
 
                 } catch (Exception e) {
-                    hasRouteMedia = false;
+                    Log.e("Exception", "asdaasdas");
 
+                    routeSuccess = false;
                 }
 
-                mPreferences.edit().putBoolean("r7d", hasRouteMedia).apply();
+if(routeSuccess){
+    route.setRouteContentLastUpdatedNow();
+    dataBaseHelper.getRouteDataDao().update(route);
 
+}
             }
-
 
             return null;
 
@@ -729,7 +712,9 @@ public class Switchboard extends Activity {
             String srTitle;
             String srMessage;
 
-            if (hasGRs && hasJson && hasMaps && hasRouteMedia) {
+
+
+            if (Util.hasMinimumContents(context, app)) {
                 srTitle = "Success!";
                 srMessage = "Eth Holet has all the data he needs. You can go ahead and start hiking!";
             } else {

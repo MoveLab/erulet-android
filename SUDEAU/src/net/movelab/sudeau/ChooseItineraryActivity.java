@@ -98,6 +98,8 @@ public class ChooseItineraryActivity extends Activity {
 
 	private static final String TAG = "ChooseItineraryActivity";
 
+    private String currentLocale;
+
     Context context;
 
 	@Override
@@ -113,6 +115,9 @@ public class ChooseItineraryActivity extends Activity {
         }
 
         context = getApplicationContext();
+
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
 
         mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
@@ -131,6 +136,7 @@ public class ChooseItineraryActivity extends Activity {
 	protected void onResume() {	
 		super.onResume();
 		refreshMapView();
+        currentLocale = PropertyHolder.getLocale();
 	}
 	
 	@Override
@@ -178,9 +184,9 @@ public class ChooseItineraryActivity extends Activity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final Route r = routeTable.get(selectedMarker);
         if(r7downloaded){
-            builder.setTitle(r.getName());
+            builder.setTitle(r.getName(currentLocale));
             builder.setIcon(R.drawable.ic_pin_info);
-            builder.setMessage(r.getDescription());
+            builder.setMessage(r.getDescription(currentLocale));
             builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -215,8 +221,8 @@ public class ChooseItineraryActivity extends Activity {
             });
             }
         } else{
-            builder.setTitle(r.getName());
-            builder.setMessage(r.getDescription() + "\n\nYou have not yet downloaded the content for this route to your phone. Would you like to download it now?");
+            builder.setTitle(r.getName(currentLocale));
+            builder.setMessage(r.getDescription(currentLocale) + "\n\nYou have not yet downloaded the content for this route to your phone. Would you like to download it now?");
             builder.setPositiveButton("Download", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -305,8 +311,8 @@ public class ChooseItineraryActivity extends Activity {
 					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
 					Route r = routeTable.get(marker);
 					r = DataContainer.refreshRoute(r,app.getDataBaseHelper());
-		            snippet.setText(r.getDescription());
-		            title.setText(r.getName());
+		            snippet.setText(r.getDescription(currentLocale));
+		            title.setText(r.getName(currentLocale));
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
 		            picture.setImageResource(R.drawable.ic_pin_info);		            
 		            return myContentView;
@@ -403,9 +409,9 @@ public class ChooseItineraryActivity extends Activity {
 				//Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
 				Marker my_marker = mMap.addMarker( new MarkerOptions()
 				.position(new LatLng(start.getLatitude(), start.getLongitude()))
-				.title(r.getName())
+				.title(r.getName(currentLocale))
 				.snippet(null)
-				.icon( BitmapDescriptorFactory.fromBitmap(ic.makeIcon(r.getName())))); 
+				.icon( BitmapDescriptorFactory.fromBitmap(ic.makeIcon(r.getName(currentLocale)))));
 				routeTable.put(my_marker, r);
 			}
 		}
@@ -417,7 +423,7 @@ public class ChooseItineraryActivity extends Activity {
                 Util.baseFolder + "/" + Util.routeMapsFolder);
 
 // TODO fix this temporary hack
-        File f = new File(sdcard, "/route7/23734ba3-4624-4187-93cf-231f8252427a.mbtiles");
+        File f = new File(sdcard, );
         Log.e("CARTO CHOOSE", f.getPath());
 
         //File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");

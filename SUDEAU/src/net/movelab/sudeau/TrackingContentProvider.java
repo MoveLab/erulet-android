@@ -131,14 +131,6 @@ public abstract class TrackingContentProvider extends ContentProvider {
 
 			Util.needDatabaseUpdate = true;
 
-			PropertyHolder.setNeedDatabaseValueUpdate(true);
-
-			// OLD CODE
-			// Log.w(TAG, "Upgrading database from version " + oldVersion +
-			// " to "
-			// + newVersion + ", which will destroy all old data");
-			// db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-			// onCreate(db);
 		}
 	}
 

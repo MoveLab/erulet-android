@@ -36,7 +36,8 @@ public class MyItinerariesActivity extends Activity {
 	private ListView listView;
 	private EruletApp app;
 	
-	
+	String locale;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.my_itineraries);
@@ -44,12 +45,16 @@ public class MyItinerariesActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+        Context context = getApplication();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        locale = PropertyHolder.getLocale();
 
 		listView = (ListView) findViewById(R.id.lv_my_routes);
 		String android_id = DataContainer.getAndroidId(getBaseContext().getContentResolver());
 		List<Route> myRoutes = loadRoutes(android_id);
 		
-		routeArrayAdapter = new MyRouteArrayAdapter(this, myRoutes,app);
+		routeArrayAdapter = new MyRouteArrayAdapter(this, locale, myRoutes,app);
 		listView.setAdapter(routeArrayAdapter);			
 
 	}
@@ -66,7 +71,7 @@ public class MyItinerariesActivity extends Activity {
 	
 	private void refreshListView(String android_id){
 		List<Route> newRoutes = loadRoutes(android_id);
-		routeArrayAdapter = new MyRouteArrayAdapter(this, newRoutes,app);
+		routeArrayAdapter = new MyRouteArrayAdapter(this, locale, newRoutes,app);
 		listView.setAdapter(routeArrayAdapter);
 	}
 	
@@ -86,8 +91,9 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 	private List<Route> routes;
 	private EruletApp app;
 	//private Route currentRoute;
+    String locale;
 
-	public MyRouteArrayAdapter(Context context, List<Route> objects,EruletApp app) {
+	public MyRouteArrayAdapter(Context context, String locale, List<Route> objects,EruletApp app) {
 		super(context, R.layout.local_route_list_item, objects);		
 		for (int i = 0; i < objects.size(); ++i) {
 			mIdMap.put(objects.get(i), i);
@@ -95,6 +101,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 		this.routes=objects;
 		this.context=context;
 		this.app=app;
+        this.locale = locale;
 	}		
 	
 	@Override
@@ -108,8 +115,8 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 		    ImageButton delete = (ImageButton) rowView.findViewById(R.id.route_delete);		    
 		    ImageButton upload = (ImageButton) rowView.findViewById(R.id.route_upload);
 		    final Route currentRoute = routes.get(position);
-		    nom.setText(currentRoute.getName());
-		    description.setText(currentRoute.getDescription());
+		    nom.setText(currentRoute.getName(locale));
+		    description.setText(currentRoute.getDescription(locale));
 		    edit.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -134,7 +141,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 			        alertDialog.setTitle(app.getResources().getString(R.string.confirm_delete));
 			 
 			        // Setting Dialog Message
-			        alertDialog.setMessage( app.getResources().getString(R.string.about_to_delete) + "\n" + currentRoute.getName() +  "\n" + app.getResources().getString(R.string.really_continue));
+			        alertDialog.setMessage( app.getResources().getString(R.string.about_to_delete) + "\n" + currentRoute.getName(locale) +  "\n" + app.getResources().getString(R.string.really_continue));
 			 
 			        // Setting Icon to Dialog
 			        alertDialog.setIcon(R.drawable.ic_delete);
