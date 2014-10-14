@@ -161,7 +161,8 @@ public class DataContainer {
         String stepId = getStepId(db, userId);
         s.setId(stepId);
         db.getStepDataDao().create(s);
-        t.getSteps().add(s);
+// This is causing problems -- and according to ormlite docs, adding s to t after s has been created is a mistake. Just add t to s as above.
+//        t.getSteps().add(s);
     }
 
     public static void addHighLightToStep(Step s, HighLight h, String userId,
@@ -187,10 +188,22 @@ public class DataContainer {
         return hl;
     }
 
-    public static Step refreshStepForHighlight(Step s, DataBaseHelper db) {
-        db.getHlDataDao().refresh(s.getHighlights());
-        Log.i("REFRESH", hl.getId());
-        return hl;
+    public static Step refreshStepForTrack(Step s, DataBaseHelper db) {
+        db.getTrackDataDao().refresh(s.getTrack());
+        Log.i("REFRESH", s.getId());
+        return s;
+    }
+
+    public static Route refreshRouteForTrack(Route r, DataBaseHelper db) {
+        db.getTrackDataDao().refresh(r.getTrack());
+        Log.i("REFRESH", r.getId());
+        return r;
+    }
+
+    public static Track refreshTrackForRoute(Track t, DataBaseHelper db) {
+        db.getRouteDataDao().refresh(t.getRoute());
+        Log.i("REFRESH", t.getId());
+        return t;
     }
 
 

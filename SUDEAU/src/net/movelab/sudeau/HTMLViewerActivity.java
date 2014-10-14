@@ -25,9 +25,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class HTMLViewerActivity extends Activity {
-		
+
 	private int group1 = 1;
-	private int first_id = Menu.FIRST;	
+	private int first_id = Menu.FIRST;
 	private EruletApp app;
 	WebView wv;
     String base_url;
@@ -67,7 +67,7 @@ public class HTMLViewerActivity extends Activity {
 //		}
 //		return super.onOptionsItemSelected(item);
 //	}
-		
+
 	private String getReferenceString(){
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
@@ -116,18 +116,18 @@ public class HTMLViewerActivity extends Activity {
 		}
 		return null;
 	}
-	
+
 	private void loadHTML(){
 
         wv.loadDataWithBaseURL(base_url, getReferenceString(), "text/html","utf-8", null);
 	}
-	
+
 	/**
 	 * This allows navigation between a webview and a link opening another webview
 	 */
 	@Override
 	public void onBackPressed() {
-		WebView wv;  
+		WebView wv;
         wv = (WebView) findViewById(R.id.wb_webView);
         Log.i("WV BACK: ", wv.getUrl());
         if(wv.canGoBack() && !wv.getUrl().equals("about:blank")){
@@ -141,7 +141,7 @@ public class HTMLViewerActivity extends Activity {
         	super.onBackPressed();
         }
 	}
-	
+
 	private class MyWebViewClient extends WebViewClient {
 	    @Override
 	    public boolean shouldOverrideUrlLoading(WebView view, String url) {

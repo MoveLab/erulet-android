@@ -203,7 +203,7 @@ public class Step implements Comparable<Step> {
 		NumberFormat df = new DecimalFormat("0.00");
 		sl.append("Latitud: " + df.format(getLatitude()) + "\n");
 		sl.append("Longitud: " + df.format(getLongitude()) + "\n");
-		sl.append("Alçada: " + df.format(getAltitude()) + "\n");
+		sl.append("AlÃ§ada: " + df.format(getAltitude()) + "\n");
 		return sl.toString();
 	}
 
