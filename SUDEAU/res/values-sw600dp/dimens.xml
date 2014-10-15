@@ -10,9 +10,9 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     
     <dimen name="activity_label_title">36sp</dimen>
-    <dimen name="label_small">14dp</dimen>
-    <dimen name="label_button">16dp</dimen>
-    <dimen name="label_button_small">12dp</dimen>
+    <dimen name="label_small">14sp</dimen>
+    <dimen name="label_button">16sp</dimen>
+    <dimen name="label_button_small">12sp</dimen>
     <dimen name="infowindow_label">14sp</dimen>
     
     <dimen name="label_infoblock_highlighted">15sp</dimen>

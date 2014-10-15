@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -63,7 +65,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-public class ChooseItineraryActivity extends Activity {
+public class ChooseItineraryActivity extends FragmentActivity {
 
     public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
     private ProgressDialog mProgressDialog;
@@ -227,7 +229,7 @@ public class ChooseItineraryActivity extends Activity {
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (mMap == null) {
-			mMap = ((MapFragment) getFragmentManager().findFragmentById(
+			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {

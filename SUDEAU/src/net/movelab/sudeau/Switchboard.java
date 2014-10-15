@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -67,7 +68,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
-public class Switchboard extends Activity {
+public class Switchboard extends FragmentActivity {
 
     private Button btn_manual;
     private Button btn_security;
@@ -467,9 +468,8 @@ public class Switchboard extends Activity {
 
 //Route Maps
 List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
-            boolean routeMapSuccess;
             for(Route route: routes){
-                routeMapSuccess = true;
+                boolean routeMapSuccess = true;
             try {
                 HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -487,7 +487,7 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                         int total = 0;
                         while ((count = input.read(data)) != -1) {
                             if (isCancelled()) {
-                                mapSuccess = false;
+                                routeMapSuccess = false;
                                 break;
                             } else {
                                 output.write(data, 0, count);
@@ -519,7 +519,7 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                             // iterates over entries in the zip file. THE server should put only one in it, and I will save only the last entry as the map destination in shared preferences. But I am keeping the iteration just in case that would change in future.
                             while (entry != null) {
                                 if (isCancelled()) {
-                                    mapSuccess = false;
+                                    routeMapSuccess = false;
                                     break;
                                 } else {
                                     String filePath = destDirectory + File.separator + entry.getName();
@@ -554,7 +554,7 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                             }
                             zipIn.close();
                         } catch (Exception ex) {
-                            mapSuccess = false;
+                            routeMapSuccess = false;
                             Log.e("MAP ERROR 1: ", ex.getStackTrace().toString());
                         }
 
@@ -563,18 +563,18 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                     }
                 } else {
                     Log.e("NEWTRY", "failed to get map");
-                    mapSuccess = false;
+                   routeMapSuccess = false;
                 }
             } catch (ClientProtocolException e) {
                 Log.e("NEWTRY", "error: " + e);
-                mapSuccess = false;
+                routeMapSuccess = false;
 
             } catch (IOException e) {
-                mapSuccess = false;
+                routeMapSuccess = false;
                 Log.e("NEWTRY", "error: " + e);
             }
-            if (mapSuccess) {
-                PropertyHolder.setLastUpdateGeneralMapNow();
+            if (routeMapSuccess) {
+              route.setLocalCartoLastUpdatedNow();
             }
 
             }
@@ -662,6 +662,7 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                                         try {
                                             dataBaseHelper.getFileManifestDataDao().create(this_file_manifest);
                                         } catch (RuntimeException ex) {
+                                            grSuccess = false;
                                             Log.e("Creating file manifest", "Create error " + ex.toString());
                                         }
 
@@ -688,13 +689,13 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                     }
                 } else {
                     Log.e("NEWTRY", "failed to get map");
-                    mapSuccess = false;
+                    grSuccess = false;
                 }
             } catch (ClientProtocolException e) {
                 Log.e("NEWTRY", "error: " + e);
-                mapSuccess = false;
+                grSuccess = false;
             } catch (IOException e) {
-                mapSuccess = false;
+                grSuccess = false;
                 Log.e("NEWTRY", "error: " + e);
             }
             if (grSuccess) {
@@ -848,13 +849,13 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                         }
                     } else {
                         Log.e("NEWTRY", "failed to get map");
-                        mapSuccess = false;
+                        routeSuccess = false;
                     }
                 } catch (ClientProtocolException e) {
                     Log.e("NEWTRY", "error: " + e);
-                    mapSuccess = false;
+                    routeSuccess = false;
                 } catch (IOException e) {
-                    mapSuccess = false;
+                    routeSuccess = false;
                     Log.e("NEWTRY", "error: " + e);
                 }
                 if (routeSuccess) {

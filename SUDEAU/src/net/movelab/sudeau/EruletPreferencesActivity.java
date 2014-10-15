@@ -5,12 +5,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 
 public class EruletPreferencesActivity extends Activity {
@@ -38,6 +41,18 @@ public class EruletPreferencesActivity extends Activity {
 	    mPrefEditor = mPreferences.edit();
 	    rbPreferredLocaleSelector = (RadioGroup)findViewById(R.id.radioLang);
 		updateRadioButtonState();
+
+
+        String version_name = "";
+        TextView version_text = (TextView) findViewById(R.id.version_text);
+        try {
+            PackageInfo manager=getPackageManager().getPackageInfo(getPackageName(), 0);
+            version_name = manager.versionName;
+            version_text.setText("Holet version: " + version_name);
+        } catch (PackageManager.NameNotFoundException e) {
+            //Handle exception
+        }
+
 
         etFixInterval = (EditText) findViewById(R.id.etFixInterval);
         bOK = (Button) findViewById(R.id.bOK);

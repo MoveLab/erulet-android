@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mapDetail"
-        android:name="com.google.android.gms.maps.MapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_below="@+id/tvHlData" />

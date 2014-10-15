@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="6dip" >
+
+    <TextView
+        android:id="@+id/route_name"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:text="@string/trip_name_comp"
+        android:textSize="@dimen/route_item_name" />
+
+    <TextView
+        android:id="@+id/route_description"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/route_name"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:layout_marginLeft="6dp"
+        android:text="@string/trip_description_comp"
+        android:textSize="@dimen/route_item_description" />
+
+    <ImageButton
+        android:id="@+id/download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="6dip"
+        android:layout_toRightOf="@id/route_description"
+        android:background="@drawable/ic_download_dark"
+        android:contentDescription="TODO"
+        android:gravity="center_vertical" />
+
+</RelativeLayout>

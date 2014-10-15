@@ -937,12 +937,12 @@ public class Util {
      */
     public static int[] getScreenSize(Context context) {
         int[] retVal = new int[2];
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        retVal[0] = size.x;
-        retVal[1] = size.y;
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        retVal[0] = metrics.widthPixels;
+        retVal[1] = metrics.heightPixels;
         return retVal;
     }
 

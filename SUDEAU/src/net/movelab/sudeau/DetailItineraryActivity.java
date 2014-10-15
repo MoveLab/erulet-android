@@ -41,6 +41,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Property;
@@ -69,6 +70,7 @@ import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -84,7 +86,7 @@ import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.ForeignCollectionField;
 
-public class DetailItineraryActivity extends Activity implements
+public class DetailItineraryActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
@@ -153,7 +155,7 @@ public class DetailItineraryActivity extends Activity implements
         locale = PropertyHolder.getLocale();
 
         Display display = getWindowManager().getDefaultDisplay();
-        screenWidth = display.getWidth();  // deprecated
+        screenWidth = Util.getScreenSize(context)[0];  // deprecated
 
         proximityWarning = new ProximityWarning(app);
         mObjFactory = new MapObjectsFactory();
@@ -807,7 +809,7 @@ public class DetailItineraryActivity extends Activity implements
         // Do a null check to confirm that we have not already instantiated the
         // map.
         if (mMap == null) {
-            mMap = ((MapFragment) getFragmentManager().findFragmentById(
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
                     R.id.mapDetail)).getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
