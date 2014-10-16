@@ -16,9 +16,11 @@ import net.movelab.sudeau.Util;
 
 @DatabaseTable(tableName = "route")
 public class Route {
-		
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
     @DatabaseField
     private boolean official;
 	@DatabaseField
@@ -73,10 +75,6 @@ public class Route {
 		setSharedSteps(new ArrayList<Step>());
 	}
 	
-	public Route(String id) {
-		this.id=id; 
-	}
-
     public boolean getOfficial() {
         return official;
     }
@@ -141,12 +139,12 @@ public class Route {
 		this.reference = reference;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setServerId(int server_id) {
+		this.server_id = server_id;
 	}
 
 

@@ -19,9 +19,11 @@ import android.os.Parcelable;
 
 @DatabaseTable(tableName = "step")
 public class Step implements Comparable<Step> {
-	
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private String name;
 	@DatabaseField
@@ -56,15 +58,10 @@ public class Step implements Comparable<Step> {
 	public Step() {
 		setHighlights(new ArrayList<HighLight>());
 	}
-	
-	public Step(String id) {
-		this.setId(id);
-		setHighlights(new ArrayList<HighLight>());
-	}
-	
-	public Step(String id, String name, double latitude, double longitude, double altitude,
+
+	public Step(int server_id, String name, double latitude, double longitude, double altitude,
 			double precision, int order, Track track){
-		this.id=id;
+		this.server_id=server_id;
 		this.name=name;
 		this.latitude=latitude;
 		this.longitude=longitude;
@@ -77,9 +74,9 @@ public class Step implements Comparable<Step> {
 	}
 
 
-	public Step(String id, String name, double latitude, double longitude, double altitude,
+	public Step(int server_id, String name, double latitude, double longitude, double altitude,
 			double precision, int order, Track track, Reference reference){
-		this.id=id;
+		this.server_id=server_id;
 		this.name=name;
 		this.latitude=latitude;
 		this.longitude=longitude;
@@ -132,12 +129,12 @@ public class Step implements Comparable<Step> {
 		this.reference = reference;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setServerId(int server_id) {
+		this.server_id = server_id;
 	}
 
 	public String getName() {
@@ -218,13 +215,8 @@ public class Step implements Comparable<Step> {
 			return false;
 		}
 		Step that = (Step)o;
-		if( getId()!=null && that.getId()!=null){
-			return getId().equalsIgnoreCase(that.getId());
-		}else{
-			return this.getLatitude() == that.getLatitude() &&
-					this.getLongitude() == that.getLongitude() &&
-					this.getAltitude() == that.getAltitude();
-		}
+			return getId() == that.getId();
+
 	}
 
 	public Route getRoute() {

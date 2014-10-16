@@ -10,9 +10,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "track")
 public class Track {
-		
-	@DatabaseField(id=true)
-	private String id;	
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private String name;
 	@ForeignCollectionField
@@ -25,13 +27,13 @@ public class Track {
 		steps = new ArrayList<Step>();
 	}
 	
-	public Track(String id) {
-		this.id=id;
+	public Track(int server_id) {
+		this.server_id=server_id;
 		steps = new ArrayList<Step>();
 	}
 	
-	public Track(String id, String name) {
-		this.id=id; 
+	public Track(int server_id, String name) {
+		this.server_id=server_id;
 		this.name=name;
 		steps = new ArrayList<Step>();
 	}
@@ -60,12 +62,12 @@ public class Track {
 		this.route = route;
 	}
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setServerId(int server_id) {
+        this.server_id = server_id;
     }
 
 

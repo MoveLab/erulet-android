@@ -111,11 +111,39 @@ public class Switchboard extends FragmentActivity {
 
         if (PropertyHolder.isFirstTime()) {
             // TODO tryToRegister();
-            String random_anon_id = UUID.randomUUID().toString();
-            PropertyHolder.setUserId(random_anon_id);
+            // check that auto id is working
+            Log.e("userid", PropertyHolder.getUserId());
             showWelcomeDialog();
             PropertyHolder.setFirstTime(false);
+
+            // if first time is called after this update has been written no need for sync fix
+            PropertyHolder.setNeedsSyncFix(false);
+
+        } else if (PropertyHolder.needsSyncFix()){
+            Log.i("NEEDS SYNC FIX", "top");
+            // fix for syncing bug
+            List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+            if(routes.size() > 0){
+                Log.i("NEEDS SYNC FIX", "routes size:" + routes.size());
+                for(Route route: routes){
+                    // userids were null for official routes prior to now
+                    if(route.getUserId() != null){
+                        route.setOfficial(false);
+                        // make sure set with current user id -- i.e. the UUID -- for older versions
+                        route.setUserId(PropertyHolder.getUserId());
+                        DataContainer.updateRoute(route, app.getDataBaseHelper());
+                        Log.i("NEEDS SYNC FIX", "set not official Route: " + route.getId() + " by " + route.getUserId());
+            } else if (route.getOfficial() == true){
+                        // if route already marked official by no user id because we were not grabbing it correctly from server before, mark it as lluis
+                        route.setUserId("lluis");
+                        Log.i("NEEDS SYNC FIX", "set official to lluis, route: " + route.getId());
+                    }
+            }
+            }
+            PropertyHolder.setNeedsSyncFix(false);
         }
+
+
     }
 
     private void tryToRegister() {

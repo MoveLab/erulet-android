@@ -123,7 +123,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 					Intent i = new Intent(context,EditRouteActivity.class);
 					String routeJson;
 					try {
-						routeJson = JSONConverter.routeToJSONObject(currentRoute).toString();
+						routeJson = JSONConverter.routeToJSONObject(currentRoute, app).toString();
 						i.putExtra("routeJson", routeJson );
 						context.startActivity(i);						
 					} catch (JSONException e) {

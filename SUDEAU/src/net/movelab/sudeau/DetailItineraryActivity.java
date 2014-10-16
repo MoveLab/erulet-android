@@ -2,7 +2,6 @@ package net.movelab.sudeau;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -11,18 +10,14 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -39,23 +34,18 @@ import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Property;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +59,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -82,9 +71,6 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.j256.ormlite.dao.CloseableIterator;
-import com.j256.ormlite.dao.ForeignCollection;
-import com.j256.ormlite.field.ForeignCollectionField;
 
 public class DetailItineraryActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -346,7 +332,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 }
                 hl.setName(hlName);
                 hl.setLongText(hlLongText);
-                hl.setMediaPath(imagePath);
+                hl.setMediaFileName(imagePath);
                 FileManifest new_file_manifest = new FileManifest();
                 new_file_manifest.setPath(imagePath);
                 hl.setFileManifest(new_file_manifest);
@@ -678,7 +664,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 EditRouteActivity.class);
         String routeJson;
         try {
-            routeJson = JSONConverter.routeToJSONObject(routeInProgress)
+            routeJson = JSONConverter.routeToJSONObject(routeInProgress, app)
                     .toString();
             i.putExtra("routeJson", routeJson);
             startActivityForResult(i, END_TRIP);
@@ -858,7 +844,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                     JSONObject hl_s;
                                     try {
                                         hl_s = JSONConverter
-                                                .stepToJSONObject(s);
+                                                .stepToJSONObject(s, app);
                                         if (hl_s != null) {
                                             String s_j_string = hl_s.toString();
                                             Intent i = new Intent(
@@ -892,7 +878,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                 JSONObject hl_s;
                                 try {
                                     hl_s = JSONConverter
-                                            .stepToJSONObject(s);
+                                            .stepToJSONObject(s, app);
                                     if (hl_s != null) {
                                         String s_j_string = hl_s.toString();
                                         Intent i = new Intent(
@@ -1778,7 +1764,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 if (routeMode == 1 || routeMode == 2) {
 
                     Step s = new Step();
-                    s.setId(Long.toString(currentTime));
                     s.setAbsoluteTime(time);
                     s.setAbsoluteTimeMillis(currentTime);
                     s.setAltitude(alt);

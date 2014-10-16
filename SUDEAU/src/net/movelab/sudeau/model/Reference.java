@@ -7,9 +7,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 
 public class Reference {
-	
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private String name;
 	@DatabaseField
@@ -25,10 +27,6 @@ public class Reference {
 
     public Reference(){
 		
-	}
-	
-	public Reference(String id) {
-		this.setId(id);
 	}
 
     public ForeignCollection<FileManifest> getFileManifests() { return file_manifests; }
@@ -46,12 +44,12 @@ public class Reference {
 		this.textContent = textContent;
 	}
 	
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setServerId(int server_id) {
+		this.server_id = server_id;
 	}
 
 	public String getName() {

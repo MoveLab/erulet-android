@@ -2,17 +2,15 @@ package net.movelab.sudeau.model;
 
 import android.util.Log;
 
+import net.movelab.sudeau.EruletApp;
 import net.movelab.sudeau.Util;
+import net.movelab.sudeau.database.DataContainer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,10 +37,11 @@ public class JSONConverter {
         Route r = new Route();
 
         r.setRouteJsonLastUpdatedNow();
-        r.setOfficial(true);
 
-        if (j.has("id")) {
-            r.setId(j.getString("id"));
+        r.setOfficial(j.optBoolean("official", false));
+
+        if (j.has("server_id")) {
+            r.setServerId(j.getInt("server_id"));
         }
 
         r.setName("oc", j.optString("name_oc", ""));
@@ -81,7 +80,7 @@ public class JSONConverter {
             }
         }
         if (j.has("created_by")) {
-            r.setUserId(j.getString("created_by"));
+            r.setUserId(j.optString("created_by", ""));
         }
         // this is irrelevant - will never have this on the server
         if (j.has("isuploaded")) {
@@ -115,8 +114,8 @@ public class JSONConverter {
 
     public static Track jsonObjectToTrack(JSONObject j, String route_id) throws JSONException {
         Track t = new Track();
-        if (j.has("id")) {
-            t.setId(j.getString("id"));
+        if (j.has("server_id")) {
+            t.setServerId(j.getInt("server_id"));
         }
         // again just using ca for now
         if (j.has("name_ca")) {
@@ -161,8 +160,8 @@ public class JSONConverter {
     public static Step jsonObjectToStep(JSONObject j, String route_id) throws JSONException {
         Step s = new Step();
         SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
-        if (j.has("id")) {
-            s.setId(j.getString("id"));
+        if (j.has("server_id")) {
+            s.setServerId(j.getInt("server_id"));
         }
 
         s.setAltitude(j.optDouble("altitude", Util.DEFAULT_ALTITUDE));
@@ -218,8 +217,15 @@ public class JSONConverter {
         h.setLongText(j.optString("long_text_ca", "none"));
         h.setName(j.optString("name_ca", "none"));
         if (j.has("media_name")) {
-            h.setMediaPath(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("media_name", "")));
+            h.setMediaFileName(Util.makeHighlightMediaPath(h.getId(), route_id, j.optString("media_name", "")));
         }
+        if (j.has("media_path") && !j.optString("media_path", "").isEmpty()) {
+            FileManifest this_file_manifest = new FileManifest();
+            this_file_manifest.setPath(j.optString("media_path", ""));
+            h.setFileManifest(this_file_manifest);
+        }
+
+
         h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));
         h.setType(j.optInt("type", 0) == 0 ? 3 : 1);
 
@@ -257,19 +263,19 @@ public class JSONConverter {
         return h;
     }
 
-    public static Reference jsonObjectToReference(JSONObject j, String route_id, String lang_code) throws JSONException {
+    public static Reference jsonObjectToReference(JSONObject j, int route_server_id, int route_id, String lang_code) throws JSONException {
         Reference r = new Reference();
         // TODO language issue
-        r.setId(j.optString("id", "none"));
+        r.setServerId(j.optInt("server_id"));
         r.setName(j.optString("name_ca", "none"));
         // TODO deal with this
-        r.setTextContent(Util.makeReferencePath(route_id, lang_code));
+        r.setTextContent(Util.makeReferencePath(route_server_id, route_id, lang_code));
         return r;
     }
 
-    public static Reference jsonObjectToReference(JSONObject j, String route_id, String highlight_id, String lang_code) throws JSONException {
+    public static Reference jsonObjectToReference(JSONObject j, int route_server_id, int route_id, String highlight_id, String lang_code) throws JSONException {
         Reference r = new Reference();
-        r.setId(j.optString("id", "none"));
+        r.setServerId(j.optInt("server_id"));
         r.setName(j.optString("name_ca", "none"));
         // TODO deal with this
         r.setTextContent(Util.makeReferencePath(route_id, highlight_id, r.getId(), lang_code));
@@ -293,7 +299,7 @@ public class JSONConverter {
         ArrayList<Box> result = new ArrayList<Box>();
         for (int i = 0; i < ja.length(); i++) {
             JSONObject j = ja.optJSONObject(i);
-            Box b = new Box(j.optString("id"), j.optInt("min_x"), j.optInt("min_y"), j.optInt("max_x"), j.optInt("max_y"), ii);
+            Box b = new Box(j.optInt("id"), j.optInt("min_x"), j.optInt("min_y"), j.optInt("max_x"), j.optInt("max_y"), ii);
             // TODO languages
             b.setMessage(j.optString("message_ca"));
             result.add(b);
@@ -302,13 +308,20 @@ public class JSONConverter {
     }
 
 
-    public static JSONObject highLightToJSONObject(HighLight h) throws JSONException {
+    public static JSONObject highLightToJSONObject(HighLight h, EruletApp app) throws JSONException {
         if (h == null)
             return null;
         JSONObject j = new JSONObject();
         j.put("id", h.getId());
         j.put("long_text", h.getLongText());
-        j.put("image_path", h.getMediaPath());
+        if(h.getFileManifest() != null){
+
+        DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
+            if(h.getFileManifest().getPath() != null && !h.getFileManifest().getPath().isEmpty()){
+        j.put("media_path", h.getFileManifest().getPath());
+            }
+        }
+        j.put("media_name", h.getMediaFileName());
         j.put("name", h.getName());
         j.put("radius", h.getRadius());
         j.put("type", h.getType());
@@ -318,7 +331,7 @@ public class JSONConverter {
         return j;
     }
 
-    public static JSONObject trackToJSONObject(Track t) throws JSONException {
+    public static JSONObject trackToJSONObject(Track t, EruletApp app) throws JSONException {
         if (t == null)
             return null;
         JSONObject j = new JSONObject();
@@ -326,11 +339,11 @@ public class JSONConverter {
         j.put("name", t.getName());
         j.put("reference", t.getReference());
         ArrayList<Step> steps = new ArrayList<Step>(t.getSteps());
-        j.put("steps", stepListToJSONArray(steps));
+        j.put("steps", stepListToJSONArray(steps, app));
         return j;
     }
 
-    public static JSONObject routeToJSONObject(Route r) throws JSONException {
+    public static JSONObject routeToJSONObject(Route r, EruletApp app) throws JSONException {
         if (r == null)
             return null;
         JSONObject j = new JSONObject();
@@ -343,7 +356,7 @@ public class JSONConverter {
         j.put("name_en", r.getName("en"));
         j.put("idroutebasedon", r.getIdRouteBasedOn());
         j.put("reference", referenceToJSONObject(r.getReference()));
-        j.put("track", trackToJSONObject(r.getTrack()));
+        j.put("track", trackToJSONObject(r.getTrack(), app));
         j.put("userid", r.getUserId());
         j.put("isuploaded", r.isUpLoaded());
         j.put("localcarto", r.getLocalCarto());
@@ -373,7 +386,7 @@ public class JSONConverter {
         return ja;
     }
 
-    public static JSONObject stepToJSONObject(Step s) throws JSONException {
+    public static JSONObject stepToJSONObject(Step s, EruletApp app) throws JSONException {
         JSONObject j = new JSONObject();
         SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
         j.put("id", s.getId());
@@ -383,7 +396,7 @@ public class JSONConverter {
         j.put("name", s.getName());
         //j.put("highlight", highLightToJSONObject(s.getHighlight()));
         ArrayList<HighLight> highLights = new ArrayList<HighLight>(s.getHighlights());
-        j.put("highlights", highLightListToJSONArray(highLights));
+        j.put("highlights", highLightListToJSONArray(highLights, app));
         j.put("order", s.getOrder());
         j.put("precision", s.getPrecision());
         j.put("reference", referenceToJSONObject(s.getReference()));
@@ -394,19 +407,19 @@ public class JSONConverter {
         return j;
     }
 
-    public static JSONArray highLightListToJSONArray(List<HighLight> highLights) throws JSONException {
+    public static JSONArray highLightListToJSONArray(List<HighLight> highLights, EruletApp app) throws JSONException {
         JSONArray arr = new JSONArray();
         for (HighLight highLight : highLights) {
             //arr.put(stepToJSONObject(step));
-            arr.put(highLightToJSONObject(highLight));
+            arr.put(highLightToJSONObject(highLight, app));
         }
         return arr;
     }
 
-    public static JSONArray stepListToJSONArray(List<Step> steps) throws JSONException {
+    public static JSONArray stepListToJSONArray(List<Step> steps, EruletApp app) throws JSONException {
         JSONArray arr = new JSONArray();
         for (Step step : steps) {
-            arr.put(stepToJSONObject(step));
+            arr.put(stepToJSONObject(step, app));
         }
         return arr;
     }

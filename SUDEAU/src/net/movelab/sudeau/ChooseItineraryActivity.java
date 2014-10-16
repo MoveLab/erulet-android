@@ -347,7 +347,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				Route r = routes.get(i);
 				JSONObject route_j;
 				try {
-					route_j = JSONConverter.routeToJSONObject(r);
+					route_j = JSONConverter.routeToJSONObject(r, app);
 					route_j_list.put(route_j);														
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

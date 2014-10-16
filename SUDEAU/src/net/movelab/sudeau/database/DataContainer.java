@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.movelab.sudeau.EruletApp;
 import net.movelab.sudeau.Util;
@@ -37,69 +38,21 @@ import com.j256.ormlite.stmt.Where;
 public class DataContainer {
 
     /**
-     * Incremental unique route id
+     * UUID for Route
      *
-     * @param db
-     * @param userId
      * @return
      */
-    public static String getRouteId(DataBaseHelper db, String userId) {
-        QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao()
-                .queryBuilder();
-        Where<Route, String> where = queryBuilder.where();
-        String retVal = null;
-        try {
-            where.eq("userId", userId);
-            PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
-            List<Route> userRoutes = db.getRouteDataDao().query(preparedQuery);
-            if (userRoutes != null) {
-                // int c = userRoutes.size() + 1;
-                List<String> routeIds = getRouteIds(userRoutes);
-                int c = getMaxCounter(routeIds);
-                retVal = "R_" + userId + "_" + c;
-            } else {
-                retVal = "R_" + userId + "_1";
-            }
-            Log.d("getRouteId", "Returning route id" + retVal);
-            return retVal;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return retVal;
+    public static String getRouteId() {
+        return UUID.randomUUID().toString();
     }
 
     /**
-     * Incremental unique route id
+     * Highlight UUID
      *
-     * @param db
-     * @param userId
      * @return
      */
-    public static String getHighLightId(DataBaseHelper db, String userId) {
-        QueryBuilder<HighLight, String> queryBuilder = db.getHlDataDao()
-                .queryBuilder();
-        Where<HighLight, String> where = queryBuilder.where();
-        String retVal = null;
-        try {
-            where.like("id", "%" + userId + "%");
-            PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
-            List<HighLight> userHighLights = db.getHlDataDao().query(
-                    preparedQuery);
-            if (userHighLights != null) {
-                // int c = userRoutes.size() + 1;
-                List<String> highLightIds = getHighLightIds(userHighLights);
-                int c = getMaxCounter(highLightIds);
-                retVal = "H_" + userId + "_" + c;
-            } else {
-                retVal = "H_" + userId + "_1";
-            }
-            return retVal;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return retVal;
+    public static String getHighLightId() {
+        return UUID.randomUUID().toString();
     }
 
     private static List<String> getHighLightIds(List<HighLight> userHighLights) {
@@ -124,12 +77,11 @@ public class DataContainer {
      */
     public static Route createEmptyRoute(String lang, DataBaseHelper db, String userId,
                                          String routeBasedOnId) {
-        String idTrack = getTrackId(db, userId);
+        String idTrack = getTrackId();
         Log.d("createEmptyRoute", "Getting track id " + idTrack);
         Track t = new Track();
-        t.setId(idTrack);
         db.getTrackDataDao().create(t);
-        String idRoute = getRouteId(db, userId);
+        String idRoute = getRouteId();
         Log.d("createEmptyRoute", "Getting route id " + idRoute);
         Route r = new Route();
         r.setId(idRoute);
@@ -158,8 +110,7 @@ public class DataContainer {
                                       DataBaseHelper db) {
         // Track is already created
         s.setTrack(t);
-        String stepId = getStepId(db, userId);
-        s.setId(stepId);
+        String stepId = getStepId();
         db.getStepDataDao().create(s);
 // This is causing problems -- and according to ormlite docs, adding s to t after s has been created is a mistake. Just add t to s as above.
 //        t.getSteps().add(s);
@@ -169,7 +120,7 @@ public class DataContainer {
                                           DataBaseHelper db) {
         // Step already exists
         h.setStep(s);
-        String hlId = getHighLightId(db, userId);
+        String hlId = getHighLightId();
         h.setId(hlId);
         db.getHlDataDao().create(h);
 //		s.getHighlights().add(h);
@@ -202,7 +153,7 @@ public class DataContainer {
 
     public static Track refreshTrackForRoute(Track t, DataBaseHelper db) {
         db.getRouteDataDao().refresh(t.getRoute());
-        Log.i("REFRESH", t.getId());
+        Log.i("REFRESH", "" + t.getId());
         return t;
     }
 
@@ -283,40 +234,16 @@ public class DataContainer {
     }
 
     /**
-     * Incremental unique track id
+     * Track UUID
      *
-     * @param db
-     * @param userId
      * @return
      */
-    public static String getTrackId(DataBaseHelper db, String userId) {
-        QueryBuilder<Track, String> queryBuilder = db.getTrackDataDao()
-                .queryBuilder();
-        Where<Track, String> where = queryBuilder.where();
-        String retVal = null;
-        try {
-            where.like("id", "%" + userId + "%");
-            PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
-            List<Track> trackRoutes = db.getTrackDataDao().query(preparedQuery);
-            if (trackRoutes != null) {
-                List<String> ids = getTrackIds(trackRoutes);
-                int c = getMaxCounter(ids);
-                // int c = trackRoutes.size() + 1;
-                retVal = "T_" + userId + "_" + c;
-            } else {
-                retVal = "T_" + userId + "_1";
-            }
-            Log.d("getTrackId", "Returning track id" + retVal);
-            return retVal;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return retVal;
+    public static String getTrackId() {
+        return UUID.randomUUID().toString();
     }
 
-    private static List<String> getTrackIds(List<Track> tracks) {
-        ArrayList<String> ids = new ArrayList<String>();
+    private static List<Integer> getTrackIds(List<Track> tracks) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < tracks.size(); i++) {
             ids.add(tracks.get(i).getId());
         }
@@ -340,30 +267,8 @@ public class DataContainer {
         }
     }
 
-    public static String getStepId(DataBaseHelper db, String userId) {
-        QueryBuilder<Step, String> queryBuilder = db.getStepDataDao()
-                .queryBuilder();
-        Where<Step, String> where = queryBuilder.where();
-        String retVal = null;
-        try {
-            where.like("id", "%" + userId + "%");
-            PreparedQuery<Step> preparedQuery = queryBuilder.prepare();
-            List<Step> userSteps = db.getStepDataDao().query(preparedQuery);
-            if (userSteps != null) {
-                List<String> stepIds = getStepIds(userSteps);
-                // int c = userSteps.size() + 1;
-                int c = getMaxCounter(stepIds);
-                retVal = "S_" + userId + "_" + c;
-            } else {
-                retVal = "S_" + userId + "_1";
-            }
-            Log.d("getTrackId", "Returning step id" + retVal);
-            return retVal;
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return retVal;
+    public static String getStepId() {
+        return UUID.randomUUID().toString();
     }
 
     private static List<String> getStepIds(List<Step> steps) {
@@ -606,10 +511,6 @@ public class DataContainer {
         // Track t = new Track();
         if (editedRoute.getTrack() != null) {
             Track t = editedRoute.getTrack();
-            if (t.getId() == null || t.getId().equals("")) {
-                t.setId(
-                        DataContainer.getTrackId(dataBaseHelper, userId));
-            }
             if (t.getName() == null || t.getName().equals("")) {
                 //TODO change this once all track languages are in. Should be a line for each language.
                 t.setName(editedRoute.getName("ca"));
@@ -626,15 +527,12 @@ public class DataContainer {
                 List<Step> currentSteps = (List<Step>) t.getSteps();
                 for (int i = 0; i < currentSteps.size(); i++) {
                     Step s = currentSteps.get(i);
-                    if (s.getId() == null) {
-                        s.setId(DataContainer.getStepId(dataBaseHelper, userId));
-                    }
                     s.setTrack(t);
 
                     if (s.getHighlights() != null) {
                         for (HighLight h : s.getHighlights()) {
                             if (h.getId() == null) {
-                                h.setId(DataContainer.getHighLightId(dataBaseHelper, userId));
+                                h.setId(DataContainer.getHighLightId());
                                 Log.e("HIGHLIGHT MISSING ID", h.getName());
 
                             }
@@ -697,7 +595,7 @@ public class DataContainer {
             }
         }
         if (editedRoute.getId() == null || editedRoute.getId().equals("")) {
-            editedRoute.setId(DataContainer.getRouteId(dataBaseHelper, userId));
+            editedRoute.setId(DataContainer.getRouteId());
         }
 
         try {

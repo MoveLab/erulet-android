@@ -12,9 +12,11 @@ import java.util.Collection;
 
 @DatabaseTable(tableName = "highlight")
 public class HighLight {
-	
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private String name;
 	@DatabaseField
@@ -50,44 +52,6 @@ public class HighLight {
 	public HighLight() {		
 	}
 	
-	public HighLight(String id) {
-		this.id=id; 
-	}
-	
-	public HighLight(String id, String name) {
-		this.id=id;
-		this.name=name;		
-	}
-	
-	public HighLight(String id, String name, double radius) {
-		this.id=id;
-		this.name=name;
-		this.radius=radius;
-	}		
-	
-	public HighLight(String id, String name, String longText, double radius) {
-		this.id=id;
-		this.name=name;
-		this.radius=radius;		
-		this.longText=longText;
-	}
-	
-	public HighLight(String id, String name, String longText, double radius, int type) {
-		this.id=id;
-		this.name=name;
-		this.radius=radius;		
-		this.longText=longText;
-		this.type=type;
-	}
-	
-	public HighLight(String id, String name, String longText, double radius, int type, Step step) {
-		this.id=id;
-		this.name=name;
-		this.radius=radius;		
-		this.longText=longText;
-		this.type=type;
-		this.step=step;
-	}
 
     public FileManifest getFileManifest() { return file_manifest; }
     public void setFileManifest(FileManifest file_manifest){ this.file_manifest = file_manifest;}
@@ -100,12 +64,12 @@ public class HighLight {
 		this.radius = radius;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setServerId(int server_id) {
+		this.server_id = server_id;
 	}
 
 	public String getName() {
@@ -129,12 +93,12 @@ public class HighLight {
 		this.longText = longText;
 	}
 
-	public String getMediaPath() {
+	public String getMediaFileName() {
 		return mediaPath;
 	}
 
-	public void setMediaPath(String imagePath) {
-		this.mediaPath = imagePath;
+	public void setMediaFileName(String mediaFileName) {
+		this.mediaPath = mediaFileName;
     }
 
 	public int getType() {
@@ -186,6 +150,7 @@ public class HighLight {
 
     }
 
+    // Note this should only be called after refreshing highlight for file manifest
     public boolean hasMediaFile(){
         if(this.getFileManifest()!=null && this.getFileManifest().getPath() != null)
             Log.d("MEDIA FILE MADNESS:", this.getFileManifest().getPath());

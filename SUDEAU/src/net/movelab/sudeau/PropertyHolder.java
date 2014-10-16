@@ -2,6 +2,7 @@ package net.movelab.sudeau;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ public class PropertyHolder {
     public static final String LOCALE = "pref_locale";
     public static final String GENERAL_MAP_PATH = "GENERAL_MAP_PATH";
     public static final String GENERAL_REFERENCE_PATH = "GENERAL_REFERENCE_PATH";
+    public static final String NEEDS_SYNC_FIX = "NEEDS_SYNC_FIX_2";
 
 
     public static final String ARANESE = "oc";
@@ -95,7 +97,17 @@ public class PropertyHolder {
         editor.apply();
     }
 
-	public static boolean isRegistered() {
+    public static boolean needsSyncFix() {
+        return sharedPreferences.getBoolean(NEEDS_SYNC_FIX, true);
+    }
+
+    public static void setNeedsSyncFix(boolean _needs_sync_fix) {
+        editor.putBoolean(NEEDS_SYNC_FIX, _needs_sync_fix);
+        editor.apply();
+    }
+
+
+    public static boolean isRegistered() {
 		return sharedPreferences.getBoolean(IS_REGISTERED, false);
 	}
 
@@ -105,7 +117,7 @@ public class PropertyHolder {
 	}
 
 	public static String getUserId() {
-		return sharedPreferences.getString(USER_ID, null);
+		return sharedPreferences.getString(USER_ID, UUID.randomUUID().toString());
 	}
 
 	public static void setUserId(String _userId) {

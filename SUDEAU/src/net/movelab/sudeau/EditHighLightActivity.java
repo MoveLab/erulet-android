@@ -23,6 +23,7 @@ import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -372,7 +373,8 @@ public class EditHighLightActivity extends Activity {
 				switch(selectedRb){
 					case R.id.rbImage:
 						if(currentPhoto!=null){
-							returnIntent.putExtra("imagePath", Uri.fromFile(currentPhoto).toString());
+							returnIntent.putExtra("imagePath", currentPhoto.getPath());
+                            Log.i("Highlight Image Path", currentPhoto.getPath());
 						}else{
 							returnIntent.putExtra("imagePath", "");
 						}

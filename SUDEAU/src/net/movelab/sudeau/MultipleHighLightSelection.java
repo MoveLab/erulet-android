@@ -61,7 +61,7 @@ public class MultipleHighLightSelection extends Activity {
 	private void launchStandardUserPointInfo(String hl_id){
 		JSONObject hl_s;
 		try {							
-			hl_s = JSONConverter.stepToJSONObject(step);
+			hl_s = JSONConverter.stepToJSONObject(step, app);
 			if (hl_s != null) {
 				String s_j_string = hl_s.toString();
 				Intent istep = new Intent(

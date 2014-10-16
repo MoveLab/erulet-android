@@ -5,9 +5,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "box")
 public class Box {
-		
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private int minX;
 	@DatabaseField
@@ -24,20 +26,17 @@ public class Box {
 	public Box(){	
 	}
 	
-	public Box(String id){
-		this.id=id;
-	}
-	
-	public Box(String id, int minX, int minY, int maxX,int maxY){
-		this.id=id;
+
+	public Box(int server_id, int minX, int minY, int maxX,int maxY){
+		this.server_id=server_id;
 		this.minX=minX;
 		this.minY=minY;
 		this.maxX=maxX;
 		this.maxY=maxY;
 	}
 	
-	public Box(String id, int minX, int minY, int maxX,int maxY, InteractiveImage img){
-		this.id=id;
+	public Box(int server_id, int minX, int minY, int maxX,int maxY, InteractiveImage img){
+		this.server_id=server_id;
 		this.minX=minX;
 		this.minY=minY;
 		this.maxX=maxX;
@@ -59,12 +58,12 @@ public class Box {
 		return false;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setServerId(int server_id) {
+		this.server_id = server_id;
 	}
 	
 }

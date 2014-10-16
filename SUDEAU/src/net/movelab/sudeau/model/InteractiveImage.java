@@ -10,9 +10,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "interactiveimage")
 public class InteractiveImage {
-	
-	@DatabaseField(id=true)
-	private String id;
+
+    @DatabaseField(generatedId=true)
+    private Integer id;
+    @DatabaseField
+    private Integer server_id;
 	@DatabaseField
 	private String mediaPath;	
 	@DatabaseField
@@ -29,18 +31,14 @@ public class InteractiveImage {
 	public InteractiveImage(){
 		
 	}
-	
-	public InteractiveImage(String id){
-		this.setId(id);
-	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-        Log.d("II ID SET: ", id);
+	public void setServerId(int id) {
+		this.server_id = server_id;
+        Log.d("II SERVER ID SET: ", "" + server_id);
 
     }
 
@@ -60,7 +58,7 @@ public class InteractiveImage {
 
 	public void setBoxes(Collection<Box> boxes) {
 		this.boxes = boxes;
-        Log.d("II Boxes SET: ", id);
+        Log.d("II Boxes SET: ", "" + id);
 
     }
 
@@ -88,7 +86,7 @@ public class InteractiveImage {
     }
     public void setHighlight(HighLight highlight){
         this.highlight = highlight;
-        Log.d("II HIGHLIGHT SET: ", id);
+        Log.d("II HIGHLIGHT SET: ", "" + id);
 
     }
 }
