@@ -7,9 +7,9 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Box {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
+    private int server_id;
 	@DatabaseField
 	private int minX;
 	@DatabaseField
@@ -23,7 +23,8 @@ public class Box {
 	@DatabaseField(foreign=true, columnName="interactiveImageId")
     private InteractiveImage interactiveImage;
 	
-	public Box(){	
+	public Box(){
+        this.server_id = -1;
 	}
 	
 
@@ -62,8 +63,16 @@ public class Box {
 		return id;
 	}
 
-	public void setServerId(int server_id) {
+    public int getServerId() {
+        return server_id;
+    }
+
+    public void setServerId(int server_id) {
 		this.server_id = server_id;
 	}
-	
+
+    public void setInteractiveImage(InteractiveImage ii){
+        this.interactiveImage = ii;
+    }
+
 }

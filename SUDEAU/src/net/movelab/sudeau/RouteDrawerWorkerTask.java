@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
@@ -42,9 +43,9 @@ public class RouteDrawerWorkerTask extends AsyncTask<String, Void, List<Polyline
 		try {
 			JSONArray routeList = new JSONArray(params[0]);
 			for(int i = 0; i < routeList.length(); i++){
-				Route selectedRoute = JSONConverter.jsonObjectToRoute( routeList.getJSONObject(i) );
+                final EruletApp app = appReference.get();
+				Route selectedRoute = JSONConverter.jsonObjectToRoute( routeList.getJSONObject(i), app.getDataBaseHelper() );
 				Track t = selectedRoute.getTrack();
-				final EruletApp app = appReference.get();
 				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app.getDataBaseHelper());
 				PolylineOptions rectOptions = new PolylineOptions();
 				for (int j = 0; j < selectedRouteSteps.size(); j++) {

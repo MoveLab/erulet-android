@@ -29,11 +29,13 @@ import android.content.IntentSender;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -46,6 +48,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +62,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -80,7 +84,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private MapBoxOfflineTileProvider tileProvider;
     private Marker selectedMarker;
     private Marker lastPositionMarker;
-    private String stepBeingEditedId;
+    private int stepBeingEditedId;
     private Step currentStep;
     // Route selected in choose itinerary activity
     private Route selectedRoute;
@@ -305,7 +309,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
-                                    stopTracking();
+                                    // This next line seems to be a bug, since it tries to call the same dialog again and opens it after activity has closed.
+                     //               stopTracking();
                                     finish();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
@@ -322,25 +327,23 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 String hlName = data.getStringExtra("hlName");
                 String hlLongText = data.getStringExtra("hlLongText");
                 String imagePath = data.getStringExtra("imagePath");
-                String hlId = data.getStringExtra("hlid");
+                int hlId = data.getIntExtra("hlid", -1);
                 int hlType = data.getIntExtra("hlType", HighLight.WAYPOINT);
                 HighLight hl = null;
-                if (hlId == null) {
+                if (hlId == -1) {
                     hl = new HighLight();
                 } else {
                     hl = DataContainer.findHighLightById(hlId, app.getDataBaseHelper());
                 }
                 hl.setName(hlName);
                 hl.setLongText(hlLongText);
-                hl.setMediaFileName(imagePath);
-                FileManifest new_file_manifest = new FileManifest();
-                new_file_manifest.setPath(imagePath);
+                FileManifest new_file_manifest = DataContainer.createFileManifest(imagePath, app.getDataBaseHelper());
                 hl.setFileManifest(new_file_manifest);
                 hl.setType(hlType);
                 Step s = fixReceiver.getStepById(stepBeingEditedId);
                 hl.setRadius(s.getPrecision());
                 if (s != null) {
-                    if (hlId == null) {
+                    if (hlId == -1) {
                         // Aggressively save highlight
                         //s.getHighlights().add(hl);
                         saveHighLight(hl);
@@ -408,7 +411,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 app.getDataBaseHelper());
         if (s == null) {
             // Something has gone very wrong
-            Log.d("saveHighLight", "Step id not found " + stepBeingEditedId);
         } else {
             DataContainer.addHighLightToStep(s, h,
                     PropertyHolder.getUserId(),
@@ -595,67 +597,73 @@ public class DetailItineraryActivity extends FragmentActivity implements
     // }
 
     private void saveRoute() {
-        if (routeInProgress.getTrack() != null
-                && routeInProgress.getTrack().getSteps() != null
-                && routeInProgress.getTrack().getSteps().size() < 2) {
 
-            // Route has less than 2 steps - offer the chance to directly delete
+        if (routeInProgress != null) {
+            DataContainer.refreshRouteForTrack(routeInProgress, app.getDataBaseHelper());
+            Track t = routeInProgress.getTrack();
+            if (t != null) {
+                List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
+                if (steps != null && steps.size() > 0) {
+                    if (steps.size() < 2) {
+                        // Route has less than 2 steps - offer the chance to directly delete
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                        dialog.setMessage(getString(R.string.trip_with_less_than_2_steps));
+                        dialog.setPositiveButton(getString(R.string.discard_trip),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface paramDialogInterface,
+                                            int paramInt) {
+                                        // Delete route and go to itinerary selection
+                                        DataContainer.deleteRouteCascade(routeInProgress,
+                                                app);
+                                        finish();
+                                    }
+                                });
+                        dialog.setNegativeButton(getString(R.string.save),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface paramDialogInterface,
+                                            int paramInt) {
+                                        // Go to save route
+                                        startSaveRouteInProgressIntent();
+                                    }
+                                });
+                        dialog.show();
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage(getString(R.string.trip_with_less_than_2_steps));
-            dialog.setPositiveButton(getString(R.string.discard_trip),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(
-                                DialogInterface paramDialogInterface,
-                                int paramInt) {
-                            // Delete route and go to itinerary selection
-                            DataContainer.deleteRouteCascade(routeInProgress,
-                                    app);
-                            finish();
-                        }
-                    });
-            dialog.setNegativeButton(getString(R.string.save),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(
-                                DialogInterface paramDialogInterface,
-                                int paramInt) {
-                            // Go to save route
-                            startSaveRouteInProgressIntent();
-                        }
-                    });
-            dialog.show();
+                    } else {
+                        // Route has more than 2 steps - still offer the chance to directly delete
 
-        } else {
-            // Route has more than 2 steps - still offer the chance to directly delete
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            // TODO externalize and translate
-            dialog.setMessage("Would you like to save the track you just created or discard it?");
-            dialog.setPositiveButton(getString(R.string.discard_trip),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(
-                                DialogInterface paramDialogInterface,
-                                int paramInt) {
-                            // Delete route and go to itinerary selection
-                            DataContainer.deleteRouteCascade(routeInProgress,
-                                    app);
-                            finish();
-                        }
-                    });
-            dialog.setNegativeButton(getString(R.string.save),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(
-                                DialogInterface paramDialogInterface,
-                                int paramInt) {
-                            // Go to save route
-                            startSaveRouteInProgressIntent();
-                        }
-                    });
-            dialog.show();
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                        // TODO externalize and translate
+                        dialog.setMessage("Would you like to save the track you just created or discard it?");
+                        dialog.setPositiveButton(getString(R.string.discard_trip),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface paramDialogInterface,
+                                            int paramInt) {
+                                        // Delete route and go to itinerary selection
+                                        DataContainer.deleteRouteCascade(routeInProgress,
+                                                app);
+                                        finish();
+                                    }
+                                });
+                        dialog.setNegativeButton(getString(R.string.save),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface paramDialogInterface,
+                                            int paramInt) {
+                                        // Go to save route
+                                        startSaveRouteInProgressIntent();
+                                    }
+                                });
+                        dialog.show();
+                    }
+                }
+            }
         }
     }
 
@@ -724,7 +732,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
                             m.getPosition(), m.getTitle(), m.getSnippet(),
                             hlType);
                 }
-                Log.d(TAG, "refresh markers added " + hlType);
             }
         }
     }
@@ -748,7 +755,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private void setUpRoutes() {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String idRoute = extras.getString("idRoute");
+            int idRoute = extras.getInt("idRoute", -1);
             selectedRoute = DataContainer.findRouteById(idRoute,
                     app.getDataBaseHelper());
         }
@@ -757,8 +764,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
         // user hits
         if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
             // This is very important for the ratings system
-            String idRouteBasedOn = selectedRoute != null ? selectedRoute
-                    .getId() : null;
+            int idRouteBasedOn = selectedRoute != null ? selectedRoute
+                    .getId() : -1;
             routeInProgress = DataContainer.createEmptyRoute(locale,
                     app.getDataBaseHelper(),
                     PropertyHolder.getUserId(),
@@ -914,15 +921,16 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                             MultipleHighLightSelection.class);
                                     i.putExtra("step_id", s.getId());
 
-                                        DataContainer.refreshStepForTrack(s, app.getDataBaseHelper());
-                                        Track t = s.getTrack();
-                                        if (t != null) {
-                                            DataContainer.refreshTrackForRoute(t, app.getDataBaseHelper());
-                                            Route r = t.getRoute();
-                                            if(r!=null)
-                                                i.putExtra("route_id", r.getId());
-                                    startActivity(i);
-                                }}
+                                    DataContainer.refreshStepForTrack(s, app.getDataBaseHelper());
+                                    Track t = s.getTrack();
+                                    if (t != null) {
+                                        DataContainer.refreshTrackForRoute(t, app.getDataBaseHelper());
+                                        Route r = t.getRoute();
+                                        if (r != null)
+                                            i.putExtra("route_id", r.getId());
+                                        startActivity(i);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1156,11 +1164,29 @@ public class DetailItineraryActivity extends FragmentActivity implements
             mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    // TODO Auto-generated method stub
                     if (marker.isFlat()) {
+
                         return true;
                     }
-                    return false;
+
+                    int container_height = Util.getScreenSize(getApplicationContext())[1];
+
+                    Projection projection = mMap.getProjection();
+
+                    LatLng markerLatLng = new LatLng(marker.getPosition().latitude,
+                            marker.getPosition().longitude);
+                    Point markerScreenPosition = projection.toScreenLocation(markerLatLng);
+                    Point pointBottomQuarter = new Point(markerScreenPosition.x,
+                            markerScreenPosition.y - (container_height / 4));
+
+                    LatLng aboveMarkerLatLng = projection
+                            .fromScreenLocation(pointBottomQuarter);
+
+                    marker.showInfoWindow();
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(aboveMarkerLatLng);
+                    mMap.moveCamera(center);
+
+                    return true;
                 }
             });
         }
@@ -1306,36 +1332,29 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private Step getRouteInProgressNearestStep(LatLng point, float tolerance) {
         Step retVal = null;
         if (routeInProgress != null) {
-            if (routeInProgress.getTrack() != null
-                    && routeInProgress.getTrack().getSteps() != null
-                    && routeInProgress.getTrack().getSteps().size() > 0) {
-                // Check if steps is initialized - strange condition right after
-                // stopping track
-                //*** BUG HERE: Can't cast lazyforeigncollection
-//                ArrayList<Step> steps = (ArrayList<Step>) routeInProgress
-//                        .getTrack().getSteps();
-                // Instead we will try:
-
-                DataContainer.refreshRouteForTrack(routeInProgress,app.getDataBaseHelper());
-                Track t = routeInProgress.getTrack();
+            DataContainer.refreshRouteForTrack(routeInProgress, app.getDataBaseHelper());
+            Track t = routeInProgress.getTrack();
+            if (t != null) {
                 List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
+                if (steps != null && steps.size() > 0) {
 
-                float minDist = Float.MAX_VALUE;
-                for (int i = 0; i < steps.size(); i++) {
-                    Step s = steps.get(i);
+                    float minDist = Float.MAX_VALUE;
+                    for (int i = 0; i < steps.size(); i++) {
+                        Step s = steps.get(i);
 
-                    Location stepLocation = new Location("");
-                    stepLocation.setLatitude(s.getLatitude());
-                    stepLocation.setLongitude(s.getLongitude());
+                        Location stepLocation = new Location("");
+                        stepLocation.setLatitude(s.getLatitude());
+                        stepLocation.setLongitude(s.getLongitude());
 
-                    Location tapLocation = new Location("");
-                    tapLocation.setLatitude(point.latitude);
-                    tapLocation.setLongitude(point.longitude);
+                        Location tapLocation = new Location("");
+                        tapLocation.setLatitude(point.latitude);
+                        tapLocation.setLongitude(point.longitude);
 
-                    float distance = stepLocation.distanceTo(tapLocation);
-                    if (distance <= tolerance && distance < minDist) {
-                        minDist = distance;
-                        retVal = s;
+                        float distance = stepLocation.distanceTo(tapLocation);
+                        if (distance <= tolerance && distance < minDist) {
+                            minDist = distance;
+                            retVal = s;
+                        }
                     }
                 }
             }
@@ -1415,6 +1434,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (step.hasHighLights()) {
             List<HighLight> highLights = DataContainer.getStepHighLights(step,
                     app.getDataBaseHelper());
+
             Marker m;
             if (step.hasSingleHighLight()) {
                 hl = highLights.get(0);
@@ -1573,26 +1593,18 @@ public class DetailItineraryActivity extends FragmentActivity implements
         String mapPath = selectedRoute.getLocalCarto();
         if (mapPath != null && !mapPath.isEmpty()) {
             File f = new File(mapPath);
-            Log.e("CARTO", f.getPath());
             if (f.exists()) {
-                Log.e("CARTO EXISTS", f.getPath());
                 return new MapBoxOfflineTileProvider(f.getPath());
             } else {
-                Log.d(TAG,
-                        "Fitxer cartografia no trobat " + f.getAbsolutePath());
             }
         }
         // If not returned by now, try the general map path instead
         mapPath = PropertyHolder.getGeneralMapPath();
         if (mapPath != null && !mapPath.isEmpty()) {
             File f = new File(mapPath);
-            Log.e("CARTO", f.getPath());
             if (f.exists()) {
-                Log.e("CARTO EXISTS", f.getPath());
                 return new MapBoxOfflineTileProvider(f.getPath());
             } else {
-                Log.d(TAG,
-                        "Fitxer cartografia no trobat " + f.getAbsolutePath());
             }
         }
         return null;
@@ -1685,9 +1697,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
             }
         }
 
-        public Step getStepById(String id) {
+        public Step getStepById(int id) {
             for (Step s : stepsInProgress) {
-                if (s.getId().equalsIgnoreCase(id))
+                if (s.getId() == id)
                     return s;
             }
             return null;
@@ -1806,7 +1818,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 connectionResult.startResolutionForResult(this,
                         CONNECTION_FAILURE_RESOLUTION_REQUEST);
                 /*
-				 * Thrown if Google Play services canceled the original
+                 * Thrown if Google Play services canceled the original
 				 * PendingIntent
 				 */
             } catch (IntentSender.SendIntentException e) {
@@ -1826,13 +1838,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle connectionHint) {
         // Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        Log.d("onConnected", "Google play services connected");
     }
 
     @Override
     public void onDisconnected() {
         // TODO Auto-generated method stub
-        Log.d("onDisconnected", "Google play services disconnected");
     }
 
 }

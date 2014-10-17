@@ -18,13 +18,13 @@ import net.movelab.sudeau.Util;
 public class Route {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
+    private int server_id;
     @DatabaseField
     private boolean official;
 	@DatabaseField
-	private String idRouteBasedOn;
+	private Integer idRouteBasedOn;
     @DatabaseField
     private String name_oc;
     @DatabaseField
@@ -73,6 +73,8 @@ public class Route {
 
 	public Route() {
 		setSharedSteps(new ArrayList<Step>());
+        this.server_id = -1;
+        routeContentLastUpdated = 0;
 	}
 	
     public boolean getOfficial() {
@@ -105,7 +107,6 @@ public class Route {
 
     public void setRouteContentLastUpdatedNow() {
         this.routeContentLastUpdated = System.currentTimeMillis()/1000;
-        Log.e("SET ROUTE JSON LU NOW", "reads" + this.getRouteContentLastUpdated());
 
     }
 
@@ -119,7 +120,6 @@ public class Route {
 
     public void setRouteJsonLastUpdatedNow() {
         this.routeJsonLastUpdated = System.currentTimeMillis()/1000;
-        Log.e("SET ROUTE JSON LU NOW", "");
     }
 
 
@@ -143,9 +143,14 @@ public class Route {
 		return id;
 	}
 
-	public void setServerId(int server_id) {
+    public int getServerId() {
+        return server_id;
+
+    }
+
+    public void setServerId(int server_id) {
 		this.server_id = server_id;
-	}
+    }
 
 
     public String getFirstfilledName(){
@@ -283,11 +288,11 @@ public class Route {
         return "ROUTE " + id + " " + this.getName(lang);
     }
 
-    public String getIdRouteBasedOn() {
+    public int getIdRouteBasedOn() {
 		return idRouteBasedOn;
 	}
 
-	public void setIdRouteBasedOn(String idRouteBasedOn) {
+	public void setIdRouteBasedOn(int idRouteBasedOn) {
 		this.idRouteBasedOn = idRouteBasedOn;
 	}
 	
@@ -329,5 +334,14 @@ public class Route {
 
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
-	}		
+	}
+
+    public String getUniqueName(){
+        if(official){
+            return "holet_route_" + server_id;
+        } else{
+            return "route_" + id;
+        }
+    }
+
 }

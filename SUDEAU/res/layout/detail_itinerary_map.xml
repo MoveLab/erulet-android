@@ -20,7 +20,8 @@
         android:background="@color/dark_grey"
         android:gravity="center"
         android:text="@string/follow_trip"       
-        android:textSize="@dimen/activity_label_title" />
+        android:textSize="@dimen/activity_label_title"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

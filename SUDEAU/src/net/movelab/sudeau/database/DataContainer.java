@@ -1,9 +1,11 @@
 package net.movelab.sudeau.database;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Ref;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,16 +57,16 @@ public class DataContainer {
         return UUID.randomUUID().toString();
     }
 
-    private static List<String> getHighLightIds(List<HighLight> userHighLights) {
-        ArrayList<String> retVal = new ArrayList<String>();
+    private static List<Integer> getHighLightIds(List<HighLight> userHighLights) {
+        ArrayList<Integer> retVal = new ArrayList<Integer>();
         for (int i = 0; i < userHighLights.size(); i++) {
             retVal.add(userHighLights.get(i).getId());
         }
         return retVal;
     }
 
-    private static List<String> getRouteIds(List<Route> userRoutes) {
-        ArrayList<String> retVal = new ArrayList<String>();
+    private static List<Integer> getRouteIds(List<Route> userRoutes) {
+        ArrayList<Integer> retVal = new ArrayList<Integer>();
         for (int i = 0; i < userRoutes.size(); i++) {
             retVal.add(userRoutes.get(i).getId());
         }
@@ -76,15 +78,11 @@ public class DataContainer {
      * object
      */
     public static Route createEmptyRoute(String lang, DataBaseHelper db, String userId,
-                                         String routeBasedOnId) {
+                                         int routeBasedOnId) {
         String idTrack = getTrackId();
-        Log.d("createEmptyRoute", "Getting track id " + idTrack);
         Track t = new Track();
         db.getTrackDataDao().create(t);
-        String idRoute = getRouteId();
-        Log.d("createEmptyRoute", "Getting route id " + idRoute);
         Route r = new Route();
-        r.setId(idRoute);
         r.setIdRouteBasedOn(routeBasedOnId);
         // TODO put into localized strings
         r.setName(lang, "La meva ruta");
@@ -92,16 +90,13 @@ public class DataContainer {
         r.setUserId(userId);
         r.setTrack(t);
         db.getRouteDataDao().create(r);
-        Log.d("createEmptyRoute", "Route " + idRoute + " saved");
         return r;
     }
 
     public static FileManifest createFileManifest(String path, DataBaseHelper db) {
         FileManifest fm = new FileManifest();
         fm.setPath(path);
-        Log.d("created FileManifest", "path: " + fm.getPath());
         db.getFileManifestDataDao().create(fm);
-        Log.d("created FileManifest", "id " + fm.getId());
         return fm;
     }
 
@@ -120,8 +115,6 @@ public class DataContainer {
                                           DataBaseHelper db) {
         // Step already exists
         h.setStep(s);
-        String hlId = getHighLightId();
-        h.setId(hlId);
         db.getHlDataDao().create(h);
 //		s.getHighlights().add(h);
 //		s.setHighlight(h);
@@ -134,26 +127,42 @@ public class DataContainer {
     }
 
     public static HighLight refreshHighlightForFileManifest(HighLight hl, DataBaseHelper db) {
+    if(hl != null && db != null){
         db.getFileManifestDataDao().refresh(hl.getFileManifest());
-        Log.i("REFRESH", hl.getId());
+        } else{
+    }
         return hl;
+    }
+
+
+    public static InteractiveImage refreshInteractiveImageForFileManifest(InteractiveImage ii, DataBaseHelper db) {
+        db.getFileManifestDataDao().refresh(ii.getFileManifest());
+        return ii;
+    }
+
+    public static List<FileManifest> getReferenceFiles(Reference reference, DataBaseHelper db) {
+        db.getReferenceDataDao().refresh(reference);
+        ArrayList<FileManifest> retVal = new ArrayList<FileManifest>();
+        Iterator<FileManifest> fmIt = reference.getFileManifests().iterator();
+        while (fmIt.hasNext()) {
+            FileManifest f = fmIt.next();
+            retVal.add(f);
+        }
+        return retVal;
     }
 
     public static Step refreshStepForTrack(Step s, DataBaseHelper db) {
         db.getTrackDataDao().refresh(s.getTrack());
-        Log.i("REFRESH", s.getId());
         return s;
     }
 
     public static Route refreshRouteForTrack(Route r, DataBaseHelper db) {
         db.getTrackDataDao().refresh(r.getTrack());
-        Log.i("REFRESH", r.getId());
         return r;
     }
 
     public static Track refreshTrackForRoute(Track t, DataBaseHelper db) {
         db.getRouteDataDao().refresh(t.getRoute());
-        Log.i("REFRESH", "" + t.getId());
         return t;
     }
 
@@ -171,8 +180,9 @@ public class DataContainer {
             deleteReference(r.getReference(), app);
         }
         app.getDataBaseHelper().getRouteDataDao().delete(r);
+        // TODO check why we are storing route id in shared preferences to begin with
         SharedPreferences.Editor ed = app.getPrefsEditor();
-        ed.remove(r.getId());
+        ed.remove("" + r.getId());
         ed.commit();
     }
 
@@ -229,7 +239,7 @@ public class DataContainer {
         }
         app.getDataBaseHelper().getHlDataDao().delete(h);
         SharedPreferences.Editor ed = app.getPrefsEditor();
-        ed.remove(h.getId());
+        ed.remove("" + h.getId());
         ed.commit();
     }
 
@@ -271,8 +281,8 @@ public class DataContainer {
         return UUID.randomUUID().toString();
     }
 
-    private static List<String> getStepIds(List<Step> steps) {
-        ArrayList<String> ids = new ArrayList<String>();
+    private static List<Integer> getStepIds(List<Step> steps) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < steps.size(); i++) {
             ids.add(steps.get(i).getId());
         }
@@ -283,29 +293,30 @@ public class DataContainer {
         db.getRouteDataDao().update(editedRoute);
     }
 
-    public static InteractiveImage findInteractiveImageById(String idImage,
+    public static InteractiveImage findInteractiveImageById(int idImage,
                                                             DataBaseHelper db) {
         InteractiveImage i = db.getInteractiveImageDataDao()
                 .queryForId(idImage);
         return i;
     }
 
-    public static HighLight findHighLightById(String idHighLight, DataBaseHelper db) {
+
+    public static HighLight findHighLightById(int idHighLight, DataBaseHelper db) {
         HighLight h = db.getHlDataDao().queryForId(idHighLight);
         return h;
     }
 
-    public static Route findRouteById(String idRoute, DataBaseHelper db) {
+    public static Route findRouteById(int idRoute, DataBaseHelper db) {
         Route r = db.getRouteDataDao().queryForId(idRoute);
         return r;
     }
 
-    public static Step findStepById(String idStep, DataBaseHelper db) {
+    public static Step findStepById(int idStep, DataBaseHelper db) {
         Step s = db.getStepDataDao().queryForId(idStep);
         return s;
     }
 
-    public static Reference findReferenceById(String idReference,
+    public static Reference findReferenceById(int idReference,
                                               DataBaseHelper db) {
         Reference r = db.getReferenceDataDao().queryForId(idReference);
         return r;
@@ -318,9 +329,9 @@ public class DataContainer {
 
     public static List<Route> getUserRoutes(DataBaseHelper db, String userId) {
         List<Route> userRoutes = new ArrayList<Route>();
-        QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao()
+        QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()
                 .queryBuilder();
-        Where<Route, String> where = queryBuilder.where();
+        Where<Route, Integer> where = queryBuilder.where();
         String retVal = null;
         try {
             where.eq("userId", userId);
@@ -341,9 +352,9 @@ public class DataContainer {
 
     public static List<Route> getAllOfficialRoutes(DataBaseHelper db) {
         List<Route> officialRoutes = new ArrayList<Route>();
-        QueryBuilder<Route, String> queryBuilder = db.getRouteDataDao()
+        QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()
                 .queryBuilder();
-        Where<Route, String> where = queryBuilder.where();
+        Where<Route, Integer> where = queryBuilder.where();
         try {
             where.eq("official", true);
             PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
@@ -354,6 +365,124 @@ public class DataContainer {
             e.printStackTrace();
         }
         return officialRoutes;
+    }
+
+
+    public static Route findRouteByServerId(int server_id, DataBaseHelper db) {
+        Route result = null;
+        List<Route> resultList = new ArrayList<Route>();
+        QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()
+                .queryBuilder();
+        Where where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+            resultList = db.getRouteDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static Step findStepByServerId(int server_id, DataBaseHelper db) {
+        Step result = null;
+        List<Step> resultList = new ArrayList<Step>();
+        QueryBuilder<Step, Integer> queryBuilder = db.getStepDataDao()
+                .queryBuilder();
+        Where where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<Step> preparedQuery = queryBuilder.prepare();
+            resultList = db.getStepDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static Reference findReferenceByServerId(int server_id, DataBaseHelper db) {
+        Reference result = null;
+        List<Reference> resultList = new ArrayList<Reference>();
+        QueryBuilder<Reference, Integer> queryBuilder = db.getReferenceDataDao()
+                .queryBuilder();
+        Where where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<Reference> preparedQuery = queryBuilder.prepare();
+            resultList = db.getReferenceDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+
+    public static InteractiveImage findInteractiveImageByServerId(int server_id, DataBaseHelper db) {
+        InteractiveImage result = null;
+        List<InteractiveImage> resultList = new ArrayList<InteractiveImage>();
+        QueryBuilder<InteractiveImage, Integer> queryBuilder = db.getInteractiveImageDataDao()
+                .queryBuilder();
+        Where where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<InteractiveImage> preparedQuery = queryBuilder.prepare();
+            resultList = db.getInteractiveImageDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static Track findTrackByServerId(int server_id, DataBaseHelper db) {
+        Track result = null;
+        List<Track> resultList = new ArrayList<Track>();
+        QueryBuilder<Track, Integer> queryBuilder = db.getTrackDataDao()
+                .queryBuilder();
+        Where where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
+            resultList = db.getTrackDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+
+    public static HighLight findHighlightByServerId(int server_id, DataBaseHelper db) {
+        HighLight result = null;
+        List<HighLight> resultList;
+        QueryBuilder<HighLight, Integer> queryBuilder = db.getHlDataDao()
+                .queryBuilder();
+        Where<HighLight, Integer> where = queryBuilder.where();
+        try {
+            where.eq("server_id", server_id);
+            PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
+            resultList = db.getHlDataDao().query(preparedQuery);
+            if(resultList !=null && resultList.size() > 0){
+                result = resultList.get(0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 
@@ -446,6 +575,30 @@ public class DataContainer {
         return s;
     }
 
+
+    public static List<InteractiveImage> getHighlightIIs(HighLight h, DataBaseHelper db) {
+        db.getHlDataDao().refresh(h);
+        ArrayList<InteractiveImage> retVal = new ArrayList<InteractiveImage>();
+        Iterator<InteractiveImage> iis = h.getInteractiveImages().iterator();
+        while (iis.hasNext()) {
+            InteractiveImage this_ii = iis.next();
+            retVal.add(this_ii);
+        }
+        return retVal;
+    }
+
+    public static List<Reference> getHighlightReferences(HighLight h, DataBaseHelper db) {
+        db.getHlDataDao().refresh(h);
+        ArrayList<Reference> retVal = new ArrayList<Reference>();
+        Iterator<Reference> refs = h.getReferences().iterator();
+        while (refs.hasNext()) {
+            Reference this_reference = refs.next();
+            retVal.add(this_reference);
+        }
+        return retVal;
+    }
+
+
     public static List<HighLight> getStepHighLights(Step step, DataBaseHelper db) {
         db.getStepDataDao().refresh(step);
         ArrayList<HighLight> retVal = new ArrayList<HighLight>();
@@ -495,12 +648,19 @@ public class DataContainer {
         dataBaseHelper.getRouteDataDao().update(r);
     }
 
+    public static void updateReference(Reference ref, DataBaseHelper dataBaseHelper) {
+        dataBaseHelper.getReferenceDataDao().update(ref);
+    }
+
+
     public static void updateHighLight(HighLight h, DataBaseHelper dataBaseHelper) {
         dataBaseHelper.getHlDataDao().update(h);
     }
+
     public static void updateFileManifest(FileManifest fm, DataBaseHelper dataBaseHelper) {
         dataBaseHelper.getFileManifestDataDao().update(fm);
     }
+
     public static void updateInteractiveImage(InteractiveImage ii, DataBaseHelper dataBaseHelper) {
         dataBaseHelper.getInteractiveImageDataDao().update(ii);
     }
@@ -516,11 +676,8 @@ public class DataContainer {
                 t.setName(editedRoute.getName("ca"));
             }
             try {
-                dataBaseHelper.getTrackDataDao().create(t);
-
-
+                dataBaseHelper.getTrackDataDao().createOrUpdate(t);
             } catch (RuntimeException ex) {
-                Log.e("Inserting track", "Insert error " + ex.toString());
             }
 
             if (t.getSteps() != null) {
@@ -529,24 +686,36 @@ public class DataContainer {
                     Step s = currentSteps.get(i);
                     s.setTrack(t);
 
+                    try {
+                        dataBaseHelper.getStepDataDao().createOrUpdate(s);
+
+                    } catch (RuntimeException ex) {
+                    }
                     if (s.getHighlights() != null) {
                         for (HighLight h : s.getHighlights()) {
-                            if (h.getId() == null) {
-                                h.setId(DataContainer.getHighLightId());
-                                Log.e("HIGHLIGHT MISSING ID", h.getName());
-
-                            }
                             //	s.getHighlights().add(h);
                             h.setStep(s);
 
+                            try {
+                                dataBaseHelper.getHlDataDao().createOrUpdate(h);
+
+
+                            } catch (RuntimeException ex) {
+                            }
                             if (h.getReferences() != null) {
 
                                 for (Reference ref : h.getReferences()) {
+                                    ref.setHighlight(h);
                                     try {
-                                        dataBaseHelper.getReferenceDataDao().create(ref);
+                                        dataBaseHelper.getReferenceDataDao().createOrUpdate(ref);
                                     } catch (RuntimeException ex) {
-                                        Log.e("Inserting reference",
-                                                "Insert error " + ex.toString());
+                                    }
+
+                                    if (ref.getFileManifests() != null){
+                                        for (FileManifest fm : ref.getFileManifests()){
+                                            fm.setReference(ref);
+                                            dataBaseHelper.getFileManifestDataDao().createOrUpdate(fm);
+                                        }
                                     }
                                 }
 
@@ -554,54 +723,40 @@ public class DataContainer {
                             if (h.getInteractiveImages() != null) {
 
                                 for (InteractiveImage ii : h.getInteractiveImages()) {
+                                    ii.setHighlight(h);
+                                    try {
+                                        dataBaseHelper.getInteractiveImageDataDao().createOrUpdate(ii);
+                                    } catch (RuntimeException ex) {
+                                    }
 
                                     if (ii.getBoxes() != null) {
                                         for (Box b : ii.getBoxes()) {
+
+                                            b.setInteractiveImage(ii);
+
                                             try {
-                                                dataBaseHelper.getBoxDataDao().create(b);
+                                                dataBaseHelper.getBoxDataDao().createOrUpdate(b);
                                             } catch (RuntimeException ex) {
-                                                Log.e("Inserting box",
-                                                        "Insert error " + ex.toString());
                                             }
 
                                         }
                                     }
 
-                                    try {
-                                        dataBaseHelper.getInteractiveImageDataDao().create(ii);
-                                    } catch (RuntimeException ex) {
-                                        Log.e("Inserting ii",
-                                                "Insert error " + ex.toString());
-                                    }
                                 }
 
                             }
 
-                            try {
-                                dataBaseHelper.getHlDataDao().create(h);
 
-                            } catch (RuntimeException ex) {
-                                Log.e("Inserting step",
-                                        "Insert error " + ex.toString());
-                            }
                         }
                     }
-                    try {
-                        dataBaseHelper.getStepDataDao().create(s);
-                    } catch (RuntimeException ex) {
-                        Log.e("Inserting step", "Insert error " + ex.toString());
-                    }
+
                 }
             }
         }
-        if (editedRoute.getId() == null || editedRoute.getId().equals("")) {
-            editedRoute.setId(DataContainer.getRouteId());
-        }
 
         try {
-            dataBaseHelper.getRouteDataDao().create(editedRoute);
+            dataBaseHelper.getRouteDataDao().createOrUpdate(editedRoute);
         } catch (RuntimeException ex) {
-            Log.e("Inserting route", "Insert error " + ex.toString());
         }
     }
 

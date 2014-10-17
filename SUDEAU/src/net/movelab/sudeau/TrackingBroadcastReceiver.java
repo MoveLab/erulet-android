@@ -107,14 +107,14 @@ public class TrackingBroadcastReceiver extends BroadcastReceiver {
 				System.currentTimeMillis());
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		Intent intent = new Intent(context, DetailItineraryActivity.class);
+//		Intent intent = new Intent(context, DetailItineraryActivity.class);
 
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-				intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+//				intent, PendingIntent.FLAG_CANCEL_CURRENT);
 		notification.setLatestEventInfo(context, context.getResources()
 				.getString(R.string.tracking_notification_subject), context
 				.getResources().getString(R.string.tracking_notification),
-				pendingIntent);
+				null);
 		notificationManager.notify(Util.TRACKING_NOTIFICATION, notification);
 
 	}

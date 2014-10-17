@@ -103,7 +103,7 @@ public class EditRouteActivity extends Activity {
         }
     }
 
-    private String save(String userId) {
+    private int save(String userId) {
         editedRoute.setName(locale, routeName.getText().toString());
         editedRoute.setDescription(locale, routeDescription.getText().toString());
         DataContainer.editRoute(editedRoute, app.getDataBaseHelper());
@@ -121,8 +121,8 @@ public class EditRouteActivity extends Activity {
         myRating = (RatingBar) findViewById(R.id.ratBarUserRoute);
         myRating.setStepSize(1.0f);
         float userRating = 0;
-        if (editedRoute.getIdRouteBasedOn() != null) {
-            userRating = app.getPrefs().getInt(editedRoute.getIdRouteBasedOn(), 0);
+        if (editedRoute.getIdRouteBasedOn() != -1) {
+            userRating = app.getPrefs().getInt("" + editedRoute.getIdRouteBasedOn(), 0);
         }
         myRating.setRating(userRating);
 
@@ -131,7 +131,7 @@ public class EditRouteActivity extends Activity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {
-                mPrefEditor.putInt(editedRoute.getIdRouteBasedOn(), (int) rating);
+                mPrefEditor.putInt("" + editedRoute.getIdRouteBasedOn(), (int) rating);
                 mPrefEditor.commit();
             }
         });
@@ -233,7 +233,7 @@ public class EditRouteActivity extends Activity {
         if (extras != null) {
             String routeJson = extras.getString("routeJson");
             try {
-                editedRoute = JSONConverter.jsonToRoute(routeJson);
+                editedRoute = JSONConverter.jsonToRoute(routeJson, app.getDataBaseHelper());
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

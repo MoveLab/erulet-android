@@ -226,23 +226,23 @@ public class Util {
     public static String generalReferencesFolder = "general_references";
     public static String routeMediaFolder = "route_media";
 
-    public static String makeHighlightMediaPath(String highlight_id, String route_id, String media_name) {
-        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "highlight_" + highlight_id + "/media/" + media_name);
+    public static String makeHighlightMediaPath(int highlight_id, String unique_route_name, String media_name) {
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + unique_route_name + "/" + "highlight_" + highlight_id + "/media/" + media_name);
         return f.getAbsolutePath();
     }
 
-    public static String makeInteractiveImageImagePath(String interactive_image_id, String highlight_id, String route_id, String image_name) {
+    public static String makeInteractiveImageImagePath(int interactive_image_id, int highlight_id, String route_id, String image_name) {
         File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "highlight_" + highlight_id + "/interactive_image_" + interactive_image_id + "/" + image_name);
         return f.getAbsolutePath();
     }
 
-    public static String makeReferencePath(String route_id, String lang_code) {
-        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "route_reference/reference_" + lang_code + ".html");
+    public static String makeReferencePath(String unique_route_name, String lang_code) {
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + unique_route_name + "/" + "route_reference/reference_" + lang_code + ".html");
         return f.getAbsolutePath();
     }
 
-    public static String makeReferencePath(String route_id, String highlight_id, String reference_id, String lang_code) {
-        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + "route_" + route_id + "/" + "highlight_" + highlight_id + "/reference_" + reference_id + "/reference_" + lang_code + ".html");
+    public static String makeReferencePath(String unique_route_name, int highlight_id, int reference_id, String lang_code) {
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder + "/" + unique_route_name + "/" + "highlight_" + highlight_id + "/reference_" + reference_id + "/reference_" + lang_code + ".html");
         return f.getAbsolutePath();
     }
 
@@ -1113,7 +1113,7 @@ public class Util {
 
     public static String getUrlRouteMap(Route route) {
         long last_update = route.getLocalCartoLastUpdated();
-        String result = UtilLocal.URL_ROUTE_MAP + route.getId() + "/" + last_update + "/";
+        String result = UtilLocal.URL_ROUTE_MAP + route.getServerId() + "/" + last_update + "/";
         return result;
     }
 
@@ -1134,13 +1134,15 @@ public class Util {
             PropertyHolder.init(context);
         long last_update = PropertyHolder.getLastUpdateGeneralReferences();
         String result = UtilLocal.URL_GENERAL_REFERENCES + screenWidthPixels + "/" + last_update + "/";
+        Log.d("GR url: ", result);
         return result;
     }
 
-    public static String getUrlRouteContent(Context context, String routeId, long lastUpdate) {
+    public static String getUrlRouteContent(Context context, int routeId, long lastUpdate) {
         // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
         int screenWidthPixels = getLargestScreenDimension(context);
         String result = UtilLocal.URL_ROUTE_CONTENT + routeId + "/" + screenWidthPixels + "/" + Long.toString(lastUpdate) + "/";
+        Log.d("Route Media url: ", result);
         return result;
     }
 

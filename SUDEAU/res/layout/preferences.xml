@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-        
+
+
+
         <TextView
         android:id="@+id/tvLblSettings"
         android:layout_width="match_parent"
@@ -18,10 +20,24 @@
         android:text="@string/preferences"
         android:textSize="@dimen/activity_label_title" />
 
+        <TextView
+            android:id="@+id/version_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textSize="16sp"
+            android:text="Eth Holet Version"
+            android:layout_margin="10dp"
+            />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:padding="10dp" >
 
             <TextView
                 android:id="@+id/tvCurrentLang"
@@ -88,7 +104,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible"
+                android:layout_margin="10dp">
+
             <TextView
                 android:id="@+id/tvStepInterval"
                 android:layout_width="wrap_content"
@@ -110,11 +128,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/version_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
 
         </LinearLayout>
 

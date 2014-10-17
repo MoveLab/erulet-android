@@ -109,38 +109,19 @@ public class Switchboard extends FragmentActivity {
             PropertyHolder.init(context);
 
 
+        // check route size and force db updates at top
+        List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+
         if (PropertyHolder.isFirstTime()) {
+
             // TODO tryToRegister();
             // check that auto id is working
-            Log.e("userid", PropertyHolder.getUserId());
             showWelcomeDialog();
             PropertyHolder.setFirstTime(false);
 
             // if first time is called after this update has been written no need for sync fix
             PropertyHolder.setNeedsSyncFix(false);
 
-        } else if (PropertyHolder.needsSyncFix()){
-            Log.i("NEEDS SYNC FIX", "top");
-            // fix for syncing bug
-            List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
-            if(routes.size() > 0){
-                Log.i("NEEDS SYNC FIX", "routes size:" + routes.size());
-                for(Route route: routes){
-                    // userids were null for official routes prior to now
-                    if(route.getUserId() != null){
-                        route.setOfficial(false);
-                        // make sure set with current user id -- i.e. the UUID -- for older versions
-                        route.setUserId(PropertyHolder.getUserId());
-                        DataContainer.updateRoute(route, app.getDataBaseHelper());
-                        Log.i("NEEDS SYNC FIX", "set not official Route: " + route.getId() + " by " + route.getUserId());
-            } else if (route.getOfficial() == true){
-                        // if route already marked official by no user id because we were not grabbing it correctly from server before, mark it as lluis
-                        route.setUserId("lluis");
-                        Log.i("NEEDS SYNC FIX", "set official to lluis, route: " + route.getId());
-                    }
-            }
-            }
-            PropertyHolder.setNeedsSyncFix(false);
         }
 
 
@@ -260,12 +241,28 @@ public class Switchboard extends FragmentActivity {
                 Switchboard.this);
         builderSingle.setIcon(R.drawable.ic_launcher);
         builderSingle.setTitle("Holet is still syncing");
-        builderSingle.setMessage("Holet needs to complete an initial sync with the server. Please make sure you have an internet connection and wait a few moments before trying this button again.");
+        builderSingle.setMessage("Holet needs to complete an initial sync with the server in order to have all necessary contents for offline use in the mountains. Wouuld you like to try the sync now? (You can always do it later by choosing the 'sync' option from the menu on this screen.");
         builderSingle.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                    }
+                });
+        builderSingle.setNeutralButton("Sync Later",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(Switchboard.this,
+                                ChooseItineraryActivity.class);
+                        startActivity(i);
+                    }
+                });
+        builderSingle.setPositiveButton("Sync Now",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startInitialSync();
                     }
                 });
 
@@ -282,6 +279,7 @@ public class Switchboard extends FragmentActivity {
              @Override
              public void onClick(DialogInterface dialogInterface, int i) {
                  startInitialSync();
+                 dialogInterface.dismiss();
              }
          });
         b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -344,7 +342,7 @@ public class Switchboard extends FragmentActivity {
             }
 
             // JSON
-// TODO testing
+// TODO testing - iimplement better test for needing update
             if(true){
 
             myProgress = 10;
@@ -364,14 +362,13 @@ public class Switchboard extends FragmentActivity {
                     publishProgress(myProgress);
 
                 } catch (JSONException e) {
-                    Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
                 }
-                ArrayList<Route> routes = JSONConverter.jsonArrayToRouteArray(ja);
+                ArrayList<Route> these_routes = JSONConverter.jsonArrayToRouteArray(ja, app.getDataBaseHelper());
                 myProgress += 20;
                 publishProgress(myProgress);
                 int nDone = 0;
-                int totalRoutes = routes.size();
-                for (Route route : routes) {
+                int totalRoutes = these_routes.size();
+                for (Route route : these_routes) {
                     if (isCancelled()) {
                         break;
                     } else {
@@ -383,7 +380,6 @@ public class Switchboard extends FragmentActivity {
 
             } catch (Exception e) {
 
-                Log.e("JSON ERROR: ", e.getMessage() + e.getCause(), e);
 
             }
             }
@@ -392,14 +388,12 @@ public class Switchboard extends FragmentActivity {
             try {
                 HttpResponse response = Util.getResponse(Util.getUrlGeneralMap(context[0]), 180000);
                 int statusCode = response.getStatusLine().getStatusCode();
-                Log.i("MAP Download", "Status code:" + statusCode);
                 if (statusCode == 200) {
                     if (response.containsHeader("Content-Length")) {
                         int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
                         HttpEntity entity = response.getEntity();
                         File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
                         String destinationPath = destinationFile.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                         InputStream input = new BufferedInputStream(entity.getContent());
                         OutputStream output = new FileOutputStream(destinationPath);
                         byte data[] = new byte[1024];
@@ -423,10 +417,8 @@ public class Switchboard extends FragmentActivity {
                         int nEntries = thisZipfile.size();
                         int zipCounter = 0;
                         String zipFilePath = destinationPath;
-                        Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
                         File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMapsFolder);
                         String destDirectory = target_directory.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
                         try {
                             final int BUFFER_SIZE = 4096;
                             File destDir = new File(destDirectory);
@@ -471,23 +463,19 @@ public class Switchboard extends FragmentActivity {
                             zipIn.close();
                         } catch (Exception ex) {
                             mapSuccess = false;
-                            Log.e("MAP ERROR 1: ", ex.getStackTrace().toString());
                         }
 
                     } else {
                         Log.e("Maps", "entity: " + response.getEntity().getContent());
                     }
                 } else {
-                    Log.e("NEWTRY", "failed to get map");
                     mapSuccess = false;
                 }
             } catch (ClientProtocolException e) {
-                Log.e("NEWTRY", "error: " + e);
                 mapSuccess = false;
 
             } catch (IOException e) {
                 mapSuccess = false;
-                Log.e("NEWTRY", "error: " + e);
             }
             if (mapSuccess) {
                 PropertyHolder.setLastUpdateGeneralMapNow();
@@ -495,20 +483,18 @@ public class Switchboard extends FragmentActivity {
 
 
 //Route Maps
-List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+            List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
             for(Route route: routes){
                 boolean routeMapSuccess = true;
             try {
                 HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
                 int statusCode = response.getStatusLine().getStatusCode();
-                Log.i("Route MAP Download", "Status code:" + statusCode);
                 if (statusCode == 200) {
                     if (response.containsHeader("Content-Length")) {
                         int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
                         HttpEntity entity = response.getEntity();
                         File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
                         String destinationPath = destinationFile.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                         InputStream input = new BufferedInputStream(entity.getContent());
                         OutputStream output = new FileOutputStream(destinationPath);
                         byte data[] = new byte[1024];
@@ -532,10 +518,8 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                         int nEntries = thisZipfile.size();
                         int zipCounter = 0;
                         String zipFilePath = destinationPath;
-                        Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
                         File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMapsFolder);
                         String destDirectory = target_directory.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
                         try {
                             final int BUFFER_SIZE = 4096;
                             File destDir = new File(destDirectory);
@@ -583,23 +567,18 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                             zipIn.close();
                         } catch (Exception ex) {
                             routeMapSuccess = false;
-                            Log.e("MAP ERROR 1: ", ex.getStackTrace().toString());
                         }
 
                     } else {
-                        Log.e("Maps", "entity: " + response.getEntity().getContent());
                     }
                 } else {
-                    Log.e("NEWTRY", "failed to get map");
                    routeMapSuccess = false;
                 }
             } catch (ClientProtocolException e) {
-                Log.e("NEWTRY", "error: " + e);
                 routeMapSuccess = false;
 
             } catch (IOException e) {
                 routeMapSuccess = false;
-                Log.e("NEWTRY", "error: " + e);
             }
             if (routeMapSuccess) {
               route.setLocalCartoLastUpdatedNow();
@@ -622,10 +601,8 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                         HttpEntity entity = response.getEntity();
                         File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
                         String destinationPath = destinationFile.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                         destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/general_references.zip");
                         destinationPath = destinationFile.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                         entity = response.getEntity();
                         InputStream input = new BufferedInputStream(entity.getContent());
                         OutputStream output = new FileOutputStream(destinationPath);
@@ -650,10 +627,8 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                         int nEntries = thisZipfile.size();
                         int zipCounter = 0;
                         String zipFilePath = destinationPath;
-                        Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
                         File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.generalReferencesFolder);
                         String destDirectory = target_directory.getPath();
-                        Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
                         try {
                             final int BUFFER_SIZE = 4096;
                             File destDir = new File(destDirectory);
@@ -713,42 +688,34 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                             ex.printStackTrace();
                         }
                     } else {
-                        Log.e("Maps", "entity: " + response.getEntity().getContent());
                     }
                 } else {
-                    Log.e("NEWTRY", "failed to get map");
                     grSuccess = false;
                 }
             } catch (ClientProtocolException e) {
-                Log.e("NEWTRY", "error: " + e);
                 grSuccess = false;
             } catch (IOException e) {
                 grSuccess = false;
-                Log.e("NEWTRY", "error: " + e);
             }
             if (grSuccess) {
                 PropertyHolder.setLastUpdateGeneralReferencesNow();
             }
 
             // ROUTE MEDIA
-            Log.e("ROUTES:", "size: " + routes.size());
             for (Route route : routes) {
                 boolean routeSuccess = true;
                 try {
-                    HttpResponse response = Util.getResponse(Util.getUrlRouteContent(context[0], route.getId(), route.getRouteContentLastUpdated()), 180000);
+                    HttpResponse response = Util.getResponse(Util.getUrlRouteContent(context[0], route.getServerId(), route.getRouteContentLastUpdated()), 180000);
                     int statusCode = response.getStatusLine().getStatusCode();
-                    Log.i("GR Download", "Status code:" + statusCode);
                     if (statusCode == 200) {
                         if (response.containsHeader("Content-Length")) {
-
+                        Log.d("Route Media status code: ", "" + statusCode);
                             int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
                             HttpEntity entity = response.getEntity();
                             File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
                             String destinationPath = destinationFile.getPath();
-                            Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                             destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route.zip");
                             destinationPath = destinationFile.getPath();
-                            Log.d("ANDRO_ASYNC", "Save path: " + destinationPath);
                             entity = response.getEntity();
                             InputStream input = new BufferedInputStream(entity.getContent());
                             OutputStream output = new FileOutputStream(destinationPath);
@@ -777,10 +744,8 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                             int zipCounter = 0;
 
                             String zipFilePath = destinationPath;
-                            Log.d("ANDRO_ASYNC", "read path: " + destinationPath);
                             File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMediaFolder);
                             String destDirectory = target_directory.getPath();
-                            Log.d("ANDRO_ASYNC", "Save path: " + destDirectory);
 
                             UnzipUtility unzipper = new UnzipUtility();
                             try {
@@ -822,27 +787,32 @@ List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper())
                                             // save the file manifest to database
                                             FileManifest this_file_manifest = DataContainer.createFileManifest(filePath, app.getDataBaseHelper());
 
-                                            Log.i("Filepath", filePath);
                                             if (filePath.contains("highlight_")) {
-                                                String this_highlight_id = filePath.split("highlight_")[1].split("/")[0];
-                                                Log.i("Filepath", this_highlight_id);
+                                                String this_highlight_server_id = filePath.split("highlight_")[1].split("/")[0];
                                                 if (filePath.contains("/media/")) {
                                                     // This is a media file associated directly withy the highlight
-                                                    HighLight this_highlight = DataContainer.findHighLightById(this_highlight_id, app.getDataBaseHelper());
-                                                    Log.i("Media File", this_highlight.getId());
+                                                    Log.d("HighlightServerId: ", this_highlight_server_id);
+                                                    HighLight this_highlight = DataContainer.findHighlightByServerId(Integer.parseInt(this_highlight_server_id), app.getDataBaseHelper());
                                                     this_highlight.setFileManifest(this_file_manifest);
                                                     DataContainer.updateHighLight(this_highlight, app.getDataBaseHelper());
-                                                    Log.i("Highlight", this_highlight.getFileManifest().getPath());
                                                 } else if (filePath.contains("reference")) {
                                                     // This is a reference
-                                                    String this_reference_id = filePath.split("reference_")[1].split("/")[0];
-                                                    Reference this_reference = DataContainer.findReferenceById(this_reference_id, app.getDataBaseHelper());
+                                                    String this_reference_server_id = filePath.split("reference_")[1].split("/")[0];
+                                                    Reference this_reference = DataContainer.findReferenceByServerId(Integer.parseInt(this_reference_server_id), app.getDataBaseHelper());
                                                     this_file_manifest.setReference(this_reference);
                                                     DataContainer.updateFileManifest(this_file_manifest, app.getDataBaseHelper());
+                                                    if(filePath.contains(".html")){
+                                                        String lang = filePath.substring(filePath.length()-7, filePath.length()-5);
+                                                        this_reference.setHtmlPath(lang, filePath);
+
+                                                        DataContainer.updateReference(this_reference, app.getDataBaseHelper());
+
+                                                    }
 
                                                 } else if (filePath.contains("interactive_image")) {
-                                                    String this_ii_id = filePath.split("interactive_image_")[1].split("/")[0];
-                                                    InteractiveImage this_ii = DataContainer.findInteractiveImageById(this_ii_id, app.getDataBaseHelper());
+                                                    String this_ii_server_id = filePath.split("interactive_image_")[1].split("/")[0];
+
+                                                    InteractiveImage this_ii = DataContainer.findInteractiveImageByServerId(Integer.parseInt(this_ii_server_id), app.getDataBaseHelper());
                                                     this_ii.setFileManifest(this_file_manifest);
                                                     DataContainer.updateInteractiveImage(this_ii, app.getDataBaseHelper());
 

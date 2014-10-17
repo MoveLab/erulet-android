@@ -38,9 +38,9 @@ public class MultipleHighLightSelection extends Activity {
 
 		listView = (ListView) findViewById(R.id.lv_multiple_activities);
 		Bundle extras = getIntent().getExtras();
-		String step_id = "-1";
+		int step_id = -1;
 		if(extras!=null){
-			step_id = extras.getString("step_id");
+			step_id = extras.getInt("step_id");
 		}
 		List<HighLight> highLights = loadHighLights(step_id);
 		
@@ -58,7 +58,7 @@ public class MultipleHighLightSelection extends Activity {
 		});		 
 	}
 	
-	private void launchStandardUserPointInfo(String hl_id){
+	private void launchStandardUserPointInfo(int hl_id){
 		JSONObject hl_s;
 		try {							
 			hl_s = JSONConverter.stepToJSONObject(step, app);
@@ -78,9 +78,9 @@ public class MultipleHighLightSelection extends Activity {
 		}
 	}
 	
-	private List<HighLight> loadHighLights(String step_id){
+	private List<HighLight> loadHighLights(int step_id){
 		List<HighLight> retVal = new ArrayList<HighLight>();
-		if(step_id!=null){
+		if(step_id!=-1){
 			step = DataContainer.findStepById(step_id, app.getDataBaseHelper());
 			if(step!=null){			
 				retVal = DataContainer.getStepHighLights(step, app.getDataBaseHelper());

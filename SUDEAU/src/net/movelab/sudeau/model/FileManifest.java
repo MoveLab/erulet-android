@@ -10,7 +10,7 @@ import java.util.Collection;
 public class FileManifest {
 
 	@DatabaseField(generatedId=true)
-	private Integer id;
+	private int id;
 	@DatabaseField
 	private String path;
     @DatabaseField(foreign=true, columnName = "referenceId")

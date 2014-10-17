@@ -13,6 +13,7 @@ import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
+import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.Intent;
@@ -56,14 +57,17 @@ public class DetailHighLightActivity extends Activity {
             app = (EruletApp) getApplicationContext();
         }
 		screenWidth = Util.getScreenSize(getBaseContext())[0];
-		String highLight_id = null;
+		int highLight_id = -1;
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
 			String step_json = extras.getString("step_j");
-			highLight_id = extras.getString("highlight_id");
-            String route_id = extras.getString("route_id");
+			highLight_id = extras.getInt("highlight_id");
+            int route_id = extras.getInt("route_id");
+
+            Route this_route = DataContainer.findRouteById(route_id,
+                    app.getDataBaseHelper());
             try {
-				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json), route_id);
+				step = JSONConverter.jsonObjectToStep(new JSONObject(step_json), app.getDataBaseHelper());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -74,7 +78,7 @@ public class DetailHighLightActivity extends Activity {
 		}
 	}		
 	
-	private void setupUI(Step s, String idHighLight){
+	private void setupUI(Step s, int idHighLight){
 		TextView datatxt =  (TextView)findViewById(R.id.tvHlData);
 		TextView lattxt =  (TextView)findViewById(R.id.tvLatHl);
 		TextView longtxt =  (TextView)findViewById(R.id.tvLongHl);
@@ -88,10 +92,10 @@ public class DetailHighLightActivity extends Activity {
 		myRating = (RatingBar)findViewById(R.id.ratBarUser);
 		myRating.setStepSize(1.0f);
 		
-		final HighLight hl = getHighLightFromStep(s, idHighLight);
+		final HighLight hl = DataContainer.findHighLightById(idHighLight, app.getDataBaseHelper());
 		
 		if(hl != null){
-			float userRating = app.getPrefs().getInt(hl.getId(), 0);
+			float userRating = app.getPrefs().getInt("" + hl.getId(), 0);
 			myRating.setRating(userRating);
 		}
 		
@@ -101,7 +105,7 @@ public class DetailHighLightActivity extends Activity {
 					boolean fromUser) {
 				if(hl!=null){
 					SharedPreferences.Editor mPrefEditor = app.getPrefsEditor(); 
-					mPrefEditor.putInt(hl.getId(), (int)rating);
+					mPrefEditor.putInt("" + hl.getId(), (int)rating);
 	            	mPrefEditor.commit();         
 				}
 			}
@@ -131,11 +135,10 @@ public class DetailHighLightActivity extends Activity {
 		
 		ImageView ivPicture = (ImageView)findViewById(R.id.highLightPicture);
 		VideoView ivVideo = (VideoView)findViewById(R.id.highLightVideo);
+
         DataContainer.refreshHighlightForFileManifest(hl, app.getDataBaseHelper());
-        Log.i("MEDIAPATH: HAS FILE", "yes? " + hl.hasMediaFile());
 		if(hl!=null && hl.hasMediaFile()){
 			String pathName = hl.getFileManifest().getPath();
-            Log.i("MEDIAPATH: ", pathName);
             if(pathName.contains("mp4")){
 				progressBar.setVisibility(View.GONE);
 				ivPicture.setVisibility(View.GONE);				
@@ -195,17 +198,13 @@ public class DetailHighLightActivity extends Activity {
         LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
         LinearLayout refbuttonarea = (LinearLayout) findViewById(R.id.refbuttonarea);
 
-Log.i("DetailHighlightActivity: ", "1");
 
         // interactive images
         if (hl.getInteractiveImages() != null && hl.getInteractiveImages().size() > 0) {
-            Log.i("DetailHighlightActivity: ", "2");
-            Log.i("DetailHighlightActivity: ", hl.getInteractiveImages().size() + "");
 
             iibuttonarea.setVisibility(View.VISIBLE);
             ArrayList<InteractiveImage> these_iis = new ArrayList<InteractiveImage>(hl.getInteractiveImages());
             for(InteractiveImage ii : hl.getInteractiveImages()){
-                Log.i("DetailHighlightActivity: ", "2.1");
 
                 Button iiButton = new Button(this);
                 iiButton.setLayoutParams(new LinearLayout.LayoutParams(
@@ -217,7 +216,7 @@ Log.i("DetailHighlightActivity: ", "1");
                 iiButton.setGravity(Gravity.CENTER);
                 iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 
-                final String this_ii_id = ii.getId();
+                final int this_ii_id = ii.getId();
 
                 iibuttonarea.addView(iiButton);
                 iiButton.setOnClickListener(new View.OnClickListener() {
@@ -235,7 +234,6 @@ Log.i("DetailHighlightActivity: ", "1");
         }
             // reference
         if (hl.getReferences() != null) {
-            Log.i("DetailHighlightActivity: ", "3");
 
             refbuttonarea.setVisibility(View.VISIBLE);
             ArrayList<Reference> refs = new ArrayList<Reference>(hl.getReferences());
@@ -249,14 +247,14 @@ Log.i("DetailHighlightActivity: ", "1");
                 refButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_reference, 0, 0, 0);
                 refButton.setGravity(Gravity.CENTER);
                 refButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-                final String this_ref_id = ref.getId();
+                final int this_ref_id = ref.getId();
 
                 refbuttonarea.addView(refButton);
                 refButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
            Intent i = new Intent(DetailHighLightActivity.this, HTMLViewerActivity.class);
-            i.putExtra("idReference", this_ref_id);
+                        i.putExtra("idReference", this_ref_id);
             startActivity(i);
             }
                 });
@@ -273,12 +271,13 @@ Log.i("DetailHighlightActivity: ", "1");
 		task.execute(path, Integer.toString(width),Integer.toString(height));
 		
 	}
-	
-	private HighLight getHighLightFromStep(Step s, String idHighLight){
+
+    // Probably can be removed with new id system
+	private HighLight getHighLightFromStep(Step s, int idHighLight){
 		if(s.hasHighLights()){
 			List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper()); 
 			for( HighLight h : highLights ){
-				if(h.getId().equalsIgnoreCase(idHighLight)){
+				if(h.getId() == idHighLight){
 					return h;
 				}
 			}

@@ -22,7 +22,7 @@ public class PropertyHolder {
     public static final String SHARED_PREFERENCES_NAME = "PROPERTIES";
     public static final String ALARM_INTERVAL = "ALARM_INTERVAL";
     public static final String SERVICE_ON = "SERVICE_ON";
-    public static final String IS_FIRST_TIME = "IS_FIRST_TIME";
+    public static final String IS_FIRST_TIME = "IS_FIRST_TIME_4";
     public static final String USER_KEY = "USER_KEY";
     public static final String IS_REGISTERED = "IS_REGISTERED";
     public static final String USER_ID = "USER_ID";

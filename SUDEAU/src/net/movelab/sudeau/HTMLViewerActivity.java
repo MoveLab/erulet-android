@@ -32,16 +32,24 @@ public class HTMLViewerActivity extends Activity {
 	WebView wv;
     String base_url;
     boolean firstload;
+    String locale;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.html_viewer_activity);
-		if (app == null) {
-            app = (EruletApp) getApplicationContext();
+
+        Context context = getApplicationContext();
+
+        if (app == null) {
+            app = (EruletApp) context;
         }
 
         firstload = true;
+
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        locale = PropertyHolder.getLocale();
 
 		wv = (WebView) findViewById(R.id.wb_webView);
         wv.setWebChromeClient(new WebChromeClient());
@@ -69,15 +77,16 @@ public class HTMLViewerActivity extends Activity {
 //	}
 
 	private String getReferenceString(){
+        Log.d("References: ", "get ref string top");
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
-			String idReference = extras.getString("idReference");
-            Log.d("Reference ID: ", idReference);
+			int idReference = extras.getInt("idReference");
+            Log.d("Reference ID: ", "" + idReference);
             Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-            if(r != null && r.getTextContent() != null && !r.getTextContent().isEmpty()){
-                Log.d("Reference URL: ", "file://" + r.getTextContent());
-
-                String[] url_chop = r.getTextContent().split("/");
+            Log.d("Ref html path", r.getHtmlPath(locale));
+                if(r != null && r.getHtmlPath(locale) != null && !r.getHtmlPath(locale).isEmpty()){
+                Log.d("Reference URL: ", "file://" + r.getHtmlPath(locale));
+                String[] url_chop = r.getHtmlPath(locale).split("/");
                 base_url = "file://";
                 for(int i = 0; i < (url_chop.length-1); i++){
                     base_url += url_chop[i] + "/";
@@ -85,7 +94,7 @@ public class HTMLViewerActivity extends Activity {
 
                 Log.d("base URL: ", base_url);
 
-                File f = new File(r.getTextContent());
+                File f = new File(r.getHtmlPath(locale));
 
 
                 Log.i("html ", f.getPath());

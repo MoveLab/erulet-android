@@ -19,7 +19,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 
 public class InteractiveImageActivityHeatMap extends Activity implements View.OnTouchListener{
 	
@@ -42,22 +44,30 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
             app = (EruletApp) getApplicationContext();
         }
 		image = (ImageView)findViewById(R.id.int_image);
+
+        // Attempted fix for centering issue that does not work
+//        int middleHorizontal = Util.getScreenSize(getApplicationContext())[0];
+ //       HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.heatMapScrollView);
+  //      scrollView.scrollTo(middleHorizontal, 0);
 		
 		InteractiveImage interactiveImage = null;
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
-			String imgId = extras.getString("int_image_id");
-            Log.i("IIMAP imgId: ", imgId);
+			int imgId = extras.getInt("int_image_id");
+            Log.i("IIMAP imgId: ", "" + imgId);
 
-            if(imgId!=null){
+            if(imgId!= -1){
 				interactiveImage = DataContainer.findInteractiveImageById(imgId, app.getDataBaseHelper());
 				initBoxes(interactiveImage);
 			}
 		}
-		if(interactiveImage!=null && 
-				interactiveImage.getMediaPath()!= null && 
-				!interactiveImage.getMediaPath().equalsIgnoreCase("")){			
-			File f = new File(interactiveImage.getMediaPath());
+
+		if(interactiveImage!=null){
+            DataContainer.refreshInteractiveImageForFileManifest(interactiveImage, app.getDataBaseHelper());
+            if(interactiveImage.hasMediaFile()){
+            Log.i("Interactive Image: HAS FILE", "yes? " + interactiveImage.hasMediaFile());
+             String pathName = interactiveImage.getFileManifest().getPath();
+                File f = new File(pathName);
             Log.i("IIMAP: ", f.getPath());
 			if(f.exists()){
 				int[] screenSize = Util.getScreenSize(getBaseContext());
@@ -72,7 +82,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 			}
 		}				
 		image.setOnTouchListener(this);
-	}
+	}}
 	
 	private int getBitmapXCoord(int screenXCoord){
 		float result;

@@ -1,5 +1,7 @@
 package net.movelab.sudeau.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,9 +14,9 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Track {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
+    private int server_id;
 	@DatabaseField
 	private String name;
 	@ForeignCollectionField
@@ -25,7 +27,8 @@ public class Track {
 
 	public Track(){
 		steps = new ArrayList<Step>();
-	}
+        this.server_id = -1;
+    }
 	
 	public Track(int server_id) {
 		this.server_id=server_id;
@@ -66,8 +69,13 @@ public class Track {
         return id;
     }
 
+    public int getServerId() {
+        return server_id;
+    }
+
     public void setServerId(int server_id) {
         this.server_id = server_id;
+
     }
 
 

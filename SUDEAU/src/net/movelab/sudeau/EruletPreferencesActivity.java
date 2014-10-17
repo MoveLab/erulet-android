@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -32,7 +33,11 @@ public class EruletPreferencesActivity extends Activity {
 		super.onCreate(savedInstanceState);
         context = getApplicationContext();
 		setContentView(R.layout.preferences);
-		if (app == null) {
+
+        // To stop keyboard from popping up immediately and blocking everything
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
         if(!PropertyHolder.isInit())

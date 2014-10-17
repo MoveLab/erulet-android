@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
@@ -345,10 +346,16 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			JSONArray route_j_list = new JSONArray();
 			for(int i=0; i<routes.size();i++){
 				Route r = routes.get(i);
+                // FOR TESTING ONLY TODO TAKE OUT
+                List<Step> these_steps = DataContainer.getRouteSteps(r, app.getDataBaseHelper());
+                for(Step s : these_steps){
+                    List<HighLight> these_highlights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
+                }
+
 				JSONObject route_j;
 				try {
 					route_j = JSONConverter.routeToJSONObject(r, app);
-					route_j_list.put(route_j);														
+               		route_j_list.put(route_j);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -398,9 +405,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
         File sdcard = new File(Environment.getExternalStorageDirectory(),
                 Util.baseFolder + "/" + Util.routeMapsFolder);
 
-// TODO fix this temporary hack
+
         File f = new File(PropertyHolder.getGeneralMapPath());
-        Log.e("CARTO CHOOSE", f.getPath());
 
         //File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
 //		if (!f.exists())
@@ -418,11 +424,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
 //				throw new RuntimeException(e);
 //			}
 		if (f.exists()){
-            Log.e("CARTO CHOOSE EXISTS", f.getPath());
 
             return new MapBoxOfflineTileProvider(f.getPath());
 		}else{
-			Log.d(TAG,"Fitxer cartografia no trobat " + f.getAbsolutePath());
 		}
 		return null;
 	}

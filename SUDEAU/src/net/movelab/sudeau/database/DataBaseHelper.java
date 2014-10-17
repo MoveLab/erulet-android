@@ -24,33 +24,33 @@ import java.sql.SQLException;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 206;
+	public static final int DATABASE_VERSION = 228;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		
-	private Dao<Route, String> routeDao;
-	private RuntimeExceptionDao<Route, String> routeRuntimeDao;
+	private Dao<Route, Integer> routeDao;
+	private RuntimeExceptionDao<Route, Integer> routeRuntimeDao;
 
-    private Dao<FileManifest, String> fileManifestDao;
-    private RuntimeExceptionDao<FileManifest, String> fileManifestRuntimeDao;
+    private Dao<FileManifest, Integer> fileManifestDao;
+    private RuntimeExceptionDao<FileManifest, Integer> fileManifestRuntimeDao;
 
-    private Dao<Track, String> trackDao;
-	private RuntimeExceptionDao<Track, String> trackRuntimeDao;
+    private Dao<Track, Integer> trackDao;
+	private RuntimeExceptionDao<Track, Integer> trackRuntimeDao;
 	
-	private Dao<Step, String> stepDao;
-	private RuntimeExceptionDao<Step, String> stepRuntimeDao;
+	private Dao<Step, Integer> stepDao;
+	private RuntimeExceptionDao<Step, Integer> stepRuntimeDao;
 	
-	private Dao<HighLight, String> hlDao;
-	private RuntimeExceptionDao<HighLight, String> hlRuntimeDao;
+	private Dao<HighLight, Integer> hlDao;
+	private RuntimeExceptionDao<HighLight, Integer> hlRuntimeDao;
 		
-	private Dao<Reference, String> referenceDao;
-	private RuntimeExceptionDao<Reference, String> referenceRuntimeDao;
+	private Dao<Reference, Integer> referenceDao;
+	private RuntimeExceptionDao<Reference, Integer> referenceRuntimeDao;
 	
-	private Dao<InteractiveImage, String> interactiveImageDao;
-	private RuntimeExceptionDao<InteractiveImage, String> interactiveImageRuntimeDao;
+	private Dao<InteractiveImage, Integer> interactiveImageDao;
+	private RuntimeExceptionDao<InteractiveImage, Integer> interactiveImageRuntimeDao;
 	
-	private Dao<Box, String> boxDao;
-	private RuntimeExceptionDao<Box, String> boxRuntimeDao;
+	private Dao<Box, Integer> boxDao;
+	private RuntimeExceptionDao<Box, Integer> boxRuntimeDao;
            
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -94,56 +94,56 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		}		
 	}
 	
-	public Dao<Box, String> getBoxDao() throws java.sql.SQLException {
+	public Dao<Box, Integer> getBoxDao() throws java.sql.SQLException {
 		if (boxDao == null) {
 			boxDao = getDao(Box.class);
 		}
 		return boxDao;
 	}
 	
-	public RuntimeExceptionDao<Box, String> getBoxDataDao() {
+	public RuntimeExceptionDao<Box, Integer> getBoxDataDao() {
 		if (boxRuntimeDao == null) {			
 			boxRuntimeDao = getRuntimeExceptionDao(Box.class);
 		}
 		return boxRuntimeDao;
 	}
 	
-	public Dao<InteractiveImage, String> getInteractiveImageDao() throws java.sql.SQLException {
+	public Dao<InteractiveImage, Integer> getInteractiveImageDao() throws java.sql.SQLException {
 		if (interactiveImageDao == null) {
 			interactiveImageDao = getDao(InteractiveImage.class);
 		}
 		return interactiveImageDao;
 	}
 	
-	public RuntimeExceptionDao<InteractiveImage, String> getInteractiveImageDataDao() {
+	public RuntimeExceptionDao<InteractiveImage, Integer> getInteractiveImageDataDao() {
 		if (interactiveImageRuntimeDao == null) {			
 			interactiveImageRuntimeDao = getRuntimeExceptionDao(InteractiveImage.class);
 		}
 		return interactiveImageRuntimeDao;
 	}
 	
-	public Dao<Route, String> getRouteDao() throws java.sql.SQLException {
+	public Dao<Route, Integer> getRouteDao() throws java.sql.SQLException {
 		if (routeDao == null) {
 			routeDao = getDao(Route.class);
 		}
 		return routeDao;
 	}
 	
-	public RuntimeExceptionDao<Route, String> getRouteDataDao() {
+	public RuntimeExceptionDao<Route, Integer> getRouteDataDao() {
 		if (routeRuntimeDao == null) {			
 			routeRuntimeDao = getRuntimeExceptionDao(Route.class);
 		}
 		return routeRuntimeDao;
 	}
 	
-    public Dao<FileManifest, String> getFileManifestDao() throws java.sql.SQLException {
+    public Dao<FileManifest, Integer> getFileManifestDao() throws java.sql.SQLException {
         if (fileManifestDao == null) {
             fileManifestDao = getDao(FileManifest.class);
         }
         return fileManifestDao;        
     }
 
-    public RuntimeExceptionDao<FileManifest, String> getFileManifestDataDao() {
+    public RuntimeExceptionDao<FileManifest, Integer> getFileManifestDataDao() {
         if (fileManifestRuntimeDao == null) {
             fileManifestRuntimeDao = getRuntimeExceptionDao(FileManifest.class);
         }
@@ -151,56 +151,56 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
 
-    public Dao<Track, String> getTrackDao() throws java.sql.SQLException {
+    public Dao<Track, Integer> getTrackDao() throws java.sql.SQLException {
 		if (trackDao == null) {
 			trackDao = getDao(Track.class);
 		}
 		return trackDao;
 	}
 	
-	public RuntimeExceptionDao<Track, String> getTrackDataDao() {
+	public RuntimeExceptionDao<Track, Integer> getTrackDataDao() {
 		if (trackRuntimeDao == null) {			
 			trackRuntimeDao = getRuntimeExceptionDao(Track.class);
 		}
 		return trackRuntimeDao;
 	}
 	
-	public Dao<Step, String> getStepDao() throws java.sql.SQLException {
+	public Dao<Step, Integer> getStepDao() throws java.sql.SQLException {
 		if (stepDao == null) {
 			stepDao = getDao(Step.class);
 		}
 		return stepDao;
 	}
 	
-	public RuntimeExceptionDao<Step, String> getStepDataDao() {
+	public RuntimeExceptionDao<Step, Integer> getStepDataDao() {
 		if (stepRuntimeDao == null) {			
 			stepRuntimeDao = getRuntimeExceptionDao(Step.class);
 		}
 		return stepRuntimeDao;
 	}
 	
-	public Dao<HighLight, String> getHlDao() throws java.sql.SQLException {
+	public Dao<HighLight, Integer> getHlDao() throws java.sql.SQLException {
 		if (hlDao == null) {
 			hlDao = getDao(HighLight.class);
 		}
 		return hlDao;
 	}
 	
-	public RuntimeExceptionDao<HighLight, String> getHlDataDao() {
+	public RuntimeExceptionDao<HighLight, Integer> getHlDataDao() {
 		if (hlRuntimeDao == null) {			
 			hlRuntimeDao = getRuntimeExceptionDao(HighLight.class);
 		}
 		return hlRuntimeDao;
 	}		
 		
-	public Dao<Reference, String> getReferenceDao() throws java.sql.SQLException {
+	public Dao<Reference, Integer> getReferenceDao() throws java.sql.SQLException {
 		if (referenceDao == null) {
 			referenceDao = getDao(Reference.class);
 		}
 		return referenceDao;
 	}
 	
-	public RuntimeExceptionDao<Reference, String> getReferenceDataDao() {
+	public RuntimeExceptionDao<Reference, Integer> getReferenceDataDao() {
 		if (referenceRuntimeDao == null) {			
 			referenceRuntimeDao = getRuntimeExceptionDao(Reference.class);
 		}

@@ -17,13 +17,15 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import net.movelab.sudeau.database.DataContainer;
+
 @DatabaseTable(tableName = "step")
 public class Step implements Comparable<Step> {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
+    private int server_id;
 	@DatabaseField
 	private String name;
 	@DatabaseField
@@ -57,7 +59,8 @@ public class Step implements Comparable<Step> {
 
 	public Step() {
 		setHighlights(new ArrayList<HighLight>());
-	}
+        this.server_id = -1;
+    }
 
 	public Step(int server_id, String name, double latitude, double longitude, double altitude,
 			double precision, int order, Track track){
@@ -133,7 +136,11 @@ public class Step implements Comparable<Step> {
 		return id;
 	}
 
-	public void setServerId(int server_id) {
+    public int getServerId() {
+        return server_id;
+    }
+
+    public void setServerId(int server_id) {
 		this.server_id = server_id;
 	}
 
@@ -234,7 +241,8 @@ public class Step implements Comparable<Step> {
 	public void setHighlights(Collection<HighLight> highlights) {
 		this.highlights = highlights;
 	}
-	
+
+    // Make sure to refresh step first!
 	public boolean hasHighLights(){
 		return (highlights!= null && highlights.size() > 0);
 	}

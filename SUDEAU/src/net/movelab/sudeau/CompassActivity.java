@@ -165,8 +165,8 @@ public class CompassActivity extends Activity implements SensorEventListener {
     public void setNavPoint(){
     	Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			String idStep = extras.getString("idStep");
-			if(idStep != null && !idStep.equalsIgnoreCase("")){
+			int idStep = extras.getInt("idStep");
+			if(idStep != -1){
 				Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
 				navLocation = new Location("");
 				navLocation.setLatitude(s.getLatitude());

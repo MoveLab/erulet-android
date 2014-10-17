@@ -14,15 +14,13 @@ import java.util.Collection;
 public class HighLight {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
+    private int server_id;
 	@DatabaseField
 	private String name;
 	@DatabaseField
 	private String longText;	
-	@DatabaseField
-	private String mediaPath;
     @DatabaseField(foreign=true, columnName="fileManifestId")
     private FileManifest file_manifest;
 	@DatabaseField
@@ -49,8 +47,9 @@ public class HighLight {
 	public static final int INTERACTIVE_IMAGE = 7;
 	public static final int REFERENCE = 8;
 	
-	public HighLight() {		
-	}
+	public HighLight() {
+        this.server_id = -1;
+    }
 	
 
     public FileManifest getFileManifest() { return file_manifest; }
@@ -68,7 +67,11 @@ public class HighLight {
 		return id;
 	}
 
-	public void setServerId(int server_id) {
+    public int getServerId() {
+        return server_id;
+    }
+
+    public void setServerId(int server_id) {
 		this.server_id = server_id;
 	}
 
@@ -92,14 +95,6 @@ public class HighLight {
 	public void setLongText(String longText) {
 		this.longText = longText;
 	}
-
-	public String getMediaFileName() {
-		return mediaPath;
-	}
-
-	public void setMediaFileName(String mediaFileName) {
-		this.mediaPath = mediaFileName;
-    }
 
 	public int getType() {
 		return type;
@@ -152,9 +147,9 @@ public class HighLight {
 
     // Note this should only be called after refreshing highlight for file manifest
     public boolean hasMediaFile(){
-        if(this.getFileManifest()!=null && this.getFileManifest().getPath() != null)
-            Log.d("MEDIA FILE MADNESS:", this.getFileManifest().getPath());
-
+        if(this.getFileManifest()!=null && this.getFileManifest().getPath() != null){
+         // report error
+        }
         return this.getFileManifest()!=null && this.getFileManifest().getPath()!=null && !this.getFileManifest().getPath().isEmpty();
     }
 

@@ -12,11 +12,9 @@ import com.j256.ormlite.table.DatabaseTable;
 public class InteractiveImage {
 
     @DatabaseField(generatedId=true)
-    private Integer id;
+    private int id;
     @DatabaseField
-    private Integer server_id;
-	@DatabaseField
-	private String mediaPath;	
+    private int server_id;
 	@DatabaseField
 	private int originalWidth;
 	@DatabaseField
@@ -29,26 +27,19 @@ public class InteractiveImage {
 	private Collection<Box> boxes;	
 	
 	public InteractiveImage(){
-		
-	}
+        this.server_id = -1;
+    }
 
 	public int getId() {
 		return id;
 	}
 
-	public void setServerId(int id) {
-		this.server_id = server_id;
-        Log.d("II SERVER ID SET: ", "" + server_id);
-
+    public int getServerId() {
+        return server_id;
     }
 
-	public String getMediaPath() {
-		return mediaPath;
-	}
-
-	public void setMediaPath(String mediaPath) {
-		this.mediaPath = mediaPath;
-        Log.d("II MEDIA PATH SET: ", mediaPath);
+    public void setServerId(int server_id) {
+		this.server_id = server_id;
 
     }
 
@@ -58,7 +49,6 @@ public class InteractiveImage {
 
 	public void setBoxes(Collection<Box> boxes) {
 		this.boxes = boxes;
-        Log.d("II Boxes SET: ", "" + id);
 
     }
 
@@ -86,7 +76,11 @@ public class InteractiveImage {
     }
     public void setHighlight(HighLight highlight){
         this.highlight = highlight;
-        Log.d("II HIGHLIGHT SET: ", "" + id);
-
     }
+
+    // Note this should only be called after refreshing highlight for file manifest
+    public boolean hasMediaFile(){
+        return this.getFileManifest()!=null && this.getFileManifest().getPath()!=null && !this.getFileManifest().getPath().isEmpty();
+    }
+
 }
