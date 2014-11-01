@@ -362,6 +362,7 @@ public class Switchboard extends FragmentActivity {
                     publishProgress(myProgress);
 
                 } catch (JSONException e) {
+                    Util.logError(context[0], "JSON download 1", "" + e);
                 }
                 ArrayList<Route> these_routes = JSONConverter.jsonArrayToRouteArray(ja, app.getDataBaseHelper());
                 myProgress += 20;
@@ -379,8 +380,7 @@ public class Switchboard extends FragmentActivity {
                 publishProgress(myProgress);
 
             } catch (Exception e) {
-
-
+                Util.logError(context[0], "JSON download 2", "" + e);
             }
             }
             //General Maps

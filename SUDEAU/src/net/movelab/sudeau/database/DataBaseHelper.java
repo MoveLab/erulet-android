@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 228;
+	public static final int DATABASE_VERSION = 232;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		

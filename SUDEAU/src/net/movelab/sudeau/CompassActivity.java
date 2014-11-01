@@ -3,11 +3,6 @@ package net.movelab.sudeau;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import com.google.android.gms.common.data.DataBufferUtils;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-
-import net.movelab.sudeau.DetailItineraryActivity.FixReceiver;
-import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Step;
@@ -26,7 +21,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -53,8 +51,12 @@ public class CompassActivity extends Activity implements SensorEventListener {
 	private TextView tvDist;
 	private DecimalFormat df;
 	private EruletApp app;
-    
-	
+
+    // master control to disable or enable red arrow navidatio -- currently off because not yet fully working.
+    private boolean allowNavigation = false;
+
+    private Display display;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,14 +81,22 @@ public class CompassActivity extends Activity implements SensorEventListener {
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+
+        display = ((WindowManager)getApplicationContext().getSystemService(android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+        if(allowNavigation){
         setNavPoint();
-        checkLocationServicesStatus();        
-        adjustUI();
+        checkLocationServicesStatus();
         startTrackingMaybe();
+        }
+
+
+
+        adjustUI();
     }
     
     private void adjustUI(){
-    	if(!userRequestedNavigation()){    		    	
+    	if(!allowNavigation || !userRequestedNavigation()){
     		TextView tvCompassActivityLabel = (TextView) findViewById(R.id.tvHighLightDetailLabel);
     		tvCompassActivityLabel.setText(getString(R.string.compass));
     		tvLocation.setVisibility(View.GONE);
@@ -168,6 +178,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
 			int idStep = extras.getInt("idStep");
 			if(idStep != -1){
 				Step s = DataContainer.findStepById(idStep, app.getDataBaseHelper());
+                if(s != null){
 				navLocation = new Location("");
 				navLocation.setLatitude(s.getLatitude());
 				navLocation.setLongitude(s.getLongitude());
@@ -186,7 +197,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
 				}else{
 					tvWpName.setText(getString(R.string.point_no_name));					
 				}
-			}
+			}}
 		}
     }
     
@@ -291,11 +302,18 @@ public class CompassActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
-        // for the system's orientation sensor registered listeners        
+        // for the system's orientation sensor registered listeners
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_FASTEST);
-        // If user requested navigation, we resume listening for position updates
-        startTrackingMaybe();
+
+        // check if device has been reoriented
+        if(display.getRotation()!= Surface.ROTATION_0){
+//TODO figure this out
+//mSensorManager.remapCoordinateSystem();
+        }
+
+        if(allowNavigation)
+            startTrackingMaybe();
     }
 
     @Override
@@ -308,7 +326,6 @@ public class CompassActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-    	    	
         // get the angle around the z-axis rotated (North bearing)
     	float sensorDeltaDegree = Math.round(event.values[0]);    	
     	if( currentLocation!=null && navLocation!=null ){    		

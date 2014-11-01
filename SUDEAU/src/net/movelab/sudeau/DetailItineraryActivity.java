@@ -310,7 +310,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
                                     // This next line seems to be a bug, since it tries to call the same dialog again and opens it after activity has closed.
-                     //               stopTracking();
+                                    //               stopTracking();
                                     finish();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
@@ -327,6 +327,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 String hlName = data.getStringExtra("hlName");
                 String hlLongText = data.getStringExtra("hlLongText");
                 String imagePath = data.getStringExtra("imagePath");
+                Log.i("Highlight Result image path", imagePath);
                 int hlId = data.getIntExtra("hlid", -1);
                 int hlType = data.getIntExtra("hlType", HighLight.WAYPOINT);
                 HighLight hl = null;
@@ -1017,6 +1018,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     snippet.setMaxWidth(maxwidth);
                     TextView title = (TextView) myContentView
                             .findViewById(R.id.info_title);
+
+                    // removing title from popups as per Lluis's request
+                    title.setVisibility(View.GONE);
+
                     Step s = selectedRouteMarkers.get(marker);
                     boolean isUserMarker = false;
                     if (s == null) {
@@ -1826,7 +1831,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
         } else {
-			/*
+            /*
 			 * If no resolution is available, display a dialog to the user with
 			 * the error.
 			 */

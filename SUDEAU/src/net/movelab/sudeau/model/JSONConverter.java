@@ -30,6 +30,7 @@ public class JSONConverter {
                 JSONObject this_j = ja.getJSONObject(i);
                 Route this_r = jsonObjectToRoute(this_j, db);
                 ra.add(this_r);
+                Log.i("JSON Converter", "route added with server ID: " + this_r.getServerId());
             }
         }
         return ra;
@@ -99,7 +100,7 @@ public class JSONConverter {
             r.setUpLoaded(j.getBoolean("isuploaded"));
         }
         if (j.has("map")) {
-            if (j.getJSONObject("map") != null) {
+            if (j.getJSONObject("map") != null && !j.getJSONObject("map").equals("null")) {
                 JSONObject mapj = j.getJSONObject("map");
                 if(mapj.getString("map_file_name") != null){
                 r.setLocalCarto(mapj.getString("map_file_name"));

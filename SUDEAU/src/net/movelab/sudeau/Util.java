@@ -1153,6 +1153,7 @@ public class Util {
         boolean hasGRs = PropertyHolder.getLastUpdateGeneralReferences() > 0;
         boolean hasMaps = PropertyHolder.getLastUpdateGeneralMap() > 0;
         List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
+        Util.logInfo(context, "JSON download", "routes size: " + routes.size());
         boolean hasJson = routes.size() > 0;
         boolean hasRouteMedia = true;
         for (Route route : routes) {

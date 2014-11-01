@@ -88,6 +88,9 @@ public class EditHighLightActivity extends Activity {
 			String name = extras.getString("hlname");
 			String longText = extras.getString("hllongtext");
 			String imagePath = extras.getString("hlimagepath");
+            if(imagePath!=null){
+                Log.i("IMAGE PATH", imagePath);
+            }
 			editedHighLight = extras.getString("hlid");
 			int hlType = extras.getInt("hltype");
 			if(hlType!=0){
@@ -115,6 +118,7 @@ public class EditHighLightActivity extends Activity {
 		    		btn_video.setVisibility(View.VISIBLE);
 				}else{										
 					currentPhoto = new File(uri.getPath());
+                    Log.i("CURRENT PHOTO", currentPhoto.getAbsolutePath());
 					try {
 						createThumbnail();
 						btn_picture.setImageBitmap(thumbnail);
