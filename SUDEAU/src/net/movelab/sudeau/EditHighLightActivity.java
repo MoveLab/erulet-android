@@ -34,19 +34,19 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditHighLightActivity extends Activity {	
-	
+public class EditHighLightActivity extends Activity {
+
 	//TODO Enable default name for highlight
 	//TODO Create input validation
-	
+
 	static final int REQUEST_IMAGE_CAPTURE = 1;
 	static final int REQUEST_VIDEO_CAPTURE = 2;
-	
+
 	private ImageButton btn_picture;
 	private ImageButton btn_video;
 	private File currentPhoto;
 	private File currentVideo;
-	private Bitmap thumbnail;	
+	private Bitmap thumbnail;
 	private Bitmap videoThumbnail;
 	private TextView tvName;
 	private TextView tvLongText;
@@ -58,13 +58,13 @@ public class EditHighLightActivity extends Activity {
 	private RadioButton rbImage;
 	private RadioButton rbVideo;
 	private RadioButton rbNone;
-	
+
 	//State values
-	private int selectedHlType = HighLight.POINT_OF_INTEREST;	
-	
+	private int selectedHlType = HighLight.POINT_OF_INTEREST;
+
 	private EruletApp app;
-	private String editedHighLight; 
-	
+	private int editedHighLight;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -91,8 +91,9 @@ public class EditHighLightActivity extends Activity {
             if(imagePath!=null){
                 Log.i("IMAGE PATH", imagePath);
             }
-			editedHighLight = extras.getString("hlid");
-			int hlType = extras.getInt("hltype");
+			editedHighLight = extras.getInt("hlid", -1);
+            Log.i("SAVE HIGHLIGHT", "edit highlight id: " + editedHighLight);
+            int hlType = extras.getInt("hltype");
 			if(hlType!=0){
 				checkHighLightType(hlType);
 			}
@@ -104,7 +105,7 @@ public class EditHighLightActivity extends Activity {
 			}
 			if(imagePath!=null && !imagePath.trim().equalsIgnoreCase("")){
 				Uri uri = Uri.parse(imagePath);
-				if(imagePath.contains("mp4")){					
+				if(imagePath.contains("mp4")){
 					currentVideo = new File(uri.getPath());
 					try {
 						createVideoThumbnail();
@@ -116,7 +117,7 @@ public class EditHighLightActivity extends Activity {
 					rbVideo.setChecked(true);
 					btn_picture.setVisibility(View.GONE);
 		    		btn_video.setVisibility(View.VISIBLE);
-				}else{										
+				}else{
 					currentPhoto = new File(uri.getPath());
                     Log.i("CURRENT PHOTO", currentPhoto.getAbsolutePath());
 					try {
@@ -129,7 +130,7 @@ public class EditHighLightActivity extends Activity {
 					rbImage.setChecked(true);
 					btn_picture.setVisibility(View.VISIBLE);
 		    		btn_video.setVisibility(View.GONE);
-				}										
+				}
 			}else{
 				rbNone.setChecked(true);
 				btn_picture.setVisibility(View.GONE);
@@ -145,7 +146,7 @@ public class EditHighLightActivity extends Activity {
 			alttxt.setText(getString(R.string.altitude) + alt);
 		}
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
@@ -169,7 +170,7 @@ public class EditHighLightActivity extends Activity {
     		btn_video.setVisibility(View.GONE);
 		}
 	}
-		
+
 	private void checkHighLightType(int hlType) {
 		switch(hlType){
 			case HighLight.POINT_OF_INTEREST:
@@ -186,7 +187,7 @@ public class EditHighLightActivity extends Activity {
 				break;
 		}
 	}
-	
+
 	public void onRadioButtonHlClicked(View view){
 		boolean checked = ((RadioButton) view).isChecked();
 		switch(view.getId()) {
@@ -203,10 +204,10 @@ public class EditHighLightActivity extends Activity {
 	}
 
 	public void onRadioButtonClicked(View view){
-	    boolean checked = ((RadioButton) view).isChecked();	    
+	    boolean checked = ((RadioButton) view).isChecked();
 	    switch(view.getId()) {
 	        case R.id.rbImage:
-	            if (checked){	            	
+	            if (checked){
 	            	btn_picture.setVisibility(View.VISIBLE);
 	        		btn_video.setVisibility(View.GONE);
 	            }
@@ -223,10 +224,10 @@ public class EditHighLightActivity extends Activity {
 	        		btn_video.setVisibility(View.GONE);
 	        	}
 	        	break;
-	    }	    
+	    }
 	}
-	
-	private void createVideoFile() throws IOException {		
+
+	private void createVideoFile() throws IOException {
 	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
 	    //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 	    File storageDir = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMediaFolder);
@@ -236,10 +237,10 @@ public class EditHighLightActivity extends Activity {
 	        storageDir      /* directory */
 	    );
 	    //Update media gallery with image
-	    MediaScannerConnection.scanFile(this, new String[] { currentVideo.getPath() }, 
+	    MediaScannerConnection.scanFile(this, new String[] { currentVideo.getPath() },
 	    		new String[] { "video/mp4" }, null);
 	}
-	
+
 	private void createImageFile() throws IOException {
 	    // Create an image file name
 	    String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
@@ -251,7 +252,7 @@ public class EditHighLightActivity extends Activity {
 	        storageDir      /* directory */
 	    );
 	    //Update media gallery with image
-	    MediaScannerConnection.scanFile(this, new String[] { currentPhoto.getPath() }, 
+	    MediaScannerConnection.scanFile(this, new String[] { currentPhoto.getPath() },
 	    		new String[] { "image/jpeg" }, null);
 	}
 
@@ -267,13 +268,13 @@ public class EditHighLightActivity extends Activity {
 	    		Toast.makeText(getApplicationContext(), getString(R.string.error_video_capture), Toast.LENGTH_LONG).show();
 	    	}
 	    	if (currentVideo != null) {
-	    		takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, 
+	    		takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 	    				Uri.fromFile(currentVideo));
 	    		startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
 	    	}
 	    }
 	}
-	
+
 	private void dispatchTakePictureIntent() {
 	    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 	    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -292,17 +293,17 @@ public class EditHighLightActivity extends Activity {
 	        }
 	    }
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-	    	try {	    			    		
+	    	try {
 	    		createThumbnail();
 				btn_picture.setImageBitmap(thumbnail);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}     
+			}
 	    }
 	    if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
 	    	try {
@@ -314,19 +315,19 @@ public class EditHighLightActivity extends Activity {
 			}
 	    }
 	}
-	
+
 	private void createVideoThumbnail() throws FileNotFoundException{
-		videoThumbnail = ThumbnailUtils.createVideoThumbnail( currentVideo.getAbsolutePath(), android.provider.MediaStore.Video.Thumbnails.MICRO_KIND);		
+		videoThumbnail = ThumbnailUtils.createVideoThumbnail( currentVideo.getAbsolutePath(), android.provider.MediaStore.Video.Thumbnails.MICRO_KIND);
     }
-	
-	private void createThumbnail() throws FileNotFoundException{		                        
-//        FileInputStream fis;		
+
+	private void createThumbnail() throws FileNotFoundException{
+//        FileInputStream fis;
 //		fis = new FileInputStream(currentPhoto);
 //		thumbnail = BitmapFactory.decodeStream(fis);
 //        thumbnail = Bitmap.createScaledBitmap(thumbnail, 96, 96, false);
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
-//        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);        
-//        try {			
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//        try {
 //			baos.flush();
 //			baos.close();
 //			fis.close();
@@ -336,22 +337,22 @@ public class EditHighLightActivity extends Activity {
 //		} finally {
 //			fis = null;
 //			baos = null;
-//		}        
+//		}
         thumbnail = Util.decodeSampledBitmapFromFile(currentPhoto.getAbsolutePath(), 96, 96);
 	}
-	
+
 	private void setUpInterface(){
 		btn_picture = (ImageButton)findViewById(R.id.btnPicture);
 		btn_video = (ImageButton)findViewById(R.id.btnVideo);
-		
+
 		rbWp = (RadioButton)findViewById(R.id.rbWayPoint);
 		rbPoi = (RadioButton)findViewById(R.id.rbPOI);
 		rbWarning = (RadioButton)findViewById(R.id.rbWarning);
-		
+
 		rbImage = (RadioButton)findViewById(R.id.rbImage);
 		rbVideo = (RadioButton)findViewById(R.id.rbVideo);
 		rbNone = (RadioButton)findViewById(R.id.rbImgVidNull);
-		
+
 		Button btn_save = (Button)findViewById(R.id.btnHlSave);
 		Button btn_cancel = (Button)findViewById(R.id.btnHlCancel);
 		tvName = (TextView)findViewById(R.id.txtNameHl);
@@ -361,7 +362,7 @@ public class EditHighLightActivity extends Activity {
 				dispatchTakePictureIntent();
 			}
 		});
-		btn_video.setOnClickListener(new OnClickListener() {			
+		btn_video.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				dispatchCaptureVideoIntent();
@@ -425,5 +426,5 @@ public class EditHighLightActivity extends Activity {
 		hlType  = (RadioGroup)findViewById(R.id.rgHighLightType);
 		tvName.requestFocus();
 	}
-	
+
 }
