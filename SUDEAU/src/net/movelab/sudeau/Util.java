@@ -157,15 +157,13 @@ public class Util {
      * even if the network location is listed with a higher accuracy.
      */
 
-    //TODO change back to 50
-    public static final float MIN_GPS_ACCURACY = 50000;
+    public static final float MIN_GPS_ACCURACY = 50;
 
     /**
      * Value at which a location will be used, and both listeners stopped even
      * if not yet at the end of the listener window.
      */
-    // TODO change back to 15
-    public static final float OPT_ACCURACY = 1500;
+    public static final float OPT_ACCURACY = 15;
 
     /**
      * Value at which a location will be used, and both listeners stopped even
@@ -176,8 +174,7 @@ public class Util {
     /**
      * Minimum accuracy necessary for location to be used.
      */
-    // TODO change back to 500
-    public static final float MIN_ACCURACY = 50000;
+    public static final float MIN_ACCURACY = 500;
 
     /**
      * Default time for storing user data when user selects to do so. In days.
