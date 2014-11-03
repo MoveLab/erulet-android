@@ -39,8 +39,10 @@ public class MapObjectsFactory {
 		.icon(BitmapDescriptorFactory
 				.fromResource(R.drawable.ic_erulet_v2)));
 	}
-	
-	public static Marker addEmptyUserMarker(
+
+
+
+    public static Marker addEmptyUserMarker(
 			GoogleMap mMap,
 			LatLng position,
 			String title,
@@ -191,10 +193,12 @@ public class MapObjectsFactory {
 		copt.zIndex(zIndex);
 		copt.strokeColor(Color.BLACK);
 		if(last){			
-			copt.strokeWidth(4);
-            copt.fillColor(0x5500FF00);
-        }else{
 			copt.strokeWidth(1);
+            copt.fillColor(0x550000FF);
+        }else{
+            // setting to zero so past point accuracy circles invisible
+            // TODO consider simply taking this call out for past points.
+			copt.strokeWidth(0);
             // Fill color of the circle
             // 0x represents, this is an hexadecimal code
             // 55 represents percentage of transparency. For 100%
@@ -214,11 +218,21 @@ public class MapObjectsFactory {
 	public static PolylineOptions getRouteInProgressPolyLine(int zIndex) { 
 		PolylineOptions rectOptions = new PolylineOptions();
 		rectOptions.zIndex(zIndex);
-		rectOptions.color(Color.GREEN);
+		rectOptions.color(Color.BLUE);
+        rectOptions.width(5);
 		return rectOptions;
 	}
 
-	public static Marker addStartMarker(GoogleMap mMap, LatLng position, String start_text) {
+    public static PolylineOptions getRouteInProgressPolyLineBackground(int zIndex) {
+        PolylineOptions rectOptions = new PolylineOptions();
+        rectOptions.zIndex(zIndex);
+        rectOptions.color(Color.BLACK);
+        rectOptions.width(7);
+        return rectOptions;
+    }
+
+
+    public static Marker addStartMarker(GoogleMap mMap, LatLng position, String start_text) {
 		return mMap.addMarker(new MarkerOptions()		
 		.position(position)
 		.title(start_text)

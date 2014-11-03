@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Filter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,11 +65,14 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -99,6 +103,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private ArrayList<Step> highLightedSteps;
     private IntentFilter fixFilter;
     private FixReceiver fixReceiver;
+    private MissedFixesReceiver missedFixesReceiver;
     private Hashtable<Marker, Step> selectedRouteMarkers;
     private Hashtable<Marker, Step> routeInProgressMarkers;
 
@@ -128,6 +133,12 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private ProximityWarning proximityWarning;
     public int screenWidth = 200;
     String locale;
+    Marker lastLocation;
+    MarkerOptions currentLocationOptions;
+    int rulerScreenLeft;
+    int rulerScreenRight;
+    TextView ruler;
+    ImageButton locationAlerts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +173,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
             setWorkingMode();
             setupView();
+
+            locationAlerts = (ImageButton) findViewById(R.id.location_alerts);
 
             btn_compass = (ImageButton) findViewById(R.id.btn_compass);
             btn_compass.setOnClickListener(new OnClickListener() {
@@ -281,10 +294,28 @@ public class DetailItineraryActivity extends FragmentActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        updateLocationAlerts(false);
+    }
+
+
+    @Override
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
         locationClient.connect();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        ruler = (TextView) findViewById(R.id.ruler);
+        int[] rulerOnScreen = new int[2];
+        ruler.getLocationOnScreen(rulerOnScreen);
+        Log.i("SCALE", "locationOnScreen: " + rulerOnScreen[0] + ", " + rulerOnScreen[1]);
+        rulerScreenLeft = rulerOnScreen[0];
+        rulerScreenRight = rulerScreenLeft + ruler.getMeasuredWidth();
+        updateScale();
     }
 
     @Override
@@ -382,6 +413,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
             // Free resources from fixReceiver, we don't need it anymore
             fixReceiver.destroy();
             fixReceiver = null;
+            if(missedFixesReceiver != null){
+            unregisterReceiver(missedFixesReceiver);
+            missedFixesReceiver = null;
+            }
             // Re-display selected route
             resetSelectedRouteMarkers();
             updateSelectedRoute();
@@ -523,6 +558,13 @@ public class DetailItineraryActivity extends FragmentActivity implements
             fixReceiver = new FixReceiver(mMap, proximityWarning,
                     selectedRouteMarkers);
             registerReceiver(fixReceiver, fixFilter);
+
+            IntentFilter missedFixesFilter = new IntentFilter(getResources().getString(
+                    R.string.internal_message_id)
+                    + Util.MESSAGE_MISSED_FIXES);
+            missedFixesReceiver = new MissedFixesReceiver();
+            registerReceiver(missedFixesReceiver, missedFixesFilter);
+
         }
     }
 
@@ -741,6 +783,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setupView();
+        updateScale();
         if (fixReceiver != null) {
             fixReceiver.moveCameraToLastPosition();
         }
@@ -793,6 +836,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
             unregisterReceiver(fixReceiver);
             fixReceiver = null;
         }
+        if(missedFixesReceiver != null){
+            unregisterReceiver(missedFixesReceiver);
+            missedFixesReceiver = null;
+        }
         if (tileProvider != null) {
             tileProvider.close();
             tileProvider = null;
@@ -816,7 +863,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 }
             }
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
+            mMap.setOnCameraChangeListener(getCameraChangeListener());
             mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
@@ -1133,11 +1180,13 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     if (nearestStepToTap == null) {
                         selectedMarker = null;
                     }
+/* Taking this out for now because it makes it hard to select points on map that the user wants to view. We can improve this in future and put it back in, but for now only way to add new marker will be via the button (and it can be added only to current location)
                     if (routeMode == 1 || routeMode == 2) {
                         if (selectedMarker != null) {
                             showAddMarkerOnTapDialog(nearestStepToTap);
                         }
                     }
+*/
 
                     // if(bogus_location != null){
                     // bogus_location.remove();
@@ -1615,6 +1664,78 @@ public class DetailItineraryActivity extends FragmentActivity implements
         return null;
     }
 
+    public void updateLocationAlerts(boolean missed_fix) {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationAlerts.setVisibility(View.VISIBLE);
+            locationAlerts.setImageResource(R.drawable.ic_action_location_off);
+            locationAlerts.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(
+                            android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                }
+            } );
+        } else if (missed_fix) {
+            locationAlerts.setVisibility(View.VISIBLE);
+            locationAlerts.setImageResource(R.drawable.ic_action_location_searching);
+            locationAlerts.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    AlertDialog.Builder missedFixesAlert = new AlertDialog.Builder(
+                            DetailItineraryActivity.this);
+                    missedFixesAlert.setIcon(R.drawable.ic_action_location_searching);
+                    missedFixesAlert.setTitle("Searching");
+                    missedFixesAlert.setMessage("Eth Holet is having trouble finding your location right now, so make sure to pay attention to your map and your surroundings rather than relying on your GPS.");
+                    missedFixesAlert.setNegativeButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    missedFixesAlert.show();
+
+                }
+            });
+
+        } else {
+            locationAlerts.setVisibility(View.GONE);
+        }
+    }
+
+    public void updateScale() {
+        Projection thisProjection = mMap.getProjection();
+        LatLng startLatLng = thisProjection.fromScreenLocation(new Point(rulerScreenLeft, 0));
+        LatLng endLatLng = thisProjection.fromScreenLocation(new Point(rulerScreenRight, 0));
+        Log.i("SCALE", "rulerScreenLeft:" + rulerScreenLeft);
+        Log.i("SCALE", "rulerScreenRight:" + rulerScreenRight);
+        Log.i("SCALE", "leftLatLng: " + startLatLng.latitude + ", " + startLatLng.longitude);
+        Log.i("SCALE", "RightLatLng: " + endLatLng.latitude + ", " + endLatLng.longitude);
+        Location startLoc = new Location("");
+        Location endLoc = new Location("");
+        startLoc.setLatitude(startLatLng.latitude);
+        startLoc.setLongitude(startLatLng.longitude);
+        endLoc.setLatitude(endLatLng.latitude);
+        endLoc.setLongitude(endLatLng.longitude);
+        int thisDistance = Math.round(startLoc.distanceTo(endLoc));
+        String units = thisDistance >= 1000 ? "km" : "m";
+        int printedDistance = thisDistance >= 1000 ? Math.round((float) thisDistance / 1000) : thisDistance;
+        Log.i("SCALE", "thisDistance: " + thisDistance);
+        ruler.setText("<- " + printedDistance + " " + units + " ->");
+    }
+
+
+    public GoogleMap.OnCameraChangeListener getCameraChangeListener() {
+        return new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                updateScale();
+            }
+        };
+    }
+
     public class FixReceiver extends BroadcastReceiver {
 
         private GoogleMap mMap;
@@ -1677,12 +1798,23 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     .size() + 1 : 1;
             PolylineOptions rectOptions = MapObjectsFactory
                     .getRouteInProgressPolyLine(zIndexPolyLine);
+            PolylineOptions rectBackgroundOptions = MapObjectsFactory
+                    .getRouteInProgressPolyLineBackground(zIndexPolyLine);
+
             if (stepsInProgress != null && stepsInProgress.size() > 0) {
                 for (int i = 0; i < stepsInProgress.size(); i++) {
 
                     Step step = stepsInProgress.get(i);
 
                     boolean last = (i == stepsInProgress.size() - 1);
+
+                    if (last) {
+                        currentLocationOptions = new MarkerOptions()
+                                .position(new LatLng(step.getLatitude(), step.getLongitude()))
+                                .icon(BitmapDescriptorFactory
+                                        .fromResource(R.drawable.blue))
+                                .flat(true);
+                    }
 
                     CircleOptions copt = MapObjectsFactory
                             .getRouteInProgressCircle(
@@ -1694,13 +1826,22 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     if (routeMode == 1 || routeMode == 2) {
                         rectOptions.add(new LatLng(step.getLatitude(), step
                                 .getLongitude()));
+                        rectBackgroundOptions.add(new LatLng(step.getLatitude(), step
+                                .getLongitude()));
+
                     }
                 }
                 if (routeMode == 1 || routeMode == 2) {
+                    trackInProgress = mMap.addPolyline(rectBackgroundOptions);
                     trackInProgress = mMap.addPolyline(rectOptions);
                 }
+                if (lastLocation != null) {
+                    lastLocation.remove();
+                }
+                lastLocation = mMap.addMarker(currentLocationOptions);
             }
         }
+
 
         public Step getStepById(int id) {
             for (Step s : stepsInProgress) {
@@ -1752,6 +1893,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            updateLocationAlerts(false);
             double lat = intent.getExtras().getDouble("lat", 0);
             double lng = intent.getExtras().getDouble("long", 0);
             double alt = intent.getExtras().getDouble("alt", 0);
@@ -1815,6 +1957,20 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     }
 
+
+    public class MissedFixesReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            updateLocationAlerts(true);
+
+        }
+
+
+    }
+
+
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
@@ -1832,7 +1988,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
             }
         } else {
             /*
-			 * If no resolution is available, display a dialog to the user with
+             * If no resolution is available, display a dialog to the user with
 			 * the error.
 			 */
             Toast.makeText(this, getString(R.string.error_gplay_connect),

@@ -69,4 +69,27 @@
             
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/ruler"
+        android:layout_width="140dp"
+        android:padding="5dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ruler_background"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <ImageButton
+        android:id="@+id/location_alerts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/black"
+        android:layout_margin="5dp"/>
+
+
 </RelativeLayout>

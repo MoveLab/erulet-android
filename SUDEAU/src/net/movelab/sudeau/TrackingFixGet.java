@@ -320,8 +320,10 @@ public class TrackingFixGet extends Service {
 		 *            The provider to be disabled
 		 */
 		public void onProviderDisabled(String provider) {
-			removeLocationUpdate(provider);
+            announceMissedFixes();
+            removeLocationUpdate(provider);
 			if (locationListener1 == null && locationListener2 == null) {
+
 				removeLocationUpdates();
 				// try {
 				// unregisterReceiver(stopReceiver);
@@ -352,6 +354,8 @@ public class TrackingFixGet extends Service {
 			if (status == LocationProvider.OUT_OF_SERVICE) {
 				removeLocationUpdate(provider);
 				if (locationListener1 == null && locationListener2 == null) {
+
+                    announceMissedFixes();
 
 					removeLocationUpdates();
 					// try {
@@ -417,7 +421,16 @@ public class TrackingFixGet extends Service {
 		sendBroadcast(intent);
 	}
 
-	private void useFix(Context context, Location location) {
+    private void announceMissedFixes() {
+        Intent intent = new Intent(getResources().getString(
+                R.string.internal_message_id)
+                + Util.MESSAGE_MISSED_FIXES);
+        sendBroadcast(intent);
+    }
+
+
+
+    private void useFix(Context context, Location location) {
 
 		// Log.e("FixGet", "useFix started");
 
@@ -625,6 +638,8 @@ public class TrackingFixGet extends Service {
 							&& locationManager
 									.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 						Util.missedFixes = Util.missedFixes + 1;
+
+                        announceMissedFixes();
 					}
 				}
 

@@ -84,6 +84,8 @@ public class Util {
     public final static String MESSAGE_UNSCHEDULE = ".UNSCHEDULE_SERVICE";
     public final static String MESSAGE_FIX_RECORDED = ".NEW_FIX_RECORDED";
     public final static String MESSAGE_FIX_UPLOADED = ".NEW_FIX_UPLOADED";
+    public final static String MESSAGE_MISSED_FIXES = ".MISSED_FIXES";
+
 
     public final static int TRACKING_NOTIFICATION = 0;
 
