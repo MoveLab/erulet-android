@@ -92,12 +92,63 @@
 	                android:text="@string/lang_device" />
 			</RadioGroup>
 
+            <View
+                android:background="#fff"
+                android:layout_width = "fill_parent"
+                android:layout_height="1dip"/>
+
+            <LinearLayout
+                android:id="@+id/auto_center_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/tvAutoCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto-center map"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ToggleButton
+                    android:id="@+id/toggleAutoCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+</LinearLayout>
+
+            <View
+                android:background="#fff"
+                android:layout_width = "fill_parent"
+                android:layout_height="1dip"/>
+
+            <LinearLayout
+                android:id="@+id/user_tracks_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/tvUserTracks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show your tracks"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ToggleButton
+                    android:id="@+id/toggleUserTracks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
             <View android:id="@+id/separator"
                 android:background="#fff"
                 android:layout_width = "fill_parent"
-                android:layout_height="1dip"
-                android:layout_centerVertical ="true"
-                android:layout_alignParentTop="true"/>
+                android:layout_height="1dip"/>
 
             <LinearLayout
                 android:id="@+id/fix_interval_settings"

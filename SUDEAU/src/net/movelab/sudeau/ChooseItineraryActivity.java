@@ -137,7 +137,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){		
 		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));
- // TODO decide if we want this in - I am removing it for now
+        menu.add(group1, second_id, second_id, getString(R.string.preferences));
+
+        // TODO decide if we want this in - I am removing it for now
 //		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -151,9 +153,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				startActivity(i1);
 			    return true;	
 			case 2:
-				Intent i2 = new Intent(ChooseItineraryActivity.this,
-						OtherItinerariesActivity.class);				
-				startActivity(i2);
+                Intent i = new Intent(ChooseItineraryActivity.this, EruletPreferencesActivity.class);
+                startActivity(i);
 			    return true;
 			default:
 				break;

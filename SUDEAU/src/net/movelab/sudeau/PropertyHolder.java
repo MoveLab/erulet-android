@@ -32,6 +32,8 @@ public class PropertyHolder {
     public static final String GENERAL_MAP_PATH = "GENERAL_MAP_PATH";
     public static final String GENERAL_REFERENCE_PATH = "GENERAL_REFERENCE_PATH";
     public static final String NEEDS_SYNC_FIX = "NEEDS_SYNC_FIX_2";
+    public static final String AUTOCENTER = "AUTOCENTER";
+    public static final String USERTRACKS = "USERTRACKS";
 
 
     public static final String ARANESE = "oc";
@@ -87,6 +89,24 @@ public class PropertyHolder {
 		editor.putBoolean(SERVICE_ON, _isOn);
 		editor.apply();
 	}
+
+    public static boolean isAutoCenterOn() {
+        return sharedPreferences.getBoolean(AUTOCENTER, false);
+    }
+
+    public static void setAutocenterOn(boolean _isOn) {
+        editor.putBoolean(AUTOCENTER, _isOn);
+        editor.apply();
+    }
+    public static boolean isUserTracksOn() {
+        return sharedPreferences.getBoolean(USERTRACKS, false);
+    }
+
+    public static void setUserTracksOn(boolean _isOn) {
+        editor.putBoolean(USERTRACKS, _isOn);
+        editor.apply();
+    }
+
 
     public static boolean isFirstTime() {
         return sharedPreferences.getBoolean(IS_FIRST_TIME, true);

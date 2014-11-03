@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 
 public class EruletPreferencesActivity extends Activity {
@@ -26,6 +28,8 @@ public class EruletPreferencesActivity extends Activity {
 	private int formerSelectedRadioButton;
     private EditText etFixInterval;
     private Button bOK;
+    private ToggleButton autoCenter;
+    private ToggleButton userTracks;
     Context context;
 	
 	@Override
@@ -72,7 +76,26 @@ public class EruletPreferencesActivity extends Activity {
                 finish();
             }
         });
-	}
+
+    autoCenter = (ToggleButton) findViewById(R.id.toggleAutoCenter);
+    userTracks = (ToggleButton) findViewById(R.id.toggleUserTracks);
+
+    autoCenter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton toggleButton, boolean b) {
+            PropertyHolder.setAutocenterOn(toggleButton.isChecked());
+        }
+    });
+
+        userTracks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton toggleButton, boolean b) {
+                PropertyHolder.setUserTracksOn(toggleButton.isChecked());
+            }
+        });
+
+
+    }
 	
 	private void updateRadioButtonState(){
 		String pref_locale = PropertyHolder.getLocale();

@@ -41,6 +41,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -110,9 +111,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private ImageButton btn_whereami;
 
     private int routeMode;
-    private int group1 = 1;
-    private int first_id = Menu.FIRST;
-    private int second_id = Menu.FIRST + 1;
 
     private float TAP_TOLERANCE_DIST = 100;
     static final int HIGHLIGHT_EDIT_REQUEST = 1;
@@ -136,6 +134,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     int rulerScreenRight;
     TextView ruler;
     ImageButton locationAlerts;
+    private boolean autoCenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +150,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
+        autoCenter = PropertyHolder.isAutoCenterOn();
 
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = Util.getScreenSize(context)[0];  // deprecated
@@ -803,7 +803,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         super.onConfigurationChanged(newConfig);
         setupView();
         updateScale();
-        if (fixReceiver != null) {
+        if (autoCenter == true && fixReceiver != null) {
             fixReceiver.moveCameraToLastPosition();
         }
     }
@@ -1779,7 +1779,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     } else {
                         cu = CameraUpdateFactory.newLatLngZoom(location, 16);
                     }
-                    if (mMap != null && cu != null) {
+                    if (autoCenter == true && mMap != null && cu != null) {
                         mMap.moveCamera(cu);
                     }
                     // Aggressive save - save location as soon as is available
@@ -1869,5 +1869,29 @@ public class DetailItineraryActivity extends FragmentActivity implements
     public void onDisconnected() {
         // TODO Auto-generated method stub
     }
+
+    private int group1 = 1;
+    private int first_id = Menu.FIRST;
+    private int second_id = Menu.FIRST + 1;
+    private int third_id = Menu.FIRST + 2;
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(group1, first_id, first_id, getString(R.string.preferences));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                Intent i = new Intent(DetailItineraryActivity.this, EruletPreferencesActivity.class);
+                startActivity(i);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

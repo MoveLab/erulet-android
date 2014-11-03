@@ -77,10 +77,6 @@ public class Switchboard extends FragmentActivity {
     private EruletApp app;
     private SharedPreferences mPreferences;
 
-    private int group1 = 1;
-    private int first_id = Menu.FIRST;
-    private int second_id = Menu.FIRST + 1;
-    private int third_id = Menu.FIRST + 2;
 
     Context context;
 
@@ -162,12 +158,20 @@ public class Switchboard extends FragmentActivity {
     b.show();
 }
 
+    private int group1 = 1;
+    private int first_id = Menu.FIRST;
+    private int second_id = Menu.FIRST + 1;
+    private int third_id = Menu.FIRST + 2;
+    private int fourth_id = Menu.FIRST + 3;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
         menu.add(group1, second_id, second_id, getString(R.string.register_user));
         menu.add(group1, third_id, third_id, "Sync");
+        menu.add(group1, fourth_id, fourth_id,getString(R.string.choose_it_my_itineraries));
+
         //getMenuInflater().inflate(R.menu.switchboard, menu);
         return true;
     }
@@ -184,6 +188,11 @@ public class Switchboard extends FragmentActivity {
                 break;
             case 3:
                 startInitialSync();
+                break;
+            case 4:
+                Intent i1 = new Intent(Switchboard.this,
+                        MyItinerariesActivity.class);
+                startActivity(i1);
                 break;
             default:
                 break;
