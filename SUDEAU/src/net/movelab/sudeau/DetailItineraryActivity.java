@@ -153,6 +153,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = Util.getScreenSize(context)[0];  // deprecated
 
+        ruler = (TextView) findViewById(R.id.ruler);
+
         proximityWarning = new ProximityWarning(app);
         mObjFactory = new MapObjectsFactory();
         // Check availability of google play services
@@ -304,7 +306,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        ruler = (TextView) findViewById(R.id.ruler);
         int[] rulerOnScreen = new int[2];
         ruler.getLocationOnScreen(rulerOnScreen);
         Log.i("SCALE", "locationOnScreen: " + rulerOnScreen[0] + ", " + rulerOnScreen[1]);

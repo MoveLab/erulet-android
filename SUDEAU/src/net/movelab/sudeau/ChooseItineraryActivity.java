@@ -77,7 +77,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
 //	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
 	//private DataBaseHelper dataBaseHelper;
-	private Hashtable<Marker, Route> routeTable;
+	private Hashtable<Marker, String[]> routeTable;
 	private Marker selectedMarker;
 	private List<Route> routes;
 	
@@ -178,16 +178,19 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			items = new CharSequence[]{OPTION_1,OPTION_2};
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final Route r = routeTable.get(selectedMarker);
-            builder.setTitle(r.getName(currentLocale));
+        final String[] rbb = routeTable.get(selectedMarker);
+            // rbb[2] is localized name
+            builder.setTitle(rbb[2]);
             builder.setIcon(R.drawable.ic_pin_info);
-            builder.setMessage(r.getDescription(currentLocale));
+            // rbb[3] is localized description
+            builder.setMessage(rbb[3]);
             builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
-                    intent.putExtra("idRoute",r.getId());
+                    // rbb[0] is route id as string
+                    intent.putExtra("idRoute", Integer.parseInt(rbb[0]));
                     intent.putExtra("mode",0);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -197,7 +200,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
-                    intent.putExtra("idRoute",r.getId());
+                    // rbb[0] is route ID as string
+                    intent.putExtra("idRoute",Integer.parseInt(rbb[0]));
                     intent.putExtra("mode",1);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -209,7 +213,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
-                    intent.putExtra("idRoute",r.getId());
+                    // rbb[0] is route ID as string
+                    intent.putExtra("idRoute",Integer.parseInt(rbb[0]));
                     intent.putExtra("mode",2);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -245,8 +250,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 							.addTileOverlay(new TileOverlayOptions()
 									.tileProvider(tileProvider));
 					tileOverlay.setVisible(true);
-				}
-			}
+				}	
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);			
 			mMap.setOnMapClickListener(new OnMapClickListener() {				
 				@Override
@@ -258,7 +262,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				@Override
 				public boolean onMarkerClick(Marker marker) {
 					selectedMarker=marker;
-					Route r = routeTable.get(marker);
                     showItineraryOptions();
                     return true;
 				}
@@ -287,17 +290,18 @@ public class ChooseItineraryActivity extends FragmentActivity {
 					View myContentView = getLayoutInflater().inflate(R.layout.custominfowindow, null); 
 					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
 					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
-					Route r = routeTable.get(marker);
-					r = DataContainer.refreshRoute(r,app.getDataBaseHelper());
-		            snippet.setText(r.getDescription(currentLocale));
-		            title.setText(r.getName(currentLocale));
+					String[] rbb = routeTable.get(marker);
+                    // rbb[3] is localized description
+		            snippet.setText(rbb[3]);
+                    // rbb[2] is localized name
+		            title.setText(rbb[2]);
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
 		            picture.setImageResource(R.drawable.ic_pin_info);		            
 		            return myContentView;
 				}
 			});						
 						
-		}
+		}}
 	}
 	
 	private void setUpCamera(){				
@@ -347,11 +351,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			JSONArray route_j_list = new JSONArray();
 			for(int i=0; i<routes.size();i++){
 				Route r = routes.get(i);
-                // FOR TESTING ONLY TODO TAKE OUT
-                List<Step> these_steps = DataContainer.getRouteSteps(r, app.getDataBaseHelper());
-                for(Step s : these_steps){
-                    List<HighLight> these_highlights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
-                }
 
 				JSONObject route_j;
 				try {
@@ -374,13 +373,13 @@ public class ChooseItineraryActivity extends FragmentActivity {
 
 	private void addRouteMarkersFromDB() {
 		// custom icon
-		routes = DataContainer.getAllRoutes(app.getDataBaseHelper());
+		List<String[]> routesBareBones = DataContainer.getAllRoutesBareBones(app.getDataBaseHelper(), currentLocale);
 		if(routeTable == null){
-			routeTable = new Hashtable<Marker, Route>();
+			routeTable = new Hashtable<Marker, String[]>();
 		}
-		for(int i=0; i < routes.size(); i++){			
-			Route r = routes.get(i);
-			Step start = DataContainer.getRouteStarterFast(r, app.getDataBaseHelper());
+		for(String[] rbb : routesBareBones){
+            // rbb[1] is trackId
+			Step start = DataContainer.getRouteStarterFast(rbb[1], app.getDataBaseHelper());
 			if(start!=null){
 //				Marker my_marker = mMap.addMarker(new MarkerOptions()
 //				.position(new LatLng(start.getLatitude(), start.getLongitude()))
@@ -391,12 +390,13 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				IconGenerator ic = new IconGenerator(getBaseContext());
 				ic.setTextAppearance(R.style.BubbleFont);
 				//Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
-				Marker my_marker = mMap.addMarker( new MarkerOptions()
-				.position(new LatLng(start.getLatitude(), start.getLongitude()))
-				.title(r.getName(currentLocale))
-				.snippet(null)
-				.icon( BitmapDescriptorFactory.fromBitmap(ic.makeIcon(r.getName(currentLocale)))));
-				routeTable.put(my_marker, r);
+				Marker my_marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(start.getLatitude(), start.getLongitude()))
+                                // rbb[2] is localized name
+                        .title(rbb[2])
+                        .snippet(null)
+                        .icon(BitmapDescriptorFactory.fromBitmap(ic.makeIcon(rbb[2]))));
+				routeTable.put(my_marker, rbb);
 			}
 		}
 	}

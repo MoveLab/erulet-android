@@ -1,20 +1,13 @@
 package net.movelab.sudeau.database;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Ref;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import net.movelab.sudeau.EruletApp;
-import net.movelab.sudeau.Util;
 import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.FileManifest;
@@ -25,14 +18,9 @@ import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.provider.Settings.Secure;
-import android.util.Log;
 
-import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -127,10 +115,10 @@ public class DataContainer {
     }
 
     public static HighLight refreshHighlightForFileManifest(HighLight hl, DataBaseHelper db) {
-    if(hl != null && db != null){
-        db.getFileManifestDataDao().refresh(hl.getFileManifest());
-        } else{
-    }
+        if (hl != null && db != null) {
+            db.getFileManifestDataDao().refresh(hl.getFileManifest());
+        } else {
+        }
         return hl;
     }
 
@@ -367,6 +355,28 @@ public class DataContainer {
         return officialRoutes;
     }
 
+    public static List<String[]> getAllRoutesBareBones(DataBaseHelper db, String locale) {
+        List<String[]> results = null;
+        GenericRawResults<String[]> rawResults;
+        if (locale.equals("es")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es  from route");
+        } else if (locale.equals("ca")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca  from route");
+        } else if (locale.equals("fr")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr  from route");
+        } else if (locale.equals("en")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en  from route");
+        } else {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc  from route");
+        }
+        try {
+             results = rawResults.getResults();
+        } catch (SQLException e) {
+// TODO
+        }
+        return results;
+    }
+
 
     public static Route findRouteByServerId(int server_id, DataBaseHelper db) {
         Route result = null;
@@ -378,8 +388,9 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
             resultList = db.getRouteDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
-                result = resultList.get(0);            }
+            if (resultList != null && resultList.size() > 0) {
+                result = resultList.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -397,8 +408,9 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<Step> preparedQuery = queryBuilder.prepare();
             resultList = db.getStepDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
-                result = resultList.get(0);            }
+            if (resultList != null && resultList.size() > 0) {
+                result = resultList.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -416,14 +428,14 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<Reference> preparedQuery = queryBuilder.prepare();
             resultList = db.getReferenceDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
-                result = resultList.get(0);            }
+            if (resultList != null && resultList.size() > 0) {
+                result = resultList.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
-
 
 
     public static InteractiveImage findInteractiveImageByServerId(int server_id, DataBaseHelper db) {
@@ -436,7 +448,7 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<InteractiveImage> preparedQuery = queryBuilder.prepare();
             resultList = db.getInteractiveImageDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
+            if (resultList != null && resultList.size() > 0) {
                 result = resultList.get(0);
             }
         } catch (SQLException e) {
@@ -456,14 +468,14 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<Track> preparedQuery = queryBuilder.prepare();
             resultList = db.getTrackDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
-                result = resultList.get(0);            }
+            if (resultList != null && resultList.size() > 0) {
+                result = resultList.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
-
 
 
     public static HighLight findHighlightByServerId(int server_id, DataBaseHelper db) {
@@ -476,7 +488,7 @@ public class DataContainer {
             where.eq("server_id", server_id);
             PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
             resultList = db.getHlDataDao().query(preparedQuery);
-            if(resultList !=null && resultList.size() > 0){
+            if (resultList != null && resultList.size() > 0) {
                 result = resultList.get(0);
             }
         } catch (SQLException e) {
@@ -525,18 +537,16 @@ public class DataContainer {
 //	}
 //	return retVal;
 
-    public static Step getRouteStarterFast(Route route, DataBaseHelper db) {
-        if (route.getTrack() != null) {
-            try {
-                List<Step> steps = db.getStepDataDao().query(
-                        db.getStepDataDao().queryBuilder().where()
-                                .eq("trackId", route.getTrack().getId()).and().eq("order", 1).prepare());
-                if (steps != null && steps.size() > 0) {
-                    return steps.get(0);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+    public static Step getRouteStarterFast(String trackId, DataBaseHelper db) {
+        try {
+            List<Step> steps = db.getStepDataDao().query(
+                    db.getStepDataDao().queryBuilder().where()
+                            .eq("trackId", trackId).and().eq("order", 1).prepare());
+            if (steps != null && steps.size() > 0) {
+                return steps.get(0);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -711,8 +721,8 @@ public class DataContainer {
                                     } catch (RuntimeException ex) {
                                     }
 
-                                    if (ref.getFileManifests() != null){
-                                        for (FileManifest fm : ref.getFileManifests()){
+                                    if (ref.getFileManifests() != null) {
+                                        for (FileManifest fm : ref.getFileManifests()) {
                                             fm.setReference(ref);
                                             dataBaseHelper.getFileManifestDataDao().createOrUpdate(fm);
                                         }
