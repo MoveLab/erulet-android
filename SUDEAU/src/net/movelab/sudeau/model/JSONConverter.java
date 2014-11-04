@@ -99,6 +99,7 @@ public class JSONConverter {
         if (j.has("isuploaded")) {
             r.setUpLoaded(j.getBoolean("isuploaded"));
         }
+        r.setLocalCarto("none");
         if (j.has("map")) {
             if (j.getJSONObject("map") != null && !j.getJSONObject("map").equals("null")) {
                 JSONObject mapj = j.getJSONObject("map");

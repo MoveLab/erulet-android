@@ -495,6 +495,7 @@ public class Switchboard extends FragmentActivity {
             List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
             for(Route route: routes){
                 boolean routeMapSuccess = true;
+                if(route.getLocalCarto() != null && !route.getLocalCarto().equals("") && !route.getLocalCarto().equals("none")){
             try {
                 HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -592,7 +593,7 @@ public class Switchboard extends FragmentActivity {
             if (routeMapSuccess) {
               route.setLocalCartoLastUpdatedNow();
             }
-
+                }
             }
 // GENERAL REFS
 

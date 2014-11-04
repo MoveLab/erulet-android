@@ -134,7 +134,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
     int rulerScreenRight;
     TextView ruler;
     ImageButton locationAlerts;
-    private boolean autoCenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +149,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
-        autoCenter = PropertyHolder.isAutoCenterOn();
 
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = Util.getScreenSize(context)[0];  // deprecated
@@ -803,7 +801,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         super.onConfigurationChanged(newConfig);
         setupView();
         updateScale();
-        if (autoCenter == true && fixReceiver != null) {
+        if (PropertyHolder.isAutoCenterOn() && fixReceiver != null) {
             fixReceiver.moveCameraToLastPosition();
         }
     }
@@ -1779,7 +1777,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     } else {
                         cu = CameraUpdateFactory.newLatLngZoom(location, 16);
                     }
-                    if (autoCenter == true && mMap != null && cu != null) {
+                    if (PropertyHolder.isAutoCenterOn() && mMap != null && cu != null) {
                         mMap.moveCamera(cu);
                     }
                     // Aggressive save - save location as soon as is available

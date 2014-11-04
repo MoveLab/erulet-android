@@ -50,7 +50,7 @@ public class ManualActivity extends FragmentActivity {
             PropertyHolder.init(context);
 
         // TODO languages
-        lang = "ca";
+        lang = PropertyHolder.getLocale();
 
     }
 

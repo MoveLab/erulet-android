@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -64,6 +65,7 @@ public class EruletPreferencesActivity extends Activity {
 
 
         etFixInterval = (EditText) findViewById(R.id.etFixInterval);
+        etFixInterval.setText("" + Math.round(PropertyHolder.getAlarmInterval()/1000));
         bOK = (Button) findViewById(R.id.bOK);
         bOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,19 +73,26 @@ public class EruletPreferencesActivity extends Activity {
                 String input = etFixInterval.getText().toString();
                 if(!input.matches("")){
                     PropertyHolder.init(context);
+                    if(Long.parseLong(input, 10) >=10){
                     PropertyHolder.setAlarmInterval(1000*Long.parseLong(input, 10));
+                    if(PropertyHolder.isServiceOn()){
+                        // TODO restart service so new alarm intervala takes effect
+                    }
+                    }
                 };
                 finish();
             }
         });
 
     autoCenter = (ToggleButton) findViewById(R.id.toggleAutoCenter);
+        autoCenter.setChecked(PropertyHolder.isAutoCenterOn());
     userTracks = (ToggleButton) findViewById(R.id.toggleUserTracks);
+        userTracks.setChecked(PropertyHolder.isUserTracksOn());
 
     autoCenter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton toggleButton, boolean b) {
-            PropertyHolder.setAutocenterOn(toggleButton.isChecked());
+            PropertyHolder.setAutocenterOn(b);
         }
     });
 
