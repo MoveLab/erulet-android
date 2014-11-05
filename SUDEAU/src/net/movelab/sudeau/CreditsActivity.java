@@ -37,21 +37,20 @@ public class CreditsActivity extends FragmentActivity {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
 
-        // TODO languages
-        lang = "ca";
-
     }
 
     @Override
     protected void onPause() {
 
         super.onPause();
+
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected void onResume() {
 
+        lang = PropertyHolder.getLocale();
 
         // if (Util.isOnline(context)) {
         setContentView(R.layout.html_viewer_activity);
@@ -84,10 +83,12 @@ public class CreditsActivity extends FragmentActivity {
             WebViewApi7.api7settings(myWebView, context);
         }
 
+
         if (!Util.isOnline(context)) { // loading offline only if not online
             myWebView.getSettings().setCacheMode(
                     WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
+
 
         if (lang.equals("ca"))
             myWebView.loadUrl(BEFORE_LEAVING_URL_CA);

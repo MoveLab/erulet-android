@@ -49,14 +49,11 @@ public class ManualActivity extends FragmentActivity {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
 
-        // TODO languages
-        lang = PropertyHolder.getLocale();
 
     }
 
     @Override
     protected void onPause() {
-
         super.onPause();
     }
 
@@ -64,6 +61,7 @@ public class ManualActivity extends FragmentActivity {
     @Override
     protected void onResume() {
 
+        lang = PropertyHolder.getLocale();
 
         // if (Util.isOnline(context)) {
         setContentView(R.layout.html_viewer_activity);
@@ -95,6 +93,7 @@ public class ManualActivity extends FragmentActivity {
         if (Build.VERSION.SDK_INT >= 7) {
             WebViewApi7.api7settings(myWebView, context);
         }
+
 
         if (!Util.isOnline(context)) { // loading offline only if not online
             myWebView.getSettings().setCacheMode(
