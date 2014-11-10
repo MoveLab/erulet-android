@@ -338,11 +338,14 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                     int which) {
                                     // This next line seems to be a bug, since it tries to call the same dialog again and opens it after activity has closed.
                                     //               stopTracking();
+                                    stopTracking();
+                                    launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
                                     finish();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
                     .show();
         } else {
+            launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
             finish();
         }
     }
@@ -393,6 +396,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
             routeMode = 0;
             // Adjust interface
             configureUI();
+            // get serverid of previous selected route for survey
+            int server_id = selectedRoute.getServerId();
             // Load saved route (not strictly necessary...)
             selectedRoute = routeInProgress;
             // Free resources from fixReceiver, we don't need it anymore
@@ -405,6 +410,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
             // Re-display selected route
             resetSelectedRouteMarkers();
             updateSelectedRoute();
+            launchSurvey(server_id, Util.ROUTE_SURVEY);
         }
     }
 
@@ -708,6 +714,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
+                                        launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
                                         finish();
                                     }
                                 });
@@ -727,6 +734,15 @@ public class DetailItineraryActivity extends FragmentActivity implements
             }
         }
     }
+
+    private void launchSurvey(int route_server_id, String survey_type){
+        Intent i = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
+        if(route_server_id >= 0)
+            i.putExtra("route_server_id", String.valueOf(route_server_id));
+        i.putExtra("survey_type", Util.ROUTE_SURVEY);
+        startActivity(i);
+    }
+
 
     private void startSaveRouteInProgressIntent() {
         Intent i = new Intent(DetailItineraryActivity.this,

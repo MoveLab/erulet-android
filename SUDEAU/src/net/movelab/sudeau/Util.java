@@ -86,6 +86,8 @@ public class Util {
     public final static String MESSAGE_FIX_UPLOADED = ".NEW_FIX_UPLOADED";
     public final static String MESSAGE_MISSED_FIXES = ".MISSED_FIXES";
 
+    // Important! This must match the name given to the servey in the server database!
+    public final static String ROUTE_SURVEY = "route_survey";
 
     public final static int TRACKING_NOTIFICATION = 0;
 

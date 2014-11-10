@@ -60,6 +60,8 @@
         </activity>        
         <activity android:name="net.movelab.sudeau.CreditsActivity" >
         </activity>
+        <activity android:name="net.movelab.sudeau.SurveyActivity" >
+        </activity>
         <activity android:name="net.movelab.sudeau.ManualActivity" >
         </activity>
         <activity android:name="net.movelab.sudeau.SecurityRules" >
