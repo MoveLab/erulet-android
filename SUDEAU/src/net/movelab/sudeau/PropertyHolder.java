@@ -26,6 +26,7 @@ public class PropertyHolder {
     public static final String USER_KEY = "USER_KEY";
     public static final String IS_REGISTERED = "IS_REGISTERED";
     public static final String USER_ID = "USER_ID";
+    public static final String USER_NAME = "USER_NAME";
     public static final String LAST_UPDATE_GENERAL_MAP = "LAST_UPDATE_GENERAL_MAP";
     public static final String LAST_UPDATE_GENERAL_REFERENCES = "LAST_UPDATE_GENERAL_REFERENCES";
     public static final String LOCALE = "pref_locale";
@@ -137,16 +138,26 @@ public class PropertyHolder {
 	}
 
 	public static String getUserId() {
-		return sharedPreferences.getString(USER_ID, UUID.randomUUID().toString());
+		String id = sharedPreferences.getString(USER_ID, null);
+        if(id == null){
+            id = UUID.randomUUID().toString();
+            editor.putString(USER_ID, id);
+            editor.apply();
+        }
+        return id;
 	}
 
-	public static void setUserId(String _userId) {
-		editor.putString(USER_ID, _userId);
-		editor.apply();
-	}
+    public static String getUserName() {
+        return sharedPreferences.getString(USER_NAME, UtilLocal.SERVULET_ANONYMOUS_USERNAME);
+    }
+
+    public static void setUserName(String _userName) {
+        editor.putString(USER_NAME, _userName);
+        editor.apply();
+    }
 
     public static String getUserKey() {
-        return sharedPreferences.getString(USER_KEY, null);
+        return sharedPreferences.getString(USER_KEY, UtilLocal.SERVULET_ANONYMOUS_API_KEY);
     }
 
     public static void setUserKey(String _userKey) {

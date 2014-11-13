@@ -1060,7 +1060,7 @@ public class Util {
 
             httpGet.setHeader("Accept", "application/json");
             httpGet.setHeader("Content-type", "application/json");
-            httpGet.setHeader("Authorization", UtilLocal.SERVULET_AUTHORIZATION);
+            httpGet.setHeader("Authorization", "token " + PropertyHolder.getUserKey());
 
             try {
                 HttpResponse response = client.execute(httpGet);
@@ -1199,7 +1199,7 @@ public class Util {
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader("Accept", "application/zip");
         httpGet.setHeader("Content-type", "application/zip");
-        httpGet.setHeader("Authorization", UtilLocal.SERVULET_AUTHORIZATION);
+        httpGet.setHeader("Authorization", "token " + PropertyHolder.getUserKey());
 
         HttpResponse response = client.execute(httpGet);
         return response;

@@ -9,17 +9,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.Reference;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -31,7 +35,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class HTMLViewerActivity extends Activity {
+public class HTMLViewerActivity extends FragmentActivity {
 
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
@@ -42,7 +46,7 @@ public class HTMLViewerActivity extends Activity {
     String locale;
     private HighLight hl;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.html_viewer_activity);
@@ -77,38 +81,45 @@ public class HTMLViewerActivity extends Activity {
             if (hl.getReferences() != null) {
 
         // interactive images
-        if (hl.getInteractiveImages() != null && hl.getInteractiveImages().size() > 0) {
+        final Collection these_interactive_images = hl.getInteractiveImages();
+        if (these_interactive_images != null && these_interactive_images.size() > 0) {
 
             LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
             iibuttonarea.setVisibility(View.VISIBLE);
+
+            Button iiButton = new Button(this);
+            iiButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            iiButton.setPadding(10, 10, 10, 10);
+            iiButton.setText("Interactive Images");
+            iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
+            iiButton.setGravity(Gravity.CENTER);
+            iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+
+            iibuttonarea.addView(iiButton);
+
+            final CharSequence[] ii_items = new CharSequence[these_interactive_images.size()];
+            final int[] ii_ids = new int[these_interactive_images.size()];
+
+            int i = 0;
             for(InteractiveImage ii : hl.getInteractiveImages()){
+                ii_items[i] = "Interactive Image " + (i + 1);
+                ii_ids[i] = ii.getId();
+                i++;
+            }
 
-                Button iiButton = new Button(this);
-                iiButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                iiButton.setPadding(10, 10, 10, 10);
-                iiButton.setText("Interactive Image");
-                iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
-                iiButton.setGravity(Gravity.CENTER);
-                iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 
-                final int this_ii_id = ii.getId();
+            iiButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                iibuttonarea.addView(iiButton);
-                iiButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(
-                                HTMLViewerActivity.this,
-                                InteractiveImageActivityHeatMap.class);
-                        i.putExtra("int_image_id", this_ii_id);
-                        startActivity(i);
-                    }
+                    showInteractiveImageDialog(ii_items, ii_ids);
+                }
                 });
 
             }
-        }
+
 
 
 
@@ -188,6 +199,28 @@ public class HTMLViewerActivity extends Activity {
         // for now we are simply going to use the first reference and ignore the rest. But for future TODO we can add some navigation to the others
         wv.loadDataWithBaseURL(base_url, getReferenceString().get(0), "text/html","utf-8", null);
 	}
+
+
+    public void showInteractiveImageDialog(CharSequence[] ii_items, int[] ii_ids){
+
+        final int[] these_ii_ids = ii_ids;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose interactive image")
+                .setItems(ii_items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(
+                                HTMLViewerActivity.this,
+                                InteractiveImageActivityHeatMap.class);
+                        i.putExtra("int_image_id", these_ii_ids[which]);
+                        dialog.dismiss();
+                        startActivity(i);
+                    }
+                });
+
+        builder.show();
+
+    }
 
 	/**
 	 * This allows navigation between a webview and a link opening another webview

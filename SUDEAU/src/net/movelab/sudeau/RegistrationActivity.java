@@ -33,8 +33,8 @@ public class RegistrationActivity extends Activity {
                     String[] token_chop =  url.split("token=")[1].split("username=");
                     String token = token_chop[0];
                     String username = token_chop[1];
-                            //.substring(0, token_chop[1].length()-1);
                     Log.i("parsed as: ", "token:" + token + ", username:" + username);
+
                     finish();
                     return true;
                 }
