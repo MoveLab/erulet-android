@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.Reference;
 import android.app.Activity;
 import android.content.Context;
@@ -18,11 +21,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 public class HTMLViewerActivity extends Activity {
 
@@ -33,6 +40,7 @@ public class HTMLViewerActivity extends Activity {
     String base_url;
     boolean firstload;
     String locale;
+    private HighLight hl;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +67,58 @@ public class HTMLViewerActivity extends Activity {
         wv.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         wv.getSettings().setPluginState(WebSettings.PluginState.ON);
 
-		loadHTML();
+
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null){
+            int idHighLight = extras.getInt("highlight_id");
+            Log.d("Highlight ID: ", "" + idHighLight);
+            // TODO make sure to pass highlight id when calling this activity now!!!
+            hl = DataContainer.findHighLightById(idHighLight, app.getDataBaseHelper());
+            if (hl.getReferences() != null) {
+
+        // interactive images
+        if (hl.getInteractiveImages() != null && hl.getInteractiveImages().size() > 0) {
+
+            LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
+            iibuttonarea.setVisibility(View.VISIBLE);
+            for(InteractiveImage ii : hl.getInteractiveImages()){
+
+                Button iiButton = new Button(this);
+                iiButton.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+                iiButton.setPadding(10, 10, 10, 10);
+                iiButton.setText("Interactive Image");
+                iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
+                iiButton.setGravity(Gravity.CENTER);
+                iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+
+                final int this_ii_id = ii.getId();
+
+                iibuttonarea.addView(iiButton);
+                iiButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(
+                                HTMLViewerActivity.this,
+                                InteractiveImageActivityHeatMap.class);
+                        i.putExtra("int_image_id", this_ii_id);
+                        startActivity(i);
+                    }
+                });
+
+            }
+        }
+
+
+
+        loadHTML();
+
+            } else{
+// TODO fallback on normal view
+            } }else{
+// TODO fallback on normal view
+            }
 	}
 
 
@@ -76,59 +135,58 @@ public class HTMLViewerActivity extends Activity {
 //		return super.onOptionsItemSelected(item);
 //	}
 
-	private String getReferenceString(){
-        Log.d("References: ", "get ref string top");
-		Bundle extras = getIntent().getExtras();
-		if(extras!=null){
-			int idReference = extras.getInt("idReference");
-            Log.d("Reference ID: ", "" + idReference);
-            Reference r = DataContainer.findReferenceById(idReference, app.getDataBaseHelper());
-            Log.d("Ref html path", r.getHtmlPath(locale));
-                if(r != null && r.getHtmlPath(locale) != null && !r.getHtmlPath(locale).isEmpty()){
-                Log.d("Reference URL: ", "file://" + r.getHtmlPath(locale));
-                String[] url_chop = r.getHtmlPath(locale).split("/");
-                base_url = "file://";
-                for(int i = 0; i < (url_chop.length-1); i++){
-                    base_url += url_chop[i] + "/";
-                }
+	private ArrayList<String> getReferenceString(){
+                ArrayList<String> html_list = new ArrayList<String>();
+                for(Reference ref : hl.getReferences()){
+                    final int this_ref_id = ref.getId();
+                    Reference r = DataContainer.findReferenceById(this_ref_id, app.getDataBaseHelper());
+                    Log.d("Ref html path", r.getHtmlPath(locale));
+                    if(r != null && r.getHtmlPath(locale) != null && !r.getHtmlPath(locale).isEmpty()){
+                        Log.d("Reference URL: ", "file://" + r.getHtmlPath(locale));
+                        String[] url_chop = r.getHtmlPath(locale).split("/");
+                        base_url = "file://";
+                        for(int i = 0; i < (url_chop.length-1); i++){
+                            base_url += url_chop[i] + "/";
+                        }
 
-                Log.d("base URL: ", base_url);
+                        Log.d("base URL: ", base_url);
 
-                File f = new File(r.getHtmlPath(locale));
+                        File f = new File(r.getHtmlPath(locale));
+
+                        Log.i("html ", f.getPath());
+
+                        StringBuilder html_text = new StringBuilder();
+
+                        try {
+                            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("ISO-8859-1")));
+                            String line;
+
+                            while ((line = br.readLine()) != null) {
+                                html_text.append(line);
+                            }
+                        }
+                        catch (IOException e) {
+                            //You'll need to add proper error handling here
+                        }
 
 
-                Log.i("html ", f.getPath());
+                        String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("holet-ref-style.css", "erholet-ref-style.css");
 
-                StringBuilder html_text = new StringBuilder();
+                        Log.i("htmltext ", modified_html_text);
 
-                try {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("ISO-8859-1")));
-                    String line;
+                        html_list.add(modified_html_text);
 
-                    while ((line = br.readLine()) != null) {
-                        html_text.append(line);
                     }
-                }
-                catch (IOException e) {
-                    //You'll need to add proper error handling here
-                }
+            }
 
 //                String modified_html_text = html_text.toString().replace("../", "" );
-                String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("holet-ref-style.css", "erholet-ref-style.css");
-
-
-
-                Log.i("htmltext ", modified_html_text);
-			return modified_html_text;
-            } else
-                return null;
-		}
-		return null;
+			return html_list;
 	}
 
 	private void loadHTML(){
 
-        wv.loadDataWithBaseURL(base_url, getReferenceString(), "text/html","utf-8", null);
+        // for now we are simply going to use the first reference and ignore the rest. But for future TODO we can add some navigation to the others
+        wv.loadDataWithBaseURL(base_url, getReferenceString().get(0), "text/html","utf-8", null);
 	}
 
 	/**

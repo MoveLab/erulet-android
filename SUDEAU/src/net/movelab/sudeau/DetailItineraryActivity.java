@@ -2,6 +2,7 @@ package net.movelab.sudeau;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -14,6 +15,7 @@ import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
@@ -973,9 +975,17 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                     .stepToJSONObject(s, app);
                                             if (hl_s != null) {
                                                 String s_j_string = hl_s.toString();
-                                                Intent i = new Intent(
+                                                Intent i;
+                                                Collection<Reference> these_refs = h.getReferences();
+                                                if (these_refs != null && these_refs.size() > 0 ){
+                                                i = new Intent(
+                                                        DetailItineraryActivity.this,
+                                                        HTMLViewerActivity.class);
+                                                } else{
+                                                i = new Intent(
                                                         DetailItineraryActivity.this,
                                                         DetailHighLightActivity.class);
+                                                }
                                                 i.putExtra("step_j", s_j_string);
                                                 DataContainer.refreshStepForTrack(s, app.getDataBaseHelper());
                                                 Track t = s.getTrack();
@@ -991,6 +1001,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                 }
                                                 startActivity(i);
                                             }
+
                                         } catch (JSONException e) {
                                             // TODO Auto-generated catch block
                                             e.printStackTrace();
