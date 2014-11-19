@@ -30,11 +30,16 @@ import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Route;
 
 import org.apache.http.Header;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -42,6 +47,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,6 +60,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.BufferedReader;
@@ -61,6 +68,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1055,36 +1063,92 @@ public class Util {
             return null;
         } else {
 
-            try {
-                HttpParams httpParameters = new BasicHttpParams();
-                int timeoutConnection = 3000;
-                HttpConnectionParams.setConnectionTimeout(httpParameters,
-                        timeoutConnection);
-                int timeoutSocket = 3000;
-                HttpConnectionParams
-                        .setSoTimeout(httpParameters, timeoutSocket);
-
-                DefaultHttpClient httpclient = new DefaultHttpClient(
-                        httpParameters);
-                HttpPost httpost = new HttpPost(apiEndpoint);
-                StringEntity se = new StringEntity(jsonData.toString(), "UTF-8");
-                httpost.setEntity(se);
-                httpost.setHeader("Accept", "application/json");
-                httpost.setHeader("Content-type", "application/json");
-                httpost.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
-
-                result = httpclient.execute(httpost);
-
-            } catch (UnsupportedEncodingException e) {
-                Util.logError(context, TAG, "error: " + e);
-            } catch (ClientProtocolException e) {
-                Util.logError(context, TAG, "error: " + e);
-            } catch (IOException e) {
-                Util.logError(context, TAG, "error: " + e);
+            int server_id = jsonData.optInt("server_id", -1);
+            if(server_id == -1){
+            result = postJsonString(jsonData.toString(), apiEndpoint, context);
+            } else{
+                String targetUrl = apiEndpoint + server_id;
+                Log.i("postJson", "endpoint: " + targetUrl);
+                Log.i("postJson", "json: " + jsonData.toString());
+                result = putJsonString(jsonData.toString(), targetUrl, context);
             }
             return result;
         }
     }
+
+
+    public static HttpResponse postJsonString(String jsonString, String targetUrl, Context context){
+        HttpResponse result = null;
+        try {
+            HttpParams httpParameters = new BasicHttpParams();
+            int timeoutConnection = 3000;
+            HttpConnectionParams.setConnectionTimeout(httpParameters,
+                    timeoutConnection);
+            int timeoutSocket = 3000;
+            HttpConnectionParams
+                    .setSoTimeout(httpParameters, timeoutSocket);
+
+            DefaultHttpClient httpclient = new DefaultHttpClient(
+                    httpParameters);
+            HttpPost httpost = new HttpPost(targetUrl);
+            StringEntity se = new StringEntity(jsonString, "UTF-8");
+            httpost.setEntity(se);
+            httpost.setHeader("Accept", "application/json");
+            httpost.setHeader("Content-type", "application/json");
+            httpost.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
+
+            result = httpclient.execute(httpost);
+
+        } catch (UnsupportedEncodingException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (ClientProtocolException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (IOException e) {
+            Util.logError(context, TAG, "error: " + e);
+        }
+
+    return result;
+    }
+
+    public static HttpResponse putJsonString(String jsonString, String targetUrl, Context context){
+// TODO: fix this. Currently, the server returns an OK response but does not change any of the target record. In contrast, put requests work fine with Postman and via the REST Framework browsable API.
+
+        HttpResponse result = null;
+        try {
+            HttpParams httpParameters = new BasicHttpParams();
+            int timeoutConnection = 3000;
+            HttpConnectionParams.setConnectionTimeout(httpParameters,
+                    timeoutConnection);
+            int timeoutSocket = 3000;
+            HttpConnectionParams
+                    .setSoTimeout(httpParameters, timeoutSocket);
+
+            DefaultHttpClient httpclient = new DefaultHttpClient(
+                    httpParameters);
+            HttpPut httpPut = new HttpPut(targetUrl);
+            StringEntity se = new StringEntity(jsonString, "UTF-8");
+            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json"));
+            httpPut.setEntity(se);
+            httpPut.setHeader("Accept", "application/json");
+            httpPut.setHeader("Content-type", "application/json");
+            httpPut.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
+
+            Log.d("put", "put content: " + parseInputStream(context, httpPut.getEntity().getContent()));
+
+            result = httpclient.execute(httpPut);
+
+        } catch (UnsupportedEncodingException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (ClientProtocolException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (IOException e) {
+            Util.logError(context, TAG, "error: " + e);
+        }
+
+        return result;
+    }
+
 
     public static int getResponseStatusCode(HttpResponse httpResponse) {
 
@@ -1123,6 +1187,26 @@ public class Util {
         return json;
     }
 
+    public static String parseInputStream(Context context, InputStream is) {
+            String result = "";
+            BufferedReader reader;
+            try {
+                reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder builder = new StringBuilder();
+                for (String line = null; (line = reader.readLine()) != null;) {
+                    builder.append(line).append("\n");
+                }
+                result = builder.toString();
+
+            } catch (UnsupportedEncodingException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IllegalStateException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IOException e) {
+                Util.logError(context, TAG, "error: " + e);
+        }
+        return result;
+    }
 
 
     public static String getJSON(String apiEndpoint, Context context) {

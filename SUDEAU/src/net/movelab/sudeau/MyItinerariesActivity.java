@@ -254,6 +254,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                     resultFlag = SUCCESS;
                     server_id = responseJson.optInt("server_id", -1);
                     selectedRoute.setServerId(server_id);
+                    DataContainer.updateRoute(selectedRoute, app.getDataBaseHelper());
                 }
                 else{
                     resultFlag = UPLOAD_ERROR;
@@ -276,6 +277,10 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
             if (result && resultFlag == SUCCESS) {
                 Util.toast(
                         context,"Uploaded: Server ID " + server_id);
+
+                //TODO remove this just for testing
+                buildCustomAlert("server response: " + responseJson.toString());
+
             } else {
                 if (resultFlag == OFFLINE) {
                     buildCustomAlert("You do not have an internet connection right now. Please try again later.");

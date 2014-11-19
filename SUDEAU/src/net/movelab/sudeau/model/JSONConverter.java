@@ -467,6 +467,8 @@ public class JSONConverter {
             return null;
         JSONObject j = new JSONObject();
 
+        j.put("server_id", r.getServerId());
+
         j.put("name_oc", r.getName("oc"));
         j.put("name_es", r.getName("es"));
         j.put("name_ca", r.getName("ca"));
