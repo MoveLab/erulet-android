@@ -17,10 +17,26 @@ public class HighLight {
     private int id;
     @DatabaseField
     private int server_id;
-	@DatabaseField
-	private String name;
-	@DatabaseField
-	private String longText;	
+    @DatabaseField
+    private String name_oc;
+    @DatabaseField
+    private String name_es;
+    @DatabaseField
+    private String name_ca;
+    @DatabaseField
+    private String name_fr;
+    @DatabaseField
+    private String name_en;
+    @DatabaseField
+    private String longText_oc;
+    @DatabaseField
+    private String longText_es;
+    @DatabaseField
+    private String longText_ca;
+    @DatabaseField
+    private String longText_fr;
+    @DatabaseField
+    private String longText_en;
     @DatabaseField(foreign=true, columnName="fileManifestId")
     private FileManifest file_manifest;
 	@DatabaseField
@@ -75,28 +91,132 @@ public class HighLight {
 		this.server_id = server_id;
 	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	@Override
 	public String toString(){
-		return "HIGHLIGHT " + id + " " + name + " " + radius;
+		return "HIGHLIGHT " + id + " " + getFirstfilledName() + " " + radius;
 	}
 
-	public String getLongText() {
-		return longText;
-	}
 
-	public void setLongText(String longText) {
-		this.longText = longText;
-	}
 
-	public int getType() {
+    public String getFirstfilledName(){
+        String result = name_oc;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_es;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_ca;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_fr;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = name_en;
+        if(result != null && !result.isEmpty())
+            return result;
+        return "";
+    }
+
+    public String getName(String lang) {
+        String result = "";
+        if(lang.equals("oc")){
+            result = name_oc;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("es")){
+            result = name_es;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("ca")){
+            result = name_ca;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("fr")){
+            result = name_fr;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("en"))
+            result = name_en;{
+            if(result != null && !result.isEmpty())
+                return result;}
+        return getFirstfilledName();
+    }
+
+    public void setName(String lang, String name) {
+        if(lang.equals("oc"))
+            this.name_oc = name;
+        if(lang.equals("es"))
+            this.name_es = name;
+        if(lang.equals("ca"))
+            this.name_ca = name;
+        if(lang.equals("fr"))
+            this.name_fr = name;
+        if(lang.equals("en"))
+            this.name_en = name;
+    }
+
+
+    public String getFirstfilledLongText(){
+        String result = longText_oc;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = longText_es;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = longText_ca;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = longText_fr;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = longText_en;
+        if(result != null && !result.isEmpty())
+            return result;
+        return "";
+    }
+
+    public String getLongText(String lang) {
+        String result = "";
+        if(lang.equals("oc")){
+            result = longText_oc;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("es")){
+            result = longText_es;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("ca")){
+            result = longText_ca;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("fr")){
+            result = longText_fr;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("en"))
+            result = longText_en;{
+            if(result != null && !result.isEmpty())
+                return result;}
+        return getFirstfilledLongText();
+    }
+
+    public void setLongText(String lang, String longText) {
+        if(lang.equals("oc"))
+            this.longText_oc = longText;
+        if(lang.equals("es"))
+            this.longText_es = longText;
+        if(lang.equals("ca"))
+            this.longText_ca = longText;
+        if(lang.equals("fr"))
+            this.longText_fr = longText;
+        if(lang.equals("en"))
+            this.longText_en = longText;
+    }
+
+
+
+    public int getType() {
 		return type;
 	}
 

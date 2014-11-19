@@ -51,6 +51,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
 	private TextView tvDist;
 	private DecimalFormat df;
 	private EruletApp app;
+    String currentLocale;
 
     // master control to disable or enable red arrow navidatio -- currently off because not yet fully working.
     private boolean allowNavigation = false;
@@ -81,6 +82,11 @@ public class CompassActivity extends Activity implements SensorEventListener {
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
+
+        Context context = getApplicationContext();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        currentLocale = PropertyHolder.getLocale();
 
         display = ((WindowManager)getApplicationContext().getSystemService(android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();
 
@@ -186,13 +192,13 @@ public class CompassActivity extends Activity implements SensorEventListener {
 					List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());					
 					if(s.hasSingleHighLight()){ //Single highlight
 						HighLight hl = highLights.get(0);
-						if(hl.getName() == null || hl.getName().equalsIgnoreCase("")){
+						if(hl.getName(currentLocale) == null || hl.getName(currentLocale).equalsIgnoreCase("")){
 							tvWpName.setText(getString(R.string.name_null));					
 						}else{
-							tvWpName.setText(getString(R.string.name) + " " + hl.getName());
+							tvWpName.setText(getString(R.string.name) + " " + hl.getName(currentLocale));
 						}
 					}else{ //Multiple highlights
-						tvWpName.setText(getString(R.string.name) + " " + Util.getMultipleHighLightsNameLabel(highLights) );
+						tvWpName.setText(getString(R.string.name) + " " + Util.getMultipleHighLightsNameLabel(highLights, currentLocale) );
 					}							
 				}else{
 					tvWpName.setText(getString(R.string.point_no_name));					

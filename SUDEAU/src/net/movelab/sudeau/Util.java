@@ -32,6 +32,8 @@ import net.movelab.sudeau.model.Route;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -40,6 +42,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 import java.io.BufferedInputStream;
@@ -60,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Various static fields and methods used in the application, some taken from
@@ -1030,15 +1035,94 @@ public class Util {
      * @param highLights
      * @return
      */
-    public static String getMultipleHighLightsNameLabel(List<HighLight> highLights) {
+    public static String getMultipleHighLightsNameLabel(List<HighLight> highLights, String lang) {
         StringBuffer retVal = new StringBuffer();
         String delim = "";
         for (HighLight i : highLights) {
-            retVal.append(delim).append(i.getName() == null ? "" : i.getName());
+            retVal.append(delim).append(i.getName(lang) == null ? "" : i.getName(lang));
             delim = " - ";
         }
         return retVal.toString();
     }
+
+    /**
+     * Uploads JSONObject to Tigaserver API using HTTP PUT request
+     */
+    public static HttpResponse postJSON(JSONObject jsonData,
+                                        String apiEndpoint, Context context) {
+        HttpResponse result = null;
+        if (!isOnline(context)) {
+            return null;
+        } else {
+
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                int timeoutConnection = 3000;
+                HttpConnectionParams.setConnectionTimeout(httpParameters,
+                        timeoutConnection);
+                int timeoutSocket = 3000;
+                HttpConnectionParams
+                        .setSoTimeout(httpParameters, timeoutSocket);
+
+                DefaultHttpClient httpclient = new DefaultHttpClient(
+                        httpParameters);
+                HttpPost httpost = new HttpPost(apiEndpoint);
+                StringEntity se = new StringEntity(jsonData.toString(), "UTF-8");
+                httpost.setEntity(se);
+                httpost.setHeader("Accept", "application/json");
+                httpost.setHeader("Content-type", "application/json");
+                httpost.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
+
+                result = httpclient.execute(httpost);
+
+            } catch (UnsupportedEncodingException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (ClientProtocolException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IOException e) {
+                Util.logError(context, TAG, "error: " + e);
+            }
+            return result;
+        }
+    }
+
+    public static int getResponseStatusCode(HttpResponse httpResponse) {
+
+        int statusCode = 0;
+        if (httpResponse != null) {
+            StatusLine status = httpResponse.getStatusLine();
+            statusCode = status.getStatusCode();
+        }
+        return statusCode;
+    }
+
+    public static JSONObject parseResponse(Context context,
+                                           HttpResponse response) {
+        JSONObject json = new JSONObject();
+        if (response != null) {
+            BufferedReader reader;
+            try {
+                reader = new BufferedReader(new InputStreamReader(response
+                        .getEntity().getContent(), "UTF-8"));
+                StringBuilder builder = new StringBuilder();
+                for (String line = null; (line = reader.readLine()) != null;) {
+                    builder.append(line).append("\n");
+                }
+                json = new JSONObject(builder.toString());
+
+            } catch (UnsupportedEncodingException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IllegalStateException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (IOException e) {
+                Util.logError(context, TAG, "error: " + e);
+            } catch (JSONException e) {
+                Util.logError(context, TAG, "error: " + e);
+            }
+        }
+        return json;
+    }
+
 
 
     public static String getJSON(String apiEndpoint, Context context) {
@@ -1107,6 +1191,13 @@ public class Util {
         if (debugMode(context))
             Log.i(tag, message);
     }
+
+    public static String ecma262(long time) {
+        String format = "yyyy-MM-dd'T'HH:mm:ss.SSZ";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        return sdf.format(new Date(time));
+    }
+
 
     public static String getUrlGeneralMap(Context context) {
         if (!PropertyHolder.isInit())

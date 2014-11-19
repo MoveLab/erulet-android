@@ -19,6 +19,7 @@ import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -275,10 +276,6 @@ public class DataContainer {
             ids.add(steps.get(i).getId());
         }
         return ids;
-    }
-
-    public static void editRoute(Route editedRoute, DataBaseHelper db) {
-        db.getRouteDataDao().update(editedRoute);
     }
 
     public static InteractiveImage findInteractiveImageById(int idImage,
@@ -655,6 +652,8 @@ public class DataContainer {
     }
 
     public static void updateRoute(Route r, DataBaseHelper dataBaseHelper) {
+        Log.d("data container edit route", "top");
+        Log.d("data container edit route", "editedRoute getNameOC " + r.getName("oc"));
         dataBaseHelper.getRouteDataDao().update(r);
     }
 

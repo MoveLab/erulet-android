@@ -5,8 +5,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.util.Log;
 import android.view.View.OnClickListener;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import net.movelab.sudeau.database.DataBaseHelper;
@@ -22,6 +34,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,7 +48,8 @@ public class MyItinerariesActivity extends Activity {
 	private MyRouteArrayAdapter routeArrayAdapter;
 	private ListView listView;
 	private EruletApp app;
-	
+    private Context context;
+
 	String locale;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +59,7 @@ public class MyItinerariesActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-        Context context = getApplication();
+        context = getApplication();
         if(!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
@@ -82,6 +96,9 @@ public class MyItinerariesActivity extends Activity {
 		refreshListView(userId);
 	}
 
+
+
+
 }
 
 class MyRouteArrayAdapter extends ArrayAdapter<Route> {
@@ -92,8 +109,10 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 	private EruletApp app;
 	//private Route currentRoute;
     String locale;
+    public Route selectedRoute;
 
-	public MyRouteArrayAdapter(Context context, String locale, List<Route> objects,EruletApp app) {
+
+    public MyRouteArrayAdapter(Context context, String locale, List<Route> objects,EruletApp app) {
 		super(context, R.layout.local_route_list_item, objects);		
 		for (int i = 0; i < objects.size(); ++i) {
 			mIdMap.put(objects.get(i), i);
@@ -120,16 +139,10 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 		    edit.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+                    Log.i("route check", "name_" + locale + " = " + currentRoute.getName(locale));
 					Intent i = new Intent(context,EditRouteActivity.class);
-					String routeJson;
-					try {
-						routeJson = JSONConverter.routeToJSONObject(currentRoute, app).toString();
-						i.putExtra("routeJson", routeJson );
-						context.startActivity(i);						
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					i.putExtra("routeId", currentRoute.getId());
+					context.startActivity(i);
 				}
 			});
 		    delete.setOnClickListener(new OnClickListener() {				
@@ -164,9 +177,18 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 			        // Showing Alert Message
 			        alertDialog.show();					
 				}
-			});		    
+			});
+        upload.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-		    return rowView;
+                selectedRoute = currentRoute;
+                new ItineraryUploadTask().execute(context);
+
+            }
+        });
+
+        return rowView;
 	}
 	
 	@Override
@@ -185,5 +207,122 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
     public boolean hasStableIds() {
       return true;
     }
+
+    public class ItineraryUploadTask extends AsyncTask<Context, Integer, Boolean> {
+
+        ProgressDialog prog;
+
+        int myProgress;
+        int resultFlag;
+
+        int OFFLINE = 0;
+        int UPLOAD_ERROR = 1;
+        int DATABASE_ERROR = 2;
+        int SUCCESS = 3;
+        int JSON_ERROR = 4;
+
+        HttpResponse response;
+        JSONObject responseJson;
+        int statusCode = -1;
+        int server_id = -1;
+
+
+        @Override
+        protected void onPreExecute() {
+
+            resultFlag = SUCCESS;
+
+            prog = new ProgressDialog(context);
+            prog.setTitle("Uploading itinerary");
+            prog.setIndeterminate(false);
+            prog.setMax(100);
+            prog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            prog.show();
+
+            myProgress = 0;
+
+        }
+
+        protected Boolean doInBackground(Context... context) {
+
+            try{
+                JSONObject this_route_json = JSONConverter.userRouteToServerJSONObject(selectedRoute, app);
+                response = Util.postJSON(this_route_json, UtilLocal.URL_USER_ROUTES, context[0]);
+                statusCode = Util.getResponseStatusCode(response);
+                responseJson = Util.parseResponse(context[0], response);
+                if(statusCode >= 200 && statusCode < 300){
+                    resultFlag = SUCCESS;
+                    server_id = responseJson.optInt("server_id", -1);
+                    selectedRoute.setServerId(server_id);
+                }
+                else{
+                    resultFlag = UPLOAD_ERROR;
+                }
+            } catch (JSONException e){
+                resultFlag = JSON_ERROR;
+            }
+            return true;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+
+            prog.setProgress(progress[0]);
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+            prog.dismiss();
+
+            if (result && resultFlag == SUCCESS) {
+                Util.toast(
+                        context,"Uploaded: Server ID " + server_id);
+            } else {
+                if (resultFlag == OFFLINE) {
+                    buildCustomAlert("You do not have an internet connection right now. Please try again later.");
+                }else if (resultFlag == UPLOAD_ERROR) {
+                    buildCustomAlert("Upload error. JSON: " + responseJson.toString());
+                }else if (resultFlag == DATABASE_ERROR) {
+                    buildCustomAlert("Database error");
+                }else if (resultFlag == JSON_ERROR) {
+                    buildCustomAlert("Json error");
+                }
+
+            }
+
+        }
+    }
+
+
+    public void buildCustomAlert(String message) {
+
+        final Dialog dialog = new Dialog(context);
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialog.setContentView(R.layout.custom_alert);
+
+        dialog.setCancelable(false);
+
+        TextView alertText = (TextView) dialog.findViewById(R.id.alertText);
+        alertText.setText(message);
+
+        Button positive = (Button) dialog.findViewById(R.id.alertOK);
+        Button negative = (Button) dialog.findViewById(R.id.alertCancel);
+        negative.setVisibility(View.GONE);
+
+        positive.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.cancel();
+
+            }
+        });
+
+        dialog.show();
+
+    }
+
+
 
 }

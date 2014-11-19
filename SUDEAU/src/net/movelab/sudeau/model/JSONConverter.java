@@ -41,7 +41,7 @@ public class JSONConverter {
     public static Route jsonObjectToRoute(JSONObject j, DataBaseHelper db) throws JSONException {
 
         Route r;
-        int server_id = j.optInt("server_id");
+        int server_id = j.optInt("server_id", -1);
         if(server_id != -1){
             r = DataContainer.findRouteByServerId(server_id, db);
             if(r == null){
@@ -125,7 +125,7 @@ public class JSONConverter {
     public static Track jsonObjectToTrack(JSONObject j, String route_id, DataBaseHelper db) throws JSONException {
 
         Track t;
-        int server_id = j.optInt("server_id");
+        int server_id = j.optInt("server_id", -1);
         if(server_id != -1){
            t = DataContainer.findTrackByServerId(server_id, db);
             if(t == null){
@@ -247,9 +247,19 @@ public class JSONConverter {
 
         h.setStep(s);
         h.setGlobalRating(j.optInt("average_rating", -1));
-        // TODO languages...
-        h.setLongText(j.optString("long_text_ca", "none"));
-        h.setName(j.optString("name_ca", "none"));
+
+        h.setName("oc", j.optString("name_oc", ""));
+        h.setName("es", j.optString("name_es", ""));
+        h.setName("ca", j.optString("name_ca", ""));
+        h.setName("fr", j.optString("name_fr", ""));
+        h.setName("en", j.optString("name_en", ""));
+
+        h.setLongText("oc", j.optString("long_text_oc", ""));
+        h.setLongText("es", j.optString("long_text_es", ""));
+        h.setLongText("ca", j.optString("long_text_ca", ""));
+        h.setLongText("fr", j.optString("long_text_fr", ""));
+        h.setLongText("en", j.optString("long_text_en", ""));
+
         if (j.has("media_path") && !j.optString("media_path", "").isEmpty()) {
             FileManifest this_file_manifest = new FileManifest();
             this_file_manifest.setPath(j.optString("media_path", ""));
@@ -351,14 +361,23 @@ public class JSONConverter {
             return null;
         JSONObject j = new JSONObject();
         j.put("id", h.getId());
-        j.put("long_text", h.getLongText());
         if(h.getFileManifest() != null){
         DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
             if(h.getFileManifest().getPath() != null && !h.getFileManifest().getPath().isEmpty()){
         j.put("media_path", h.getFileManifest().getPath());
             }
         }
-        j.put("name", h.getName());
+        j.put("name_oc", h.getName("oc"));
+        j.put("name_es", h.getName("es"));
+        j.put("name_ca", h.getName("ca"));
+        j.put("name_fr", h.getName("fr"));
+        j.put("name_en", h.getName("en"));
+
+        j.put("long_text_oc", h.getLongText("oc"));
+        j.put("long_text_es", h.getLongText("es"));
+        j.put("long_text_ca", h.getLongText("ca"));
+        j.put("long_text_fr", h.getLongText("fr"));
+        j.put("long_text_en", h.getLongText("en"));
         j.put("radius", h.getRadius());
         j.put("type", h.getType());
         j.put("user_rating", h.getUserRating());
@@ -372,6 +391,30 @@ public class JSONConverter {
         return j;
     }
 
+    public static JSONObject userHighLightToServerJSONObject(HighLight h, EruletApp app) throws JSONException {
+        if (h == null)
+            return null;
+        JSONObject j = new JSONObject();
+
+        j.put("name_oc", h.getName("oc"));
+        j.put("name_es", h.getName("es"));
+        j.put("name_ca", h.getName("ca"));
+        j.put("name_fr", h.getName("fr"));
+        j.put("name_en", h.getName("en"));
+
+        j.put("long_text_oc", h.getLongText("oc"));
+        j.put("long_text_es", h.getLongText("es"));
+        j.put("long_text_ca", h.getLongText("ca"));
+        j.put("long_text_fr", h.getLongText("fr"));
+        j.put("long_text_en", h.getLongText("en"));
+
+        j.put("radius", h.getRadius());
+        j.put("type", h.getType());
+
+        return j;
+    }
+
+
     public static JSONObject trackToJSONObject(Track t, EruletApp app) throws JSONException {
         if (t == null)
             return null;
@@ -384,18 +427,31 @@ public class JSONConverter {
         return j;
     }
 
+    public static JSONObject userTrackToServerJSONObject(Track t, EruletApp app) throws JSONException {
+        if (t == null)
+            return null;
+        JSONObject j = new JSONObject();
+        List<Step> steps = DataContainer.getTrackSteps(t, app.getDataBaseHelper());
+        j.put("steps", userStepListToServerJSONArray(steps, app));
+        return j;
+    }
+
+
     public static JSONObject routeToJSONObject(Route r, EruletApp app) throws JSONException {
         if (r == null)
             return null;
         JSONObject j = new JSONObject();
         j.put("id", r.getId());
+        j.put("server_id", r.getServerId());
 
         j.put("name_oc", r.getName("oc"));
+        Util.logInfo(app, "r2joc", r.getName("oc"));
         j.put("name_es", r.getName("es"));
+        Util.logInfo(app, "r2jes", r.getName("es"));
         j.put("name_ca", r.getName("ca"));
         j.put("name_fr", r.getName("fr"));
         j.put("name_en", r.getName("en"));
-        j.put("idroutebasedon", r.getIdRouteBasedOn());
+        j.put("id_route_based_on", r.getIdRouteBasedOn());
         j.put("reference", referenceToJSONObject(r.getReference()));
         j.put("track", trackToJSONObject(r.getTrack(), app));
         j.put("userid", r.getUserId());
@@ -405,6 +461,31 @@ public class JSONConverter {
         j.put("globalrating", r.getGlobalRating());
         return j;
     }
+
+    public static JSONObject userRouteToServerJSONObject(Route r, EruletApp app) throws JSONException {
+        if (r == null)
+            return null;
+        JSONObject j = new JSONObject();
+
+        j.put("name_oc", r.getName("oc"));
+        j.put("name_es", r.getName("es"));
+        j.put("name_ca", r.getName("ca"));
+        j.put("name_fr", r.getName("fr"));
+        j.put("name_en", r.getName("en"));
+
+        j.put("description_oc", r.getDescription("oc"));
+        j.put("description_es", r.getDescription("es"));
+        j.put("description_ca", r.getDescription("ca"));
+        j.put("description_fr", r.getDescription("fr"));
+        j.put("description_en", r.getDescription("en"));
+
+        j.put("id_route_based_on", r.getIdRouteBasedOn());
+
+        j.put("track", userTrackToServerJSONObject(r.getTrack(), app));
+
+        return j;
+    }
+
 
     public static JSONObject referenceToJSONObject(Reference r) throws JSONException {
         if (r == null)
@@ -479,6 +560,22 @@ public class JSONConverter {
         return j;
     }
 
+    public static JSONObject userStepToServerJSONObject(Step s, EruletApp app) throws JSONException {
+        JSONObject j = new JSONObject();
+        j.put("altitude", s.getAltitude());
+        j.put("latitude", s.getLatitude());
+        j.put("longitude", s.getLongitude());
+        List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper());
+        j.put("highlights", userHighLightListToServerJSONArray(highLights, app));
+        j.put("order", s.getOrder());
+        j.put("precision", s.getPrecision());
+        if (s.getAbsoluteTime() != null) {
+            j.put("absoluteTime", Util.ecma262(s.getAbsoluteTimeMillis()));
+        }
+        return j;
+    }
+
+
     public static JSONArray highLightListToJSONArray(List<HighLight> highLights, EruletApp app) throws JSONException {
         JSONArray arr = new JSONArray();
         for (HighLight highLight : highLights) {
@@ -492,6 +589,23 @@ public class JSONConverter {
         JSONArray arr = new JSONArray();
         for (Step step : steps) {
             arr.put(stepToJSONObject(step, app));
+        }
+        return arr;
+    }
+
+    public static JSONArray userHighLightListToServerJSONArray(List<HighLight> highLights, EruletApp app) throws JSONException {
+        JSONArray arr = new JSONArray();
+        for (HighLight highLight : highLights) {
+            arr.put(userHighLightToServerJSONObject(highLight, app));
+        }
+
+        return arr;
+    }
+
+    public static JSONArray userStepListToServerJSONArray(List<Step> steps, EruletApp app) throws JSONException {
+        JSONArray arr = new JSONArray();
+        for (Step step : steps) {
+            arr.put(userStepToServerJSONObject(step, app));
         }
         return arr;
     }

@@ -17,6 +17,7 @@
      
      <TextView
          android:id="@+id/route_description"
+         android:visibility="gone"
          android:layout_width="125dp"
          android:layout_height="wrap_content"                          
          android:layout_alignParentTop="true"

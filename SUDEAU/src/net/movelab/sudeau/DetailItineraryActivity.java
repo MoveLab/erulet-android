@@ -369,8 +369,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 } else {
                     hl = DataContainer.findHighLightById(hlId, app.getDataBaseHelper());
                 }
-                hl.setName(hlName);
-                hl.setLongText(hlLongText);
+                hl.setName(hlName, locale);
+                hl.setLongText(hlLongText, locale);
                 FileManifest new_file_manifest = DataContainer.createFileManifest(imagePath, app.getDataBaseHelper());
                 hl.setFileManifest(new_file_manifest);
                 hl.setType(hlType);
@@ -452,7 +452,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     app.getDataBaseHelper());
 
         Marker newMarker = MapObjectsFactory.addUserHighLightMarker(mMap,
-                new LatLng(s.getLatitude(),s.getLongitude()), h.getName(), h.getLongText(),
+                new LatLng(s.getLatitude(),s.getLongitude()), h.getName(locale), h.getLongText(locale),
                 h.getType());
         routeInProgressMarkers.put(newMarker, s);
         newMarker.showInfoWindow();
@@ -475,7 +475,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         } else {
 
             Marker newMarker = MapObjectsFactory.addUserHighLightMarker(mMap,
-                    new LatLng(s.getLatitude(),s.getLongitude()), h.getName(), h.getLongText(),
+                    new LatLng(s.getLatitude(),s.getLongitude()), h.getName(locale), h.getLongText(locale),
                     h.getType());
             routeInProgressMarkers.put(newMarker, s);
             newMarker.showInfoWindow();
@@ -749,16 +749,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private void startSaveRouteInProgressIntent() {
         Intent i = new Intent(DetailItineraryActivity.this,
                 EditRouteActivity.class);
-        String routeJson;
-        try {
-            routeJson = JSONConverter.routeToJSONObject(routeInProgress, app)
-                    .toString();
-            i.putExtra("routeJson", routeJson);
-            startActivityForResult(i, END_TRIP);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        i.putExtra("routeId", routeInProgress.getId());
+        startActivityForResult(i, END_TRIP);
     }
 
     private void stopTracking() {
@@ -845,7 +837,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
             // This is very important for the ratings system
             int idRouteBasedOn = selectedRoute != null ? selectedRoute
-                    .getId() : -1;
+                    .getServerId() : -1;
             routeInProgress = DataContainer.createEmptyRoute(locale,
                     app.getDataBaseHelper(),
                     PropertyHolder.getUserId(),
@@ -1071,8 +1063,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                         app.getDataBaseHelper());
                                         HighLight h1 = highLights.get(0);
                                         // HighLight h1 = s.getHighlight();
-                                        title.setText(h1.getName());
-                                        snippet.setText(h1.getLongText());
+                                        title.setText(h1.getName(locale));
+                                        snippet.setText(h1.getLongText(locale));
                                         ImageView picture = (ImageView) myContentView
                                                 .findViewById(R.id.info_pic);
                                         DataContainer.refreshHighlightForFileManifest(h1, app.getDataBaseHelper());
@@ -1108,8 +1100,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                         // (List<HighLight>) s.getHighlights();
                                         // HighLight h1 = s.getHighlight();
                                         HighLight h1 = highLights.get(0);
-                                        title.setText(h1.getName());
-                                        snippet.setText(h1.getLongText());
+                                        title.setText(h1.getName(locale));
+                                        snippet.setText(h1.getLongText(locale));
                                         ImageView picture = (ImageView) myContentView
                                                 .findViewById(R.id.info_pic);
                                         DataContainer.refreshHighlightForFileManifest(h1, app.getDataBaseHelper());
@@ -1217,8 +1209,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (h != null) {
             i.putExtra("hlid", h.getId());
             Log.i("SAVE HIGHLIGHT", "LAUNCHING ID: " + h.getId());
-            i.putExtra("hlname", h.getName());
-            i.putExtra("hllongtext", h.getLongText());
+            i.putExtra("hlname", h.getName(locale));
+            i.putExtra("hllongtext", h.getLongText(locale));
             DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
             if (h.hasMediaFile()) {
                 i.putExtra("hlimagepath", h.getFileManifest().getPath());
@@ -1413,7 +1405,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 // Marker m = MapObjectsFactory.addHighLightMarker(
                 m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
                         new LatLng(step.getLatitude(), step.getLongitude()),
-                        hl.getName(), hl.getLongText(), hl.getType());
+                        hl.getName(locale), hl.getLongText(locale), hl.getType());
             } else { // Multiple highlights
                 // �$$�
                 m = MapObjectsFactory.addOfficialHighLightMarker(mMap,

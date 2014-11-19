@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -104,9 +105,18 @@ public class EditRouteActivity extends Activity {
     }
 
     private int save(String userId) {
+
+        Log.i("ahh", "help");
+
+        Log.d("save edited route", routeName.getText().toString());
+        Log.d("save edited route", locale);
+
         editedRoute.setName(locale, routeName.getText().toString());
+
+        Log.d("save edited route", editedRoute.getName(locale));
+
         editedRoute.setDescription(locale, routeDescription.getText().toString());
-        DataContainer.editRoute(editedRoute, app.getDataBaseHelper());
+        DataContainer.updateRoute(editedRoute, app.getDataBaseHelper());
         Toast.makeText(getApplicationContext(), getString(R.string.save_succesful), Toast.LENGTH_LONG).show();
         return editedRoute.getId();
     }
@@ -147,12 +157,11 @@ public class EditRouteActivity extends Activity {
         routeName.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO Auto-generated method stub
+                changed = true;
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
                 changed = true;
             }
 
@@ -167,7 +176,7 @@ public class EditRouteActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO Auto-generated method stub
+                changed = true;
 
             }
 
@@ -208,14 +217,10 @@ public class EditRouteActivity extends Activity {
         Button btn_cancel = (Button) findViewById(R.id.btnHlCancel);
         btn_save.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (changed) {
                     save(PropertyHolder.getUserId());
                     Intent returnIntent = new Intent();
                     setResult(RESULT_OK, returnIntent);
                     finish();
-                } else {
-                    finish();
-                }
             }
         });
         btn_cancel.setOnClickListener(new OnClickListener() {
@@ -231,13 +236,8 @@ public class EditRouteActivity extends Activity {
     private void setEditedRoute() {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String routeJson = extras.getString("routeJson");
-            try {
-                editedRoute = JSONConverter.jsonToRoute(routeJson, app.getDataBaseHelper());
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            int routeId = extras.getInt("routeId");
+                editedRoute = DataContainer.findRouteById(routeId, app.getDataBaseHelper());
         }
     }
 

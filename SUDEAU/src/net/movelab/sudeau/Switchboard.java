@@ -75,7 +75,6 @@ public class Switchboard extends FragmentActivity {
     private Button btn_routes;
     private Button btn_credits;
     private EruletApp app;
-    private SharedPreferences mPreferences;
 
 
     Context context;
@@ -125,10 +124,7 @@ public class Switchboard extends FragmentActivity {
 
     private void tryToRegister() {
 
-        // TODO take this out -- beta only
-        showNoRegistrationDialog();
-        if(false){
-        boolean userIsRegistered = mPreferences.getBoolean("registered_user", false);
+        boolean userIsRegistered = PropertyHolder.isRegistered();
         if (!userIsRegistered) {
             if (Util.isOnline(getBaseContext())) {
                 Intent intent = new Intent(this, RegistrationActivity.class);
@@ -139,7 +135,7 @@ public class Switchboard extends FragmentActivity {
         } else {
             Toast.makeText(this, getString(R.string.already_registered), Toast.LENGTH_SHORT).show();
         }
-        }
+
     }
 
 

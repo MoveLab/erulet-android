@@ -17,7 +17,8 @@ public class HighLightArrayAdapter extends ArrayAdapter<HighLight> {
 
 	HashMap<HighLight, Integer> mIdMap = new HashMap<HighLight, Integer>();
 	private final Context context;	
-	private List<HighLight> highLights;		
+	private List<HighLight> highLights;
+    String currentLocale;
 
 	public HighLightArrayAdapter(Context context, List<HighLight> objects) {
 		super(context, R.layout.highlight_list_item, objects);		
@@ -25,8 +26,13 @@ public class HighLightArrayAdapter extends ArrayAdapter<HighLight> {
 			mIdMap.put(objects.get(i), i);
 		}			
 		this.highLights=objects;
-		this.context=context;			
-	}		
+		this.context=context;
+
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        currentLocale = PropertyHolder.getLocale();
+
+    }
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -42,8 +48,8 @@ public class HighLightArrayAdapter extends ArrayAdapter<HighLight> {
 		    			MapObjectsFactory.getBitmap(currentHighLight.getType(), context)		    			
 		    			);
 		    }
-		    firstLine.setText(currentHighLight.getName());
-		    secondLine.setText(currentHighLight.getLongText());
+		    firstLine.setText(currentHighLight.getName(currentLocale));
+		    secondLine.setText(currentHighLight.getLongText(currentLocale));
 		    return rowView;
 	}
 			

@@ -30,11 +30,12 @@ public class RegistrationActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i("TOKEN 1:", "url is " + url);
                 if(url.contains("token=")){
-                    String[] token_chop =  url.split("token=")[1].split("username=");
+                    String[] token_chop =  url.split("token=")[1].split(",username=");
                     String token = token_chop[0];
                     String username = token_chop[1];
+                    PropertyHolder.setUserKey(token);
+                    PropertyHolder.setUserName(username);
                     Log.i("parsed as: ", "token:" + token + ", username:" + username);
-
                     finish();
                     return true;
                 }

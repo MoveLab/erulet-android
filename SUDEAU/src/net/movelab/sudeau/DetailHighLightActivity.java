@@ -16,6 +16,7 @@ import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -47,6 +48,7 @@ public class DetailHighLightActivity extends Activity {
 	private RatingBar myRating;
 	private Step step;
 	private int screenWidth;
+    String currentLocale;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,12 @@ public class DetailHighLightActivity extends Activity {
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		screenWidth = Util.getScreenSize(getBaseContext())[0];
+        Context context = getApplicationContext();
+        if(!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        currentLocale = PropertyHolder.getLocale();
+
+        screenWidth = Util.getScreenSize(getBaseContext())[0];
 		int highLight_id = -1;
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
@@ -175,16 +182,16 @@ public class DetailHighLightActivity extends Activity {
 		String alt = Double.toString(s.getAltitude());
 		
 		String name = getString(R.string.point_no_name);
-		if(hl!=null && hl.getName()!=null){
-			if(!hl.getName().trim().equalsIgnoreCase("")){
-				name = hl.getName();
+		if(hl!=null && hl.getName(currentLocale)!=null){
+			if(!hl.getName(currentLocale).trim().equalsIgnoreCase("")){
+				name = hl.getName(currentLocale);
 			}
 //			globalRating.setRating( hl.getGlobalRating() );
 		}
 		String description = getString(R.string.point_no_description);
-        if(hl!=null && hl.getLongText()!=null){
-            if(!hl.getLongText().trim().equalsIgnoreCase("")){
-                description = hl.getLongText();
+        if(hl!=null && hl.getLongText(currentLocale)!=null){
+            if(!hl.getLongText(currentLocale).trim().equalsIgnoreCase("")){
+                description = hl.getLongText(currentLocale);
             }
         }
 
