@@ -32,11 +32,14 @@ import net.movelab.sudeau.model.Route;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -1067,10 +1070,12 @@ public class Util {
             if(server_id == -1){
             result = postJsonString(jsonData.toString(), apiEndpoint, context);
             } else{
-                String targetUrl = apiEndpoint + server_id;
+                String targetUrl = apiEndpoint + server_id + "/";
                 Log.i("postJson", "endpoint: " + targetUrl);
                 Log.i("postJson", "json: " + jsonData.toString());
                 result = putJsonString(jsonData.toString(), targetUrl, context);
+                // As alternative, trying?
+//                result = patchJsonString(jsonData.toString(), targetUrl, context);
             }
             return result;
         }
@@ -1110,6 +1115,40 @@ public class Util {
     return result;
     }
 
+    public static HttpResponse postJsonStringAsUpdate(String jsonString, String targetUrl, Context context){
+        HttpResponse result = null;
+        try {
+            HttpParams httpParameters = new BasicHttpParams();
+            int timeoutConnection = 3000;
+            HttpConnectionParams.setConnectionTimeout(httpParameters,
+                    timeoutConnection);
+            int timeoutSocket = 3000;
+            HttpConnectionParams
+                    .setSoTimeout(httpParameters, timeoutSocket);
+
+            DefaultHttpClient httpclient = new DefaultHttpClient(
+                    httpParameters);
+            HttpPost httpost = new HttpPost(targetUrl);
+            StringEntity se = new StringEntity(jsonString, "UTF-8");
+            httpost.setEntity(se);
+            httpost.setHeader("Accept", "application/json");
+            httpost.setHeader("Content-type", "application/json");
+            httpost.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
+
+            result = httpclient.execute(httpost);
+
+        } catch (UnsupportedEncodingException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (ClientProtocolException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (IOException e) {
+            Util.logError(context, TAG, "error: " + e);
+        }
+
+        return result;
+    }
+
+
     public static HttpResponse putJsonString(String jsonString, String targetUrl, Context context){
 // TODO: fix this. Currently, the server returns an OK response but does not change any of the target record. In contrast, put requests work fine with Postman and via the REST Framework browsable API.
 
@@ -1147,6 +1186,49 @@ public class Util {
         }
 
         return result;
+    }
+
+    public static HttpResponse patchJsonString(String jsonString,
+                                          String targetUrl, Context context) {
+
+        HttpResponse response = null;
+
+        try {
+
+            // Create a new HttpClient and Post Header
+            HttpPatch httppatch = new HttpPatch(targetUrl);
+
+            HttpParams myParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(myParams, 10000);
+            HttpConnectionParams.setSoTimeout(myParams, 60000);
+            HttpConnectionParams.setTcpNoDelay(myParams, true);
+
+            httppatch.setHeader("Content-type", "application/json");
+
+            httppatch.setHeader("Authorization", "Token " + PropertyHolder.getUserKey());
+
+            HttpClient httpclient = new DefaultHttpClient();
+
+            ByteArrayEntity bae = new ByteArrayEntity(jsonString
+                    .getBytes("UTF8"));
+
+            // StringEntity se = new StringEntity(jsonArray.toString(),
+            // HTTP.UTF_8);
+            // se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+            // "application/json"));
+            bae.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+                    "application/json"));
+            httppatch.setEntity(bae);
+
+            response = httpclient.execute(httppatch);
+
+        } catch (ClientProtocolException e) {
+       //TODO
+        } catch (IOException e) {
+      //TODO
+        }
+
+        return response;
     }
 
 

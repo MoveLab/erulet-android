@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,21 +11,23 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.JSONConverter;
-
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 
-public class RegistrationActivity extends Activity {
+public class LoginActivity extends Activity {
 
+    boolean flag = false;
     Context context = this;
     String current_url = "";
 
@@ -38,7 +39,7 @@ public class RegistrationActivity extends Activity {
         WebView myWebView = (WebView) findViewById(R.id.wvRegistration);
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        myWebView.loadUrl(UtilLocal.URL_REGISTRATION);
+        myWebView.loadUrl(UtilLocal.URL_LOGIN);
 
 
         myWebView.setWebViewClient(new WebViewClient() {
@@ -46,19 +47,17 @@ public class RegistrationActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.i("reg", "should override loading top. url is " + url);
+                Log.i("login", "should override loading top. url is " + url);
                 if(url.contains("show_credentials")) {
-                    Log.i("reg", "should override loading inside");
+                    Log.i("login", "should override loading inside");
 
-                    current_url = url;
                     new GetJSONResponseTask().execute(context);
-
                 return true;
+                }
+                return false;
+
+
             }
-
-        return false;
-
-        }
         });
 
     }
@@ -79,7 +78,6 @@ public class RegistrationActivity extends Activity {
         setResult(RESULT_CANCELED);
         finish();
     }
-
 
     public class GetJSONResponseTask extends AsyncTask<Context, Integer, Boolean> {
 
@@ -152,7 +150,7 @@ public class RegistrationActivity extends Activity {
                 Log.e("login", "should override; io exception");
             }
 
-        return false;
+            return false;
         }
 
         protected void onProgressUpdate(Integer... progress) {

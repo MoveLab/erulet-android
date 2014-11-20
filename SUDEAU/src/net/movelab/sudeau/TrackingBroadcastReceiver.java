@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.util.Log;
 
 /**
  * Schedules alarm to run FixGet service upon boot up of the phone, if a
@@ -78,11 +79,14 @@ public class TrackingBroadcastReceiver extends BroadcastReceiver {
 			startFileUploaderAlarm.setRepeating(alarmType, triggerTime,
 					uploadAlarmInterval, pendingIntent2FileUploader);
 
-		} else if (action.contains("BOOT_COMPLETED")) {
+		} else if (action.contains(Intent.ACTION_BOOT_COMPLETED)) {
 
+            Log.i("boot completed", "top");
 
 			if (PropertyHolder.isServiceOn()) {
-				Intent intent2broadcast = new Intent(
+                Log.i("boot completed", "intent");
+
+                Intent intent2broadcast = new Intent(
 						context.getString(R.string.internal_message_id)
 								+ Util.MESSAGE_SCHEDULE);
 				context.sendBroadcast(intent2broadcast);

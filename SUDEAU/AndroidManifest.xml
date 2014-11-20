@@ -92,7 +92,10 @@
         </activity>
         <activity android:name="net.movelab.sudeau.RegistrationActivity"
             android:theme="@android:style/Theme.Holo">
-        </activity>        
+        </activity>
+        <activity android:name="net.movelab.sudeau.LoginActivity"
+            android:theme="@android:style/Theme.Holo">
+        </activity>
         <activity android:name="net.movelab.sudeau.DetailHighLightActivity"
             android:theme="@android:style/Theme.Holo">
         </activity>
@@ -113,22 +116,7 @@
         </receiver>
         
         <service android:name="net.movelab.sudeau.TrackingFixGet" />
-        <!--         <service android:name="net.movelab.sudeau.FileUploader" /> -->
-<!--         <service android:name="net.movelab.sudeau.TrackingUpload" />           -->
 
-<!--         <provider -->
-<!--             android:name="edu.princeton.jrpalmer.asmlibrary.SpaceMapperContentProvider" -->
-<!--             android:authorities="edu.princeton.jrpalmer.asmlibrary.spacemapperfixprovider" -->
-<!--             android:enabled="true" -->
-<!--             android:exported="false" > -->
-<!--         </provider> -->
-<!--         <provider -->
-<!--             android:name="edu.princeton.jrpalmer.asmlibrary.UploadQueueContentProvider" -->
-<!--             android:authorities="edu.princeton.jrpalmer.asmlibrary.uploadqueueprovider" -->
-<!--             android:enabled="true" -->
-<!--             android:exported="false" > -->
-<!--         </provider> -->
-        
     </application>
 
 </manifest>

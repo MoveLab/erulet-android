@@ -35,6 +35,9 @@ public class PropertyHolder {
     public static final String NEEDS_SYNC_FIX = "NEEDS_SYNC_FIX_2";
     public static final String AUTOCENTER = "AUTOCENTER";
     public static final String USERTRACKS = "USERTRACKS";
+    public static final String TRIP_IN_PROGRESS_FOLLOWING = "TRIP_IN_PROGRESS_FOLLOWING";
+    public static final String TRIP_IN_PROGRESS_TRACKING = "TRIP_IN_PROGRESS_TRACKING";
+    public static final String TRIP_IN_PROGRESS_MODE = "TRIP_IN_PROGRESS_MODE";
 
 
     public static final String ARANESE = "oc";
@@ -105,6 +108,34 @@ public class PropertyHolder {
 
     public static void setUserTracksOn(boolean _isOn) {
         editor.putBoolean(USERTRACKS, _isOn);
+        editor.apply();
+    }
+
+
+    public static int getTripInProgressFollowing() {
+        return sharedPreferences.getInt(TRIP_IN_PROGRESS_FOLLOWING, -1);
+    }
+
+    public static void setTripInProgressFollowing(int following_id) {
+        editor.putInt(TRIP_IN_PROGRESS_FOLLOWING, following_id);
+        editor.apply();
+    }
+
+    public static int getTripInProgressTracking() {
+        return sharedPreferences.getInt(TRIP_IN_PROGRESS_TRACKING, -1);
+    }
+
+    public static void setTripInProgressTracking(int tracking_id) {
+        editor.putInt(TRIP_IN_PROGRESS_TRACKING, tracking_id);
+        editor.apply();
+    }
+
+    public static int getTripInProgressMode() {
+        return sharedPreferences.getInt(TRIP_IN_PROGRESS_MODE, -1);
+    }
+
+    public static void setTripInProgressMode(int mode) {
+        editor.putInt(TRIP_IN_PROGRESS_MODE, mode);
         editor.apply();
     }
 

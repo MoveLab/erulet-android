@@ -296,6 +296,26 @@ public class DataContainer {
         return r;
     }
 
+   public static List<Route> findRelatedRoutesById(int idRoute, DataBaseHelper db) {
+       List<Route> result = new ArrayList<Route>();
+       QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()
+               .queryBuilder();
+       Where<Route, Integer> where = queryBuilder.where();
+       try {
+           where.eq("idRouteBasedOn", idRoute);
+           PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+           result = db.getRouteDataDao().query(preparedQuery);
+           Log.i("related routes,", "ran query. result size: " + result.size());
+           return result;
+       } catch (SQLException e) {
+           Log.i("related routes,", "exception in findRelatedRoutesById");
+
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }
+       return result;
+   }
+
     public static Step findStepById(int idStep, DataBaseHelper db) {
         Step s = db.getStepDataDao().queryForId(idStep);
         return s;

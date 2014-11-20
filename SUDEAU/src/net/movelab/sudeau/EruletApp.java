@@ -41,16 +41,6 @@ public class EruletApp extends Application{
 		createAppFolders();
         if(dataBaseHelper == null){
     		dataBaseHelper = OpenHelperManager.getHelper(this,DataBaseHelper.class);
-    		//DataContainer.loadSampleData(dataBaseHelper, this.getBaseContext());
-    		boolean loaded = getPrefs().getBoolean("redon_loaded", false);
-//    		if(!loaded){
-//    			DataContainer.loadRedonCompact(dataBaseHelper, this.getBaseContext());
-//    		reloadRedonCompact();
-//    		reloadEscunHau();
-//    		reloadBassaOles();
-//    		reloadVarrados();
-//    		reloadGaronaPeu();
-    		//reloadArtigaDeLin();
 
     	}
 

@@ -92,9 +92,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private Step currentStep;
     // Route selected in choose itinerary activity
     private Route selectedRoute;
+    private List<Route> relatedRoutes;
     private Polyline selectedRoutePolyLine;
     private List<Circle> selectedRoutePoints;
     private List<Step> selectedRouteSteps;
+    private List<Step> relatedRouteSteps;
     private List<Marker> directionMarkers;
     private Marker arrivalMarker;
     private Marker startMarker;
@@ -296,6 +298,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     protected void onResume() {
         super.onResume();
         updateLocationAlerts(false);
+        updateSelectedRoute();
     }
 
 
@@ -341,12 +344,20 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                     // This next line seems to be a bug, since it tries to call the same dialog again and opens it after activity has closed.
                                     //               stopTracking();
                                     stopTracking();
+                                    PropertyHolder.setTripInProgressFollowing(-1);
+                                    PropertyHolder.setTripInProgressTracking(-1);
+                                    PropertyHolder.setTripInProgressMode(-1);
+
+
                                     launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
                                     finish();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
                     .show();
         } else {
+            PropertyHolder.setTripInProgressFollowing(-1);
+            PropertyHolder.setTripInProgressTracking(-1);
+            PropertyHolder.setTripInProgressMode(-1);
             launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
             finish();
         }
@@ -390,6 +401,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
             }
         }
         if (requestCode == END_TRIP) { //
+
+            PropertyHolder.setTripInProgressFollowing(-1);
+            PropertyHolder.setTripInProgressTracking(-1);
+            PropertyHolder.setTripInProgressMode(-1);
+
             // Clear map
             fixReceiver.clearTrackObjects();
             // Remove route in progress markers
@@ -451,11 +467,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     PropertyHolder.getUserId(),
                     app.getDataBaseHelper());
 
-        Marker newMarker = MapObjectsFactory.addUserHighLightMarker(mMap,
-                new LatLng(s.getLatitude(),s.getLongitude()), h.getName(locale), h.getLongText(locale),
-                h.getType());
-        routeInProgressMarkers.put(newMarker, s);
-        newMarker.showInfoWindow();
+            Marker newMarker = MapObjectsFactory.addUserHighLightMarker(mMap,
+                    new LatLng(s.getLatitude(), s.getLongitude()), h.getName(locale), h.getLongText(locale),
+                    h.getType());
+            routeInProgressMarkers.put(newMarker, s);
+            newMarker.showInfoWindow();
 
         }
 
@@ -475,11 +491,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
         } else {
 
             Marker newMarker = MapObjectsFactory.addUserHighLightMarker(mMap,
-                    new LatLng(s.getLatitude(),s.getLongitude()), h.getName(locale), h.getLongText(locale),
+                    new LatLng(s.getLatitude(), s.getLongitude()), h.getName(locale), h.getLongText(locale),
                     h.getType());
             routeInProgressMarkers.put(newMarker, s);
             newMarker.showInfoWindow();
-    }
+        }
     }
 
     private void checkLocationServicesStatus() {
@@ -576,7 +592,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
 //	}
 
     private void startOrResumeTracking() {
+Log.i("startOrResumeTracking", "top");
         if (routeMode > 0) {
+            Log.i("startOrResumeTracking", "routeMode > 0");
+
             app.startTrackingService();
             fixFilter = new IntentFilter(getResources().getString(
                     R.string.internal_message_id)
@@ -683,6 +702,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                     public void onClick(
                                             DialogInterface paramDialogInterface,
                                             int paramInt) {
+
+                                        PropertyHolder.setTripInProgressFollowing(-1);
+                                        PropertyHolder.setTripInProgressTracking(-1);
+                                        PropertyHolder.setTripInProgressMode(-1);
+
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
@@ -713,6 +737,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                     public void onClick(
                                             DialogInterface paramDialogInterface,
                                             int paramInt) {
+                                        PropertyHolder.setTripInProgressFollowing(-1);
+                                        PropertyHolder.setTripInProgressTracking(-1);
+                                        PropertyHolder.setTripInProgressMode(-1);
+
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
@@ -737,9 +765,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
         }
     }
 
-    private void launchSurvey(int route_server_id, String survey_type){
+    private void launchSurvey(int route_server_id, String survey_type) {
         Intent i = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
-        if(route_server_id >= 0)
+        if (route_server_id >= 0)
             i.putExtra("route_server_id", String.valueOf(route_server_id));
         i.putExtra("survey_type", Util.ROUTE_SURVEY);
         startActivity(i);
@@ -818,23 +846,44 @@ public class DetailItineraryActivity extends FragmentActivity implements
     }
 
     private void setWorkingMode() {
+        int mode = PropertyHolder.getTripInProgressMode();
+        if(mode == -1){
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             routeMode = extras.getInt("mode");
+            PropertyHolder.setTripInProgressMode(routeMode);
+        }
+        }else{
+            routeMode = mode;
         }
     }
 
     private void setUpRoutes() {
+
+        int following_id = PropertyHolder.getTripInProgressFollowing();
+
+        if(following_id == -1){
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             int idRoute = extras.getInt("idRoute", -1);
             selectedRoute = DataContainer.findRouteById(idRoute,
                     app.getDataBaseHelper());
+
+            PropertyHolder.setTripInProgressFollowing(idRoute);
+
+            relatedRoutes = DataContainer.findRelatedRoutesById(selectedRoute.getServerId(), app.getDataBaseHelper());
         }
+        }else{
+            selectedRoute = DataContainer.findRouteById(following_id, app.getDataBaseHelper());
+            relatedRoutes = DataContainer.findRelatedRoutesById(selectedRoute.getServerId(), app.getDataBaseHelper());
+        }
+
         // Create route entry in database
         // We create a route also in mode 1, though we only draw the points the
         // user hits
         if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
+            int tracking_route_id = PropertyHolder.getTripInProgressTracking();
+            if(tracking_route_id == -1){
             // This is very important for the ratings system
             int idRouteBasedOn = selectedRoute != null ? selectedRoute
                     .getServerId() : -1;
@@ -842,7 +891,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     app.getDataBaseHelper(),
                     PropertyHolder.getUserId(),
                     idRouteBasedOn);
-        }
+            PropertyHolder.setTripInProgressTracking(routeInProgress.getId());
+            } else{
+                routeInProgress = DataContainer.findRouteById(tracking_route_id, app.getDataBaseHelper());
+            }
+            }
     }
 
     // private void setUpDBIfNeeded() {
@@ -969,14 +1022,14 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                 String s_j_string = hl_s.toString();
                                                 Intent i;
                                                 Collection<Reference> these_refs = h.getReferences();
-                                                if (these_refs != null && these_refs.size() > 0 ){
-                                                i = new Intent(
-                                                        DetailItineraryActivity.this,
-                                                        HTMLViewerActivity.class);
-                                                } else{
-                                                i = new Intent(
-                                                        DetailItineraryActivity.this,
-                                                        DetailHighLightActivity.class);
+                                                if (these_refs != null && these_refs.size() > 0) {
+                                                    i = new Intent(
+                                                            DetailItineraryActivity.this,
+                                                            HTMLViewerActivity.class);
+                                                } else {
+                                                    i = new Intent(
+                                                            DetailItineraryActivity.this,
+                                                            DetailHighLightActivity.class);
                                                 }
                                                 i.putExtra("step_j", s_j_string);
                                                 DataContainer.refreshStepForTrack(s, app.getDataBaseHelper());
@@ -1471,6 +1524,20 @@ public class DetailItineraryActivity extends FragmentActivity implements
         rectOptions.zIndex(1);
         rectOptions.color(Color.GRAY);
         selectedRoutePolyLine = mMap.addPolyline(rectOptions);
+
+        // add user's markers from all related routes if set on in preferences
+        if (PropertyHolder.isUserTracksOn() && relatedRoutes != null && relatedRoutes.size() > 0) {
+            Log.i("related routes,", "ahout to add markers");
+            for (Route relatedRoute : relatedRoutes) {
+                Log.i("related routes,", "route loop");
+                relatedRouteSteps = DataContainer.getTrackSteps(relatedRoute.getTrack(),
+                        app.getDataBaseHelper());
+                for (Step thisStep : relatedRouteSteps) {
+                    Log.i("related routes,", "step loop");
+                    addMarkerIfNeeded(thisStep);
+                }
+            }
+        }
     }
 
     private void refreshDecorations(List<Step> steps) {

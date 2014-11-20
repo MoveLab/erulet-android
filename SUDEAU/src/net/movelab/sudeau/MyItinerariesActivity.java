@@ -278,8 +278,8 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                 Util.toast(
                         context,"Uploaded: Server ID " + server_id);
 
-                //TODO remove this just for testing
-                buildCustomAlert("server response: " + responseJson.toString());
+
+//                buildCustomAlert("server response: " + responseJson.toString());
 
             } else {
                 if (resultFlag == OFFLINE) {

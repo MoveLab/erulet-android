@@ -135,7 +135,7 @@
                     android:id="@+id/tvUserTracks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Show your tracks"
+                    android:text="Show your highlights"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <ToggleButton

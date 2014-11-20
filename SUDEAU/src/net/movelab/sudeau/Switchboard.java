@@ -122,6 +122,18 @@ public class Switchboard extends FragmentActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(PropertyHolder.getTripInProgressFollowing() != -1){
+            Intent intent = new Intent(Switchboard.this,
+                    DetailItineraryActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     private void tryToRegister() {
 
         boolean userIsRegistered = PropertyHolder.isRegistered();
@@ -136,6 +148,16 @@ public class Switchboard extends FragmentActivity {
             Toast.makeText(this, getString(R.string.already_registered), Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+
+    private void tryToLogin() {
+            if (Util.isOnline(getBaseContext())) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, getString(R.string.no_data_access), Toast.LENGTH_SHORT).show();
+            }
     }
 
 
@@ -159,14 +181,16 @@ public class Switchboard extends FragmentActivity {
     private int second_id = Menu.FIRST + 1;
     private int third_id = Menu.FIRST + 2;
     private int fourth_id = Menu.FIRST + 3;
+    private int fifth_id = Menu.FIRST + 4;
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
         menu.add(group1, second_id, second_id, getString(R.string.register_user));
-        menu.add(group1, third_id, third_id, "Sync");
-        menu.add(group1, fourth_id, fourth_id,getString(R.string.choose_it_my_itineraries));
+        menu.add(group1, third_id, third_id, "login");
+        menu.add(group1, fourth_id, fourth_id, "Sync");
+        menu.add(group1, fifth_id, fifth_id,getString(R.string.choose_it_my_itineraries));
 
         //getMenuInflater().inflate(R.menu.switchboard, menu);
         return true;
@@ -183,9 +207,12 @@ public class Switchboard extends FragmentActivity {
                 tryToRegister();
                 break;
             case 3:
-                startInitialSync();
+                tryToLogin();
                 break;
             case 4:
+                startInitialSync();
+                break;
+            case 5:
                 Intent i1 = new Intent(Switchboard.this,
                         MyItinerariesActivity.class);
                 startActivity(i1);
