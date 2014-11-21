@@ -34,6 +34,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 
 public class HTMLViewerActivity extends FragmentActivity {
 
@@ -121,6 +122,27 @@ public class HTMLViewerActivity extends FragmentActivity {
             }
 
 
+                RatingBar myRating = (RatingBar)findViewById(R.id.ratBarUser);
+                myRating.setStepSize(1.0f);
+
+                if(hl != null){
+                    int userRating = 0;
+                    if(hl.getUserRating() >= 0){
+                        userRating = hl.getUserRating();
+                    }
+                    myRating.setRating(userRating);
+
+                    myRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                        @Override
+                        public void onRatingChanged(RatingBar ratingBar, float rating,
+                                                    boolean fromUser) {
+                            hl.setUserRating((int)rating);
+                            hl.setUserRatingTime(System.currentTimeMillis());
+                            hl.setUserRatingUploaded(false);
+                        }
+
+                    });
+                }
 
 
         loadHTML();

@@ -612,5 +612,22 @@ public class JSONConverter {
         return arr;
     }
 
+    public static JSONObject userHighlightRatingToServerJSONObject(HighLight hl) throws JSONException {
+        JSONObject result = new JSONObject();
+        result.put("rating", hl.getUserRating());
+        result.put("time", Util.ecma262(hl.getUserRatingTime()));
+        result.put("highlight", hl.getServerId());
+        return result;
+    }
+
+    public static JSONObject userRouteRatingToServerJSONObject(Route r) throws JSONException {
+        JSONObject result = new JSONObject();
+        result.put("rating", r.getUserRating());
+        result.put("time", Util.ecma262(r.getUserRatingTime()));
+        result.put("highlight", r.getServerId());
+        return result;
+    }
+
+
 
 }

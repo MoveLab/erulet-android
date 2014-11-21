@@ -47,6 +47,10 @@ public class HighLight {
 	private int globalRating;
 	@DatabaseField
 	private int userRating;
+    @DatabaseField
+    private boolean userRatingUploaded;
+    @DatabaseField
+    private long userRatingTime;
 	@DatabaseField(foreign=true, columnName="stepId")
     private Step step;
     @ForeignCollectionField
@@ -240,7 +244,24 @@ public class HighLight {
 		this.userRating = userRating;
 	}
 
-	public Step getStep() {
+    public long getUserRatingTime() {
+        return userRatingTime;
+    }
+
+    public void setUserRatingTime(long userRatingTime) {
+        this.userRatingTime = userRatingTime;
+    }
+
+    public boolean getUserRatingUploaded() {
+        return userRatingUploaded;
+    }
+
+    public void setUserRatingUploaded(boolean userRatingUploaded) {
+        this.userRatingUploaded = userRatingUploaded;
+    }
+
+
+    public Step getStep() {
 		return step;
 	}
 

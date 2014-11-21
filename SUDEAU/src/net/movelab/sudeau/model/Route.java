@@ -65,7 +65,12 @@ public class Route {
 	private int globalRating;
 	@DatabaseField
 	private int userRating;
-	/**
+    @DatabaseField
+    private boolean userRatingUploaded;
+    @DatabaseField
+    private long userRatingTime;
+
+    /**
 	 * Here we store the steps shared by other users
 	 */
 	@ForeignCollectionField
@@ -342,6 +347,23 @@ public class Route {
         } else{
             return "route_" + id;
         }
+    }
+
+
+    public long getUserRatingTime() {
+        return userRatingTime;
+    }
+
+    public void setUserRatingTime(long userRatingTime) {
+        this.userRatingTime = userRatingTime;
+    }
+
+    public boolean getUserRatingUploaded() {
+        return userRatingUploaded;
+    }
+
+    public void setUserRatingUploaded(boolean userRatingUploaded) {
+        this.userRatingUploaded = userRatingUploaded;
     }
 
 }

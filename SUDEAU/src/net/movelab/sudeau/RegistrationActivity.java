@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,25 +42,18 @@ public class RegistrationActivity extends Activity {
         myWebView.loadUrl(UtilLocal.URL_REGISTRATION);
 
 
+        myWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+
         myWebView.setWebViewClient(new WebViewClient() {
-
-
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.i("reg", "should override loading top. url is " + url);
-                if(url.contains("show_credentials")) {
-                    Log.i("reg", "should override loading inside");
+            public void onPageFinished(WebView view, String url) {
+                Log.e("login", "page finished top. url is " + url);
+                if(url.contains("/show_credentials/")){
+                view.loadUrl("javascript:window.HTMLOUT.processHTML(document.getElementById('credentials').innerHTML);");
+            }}
 
-                    current_url = url;
-                    new GetJSONResponseTask().execute(context);
-
-                return true;
-            }
-
-        return false;
-
-        }
         });
+
 
     }
 
@@ -80,100 +74,28 @@ public class RegistrationActivity extends Activity {
         finish();
     }
 
-
-    public class GetJSONResponseTask extends AsyncTask<Context, Integer, Boolean> {
-
-        ProgressDialog prog;
-
-        int myProgress;
-        int resultFlag;
-
-        int OFFLINE = 0;
-        int UPLOAD_ERROR = 1;
-        int DATABASE_ERROR = 2;
-        int SUCCESS = 3;
-        int JSON_ERROR = 4;
-
-        HttpResponse response;
-        JSONObject responseJson;
-        int statusCode = -1;
-        int server_id = -1;
-
-        private String username = "";
-        private String token = "";
-
-        @Override
-        protected void onPreExecute() {
-
-            resultFlag = SUCCESS;
-
-            prog = new ProgressDialog(context);
-            prog.setTitle("Uploading itinerary");
-            prog.setIndeterminate(false);
-            prog.setMax(100);
-            prog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            prog.show();
-
-            myProgress = 0;
-
-        }
-
-        protected Boolean doInBackground(Context... context) {
-
-            try{
-                URL aURL = new URL(current_url);
-                HttpURLConnection conn = (HttpURLConnection) aURL.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setReadTimeout(10000); // millis
-                conn.setConnectTimeout(15000); // millis
-                conn.setDoOutput(true);
-                conn.connect();
-                InputStream is = conn.getInputStream();
-                String response = Util.parseInputStream(context[0], is);
-                Log.i("login", "response string = " + response);
-
-                try{
-                    JSONObject j = new JSONObject(response);
-                    username = j.optString("username");
-                    token = j.optString("token");
-                    if(username != null && token != null){
-                        PropertyHolder.setUserName(username);
-                        PropertyHolder.setUserKey(token);
-
-                        Log.i("login", "username now = " + PropertyHolder.getUserName());
-                        Log.i("login", "token now = " + PropertyHolder.getUserKey());
-
-                        return true;
-                    }
-                } catch(JSONException e){
-                    Log.e("login", "should override; json exception");
+    class MyJavaScriptInterface {
+        @JavascriptInterface
+        @SuppressWarnings("unused")
+        public void processHTML(String jsonstring) {
+            Log.i("reg", "processing html top jsonstring: " + jsonstring);
+            try {
+                JSONObject j = new JSONObject(jsonstring);
+                String username = j.optString("username");
+                String token = j.optString("token");
+                if (username != null && token != null) {
+                    PropertyHolder.setUserName(username);
+                    PropertyHolder.setUserKey(token);
+                    Log.i("reg", "username now = " + PropertyHolder.getUserName());
+                    Log.i("reg", "token now = " + PropertyHolder.getUserKey());
+                    Util.toast(context, "You are now registered in as " + username);
+                    finish();
                 }
-            } catch(IOException e){
-                Log.e("login", "should override; io exception");
+            } catch (JSONException e) {
+                Log.e("reg", "processing html; json exception");
             }
-
-        return false;
         }
 
-        protected void onProgressUpdate(Integer... progress) {
-
-            prog.setProgress(progress[0]);
-        }
-
-        protected void onPostExecute(Boolean result) {
-
-            prog.dismiss();
-
-            if (result) {
-                Util.toast(
-                        context,"Logged in as " + username);
-                finish();
-
-            } else {
-//TODO
-            }
-
-        }
     }
 
 

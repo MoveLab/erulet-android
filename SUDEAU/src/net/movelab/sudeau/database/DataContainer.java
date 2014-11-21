@@ -372,6 +372,46 @@ public class DataContainer {
         return officialRoutes;
     }
 
+    public static List<Route> getRoutesWithRatingsNotUploaded(DataBaseHelper db) {
+        List<Route> routes = new ArrayList<Route>();
+        QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()
+                .queryBuilder();
+        Where<Route, Integer> where = queryBuilder.where();
+        try {
+            where.eq("userRatingUploaded", false);
+            where.and();
+            where.ge("userRating", 0);
+            PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+            routes = db.getRouteDataDao().query(preparedQuery);
+            return routes;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return routes;
+    }
+
+    public static List<HighLight> getHighlightsWithRatingsNotUploaded(DataBaseHelper db) {
+        List<HighLight> highlights = new ArrayList<HighLight>();
+        QueryBuilder<HighLight, Integer> queryBuilder = db.getHlDataDao()
+                .queryBuilder();
+        Where<HighLight, Integer> where = queryBuilder.where();
+        try {
+            where.eq("userRatingUploaded", false);
+            where.and();
+            where.ge("userRating", 0);
+            PreparedQuery<HighLight> preparedQuery = queryBuilder.prepare();
+            highlights = db.getHlDataDao().query(preparedQuery);
+            return highlights;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return highlights;
+    }
+
+
+
     public static List<String[]> getAllRoutesBareBones(DataBaseHelper db, String locale) {
         List<String[]> results = null;
         GenericRawResults<String[]> rawResults;

@@ -4,14 +4,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SurveyActivity extends FragmentActivity {
 
@@ -55,26 +60,29 @@ public class SurveyActivity extends FragmentActivity {
 
         // if (Util.isOnline(context)) {
         setContentView(R.layout.html_viewer_activity);
-
         myWebView = (WebView) findViewById(R.id.wb_webView);
+        myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.setWebViewClient(new WebViewClient() {
 
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.e("login", "page started top. url is " + url);
+                if(url.contains("/ok/")){
+                    Util.toast(context, "Survey submitted - thanks you!");
+                    finish();
+                }}
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if(url.contains("ok")){
-                    Util.toast(context, "Thank you!");
+            public void onPageFinished(WebView view, String url) {
+                Log.e("login", "page finished top. url is " + url);
+                if(url.contains("/ok/")){
+                    Util.toast(context, "Survey submitted - thank you!");
                     finish();
-                    return true;
-                }
-                return false;
-            }
+            }}
 
         });
 
-        myWebView.getSettings().setAllowFileAccess(true);
-        myWebView.getSettings().setJavaScriptEnabled(true);
-        myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
 
         if (Build.VERSION.SDK_INT >= 7) {
             WebViewApi7.api7settings(myWebView, context);
@@ -89,6 +97,8 @@ public class SurveyActivity extends FragmentActivity {
 
         String this_url = UtilLocal.URL_SERVULET + lang + "/survey/mob/" + survey_type + "/" + route_server_id;
         myWebView.loadUrl(this_url);
+
+
 
         }
 

@@ -130,19 +130,19 @@ public class EditRouteActivity extends Activity {
 
         myRating = (RatingBar) findViewById(R.id.ratBarUserRoute);
         myRating.setStepSize(1.0f);
-        float userRating = 0;
-        if (editedRoute.getIdRouteBasedOn() != -1) {
-            userRating = app.getPrefs().getInt("" + editedRoute.getIdRouteBasedOn(), 0);
+        int userRating = 0;
+        if(editedRoute.getUserRating() >= 0){
+            userRating = editedRoute.getUserRating();
         }
         myRating.setRating(userRating);
 
-        // TODO create rating model and make this work
         myRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {
-                mPrefEditor.putInt("" + editedRoute.getIdRouteBasedOn(), (int) rating);
-                mPrefEditor.commit();
+                editedRoute.setUserRating((int)rating);
+                editedRoute.setUserRatingTime(System.currentTimeMillis());
+                editedRoute.setUserRatingUploaded(false);
             }
         });
 

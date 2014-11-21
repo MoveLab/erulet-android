@@ -102,22 +102,23 @@ public class DetailHighLightActivity extends Activity {
 		final HighLight hl = DataContainer.findHighLightById(idHighLight, app.getDataBaseHelper());
 		
 		if(hl != null){
-			float userRating = app.getPrefs().getInt("" + hl.getId(), 0);
+            int userRating = 0;
+            if(hl.getUserRating() >= 0){
+                userRating = hl.getUserRating();
+            }
 			myRating.setRating(userRating);
-		}
-		
+
 		myRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
-				if(hl!=null){
-					SharedPreferences.Editor mPrefEditor = app.getPrefsEditor(); 
-					mPrefEditor.putInt("" + hl.getId(), (int)rating);
-	            	mPrefEditor.commit();         
+                    hl.setUserRating((int)rating);
+                    hl.setUserRatingTime(System.currentTimeMillis());
+                    hl.setUserRatingUploaded(false);
 				}
-			}
+
 		});
-		
+    }
 		progressBar = (ProgressBar)findViewById(R.id.pbImageLoad);
 		progressBar.setIndeterminate(true);
 		progressBar.setVisibility(View.VISIBLE);
