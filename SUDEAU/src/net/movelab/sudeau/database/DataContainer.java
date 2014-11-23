@@ -411,20 +411,19 @@ public class DataContainer {
     }
 
 
-
     public static List<String[]> getAllRoutesBareBones(DataBaseHelper db, String locale) {
         List<String[]> results = null;
         GenericRawResults<String[]> rawResults;
         if (locale.equals("es")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating  from route");
         } else if (locale.equals("ca")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating  from route");
         } else if (locale.equals("fr")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating  from route");
         } else if (locale.equals("en")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating  from route");
         } else {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating  from route");
         }
         try {
              results = rawResults.getResults();

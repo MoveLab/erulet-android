@@ -128,6 +128,15 @@ public class EditRouteActivity extends Activity {
         routeName.setText(editedRoute.getName(locale));
         routeDescription.setText(editedRoute.getDescription(locale));
 
+        TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
+        String rating_text = getString(R.string.your_rating);
+        if(editedRoute.getGlobalRating() >=0){
+            rating_text = "Ave. rating of the route you were following: " + editedRoute.getGlobalRating() + "\n" + rating_text;
+        }
+        ratingLabel.setText(rating_text);
+
+
+
         myRating = (RatingBar) findViewById(R.id.ratBarUserRoute);
         myRating.setStepSize(1.0f);
         int userRating = 0;
@@ -140,9 +149,12 @@ public class EditRouteActivity extends Activity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {
-                editedRoute.setUserRating((int)rating);
-                editedRoute.setUserRatingTime(System.currentTimeMillis());
-                editedRoute.setUserRatingUploaded(false);
+                Route route_followed = DataContainer.findRouteById(editedRoute.getIdRouteBasedOn(), app.getDataBaseHelper());
+                route_followed.setUserRating((int)rating);
+                route_followed.setUserRatingTime(System.currentTimeMillis());
+                route_followed.setUserRatingUploaded(false);
+                app.getDataBaseHelper().getRouteDataDao().update(route_followed);
+
             }
         });
 

@@ -358,7 +358,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
             PropertyHolder.setTripInProgressFollowing(-1);
             PropertyHolder.setTripInProgressTracking(-1);
             PropertyHolder.setTripInProgressMode(-1);
-            launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
             finish();
         }
     }
@@ -380,12 +379,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 } else {
                     hl = DataContainer.findHighLightById(hlId, app.getDataBaseHelper());
                 }
-                hl.setName(hlName, locale);
-                hl.setLongText(hlLongText, locale);
+                hl.setName(locale, hlName);
+                hl.setLongText(locale, hlLongText);
                 FileManifest new_file_manifest = DataContainer.createFileManifest(imagePath, app.getDataBaseHelper());
                 hl.setFileManifest(new_file_manifest);
                 hl.setType(hlType);
-
                 if (hlId == -1) {
                     saveHighLight(hl);
                     Log.i("SAVE HIGHLIGHT", "saved");
@@ -393,7 +391,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
                     Log.i("SAVE HIGHLIGHT", "updated");
                     updateHighLight(hl);
                 }
-
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this,
                         getString(R.string.user_cancel), Toast.LENGTH_LONG)

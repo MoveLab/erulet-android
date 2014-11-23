@@ -59,6 +59,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1288,6 +1289,94 @@ public class Util {
                 Util.logError(context, TAG, "error: " + e);
         }
         return result;
+    }
+
+
+    public static int postMedia(Context context, String mediaPath, String mediaFileName, int server_id) {
+        String targetUrl = UtilLocal.URL_USER_HIGHLIGHT_MEDIA;
+        int response = 0;
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;
+        // DataInputStream inStream = null;
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 64 * 1024;
+        FileInputStream fileInputStream = null;
+        try {
+            // ------------------ CLIENT REQUEST
+            fileInputStream = new FileInputStream(mediaPath);
+            // open a URL connection to the Servlet
+            URL url = new URL(targetUrl);
+            // Open a HTTP connection to the URL
+            conn = (HttpURLConnection) url.openConnection();
+            // Allow Inputs
+            conn.setDoInput(true);
+            // Allow Outputs
+            conn.setDoOutput(true);
+            // Don't use a cached copy.
+            conn.setUseCaches(false);
+            // set timeout
+            conn.setConnectTimeout(240000);
+            conn.setReadTimeout(240000);
+            // Use a post method.
+            conn.setRequestMethod("POST");
+            // conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Authorization", "Token " + PropertyHolder.getUserKey());
+            conn.setRequestProperty("Content-Type",
+                    "multipart/form-data;boundary=" + boundary);
+            dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"id_on_creator_device\""
+                    + lineEnd + lineEnd);
+            dos.writeBytes(server_id + lineEnd);
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"media\";filename=\""
+                    + mediaFileName + "\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            // create a buffer of maximum size
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+            // read file and write it into form...
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            while (bytesRead > 0) {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            }
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+        } catch (Exception e) {
+            Util.logError(context, TAG, "error: " + e);
+        } finally {
+            if (dos != null) {
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "exception" + e);
+                }
+            }
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "exception" + e);
+                }
+            }
+        }
+        // ------------------ read the SERVER RESPONSE
+        try {
+            if (conn != null) {
+                response = conn.getResponseCode();
+                Log.d(TAG, "response: " + conn.getResponseMessage());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Connection error", e);
+        }
+        return response;
     }
 
 

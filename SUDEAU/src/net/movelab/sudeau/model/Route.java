@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -13,6 +14,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.movelab.sudeau.Util;
+import net.movelab.sudeau.database.DataBaseHelper;
+import net.movelab.sudeau.database.DataContainer;
 
 @DatabaseTable(tableName = "route")
 public class Route {
@@ -63,6 +66,8 @@ public class Route {
     private long routeJsonLastUpdated;
 	@DatabaseField
 	private int globalRating;
+    @DatabaseField
+    private int totalRatings;
 	@DatabaseField
 	private int userRating;
     @DatabaseField
@@ -333,7 +338,16 @@ public class Route {
 		this.globalRating = globalRating;
 	}
 
-	public int getUserRating() {
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
+    }
+
+
+    public int getUserRating() {
 		return userRating;
 	}
 
@@ -364,6 +378,22 @@ public class Route {
 
     public void setUserRatingUploaded(boolean userRatingUploaded) {
         this.userRatingUploaded = userRatingUploaded;
+    }
+
+    public Collection<HighLight> getHighlights(DataBaseHelper db){
+        ArrayList<HighLight> result = new ArrayList<HighLight>();
+        DataContainer.refreshRouteForTrack(this, db);
+        Track this_track = this.getTrack();
+        db.getTrackDataDao().refresh(this_track);
+        Collection<Step> these_steps = this.getTrack().getSteps();
+        for(Step s : these_steps){
+            DataContainer.refreshStep(s, db);
+            Collection<HighLight> these_highlights = s.getHighlights();
+            for(HighLight h: these_highlights){
+                result.add(h);
+            }
+        }
+        return result;
     }
 
 }

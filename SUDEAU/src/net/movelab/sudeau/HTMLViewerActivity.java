@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -33,8 +34,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 public class HTMLViewerActivity extends FragmentActivity {
 
@@ -122,10 +125,40 @@ public class HTMLViewerActivity extends FragmentActivity {
             }
 
 
-                RatingBar myRating = (RatingBar)findViewById(R.id.ratBarUser);
-                myRating.setStepSize(1.0f);
 
+                Log.i("ratings", "htmlview top of code");
                 if(hl != null){
+                    Log.i("ratings", "hl not null");
+
+                    final LinearLayout ratingArea = (LinearLayout) findViewById(R.id.ratingArea);
+                    final ImageButton ratingButton = (ImageButton) findViewById(R.id.ratingButton);
+                    ratingButton.setVisibility(View.VISIBLE);
+                    wv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ratingArea.setVisibility(View.GONE);
+                            ratingButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    ratingButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ratingArea.setVisibility(View.VISIBLE);
+                            ratingButton.setVisibility(View.GONE);
+
+                        }
+                    });
+
+                    TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
+                    String rating_text = getString(R.string.your_rating);
+                    if(hl.getGlobalRating() >=0){
+                        rating_text = "Ave. rating: " + hl.getGlobalRating()+ "\n" + rating_text;
+                    }
+                    ratingLabel.setText(rating_text);
+                    RatingBar myRating = (RatingBar)findViewById(R.id.ratBarUser);
+                    myRating.setStepSize(1.0f);
+
                     int userRating = 0;
                     if(hl.getUserRating() >= 0){
                         userRating = hl.getUserRating();
@@ -139,6 +172,8 @@ public class HTMLViewerActivity extends FragmentActivity {
                             hl.setUserRating((int)rating);
                             hl.setUserRatingTime(System.currentTimeMillis());
                             hl.setUserRatingUploaded(false);
+                            app.getDataBaseHelper().getHlDataDao().update(hl);
+
                         }
 
                     });

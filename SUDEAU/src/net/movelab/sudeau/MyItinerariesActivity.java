@@ -1,5 +1,6 @@
 package net.movelab.sudeau;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import android.view.View.OnClickListener;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
@@ -264,6 +266,23 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
             } catch (JSONException e){
                 resultFlag = JSON_ERROR;
             }
+
+
+            int media_post_response = 0;
+            // now highlight media
+            Collection<HighLight> these_highlights = selectedRoute.getHighlights(app.getDataBaseHelper());
+            for(HighLight h: these_highlights){
+                DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
+                FileManifest this_fm = h.getFileManifest();
+                File media_file = new File(this_fm.getPath());
+                media_post_response = Util.postMedia(context[0], media_file.getAbsolutePath(), media_file.getName(), h.getId());
+                if(media_post_response < 200 || media_post_response >= 300){
+                    resultFlag = UPLOAD_ERROR;
+                }
+            }
+
+
+
 
             // Now try ratings (or move this into pure background service)
 

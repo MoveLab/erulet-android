@@ -95,13 +95,23 @@ public class DetailHighLightActivity extends Activity {
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
 //		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
 //		globalRating.setStepSize(1.0f);
-		
-		myRating = (RatingBar)findViewById(R.id.ratBarUser);
+
+
+        myRating = (RatingBar)findViewById(R.id.ratBarUser);
 		myRating.setStepSize(1.0f);
 		
 		final HighLight hl = DataContainer.findHighLightById(idHighLight, app.getDataBaseHelper());
-		
-		if(hl != null){
+
+        TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
+        String rating_text = getString(R.string.your_rating);
+        if(hl.getGlobalRating() >=0){
+            rating_text = "Ave. rating: " + hl.getGlobalRating()+ "\n" + rating_text;
+        }
+        ratingLabel.setText(rating_text);
+
+
+
+        if(hl != null){
             int userRating = 0;
             if(hl.getUserRating() >= 0){
                 userRating = hl.getUserRating();
@@ -115,7 +125,8 @@ public class DetailHighLightActivity extends Activity {
                     hl.setUserRating((int)rating);
                     hl.setUserRatingTime(System.currentTimeMillis());
                     hl.setUserRatingUploaded(false);
-				}
+                    app.getDataBaseHelper().getHlDataDao().update(hl);
+            }
 
 		});
     }

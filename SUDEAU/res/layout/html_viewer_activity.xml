@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -9,10 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:visibility="gone">
     </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
 
     <WebView
@@ -20,27 +24,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
+    <ImageButton
+        android:id="@+id/ratingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_erulet_new"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
+
     <LinearLayout
+        android:id="@+id/ratingArea"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_vertical"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="3dp"
+        android:background="@color/black_overlay">
 
         <TextView
             android:id="@+id/tvUserRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:padding="2dp"
             android:textSize="@dimen/label_infoblock_highlighted"
-            android:text="@string/your_rating" />
+            android:text="@string/your_rating"
+            android:textColor="@color/blue_glow"
+            android:background="@color/black"/>
 
         <RatingBar
-            android:id="@+id/ratBarUserRoute"
+            android:id="@+id/ratBarUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-</LinearLayout>
+        </LinearLayout>
+
     </RelativeLayout>
+
+</LinearLayout>

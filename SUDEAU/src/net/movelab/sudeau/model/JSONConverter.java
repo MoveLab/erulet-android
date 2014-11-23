@@ -57,6 +57,7 @@ public class JSONConverter {
 
         r.setOfficial(j.optBoolean("official", false));
         r.setGlobalRating(j.optInt("average_rating"));
+        r.setTotalRatings(j.optInt("total_rating"));
 
         r.setName("oc", j.optString("name_oc", ""));
         r.setName("es", j.optString("name_es", ""));
@@ -247,6 +248,7 @@ public class JSONConverter {
 
         h.setStep(s);
         h.setGlobalRating(j.optInt("average_rating", -1));
+        h.setTotalRatings(j.optInt("total_ratings", -1));
 
         h.setName("oc", j.optString("name_oc", ""));
         h.setName("es", j.optString("name_es", ""));
@@ -381,7 +383,8 @@ public class JSONConverter {
         j.put("radius", h.getRadius());
         j.put("type", h.getType());
         j.put("user_rating", h.getUserRating());
-        j.put("global_rating", h.getGlobalRating());
+        j.put("average_rating", h.getGlobalRating());
+        j.put("total_ratings", h.getTotalRatings());
         List<Reference> reference_list = DataContainer.getHighlightReferences(h, app.getDataBaseHelper());
         j.put("references", referenceListToJSONArray(reference_list));
 
@@ -396,6 +399,8 @@ public class JSONConverter {
             return null;
         JSONObject j = new JSONObject();
 
+        j.put("id_on_creator_device", h.getId());
+
         j.put("name_oc", h.getName("oc"));
         j.put("name_es", h.getName("es"));
         j.put("name_ca", h.getName("ca"));
@@ -409,7 +414,7 @@ public class JSONConverter {
         j.put("long_text_en", h.getLongText("en"));
 
         j.put("radius", h.getRadius());
-        j.put("type", h.getType());
+        j.put("type", h.getServerType());
 
         return j;
     }
@@ -457,8 +462,9 @@ public class JSONConverter {
         j.put("userid", r.getUserId());
         j.put("isuploaded", r.isUpLoaded());
         j.put("localcarto", r.getLocalCarto());
-        j.put("userrating", r.getUserRating());
-        j.put("globalrating", r.getGlobalRating());
+        j.put("user_rating", r.getUserRating());
+        j.put("average_rating", r.getGlobalRating());
+        j.put("total_ratings", r.getTotalRatings());
         return j;
     }
 
@@ -624,7 +630,7 @@ public class JSONConverter {
         JSONObject result = new JSONObject();
         result.put("rating", r.getUserRating());
         result.put("time", Util.ecma262(r.getUserRatingTime()));
-        result.put("highlight", r.getServerId());
+        result.put("route", r.getServerId());
         return result;
     }
 

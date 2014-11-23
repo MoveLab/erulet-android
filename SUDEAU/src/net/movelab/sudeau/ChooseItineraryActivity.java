@@ -292,7 +292,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
 					String[] rbb = routeTable.get(marker);
                     // rbb[3] is localized description
-		            snippet.setText(rbb[3]);
+		            snippet.setText(rbb[3] + "\nAverage Rating: " + rbb[4]);
                     // rbb[2] is localized name
 		            title.setText(rbb[2]);
 		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
