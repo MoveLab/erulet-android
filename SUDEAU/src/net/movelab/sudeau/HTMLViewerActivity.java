@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class HTMLViewerActivity extends FragmentActivity {
@@ -130,7 +131,7 @@ public class HTMLViewerActivity extends FragmentActivity {
                 if(hl != null){
                     Log.i("ratings", "hl not null");
 
-                    final LinearLayout ratingArea = (LinearLayout) findViewById(R.id.ratingArea);
+                    final RelativeLayout ratingArea = (RelativeLayout) findViewById(R.id.ratingArea);
                     final ImageButton ratingButton = (ImageButton) findViewById(R.id.ratingButton);
                     ratingButton.setVisibility(View.VISIBLE);
                     wv.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +142,14 @@ public class HTMLViewerActivity extends FragmentActivity {
                         }
                     });
 
+                    Button ratingAreaCloseButton = (Button) findViewById(R.id.ratingAreaCloseButton);
+                    ratingAreaCloseButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ratingArea.setVisibility(View.GONE);
+                            ratingButton.setVisibility(View.VISIBLE);
+                        }
+                    });
                     ratingButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -153,7 +162,7 @@ public class HTMLViewerActivity extends FragmentActivity {
                     TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
                     String rating_text = getString(R.string.your_rating);
                     if(hl.getGlobalRating() >=0){
-                        rating_text = "Ave. rating: " + hl.getGlobalRating()+ "\n" + rating_text;
+                        rating_text = "Average rating: " + hl.getGlobalRating()+ "\n\n" + rating_text;
                     }
                     ratingLabel.setText(rating_text);
                     RatingBar myRating = (RatingBar)findViewById(R.id.ratBarUser);

@@ -29,12 +29,12 @@
         android:id="@+id/ratingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_erulet_new"
+        android:src="@drawable/ic_star"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ratingArea"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -53,17 +53,31 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:padding="2dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:textSize="@dimen/label_infoblock_highlighted"
             android:text="@string/your_rating"
             android:textColor="@color/blue_glow"
             android:background="@color/black"/>
 
+        <Button
+            android:id="@+id/ratingAreaCloseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="x"/>
+
+
         <RatingBar
             android:id="@+id/ratBarUser"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/tvUserRating"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 
