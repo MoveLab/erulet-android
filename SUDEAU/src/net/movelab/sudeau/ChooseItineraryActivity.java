@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.RBB;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
@@ -31,6 +32,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,7 +79,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 //	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
 //	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
 	//private DataBaseHelper dataBaseHelper;
-	private Hashtable<Marker, String[]> routeTable;
+	private Hashtable<Marker, RBB> routeTable;
 	private Marker selectedMarker;
 	private List<Route> routes;
 	
@@ -93,8 +95,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	private ProgressBar progressBar;
 	
 	private EruletApp app;
-
-    private SharedPreferences mPreferences;
 
 	private static final String TAG = "ChooseItineraryActivity";
 
@@ -119,7 +119,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
         if(!PropertyHolder.isInit())
             PropertyHolder.init(context);
         currentLocale = PropertyHolder.getLocale();
-        mPreferences = getSharedPreferences("EruletPreferences", MODE_PRIVATE);
 
         progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
 		//setUpDBIfNeeded();
@@ -178,19 +177,23 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			items = new CharSequence[]{OPTION_1,OPTION_2};
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final String[] rbb = routeTable.get(selectedMarker);
+        final RBB rbb = routeTable.get(selectedMarker);
             // rbb[2] is localized name
-            builder.setTitle(rbb[2]);
+            builder.setTitle(rbb.name);
             builder.setIcon(R.drawable.ic_pin_info);
             // rbb[3] is localized description
-            builder.setMessage(rbb[3]);
+            Log.i("rbb4", Float.toString(rbb.globalRating));
+            if(rbb.globalRating>=0)
+                builder.setMessage(Html.fromHtml(rbb.description + "<br><br><b>Average Rating: " + Float.toString(rbb.globalRating)+ "</b>"));
+            else
+                builder.setMessage(rbb.description);
             builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
                     // rbb[0] is route id as string
-                    intent.putExtra("idRoute", Integer.parseInt(rbb[0]));
+                    intent.putExtra("idRoute", rbb.id);
                     intent.putExtra("mode",0);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -201,7 +204,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
                     // rbb[0] is route ID as string
-                    intent.putExtra("idRoute",Integer.parseInt(rbb[0]));
+                    intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",1);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -214,7 +217,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     Intent intent = new Intent(ChooseItineraryActivity.this,
                             DetailItineraryActivity.class);
                     // rbb[0] is route ID as string
-                    intent.putExtra("idRoute",Integer.parseInt(rbb[0]));
+                    intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",2);
                     dialogInterface.dismiss();
                     startActivity(intent);				                }
@@ -278,29 +281,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				}
 			});
 			
-			mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
-				
-				@Override
-				public View getInfoWindow(Marker marker) {
-					return null;
-				}
-				
-				@Override
-				public View getInfoContents(Marker marker) {
-					View myContentView = getLayoutInflater().inflate(R.layout.custominfowindow, null); 
-					TextView snippet = (TextView) myContentView.findViewById(R.id.info_snippet);
-					TextView title = (TextView) myContentView.findViewById(R.id.info_title);
-					String[] rbb = routeTable.get(marker);
-                    // rbb[3] is localized description
-		            snippet.setText(rbb[3] + "\nAverage Rating: " + rbb[4]);
-                    // rbb[2] is localized name
-		            title.setText(rbb[2]);
-		            ImageView picture = (ImageView)myContentView.findViewById(R.id.info_pic);
-		            picture.setImageResource(R.drawable.ic_pin_info);		            
-		            return myContentView;
-				}
-			});						
-						
+
 		}}
 	}
 	
@@ -347,39 +328,19 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		if(progressBar!=null){
         	progressBar.setVisibility(View.VISIBLE);
         }
-		if(routes!=null){
-			JSONArray route_j_list = new JSONArray();
-			for(int i=0; i<routes.size();i++){
-				Route r = routes.get(i);
-
-				JSONObject route_j;
-				try {
-					route_j = JSONConverter.routeToJSONObject(r, app);
-               		route_j_list.put(route_j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}				
-			}
-			String params = route_j_list.toString();
-			RouteDrawerWorkerTask task = new RouteDrawerWorkerTask(mMap,app,progressBar);
-			task.execute(params);
-		}else{
-			if(progressBar!=null){
-	        	progressBar.setVisibility(View.GONE);
-	        }
-		}
+			RouteDrawerWorkerTask task = new RouteDrawerWorkerTask(mMap,progressBar);
+			task.execute(app);
 	}
 
 	private void addRouteMarkersFromDB() {
 		// custom icon
-		List<String[]> routesBareBones = DataContainer.getAllRoutesBareBones(app.getDataBaseHelper(), currentLocale);
+		List<RBB> routesBareBones = DataContainer.getAllRoutesBareBones(app.getDataBaseHelper(), currentLocale);
 		if(routeTable == null){
-			routeTable = new Hashtable<Marker, String[]>();
+			routeTable = new Hashtable<Marker, RBB>();
 		}
-		for(String[] rbb : routesBareBones){
-            // rbb[1] is trackId
-			Step start = DataContainer.getRouteStarterFast(rbb[1], app.getDataBaseHelper());
+		for(RBB rbb : routesBareBones){
+            Log.i("rbb orig", "rbb4: " + Float.toString(rbb.globalRating));
+			Step start = DataContainer.getRouteStarterFast(Integer.toString(rbb.trackId), app.getDataBaseHelper());
 			if(start!=null){
 //				Marker my_marker = mMap.addMarker(new MarkerOptions()
 //				.position(new LatLng(start.getLatitude(), start.getLongitude()))
@@ -393,9 +354,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				Marker my_marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(start.getLatitude(), start.getLongitude()))
                                 // rbb[2] is localized name
-                        .title(rbb[2])
+                        .title(rbb.name)
                         .snippet(null)
-                        .icon(BitmapDescriptorFactory.fromBitmap(ic.makeIcon(rbb[2]))));
+                        .icon(BitmapDescriptorFactory.fromBitmap(ic.makeIcon(rbb.name))));
 				routeTable.put(my_marker, rbb);
 			}
 		}

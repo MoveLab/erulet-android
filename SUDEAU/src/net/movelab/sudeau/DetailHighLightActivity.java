@@ -93,8 +93,6 @@ public class DetailHighLightActivity extends Activity {
 		TextView nameTxt =  (TextView)findViewById(R.id.tvHlNameLabel);
 		View picSeparator = findViewById(R.id.picture_separator);
 		TextView descriptionTxt =  (TextView)findViewById(R.id.tvHlDescription);
-//		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobal);
-//		globalRating.setStepSize(1.0f);
 
 
         myRating = (RatingBar)findViewById(R.id.ratBarUser);

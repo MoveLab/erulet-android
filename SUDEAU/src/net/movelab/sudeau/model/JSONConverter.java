@@ -56,8 +56,8 @@ public class JSONConverter {
         r.setRouteJsonLastUpdatedNow();
 
         r.setOfficial(j.optBoolean("official", false));
-        r.setGlobalRating(j.optInt("average_rating"));
-        r.setTotalRatings(j.optInt("total_rating"));
+        r.setGlobalRating((float) j.optDouble("average_rating", -1.0));
+        r.setTotalRatings(j.optInt("total_ratings"));
 
         r.setName("oc", j.optString("name_oc", ""));
         r.setName("es", j.optString("name_es", ""));
@@ -111,7 +111,7 @@ public class JSONConverter {
         }
 
 
-            r.setGlobalRating(j.optInt("globalrating", -1));
+            r.setGlobalRating((float) j.optDouble("globalrating", -1.0));
 
         return r;
     }
@@ -247,7 +247,7 @@ public class JSONConverter {
             h.setServerId(j.optInt("server_id", -1));}
 
         h.setStep(s);
-        h.setGlobalRating(j.optInt("average_rating", -1));
+        h.setGlobalRating((float) j.optDouble("average_rating", -1.0));
         h.setTotalRatings(j.optInt("total_ratings", -1));
 
         h.setName("oc", j.optString("name_oc", ""));

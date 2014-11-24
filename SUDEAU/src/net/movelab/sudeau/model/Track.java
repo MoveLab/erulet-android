@@ -53,6 +53,10 @@ public class Track {
 		return steps;
 	}
 
+    public void setId(int id){
+        this.id = id;
+    }
+
 	public void setSteps(Collection<Step> steps) {
 		this.steps = steps;
 	}

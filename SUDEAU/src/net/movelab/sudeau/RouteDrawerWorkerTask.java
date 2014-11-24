@@ -24,58 +24,54 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
 
-public class RouteDrawerWorkerTask extends AsyncTask<String, Void, List<PolylineOptions>> {
+public class RouteDrawerWorkerTask extends AsyncTask<EruletApp, Void, List<PolylineOptions>> {
 	
 	private final WeakReference<GoogleMap> mMapReference;
-	private final WeakReference<EruletApp> appReference;
 	private final WeakReference<ProgressBar> progressBarReference;
 
-	public RouteDrawerWorkerTask(GoogleMap mMap, EruletApp app, ProgressBar progressBar){
+	public RouteDrawerWorkerTask(GoogleMap mMap, ProgressBar progressBar){
 		this.mMapReference=new WeakReference<GoogleMap>(mMap);
-		this.appReference=new WeakReference<EruletApp>(app);
 		this.progressBarReference=new WeakReference<ProgressBar>(progressBar);
 	}
 	
 	
 	@Override
-	protected List<PolylineOptions> doInBackground(String... params) {		
+	protected List<PolylineOptions> doInBackground(EruletApp... app) {
 		List<PolylineOptions> retVal = new ArrayList<PolylineOptions>();		       
-		try {
-			JSONArray routeList = new JSONArray(params[0]);
-			for(int i = 0; i < routeList.length(); i++){
-                final EruletApp app = appReference.get();
-				Route selectedRoute = JSONConverter.jsonObjectToRoute( routeList.getJSONObject(i), app.getDataBaseHelper() );
-				Track t = selectedRoute.getTrack();
-				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app.getDataBaseHelper());
+            List<Track> tracks = DataContainer.getAllTracks(app[0].getDataBaseHelper());
+            int[] colors = {Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.WHITE};
+            int colorCounter = 0;
+        for(Track t : tracks){
+				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app[0].getDataBaseHelper());
 				PolylineOptions rectOptions = new PolylineOptions();
-				for (int j = 0; j < selectedRouteSteps.size(); j++) {
-					Step step = selectedRouteSteps.get(j);
+                PolylineOptions rectOptionsBg = new PolylineOptions();
+				for(Step step : selectedRouteSteps) {
 					rectOptions.add(new LatLng(step.getLatitude(), step.getLongitude()));
+                    rectOptionsBg.add(new LatLng(step.getLatitude(), step.getLongitude()));
 				}
 				rectOptions.zIndex(1);
-				rectOptions.color(Color.RED);
-				retVal.add(rectOptions);
+                rectOptions.width(5);
+				rectOptions.color(colors[colorCounter % colors.length]);
+                rectOptionsBg.zIndex(1);
+                rectOptionsBg.width(7);
+                rectOptionsBg.color(Color.BLACK);
+                retVal.add(rectOptionsBg);
+                retVal.add(rectOptions);
+                colorCounter++;
 			}
 			return retVal;
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	@Override
 	protected void onPostExecute(List<PolylineOptions> result) {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
-		if(mMapReference!=null){
 			final GoogleMap mMap = mMapReference.get();
 			if(mMap!=null){
-				for( int i = 0; i<result.size();i++ ){
-					mMap.addPolyline(result.get(i));
+				for(PolylineOptions pl : result){
+					mMap.addPolyline(pl);
 				}
 			}
-		}
 		final ProgressBar progressBar = progressBarReference.get();
         if(progressBar!=null){
         	progressBar.setVisibility(View.GONE);

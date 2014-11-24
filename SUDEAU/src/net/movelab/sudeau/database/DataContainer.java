@@ -2,6 +2,7 @@ package net.movelab.sudeau.database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import net.movelab.sudeau.model.Box;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
+import net.movelab.sudeau.model.RBB;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
@@ -21,7 +23,9 @@ import net.movelab.sudeau.model.Track;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.maps.android.MarkerManager;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.dao.RawRowMapper;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -168,10 +172,6 @@ public class DataContainer {
             deleteReference(r.getReference(), app);
         }
         app.getDataBaseHelper().getRouteDataDao().delete(r);
-        // TODO check why we are storing route id in shared preferences to begin with
-        SharedPreferences.Editor ed = app.getPrefsEditor();
-        ed.remove("" + r.getId());
-        ed.commit();
     }
 
     public static void deleteInteractiveImageCascade(InteractiveImage img, EruletApp app) {
@@ -196,9 +196,6 @@ public class DataContainer {
     }
 
     public static void deleteStepCascade(Step s, EruletApp app) {
-//		if (s.getHighlight() != null) {
-//			deleteHighLight(s.getHighlight(), app);
-//		}
         if (s.getHighlights() != null) {
             for (HighLight h : s.getHighlights()) {
                 deleteHighLight(h, app);
@@ -211,24 +208,32 @@ public class DataContainer {
     }
 
     public static void deleteReference(Reference r, EruletApp app) {
+        Collection<FileManifest> fms = r.getFileManifests();
+        for(FileManifest fm : fms){
+            app.getDataBaseHelper().getFileManifestDataDao().delete(fm);
+        }
         app.getDataBaseHelper().getReferenceDataDao().delete(r);
     }
 
     public static void deleteHighLight(HighLight h, EruletApp app) {
+        FileManifest fm = h.getFileManifest();
+        if(fm != null)
+            app.getDataBaseHelper().getFileManifestDataDao().delete(fm);
+
         if (h.getReferences() != null) {
             for (Reference ref : h.getReferences()) {
-                app.getDataBaseHelper().getReferenceDataDao().delete(ref);
+                deleteReference(ref, app);
             }
         }
         if (h.getInteractiveImages() != null) {
             for (InteractiveImage ii : h.getInteractiveImages()) {
+                FileManifest iifm = ii.getFileManifest();
+                if(iifm != null)
+                    app.getDataBaseHelper().getFileManifestDataDao().delete(iifm);
                 deleteInteractiveImageCascade(ii, app);
             }
         }
         app.getDataBaseHelper().getHlDataDao().delete(h);
-        SharedPreferences.Editor ed = app.getPrefsEditor();
-        ed.remove("" + h.getId());
-        ed.commit();
     }
 
     /**
@@ -410,19 +415,26 @@ public class DataContainer {
     }
 
 
-    public static List<String[]> getAllRoutesBareBones(DataBaseHelper db, String locale) {
-        List<String[]> results = null;
-        GenericRawResults<String[]> rawResults;
+    public static List<RBB> getAllRoutesBareBones(DataBaseHelper db, String locale) {
+        List<RBB> results = null;
+        RawRowMapper myRawRowMapper = new RawRowMapper<RBB>() {
+            public RBB mapRow(String[] columnNames,
+                              String[] resultColumns) {
+                return new RBB(Integer.parseInt(resultColumns[0]),
+                        Integer.parseInt(resultColumns[1]), resultColumns[2], resultColumns[3], Float.parseFloat(resultColumns[4]));
+            }};
+
+        GenericRawResults<RBB> rawResults;
         if (locale.equals("es")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating  from route", myRawRowMapper);
         } else if (locale.equals("ca")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating  from route", myRawRowMapper);
         } else if (locale.equals("fr")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating  from route", myRawRowMapper);
         } else if (locale.equals("en")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating  from route", myRawRowMapper);
         } else {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating  from route");
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating  from route", myRawRowMapper);
         }
         try {
              results = rawResults.getResults();
@@ -733,15 +745,12 @@ public class DataContainer {
     }
 
     public static void insertRoute(Route editedRoute,
-                                   DataBaseHelper dataBaseHelper, String userId) {
+                                   DataBaseHelper dataBaseHelper) {
+
         // Save track
         // Track t = new Track();
         if (editedRoute.getTrack() != null) {
             Track t = editedRoute.getTrack();
-            if (t.getName() == null || t.getName().equals("")) {
-                //TODO change this once all track languages are in. Should be a line for each language.
-                t.setName(editedRoute.getName("ca"));
-            }
             try {
                 dataBaseHelper.getTrackDataDao().createOrUpdate(t);
             } catch (RuntimeException ex) {
@@ -827,4 +836,15 @@ public class DataContainer {
         }
     }
 
+    public static void updateRouteFromServer(Route updateRoute, Route existingRoute,
+                                   EruletApp app) {
+
+        // TODO make this nicer - e.g. by transferring user ratings. But for now:
+        DataContainer.deleteRouteCascade(existingRoute, app);
+        insertRoute(updateRoute, app.getDataBaseHelper());
+    }
+
+
 }
+
+

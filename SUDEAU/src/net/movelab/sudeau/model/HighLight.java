@@ -44,7 +44,7 @@ public class HighLight {
     @DatabaseField
     private int type;
     @DatabaseField
-    private int globalRating;
+    private float globalRating;
     @DatabaseField
     private int totalRatings;
     @DatabaseField
@@ -262,12 +262,14 @@ public class HighLight {
         this.type = type;
     }
 
-    public int getGlobalRating() {
+    public float getGlobalRating() {
+        Log.i("hl global get", "rating: " + globalRating);
         return globalRating;
     }
 
-    public void setGlobalRating(int globalRating) {
+    public void setGlobalRating(float globalRating) {
         this.globalRating = globalRating;
+        Log.i("hl global", "rating: " + this.globalRating);
     }
 
     public int getTotalRatings() {

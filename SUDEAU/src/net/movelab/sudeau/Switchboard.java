@@ -405,7 +405,12 @@ public class Switchboard extends FragmentActivity {
                     if (isCancelled()) {
                         break;
                     } else {
-                        DataContainer.insertRoute(route, dataBaseHelper, "this_id");
+                        Route existingRoute = DataContainer.findRouteByServerId(route.getServerId(), dataBaseHelper);
+                        if(existingRoute == null){
+                        DataContainer.insertRoute(route, dataBaseHelper);
+                        } else{
+                            DataContainer.updateRouteFromServer(route, existingRoute, app);
+                        }
                     }
                 }
                 myProgress += 20;

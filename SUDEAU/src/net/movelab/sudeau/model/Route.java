@@ -65,7 +65,7 @@ public class Route {
     @DatabaseField
     private long routeJsonLastUpdated;
 	@DatabaseField
-	private int globalRating;
+	private float globalRating;
     @DatabaseField
     private int totalRatings;
 	@DatabaseField
@@ -86,6 +86,10 @@ public class Route {
         this.server_id = -1;
         routeContentLastUpdated = 0;
 	}
+
+    public void setId(int id){
+        this.id = id;
+    }
 	
     public boolean getOfficial() {
         return official;
@@ -330,13 +334,15 @@ public class Route {
 		this.sharedSteps = sharedSteps;
 	}
 
-	public int getGlobalRating() {
+	public float getGlobalRating() {
+        Log.i("get global rating", "rating: " + globalRating);
 		return globalRating;
 	}
 
-	public void setGlobalRating(int globalRating) {
-		this.globalRating = globalRating;
-	}
+	public void setGlobalRating(float globalRating) {
+        this.globalRating = globalRating;
+        Log.i("set global rating", "rating: " + this.globalRating);
+    }
 
     public int getTotalRatings() {
         return totalRatings;
