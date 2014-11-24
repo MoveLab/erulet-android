@@ -149,12 +149,13 @@ public class EditRouteActivity extends Activity {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {
-                Route route_followed = DataContainer.findRouteById(editedRoute.getIdRouteBasedOn(), app.getDataBaseHelper());
+                Route route_followed = DataContainer.findRouteByServerId(editedRoute.getIdRouteBasedOn(), app.getDataBaseHelper());
+                if(route_followed != null){
                 route_followed.setUserRating((int)rating);
                 route_followed.setUserRatingTime(System.currentTimeMillis());
                 route_followed.setUserRatingUploaded(false);
                 app.getDataBaseHelper().getRouteDataDao().update(route_followed);
-
+                }
             }
         });
 

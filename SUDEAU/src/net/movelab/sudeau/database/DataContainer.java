@@ -66,8 +66,7 @@ public class DataContainer {
      * Creates an empty route/track entry to the database, and returns the route
      * object
      */
-    public static Route createEmptyRoute(String lang, DataBaseHelper db, String userId,
-                                         int routeBasedOnId) {
+    public static Route createEmptyRoute(String lang, DataBaseHelper db, String userId, int routeBasedOnId) {
         String idTrack = getTrackId();
         Track t = new Track();
         db.getTrackDataDao().create(t);
