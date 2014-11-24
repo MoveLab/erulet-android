@@ -138,6 +138,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     int rulerScreenRight;
     TextView ruler;
     ImageButton locationAlerts;
+    boolean surveyGiven = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -347,10 +348,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                     PropertyHolder.setTripInProgressFollowing(-1);
                                     PropertyHolder.setTripInProgressTracking(-1);
                                     PropertyHolder.setTripInProgressMode(-1);
-
-
-                                    launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
-                                    finish();
+                                    saveRoute();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
                     .show();
@@ -358,7 +356,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
             PropertyHolder.setTripInProgressFollowing(-1);
             PropertyHolder.setTripInProgressTracking(-1);
             PropertyHolder.setTripInProgressMode(-1);
-            finish();
+            launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
         }
     }
 
@@ -425,7 +423,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
             // Re-display selected route
             resetSelectedRouteMarkers();
             updateSelectedRoute();
-            launchSurvey(server_id, Util.ROUTE_SURVEY);
         }
     }
 
@@ -707,7 +704,7 @@ Log.i("startOrResumeTracking", "top");
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
-                                        finish();
+                                        launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
                                     }
                                 });
                         dialog.setNegativeButton(getString(R.string.save),
@@ -742,7 +739,6 @@ Log.i("startOrResumeTracking", "top");
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
                                         launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
-                                        finish();
                                     }
                                 });
                         dialog.setNegativeButton(getString(R.string.save),
@@ -763,11 +759,15 @@ Log.i("startOrResumeTracking", "top");
     }
 
     private void launchSurvey(int route_server_id, String survey_type) {
+        if(!surveyGiven){
+            surveyGiven = true;
         Intent i = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
         if (route_server_id >= 0)
             i.putExtra("route_server_id", String.valueOf(route_server_id));
         i.putExtra("survey_type", Util.ROUTE_SURVEY);
         startActivity(i);
+        finish();
+        }
     }
 
 

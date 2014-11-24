@@ -49,6 +49,7 @@ public class DetailHighLightActivity extends Activity {
 	private Step step;
 	private int screenWidth;
     String currentLocale;
+    boolean ratingChange = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,7 @@ public class DetailHighLightActivity extends Activity {
                     hl.setUserRating((int)rating);
                     hl.setUserRatingTime(System.currentTimeMillis());
                     hl.setUserRatingUploaded(false);
-                    app.getDataBaseHelper().getHlDataDao().update(hl);
+                ratingChange = true;
             }
 
 		});
@@ -212,72 +213,18 @@ public class DetailHighLightActivity extends Activity {
 		longtxt.setText(getString(R.string.longitude) + " " +  llong);
 		alttxt.setText(getString(R.string.altitude) + " " +  alt);
 
-        LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
-        LinearLayout refbuttonarea = (LinearLayout) findViewById(R.id.refbuttonarea);
-
-
-        // interactive images
-        if (hl.getInteractiveImages() != null && hl.getInteractiveImages().size() > 0) {
-
-            iibuttonarea.setVisibility(View.VISIBLE);
-            ArrayList<InteractiveImage> these_iis = new ArrayList<InteractiveImage>(hl.getInteractiveImages());
-            for(InteractiveImage ii : hl.getInteractiveImages()){
-
-                Button iiButton = new Button(this);
-                iiButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                iiButton.setPadding(10, 10, 10, 10);
-                iiButton.setText("Interactive Image");
-                iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
-                iiButton.setGravity(Gravity.CENTER);
-                iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-
-                final int this_ii_id = ii.getId();
-
-                iibuttonarea.addView(iiButton);
-                iiButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(
-                                DetailHighLightActivity.this,
-                                InteractiveImageActivityHeatMap.class);
-                        i.putExtra("int_image_id", this_ii_id);
-                        startActivity(i);
-                    }
-               });
-
+        Button saveButton = (Button) findViewById(R.id.btnHlSave);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ratingChange){
+                app.getDataBaseHelper().getHlDataDao().update(hl);
+                }
+                finish();
             }
-        }
-            // reference
-        if (hl.getReferences() != null) {
+        });
 
-            refbuttonarea.setVisibility(View.VISIBLE);
-            ArrayList<Reference> refs = new ArrayList<Reference>(hl.getReferences());
-            for(Reference ref : hl.getReferences()){
-                Button refButton = new Button(this);
-                refButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                refButton.setPadding(10, 10, 10, 10);
-                refButton.setText("Reference");
-                refButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_reference, 0, 0, 0);
-                refButton.setGravity(Gravity.CENTER);
-                refButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-                final int this_ref_id = ref.getId();
-
-                refbuttonarea.addView(refButton);
-                refButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-           Intent i = new Intent(DetailHighLightActivity.this, HTMLViewerActivity.class);
-                        i.putExtra("idReference", this_ref_id);
-            startActivity(i);
-            }
-                });
-
-            }
-	}}
+	}
 	
 	private void loadBitmapThumbnailToImageView(
 			String path, 
@@ -289,17 +236,5 @@ public class DetailHighLightActivity extends Activity {
 		
 	}
 
-    // Probably can be removed with new id system
-	private HighLight getHighLightFromStep(Step s, int idHighLight){
-		if(s.hasHighLights()){
-			List<HighLight> highLights = DataContainer.getStepHighLights(s, app.getDataBaseHelper()); 
-			for( HighLight h : highLights ){
-				if(h.getId() == idHighLight){
-					return h;
-				}
-			}
-		}
-		return null;
-	}
 
 }
