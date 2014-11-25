@@ -139,6 +139,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     TextView ruler;
     ImageButton locationAlerts;
     boolean surveyGiven = false;
+    public boolean isUserHighlightsOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +155,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
+
+        isUserHighlightsOn = PropertyHolder.isUserHighlightsOn();
 
         Display display = getWindowManager().getDefaultDisplay();
         screenWidth = Util.getScreenSize(context)[0];  // deprecated
@@ -1442,7 +1445,7 @@ Log.i("startOrResumeTracking", "top");
     }
 
 
-    private void addMarkerIfNeeded(Step step) {
+    private void addMarkerIfNeeded(Step step, boolean official) {
         // stepTable
         HighLight hl;
         if (step.hasHighLights()) {
@@ -1453,14 +1456,27 @@ Log.i("startOrResumeTracking", "top");
             if (step.hasSingleHighLight()) {
                 hl = highLights.get(0);
                 // Marker m = MapObjectsFactory.addHighLightMarker(
+            if(official){
                 m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
                         new LatLng(step.getLatitude(), step.getLongitude()),
                         hl.getName(locale), hl.getLongText(locale), hl.getType());
+            } else{
+                m = MapObjectsFactory.addUserHighLightMarker(mMap,
+                        new LatLng(step.getLatitude(), step.getLongitude()),
+                        hl.getName(locale), hl.getLongText(locale), hl.getType());
+
+            }
             } else { // Multiple highlights
-                // �$$�
+               if(official){
                 m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
                         new LatLng(step.getLatitude(), step.getLongitude()),
                         "Multiples punts d'interes", "", HighLight.CONTAINER_N);
+               }else{
+                   m = MapObjectsFactory.addUserHighLightMarker(mMap,
+                           new LatLng(step.getLatitude(), step.getLongitude()),
+                           "Multiples punts d'interes", "", HighLight.CONTAINER_N);
+
+               }
             }
             selectedRouteMarkers.put(m, step);
         }
@@ -1516,14 +1532,14 @@ Log.i("startOrResumeTracking", "top");
                 // Enable this maybe on options, obscures map too much
                 // addPrecisionRadius(step);
             }
-            addMarkerIfNeeded(step);
+            addMarkerIfNeeded(step, true);
         }
         rectOptions.zIndex(1);
         rectOptions.color(Color.GRAY);
         selectedRoutePolyLine = mMap.addPolyline(rectOptions);
 
         // add user's markers from all related routes if set on in preferences
-        if (PropertyHolder.isUserTracksOn() && relatedRoutes != null && relatedRoutes.size() > 0) {
+        if (isUserHighlightsOn && relatedRoutes != null && relatedRoutes.size() > 0) {
             Log.i("related routes,", "ahout to add markers");
             for (Route relatedRoute : relatedRoutes) {
                 Log.i("related routes,", "route loop");
@@ -1531,7 +1547,7 @@ Log.i("startOrResumeTracking", "top");
                         app.getDataBaseHelper());
                 for (Step thisStep : relatedRouteSteps) {
                     Log.i("related routes,", "step loop");
-                    addMarkerIfNeeded(thisStep);
+                    addMarkerIfNeeded(thisStep, false);
                 }
             }
         }
@@ -1666,7 +1682,7 @@ Log.i("startOrResumeTracking", "top");
         String units = thisDistance >= 1000 ? "km" : "m";
         int printedDistance = thisDistance >= 1000 ? Math.round((float) thisDistance / 1000) : thisDistance;
         Log.i("SCALE", "thisDistance: " + thisDistance);
-        ruler.setText("<- " + printedDistance + " " + units + " ->");
+        ruler.setText(printedDistance + " " + units);
     }
 
 
@@ -1956,13 +1972,23 @@ Log.i("startOrResumeTracking", "top");
     private int first_id = Menu.FIRST;
     private int second_id = Menu.FIRST + 1;
     private int third_id = Menu.FIRST + 2;
+    private int fourth_id = Menu.FIRST + 3;
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
+        menu.add(group1, second_id, second_id, isUserHighlightsOn ?"Hide my highlights":"Show my highlights");
         return true;
     }
+
+    public static String userHighlightsMenuItemText(boolean ison){
+        if(ison)
+            return "Hide my highlights";
+        else
+            return "Show my highlights";
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -1971,6 +1997,14 @@ Log.i("startOrResumeTracking", "top");
                 Intent i = new Intent(DetailItineraryActivity.this, EruletPreferencesActivity.class);
                 startActivity(i);
                 break;
+            case 2:
+                PropertyHolder.setUserHighlightsOn(!isUserHighlightsOn);
+                isUserHighlightsOn = !isUserHighlightsOn;
+                item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn));
+                if(!isUserHighlightsOn){
+                    resetSelectedRouteMarkers();
+                }
+                updateSelectedRoute();
         }
         return super.onOptionsItemSelected(item);
     }

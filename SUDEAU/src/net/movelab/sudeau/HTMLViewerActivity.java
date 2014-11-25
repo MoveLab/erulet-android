@@ -17,6 +17,7 @@ import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.Reference;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -50,13 +52,15 @@ public class HTMLViewerActivity extends FragmentActivity {
     boolean firstload;
     String locale;
     private HighLight hl;
+    Context context;
+    Context thisContext = this;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.html_viewer_activity);
 
-        Context context = getApplicationContext();
+        context = getApplicationContext();
 
         if (app == null) {
             app = (EruletApp) context;
@@ -77,6 +81,9 @@ public class HTMLViewerActivity extends FragmentActivity {
         wv.getSettings().setPluginState(WebSettings.PluginState.ON);
 
 
+        LinearLayout buttonArea = (LinearLayout) findViewById(R.id.buttonArea);
+        buttonArea.setVisibility(View.VISIBLE);
+
         Bundle extras = getIntent().getExtras();
         if(extras!=null){
             int idHighLight = extras.getInt("highlight_id");
@@ -89,36 +96,22 @@ public class HTMLViewerActivity extends FragmentActivity {
         final Collection these_interactive_images = hl.getInteractiveImages();
         if (these_interactive_images != null && these_interactive_images.size() > 0) {
 
-            LinearLayout iibuttonarea = (LinearLayout) findViewById(R.id.iibuttonarea);
-            iibuttonarea.setVisibility(View.VISIBLE);
-
-            Button iiButton = new Button(this);
-            iiButton.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT));
-            iiButton.setPadding(10, 10, 10, 10);
-            iiButton.setText("Interactive Images");
-            iiButton.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.pin_interactiveimage, 0, 0, 0);
-            iiButton.setGravity(Gravity.CENTER);
-            iiButton.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-
-            iibuttonarea.addView(iiButton);
+            ImageButton iiButton = (ImageButton) findViewById(R.id.iibutton);
+            iiButton.setVisibility(View.VISIBLE);
 
             final CharSequence[] ii_items = new CharSequence[these_interactive_images.size()];
             final int[] ii_ids = new int[these_interactive_images.size()];
 
             int i = 0;
             for(InteractiveImage ii : hl.getInteractiveImages()){
-                ii_items[i] = "Interactive Image " + (i + 1);
+                ii_items[i] = getString(R.string.interactive_pic) + (i + 1);
                 ii_ids[i] = ii.getId();
                 i++;
             }
 
-
             iiButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     showInteractiveImageDialog(ii_items, ii_ids);
                 }
                 });
@@ -126,68 +119,61 @@ public class HTMLViewerActivity extends FragmentActivity {
             }
 
 
-
                 Log.i("ratings", "htmlview top of code");
                 if(hl != null){
                     Log.i("ratings", "hl not null");
 
-                    final RelativeLayout ratingArea = (RelativeLayout) findViewById(R.id.ratingArea);
                     final ImageButton ratingButton = (ImageButton) findViewById(R.id.ratingButton);
                     ratingButton.setVisibility(View.VISIBLE);
-                    wv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ratingArea.setVisibility(View.GONE);
-                            ratingButton.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    Button ratingAreaCloseButton = (Button) findViewById(R.id.ratingAreaCloseButton);
-                    ratingAreaCloseButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ratingArea.setVisibility(View.GONE);
-                            ratingButton.setVisibility(View.VISIBLE);
-                        }
-                    });
                     ratingButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ratingArea.setVisibility(View.VISIBLE);
-                            ratingButton.setVisibility(View.GONE);
+                            // custom dialog
+                            final Dialog dialog = new Dialog(thisContext);
+                            dialog.setContentView(R.layout.rating_bar_dialog);
+                            dialog.setTitle("Highlight Ratings");
+                            TextView ratingLabel = (TextView) dialog.findViewById(R.id.tvGlobalRating);
+                            if(hl.getGlobalRating() >=0){
+                                ratingLabel.setText("Average rating: " + String.format("%.2f", hl.getGlobalRating()));
+                            }
+                            RatingBar myRating = (RatingBar)dialog.findViewById(R.id.ratBarUser);
+                            myRating.setStepSize(1.0f);
 
+                            int userRating = 0;
+                            if(hl.getUserRating() >= 0){
+                                userRating = hl.getUserRating();
+                            }
+                            myRating.setRating(userRating);
+
+                            myRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                                @Override
+                                public void onRatingChanged(RatingBar ratingBar, float rating,
+                                                            boolean fromUser) {
+                                    hl.setUserRating((int)rating);
+                                    hl.setUserRatingTime(System.currentTimeMillis());
+                                    hl.setUserRatingUploaded(false);
+                                }
+
+                            });
+                        Button saveButton = (Button) dialog.findViewById(R.id.alertOK);
+                            saveButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    app.getDataBaseHelper().getHlDataDao().update(hl);
+                                    dialog.dismiss();
+                                }
+                            });
+                            Button cancelButton = (Button) dialog.findViewById(R.id.alertCancel);
+                            cancelButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
                         }
-                    });
-
-                    TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
-                    String rating_text = getString(R.string.your_rating);
-                    if(hl.getGlobalRating() >=0){
-                        rating_text = "Average rating: " + hl.getGlobalRating()+ "\n\n" + rating_text;
-                    }
-                    ratingLabel.setText(rating_text);
-                    RatingBar myRating = (RatingBar)findViewById(R.id.ratBarUser);
-                    myRating.setStepSize(1.0f);
-
-                    int userRating = 0;
-                    if(hl.getUserRating() >= 0){
-                        userRating = hl.getUserRating();
-                    }
-                    myRating.setRating(userRating);
-
-                    myRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                        @Override
-                        public void onRatingChanged(RatingBar ratingBar, float rating,
-                                                    boolean fromUser) {
-                            hl.setUserRating((int)rating);
-                            hl.setUserRatingTime(System.currentTimeMillis());
-                            hl.setUserRatingUploaded(false);
-                            app.getDataBaseHelper().getHlDataDao().update(hl);
-
-                        }
-
                     });
                 }
-
 
         loadHTML();
 

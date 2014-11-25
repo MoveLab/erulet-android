@@ -243,7 +243,8 @@ public class Util {
      */
     public static long listenerTimer = LISTENER_WINDOW;
 
-    public static String baseFolder = "Holet";
+
+    public static String baseFolder = ".Holet";     // making this a hidden folder
     public static String routeMapsFolder = "route_maps";
     public static String generalReferencesFolder = "general_references";
     public static String routeMediaFolder = "route_media";

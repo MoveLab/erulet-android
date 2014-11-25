@@ -92,6 +92,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	private int group1 = 1;
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST+1;
+    private int third_id = Menu.FIRST+2;
 	private ProgressBar progressBar;
 	
 	private EruletApp app;
@@ -99,6 +100,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	private static final String TAG = "ChooseItineraryActivity";
 
     private String currentLocale;
+
+    private boolean isUserItinerariesOn = false;
 
     Context context;
 
@@ -118,8 +121,10 @@ public class ChooseItineraryActivity extends FragmentActivity {
 
         if(!PropertyHolder.isInit())
             PropertyHolder.init(context);
-        currentLocale = PropertyHolder.getLocale();
 
+        isUserItinerariesOn = PropertyHolder.isUserItinerariesOn();
+
+        currentLocale = PropertyHolder.getLocale();
         progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
 		//setUpDBIfNeeded();
 		setUpMapIfNeeded();
@@ -131,18 +136,27 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		super.onResume();
 		refreshMapView();
         currentLocale = PropertyHolder.getLocale();
-	}
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){		
 		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));
         menu.add(group1, second_id, second_id, getString(R.string.preferences));
 
+        menu.add(group1, third_id, third_id, userItineraryMenuItemText(isUserItinerariesOn));
+
         // TODO decide if we want this in - I am removing it for now
 //		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
+    public static String userItineraryMenuItemText(boolean ison){
+        if(ison)
+            return "Hide my routes";
+        else
+            return "Show my routes";
+    }
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
@@ -155,6 +169,14 @@ public class ChooseItineraryActivity extends FragmentActivity {
                 Intent i = new Intent(ChooseItineraryActivity.this, EruletPreferencesActivity.class);
                 startActivity(i);
 			    return true;
+            case 3:
+                PropertyHolder.setUseritinerariesOn(!isUserItinerariesOn);
+                isUserItinerariesOn = !isUserItinerariesOn;
+                item.setTitle(userItineraryMenuItemText(isUserItinerariesOn));
+                mMap.clear();
+                mMap = null;
+                setUpMapIfNeeded();
+                return true;
 			default:
 				break;
 		}
@@ -207,6 +229,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",1);
                     dialogInterface.dismiss();
+                    finish();
                     startActivity(intent);				                }
             });
             // this will be only for super users - need to set up check
@@ -220,7 +243,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",2);
                     dialogInterface.dismiss();
-                    startActivity(intent);				                }
+                    startActivity(intent);
+                    finish();
+                }
             });
             }
 
@@ -269,7 +294,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     return true;
 				}
 			});
-			
+
 			mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 				@Override
 				public void onInfoWindowClick(Marker arg0) {
@@ -333,30 +358,22 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	}
 
 	private void addRouteMarkersFromDB() {
-		// custom icon
-		List<RBB> routesBareBones = DataContainer.getAllRoutesBareBones(app.getDataBaseHelper(), currentLocale);
+        List<RBB> routesBareBones;
+        if(isUserItinerariesOn){
+		routesBareBones = DataContainer.getAllRoutesBareBones(app.getDataBaseHelper(), currentLocale);
+        } else{
+            routesBareBones = DataContainer.getOfficialRoutesBareBones(app.getDataBaseHelper(), currentLocale);
+        }
 		if(routeTable == null){
 			routeTable = new Hashtable<Marker, RBB>();
 		}
 		for(RBB rbb : routesBareBones){
             Log.i("rbb orig", "rbb4: " + Float.toString(rbb.globalRating));
-			Step start = DataContainer.getRouteStarterFast(Integer.toString(rbb.trackId), app.getDataBaseHelper());
-			if(start!=null){
-//				Marker my_marker = mMap.addMarker(new MarkerOptions()
-//				.position(new LatLng(start.getLatitude(), start.getLongitude()))
-//				.title(r.getName())
-//				.snippet(null)
-//				.icon(BitmapDescriptorFactory
-//						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-				IconGenerator ic = new IconGenerator(getBaseContext());
-				ic.setTextAppearance(R.style.BubbleFont);
-				//Marker my_marker = MapObjectsFactory.addStartRouteMarker(mMap, new LatLng(start.getLatitude(), start.getLongitude()), r.getName());
+			LatLng middle = DataContainer.getRouteMiddleFast(Integer.toString(rbb.trackId), app.getDataBaseHelper());
+			if(middle!=null){
 				Marker my_marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(start.getLatitude(), start.getLongitude()))
-                                // rbb[2] is localized name
-                        .title(rbb.name)
-                        .snippet(null)
-                        .icon(BitmapDescriptorFactory.fromBitmap(ic.makeIcon(rbb.name))));
+                        .position(new LatLng(middle.latitude, middle.longitude))
+                        .icon(BitmapDescriptorFactory.fromResource(rbb.official?R.drawable.itinerary_marker:R.drawable.itinerary_marker_user)));
 				routeTable.put(my_marker, rbb);
 			}
 		}

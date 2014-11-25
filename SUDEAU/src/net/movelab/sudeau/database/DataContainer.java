@@ -23,6 +23,7 @@ import net.movelab.sudeau.model.Track;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.MarkerManager;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.dao.RawRowMapper;
@@ -415,26 +416,56 @@ public class DataContainer {
     }
 
 
+    public static List<RBB> getOfficialRoutesBareBones(DataBaseHelper db, String locale) {
+        List<RBB> results = null;
+        RawRowMapper myRawRowMapper = new RawRowMapper<RBB>() {
+            public RBB mapRow(String[] columnNames,
+                              String[] resultColumns) {
+                return new RBB(Integer.parseInt(resultColumns[0]),
+                        Integer.parseInt(resultColumns[1]), resultColumns[2], resultColumns[3], Float.parseFloat(resultColumns[4]), Integer.parseInt(resultColumns[5])==1);
+            }};
+
+        GenericRawResults<RBB> rawResults;
+        if (locale.equals("es")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating,official  from route where official=1", myRawRowMapper);
+        } else if (locale.equals("ca")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating,official  from route where official=1", myRawRowMapper);
+        } else if (locale.equals("fr")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating,official  from route where official=1", myRawRowMapper);
+        } else if (locale.equals("en")) {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating,official  from route where official=1", myRawRowMapper);
+        } else {
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating,official  from route where official=1", myRawRowMapper);
+        }
+        try {
+            results = rawResults.getResults();
+        } catch (SQLException e) {
+// TODO
+        }
+        return results;
+    }
+
+
     public static List<RBB> getAllRoutesBareBones(DataBaseHelper db, String locale) {
         List<RBB> results = null;
         RawRowMapper myRawRowMapper = new RawRowMapper<RBB>() {
             public RBB mapRow(String[] columnNames,
                               String[] resultColumns) {
                 return new RBB(Integer.parseInt(resultColumns[0]),
-                        Integer.parseInt(resultColumns[1]), resultColumns[2], resultColumns[3], Float.parseFloat(resultColumns[4]));
+                        Integer.parseInt(resultColumns[1]), resultColumns[2], resultColumns[3], Float.parseFloat(resultColumns[4]),  Integer.parseInt(resultColumns[5])==1);
             }};
 
         GenericRawResults<RBB> rawResults;
         if (locale.equals("es")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating  from route", myRawRowMapper);
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_es,description_es,globalRating,official  from route", myRawRowMapper);
         } else if (locale.equals("ca")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating  from route", myRawRowMapper);
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_ca,description_ca,globalRating,official  from route", myRawRowMapper);
         } else if (locale.equals("fr")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating  from route", myRawRowMapper);
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_fr,description_fr,globalRating,official  from route", myRawRowMapper);
         } else if (locale.equals("en")) {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating  from route", myRawRowMapper);
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_en,description_en,globalRating,official  from route", myRawRowMapper);
         } else {
-            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating  from route", myRawRowMapper);
+            rawResults = db.getRouteDataDao().queryRaw("select id,trackId,name_oc,description_oc,globalRating,official  from route", myRawRowMapper);
         }
         try {
              results = rawResults.getResults();
@@ -617,6 +648,35 @@ public class DataContainer {
         }
         return null;
     }
+
+
+    public static LatLng getRouteMiddleFast(String trackId, DataBaseHelper db) {
+        LatLng result = null;
+        List<LatLng> stepsBareBones = null;
+
+        RawRowMapper myRawRowMapper = new RawRowMapper<LatLng>() {
+            public LatLng mapRow(String[] columnNames,
+                              String[] resultColumns) {
+                return new LatLng(Float.parseFloat(resultColumns[0]),
+                        Float.parseFloat(resultColumns[1]));
+            }};
+
+        GenericRawResults<LatLng> rawResults;
+        rawResults = db.getStepDataDao().queryRaw("select latitude, longitude  from step where trackId=" + trackId, myRawRowMapper);
+        try {
+            stepsBareBones = rawResults.getResults();
+        } catch (SQLException e) {
+// TODO
+        }
+
+        if(stepsBareBones != null && stepsBareBones.size() > 0){
+            int middle = (int) Math.max(0, Math.floor((float) stepsBareBones.size()/2.0));
+            Log.i("middle", "middle: " + middle + "steps size: " + stepsBareBones.size());
+            result = stepsBareBones.get(middle);
+        }
+        return result;
+    }
+
 
     public static Step getRouteStarter(Route route, DataBaseHelper db) {
         Track t = route.getTrack();

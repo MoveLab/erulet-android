@@ -104,7 +104,7 @@ public class DetailHighLightActivity extends Activity {
         TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
         String rating_text = getString(R.string.your_rating);
         if(hl.getGlobalRating() >=0){
-            rating_text = "Ave. rating: " + hl.getGlobalRating()+ "\n" + rating_text;
+            rating_text = "Ave. rating: " + String.format("%.2f", hl.getGlobalRating()) + "\n\n" + rating_text;
         }
         ratingLabel.setText(rating_text);
 

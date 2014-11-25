@@ -30,7 +30,6 @@ public class EruletPreferencesActivity extends Activity {
     private EditText etFixInterval;
     private Button bOK;
     private ToggleButton autoCenter;
-    private ToggleButton userTracks;
     Context context;
 	
 	@Override
@@ -86,8 +85,6 @@ public class EruletPreferencesActivity extends Activity {
 
     autoCenter = (ToggleButton) findViewById(R.id.toggleAutoCenter);
         autoCenter.setChecked(PropertyHolder.isAutoCenterOn());
-    userTracks = (ToggleButton) findViewById(R.id.toggleUserTracks);
-        userTracks.setChecked(PropertyHolder.isUserTracksOn());
 
     autoCenter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
@@ -95,13 +92,6 @@ public class EruletPreferencesActivity extends Activity {
             PropertyHolder.setAutocenterOn(b);
         }
     });
-
-        userTracks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton toggleButton, boolean b) {
-                PropertyHolder.setUserTracksOn(toggleButton.isChecked());
-            }
-        });
 
 
     }

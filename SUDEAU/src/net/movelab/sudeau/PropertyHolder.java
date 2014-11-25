@@ -34,7 +34,8 @@ public class PropertyHolder {
     public static final String GENERAL_REFERENCE_PATH = "GENERAL_REFERENCE_PATH";
     public static final String NEEDS_SYNC_FIX = "NEEDS_SYNC_FIX_2";
     public static final String AUTOCENTER = "AUTOCENTER";
-    public static final String USERTRACKS = "USERTRACKS";
+    public static final String USERHIGHLIGHTS = "USERHIGHLIGHTS";
+    public static final String USERITINERARIES = "USERITINERARIES";
     public static final String TRIP_IN_PROGRESS_FOLLOWING = "TRIP_IN_PROGRESS_FOLLOWING";
     public static final String TRIP_IN_PROGRESS_TRACKING = "TRIP_IN_PROGRESS_TRACKING";
     public static final String TRIP_IN_PROGRESS_MODE = "TRIP_IN_PROGRESS_MODE";
@@ -102,15 +103,23 @@ public class PropertyHolder {
         editor.putBoolean(AUTOCENTER, _isOn);
         editor.apply();
     }
-    public static boolean isUserTracksOn() {
-        return sharedPreferences.getBoolean(USERTRACKS, false);
+    public static boolean isUserHighlightsOn() {
+        return sharedPreferences.getBoolean(USERHIGHLIGHTS, false);
     }
 
-    public static void setUserTracksOn(boolean _isOn) {
-        editor.putBoolean(USERTRACKS, _isOn);
+    public static void setUserHighlightsOn(boolean _isOn) {
+        editor.putBoolean(USERHIGHLIGHTS, _isOn);
         editor.apply();
     }
 
+    public static boolean isUserItinerariesOn() {
+        return sharedPreferences.getBoolean(USERITINERARIES, false);
+    }
+
+    public static void setUseritinerariesOn(boolean _isOn) {
+        editor.putBoolean(USERITINERARIES, _isOn);
+        editor.apply();
+    }
 
     public static int getTripInProgressFollowing() {
         return sharedPreferences.getInt(TRIP_IN_PROGRESS_FOLLOWING, -1);
