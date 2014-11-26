@@ -182,6 +182,7 @@ public class Switchboard extends FragmentActivity {
     private int third_id = Menu.FIRST + 2;
     private int fourth_id = Menu.FIRST + 3;
     private int fifth_id = Menu.FIRST + 4;
+    private int sixth_id = Menu.FIRST + 5;
 
 
     @Override
@@ -191,6 +192,7 @@ public class Switchboard extends FragmentActivity {
         menu.add(group1, third_id, third_id, "login");
         menu.add(group1, fourth_id, fourth_id, "Sync");
         menu.add(group1, fifth_id, fifth_id,getString(R.string.choose_it_my_itineraries));
+        menu.add(group1, sixth_id, sixth_id,getString(R.string.take_survey));
 
         //getMenuInflater().inflate(R.menu.switchboard, menu);
         return true;
@@ -216,6 +218,11 @@ public class Switchboard extends FragmentActivity {
                 Intent i1 = new Intent(Switchboard.this,
                         MyItinerariesActivity.class);
                 startActivity(i1);
+                break;
+            case 6:
+                Intent survey_intent = new Intent(Switchboard.this, SurveyActivity.class);
+                survey_intent.putExtra(SurveyActivity.SURVEY_TYPE_KEY, "general_survey");
+                startActivity(survey_intent);
                 break;
             default:
                 break;

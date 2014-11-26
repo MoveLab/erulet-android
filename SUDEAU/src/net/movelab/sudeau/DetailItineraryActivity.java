@@ -35,6 +35,7 @@ import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -275,6 +276,13 @@ public class DetailItineraryActivity extends FragmentActivity implements
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+    }
+
+
     private void configureUI() {
         switch (routeMode) {
             case 0:
@@ -347,11 +355,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
                                                     int which) {
                                     // This next line seems to be a bug, since it tries to call the same dialog again and opens it after activity has closed.
                                     //               stopTracking();
-                                    stopTracking();
                                     PropertyHolder.setTripInProgressFollowing(-1);
                                     PropertyHolder.setTripInProgressTracking(-1);
                                     PropertyHolder.setTripInProgressMode(-1);
-                                    saveRoute();
+                                    stopTracking();
                                 }
                             }).setNegativeButton(getString(R.string.no), null)
                     .show();
@@ -359,7 +366,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
             PropertyHolder.setTripInProgressFollowing(-1);
             PropertyHolder.setTripInProgressTracking(-1);
             PropertyHolder.setTripInProgressMode(-1);
-            launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
+            finish();
         }
     }
 
@@ -450,9 +457,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     private void saveHighLight(HighLight h) {
 
-        if (selectedMarker != null) {
-            selectedMarker.remove();
-        }
+       // if (selectedMarker != null) {
+       //     selectedMarker.remove();
+       // }
 
         Step s = DataContainer.findStepById(stepBeingEditedId,
                 app.getDataBaseHelper());
@@ -542,51 +549,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
         }
     }
 
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		if (selectedRoute != null) {
-////			if (selectedRoute.getReference() == null) {
-////				menu.getItem(0).setVisible(false);
-////			}
-//			// if(selectedRoute.getInteractiveImage()==null){
-//			// menu.getItem(1).setVisible(false);
-//			// }
-//			// for (int i = 0; i < menu.size(); i++) {
-//			// menu.getItem(i).setVisible(false);
-//			// }
-//		}
-//		return true;
-//	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-////		menu.add(group1, first_id, first_id, getString(R.string.envir_data));
-////		menu.add(group1, second_id, second_id,
-////				getString(R.string.interactive_pic));
-//		return super.onCreateOptionsMenu(menu);
-//	}
-
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case 1:
-//			Intent ihtml = new Intent(DetailItineraryActivity.this,
-//					HTMLViewerActivity.class);
-//			ihtml.putExtra("idReference", selectedRoute.getReference().getId());
-//			startActivity(ihtml);
-//			return true;
-//			// case 2:
-//			// Intent i = new Intent(DetailItineraryActivity.this,
-//			// InteractiveImageActivityHeatMap.class);
-//			// i.putExtra("int_image_id",
-//			// selectedRoute.getInteractiveImage().getId());
-//			// startActivity(i);
-//			// return true;
-//		default:
-//			break;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
 
     private void startOrResumeTracking() {
 Log.i("startOrResumeTracking", "top");
@@ -707,7 +669,7 @@ Log.i("startOrResumeTracking", "top");
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
-                                        launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
+                                        finish();
                                     }
                                 });
                         dialog.setNegativeButton(getString(R.string.save),
@@ -741,7 +703,7 @@ Log.i("startOrResumeTracking", "top");
                                         // Delete route and go to itinerary selection
                                         DataContainer.deleteRouteCascade(routeInProgress,
                                                 app);
-                                        launchSurvey(selectedRoute.getServerId(), Util.ROUTE_SURVEY);
+                                        finish();
                                     }
                                 });
                         dialog.setNegativeButton(getString(R.string.save),
@@ -756,20 +718,14 @@ Log.i("startOrResumeTracking", "top");
                                 });
                         dialog.show();
                     }
+                } else{
+                    finish();
                 }
+            } else{
+                finish();
             }
-        }
-    }
-
-    private void launchSurvey(int route_server_id, String survey_type) {
-        if(!surveyGiven){
-            surveyGiven = true;
-        Intent i = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
-        if (route_server_id >= 0)
-            i.putExtra("route_server_id", String.valueOf(route_server_id));
-        i.putExtra("survey_type", Util.ROUTE_SURVEY);
-        startActivity(i);
-        finish();
+        } else{
+            finish();
         }
     }
 
@@ -788,7 +744,10 @@ Log.i("startOrResumeTracking", "top");
         app.stopTrackingService();
         if (routeMode == 1 || routeMode == 2) {
             saveRoute();
+        } else{
+            finish();
         }
+
     }
 
     private void setupView() {
@@ -1361,7 +1320,9 @@ Log.i("startOrResumeTracking", "top");
                             if (selectedMarker != null) {
                                 selectedMarker.hideInfoWindow();
                             }
-                            selectedMarker = m;
+                         //   selectedMarker = m;
+                            m.remove();
+                            routeInProgressMarkers.remove(m);
                             launchHighLightEditIntent(s, null);
                         }
                     });
@@ -1979,6 +1940,7 @@ Log.i("startOrResumeTracking", "top");
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
         menu.add(group1, second_id, second_id, isUserHighlightsOn ?"Hide my highlights":"Show my highlights");
+        menu.add(group1, third_id, third_id, getString(R.string.take_survey));
         return true;
     }
 
@@ -2005,6 +1967,12 @@ Log.i("startOrResumeTracking", "top");
                     resetSelectedRouteMarkers();
                 }
                 updateSelectedRoute();
+                break;
+            case 3:
+                Intent survey_intent = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
+                survey_intent.putExtra(SurveyActivity.SURVEY_TYPE_KEY, "general_survey");
+                startActivity(survey_intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

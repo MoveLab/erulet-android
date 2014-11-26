@@ -28,6 +28,8 @@ public class SurveyActivity extends FragmentActivity {
     String survey_type;
     String route_server_id = "";
 
+    public static String SURVEY_TYPE_KEY = "survey_type";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class SurveyActivity extends FragmentActivity {
 
         Intent i = getIntent();
         if(i.hasExtra("survey_type")){
-            survey_type = i.getStringExtra("survey_type");
+            survey_type = i.getStringExtra(SURVEY_TYPE_KEY);
         }
         if(i.hasExtra("route_server_id")){
             route_server_id = i.getStringExtra("route_server_id");
