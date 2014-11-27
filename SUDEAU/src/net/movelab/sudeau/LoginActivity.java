@@ -1,10 +1,8 @@
 package net.movelab.sudeau;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -12,18 +10,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 
 
 public class LoginActivity extends Activity {
@@ -38,7 +26,7 @@ public class LoginActivity extends Activity {
         WebView myWebView = (WebView) findViewById(R.id.wvRegistration);
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        myWebView.loadUrl(UtilLocal.URL_LOGIN);
+        myWebView.loadUrl(Util.getLocalizedLoginUrl(context));
 
         myWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
 
@@ -46,9 +34,9 @@ public class LoginActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.e("login", "page finished top. url is " + url);
-                if(url.contains("/show_credentials/")){
+                if (url.contains("/show_credentials/")) {
                     view.loadUrl("javascript:window.HTMLOUT.processHTML(document.getElementById('credentials').innerHTML);");
-            }
+                }
             }
 
         });
@@ -77,7 +65,6 @@ public class LoginActivity extends Activity {
         @JavascriptInterface
         @SuppressWarnings("unused")
         public void processHTML(String jsonstring) {
-            Log.i("login", "processing html top jsonstring: " + jsonstring);
             try {
                 JSONObject j = new JSONObject(jsonstring);
                 String username = j.optString("username");
@@ -85,9 +72,7 @@ public class LoginActivity extends Activity {
                 if (username != null && token != null) {
                     PropertyHolder.setUserName(username);
                     PropertyHolder.setUserKey(token);
-                    Log.i("login", "username now = " + PropertyHolder.getUserName());
-                    Log.i("login", "token now = " + PropertyHolder.getUserKey());
-                    Util.toast(context, "You are now logged in as " + username);
+                    Util.toast(context, getResources().getString(R.string.now_logged_in_as) + " " + username);
                     finish();
                 }
             } catch (JSONException e) {

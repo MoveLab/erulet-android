@@ -17,6 +17,15 @@
 
 
         <ImageButton
+            android:id="@+id/videobutton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:minHeight="30dp"/>
+
+        <ImageButton
             android:id="@+id/iibutton"
             android:layout_width="0dp"
             android:layout_height="40dp"

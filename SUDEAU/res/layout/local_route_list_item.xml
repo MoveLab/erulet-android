@@ -37,7 +37,6 @@
          android:layout_marginLeft="6dip"
          android:layout_toRightOf="@id/route_description"
          android:background="@drawable/ic_upload"
-         android:contentDescription="TODO"
          android:gravity="center_vertical" />
      
      <ImageButton
@@ -48,7 +47,6 @@
          android:layout_marginLeft="6dip"
          android:layout_alignParentTop="true"         
          android:layout_toRightOf="@id/route_upload"
-         android:contentDescription="TODO"         
          android:background="@drawable/ic_edit" />
      
      <ImageButton
@@ -58,7 +56,6 @@
          android:layout_marginLeft="6dip"
          android:layout_alignParentTop="true"         
          android:layout_toRightOf="@id/route_edit"
-         android:contentDescription="TODO"
-         android:background="@drawable/ic_delete" />          
+         android:background="@drawable/ic_delete" />
 
 </RelativeLayout>

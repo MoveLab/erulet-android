@@ -19,7 +19,7 @@ public class VideoPlayActivity extends Activity {
 			MediaController mediaController = new MediaController(this);
        		mediaController.setAnchorView(view);
        		view.setMediaController(mediaController);
-			String path = extras.getString("videourl");
+			String path = extras.getString("video_uri");
 			view.setVideoURI(Uri.parse(path));
 			view.start();
 		}

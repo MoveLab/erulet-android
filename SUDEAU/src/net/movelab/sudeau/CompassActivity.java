@@ -1,11 +1,5 @@
 package net.movelab.sudeau;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -29,6 +23,13 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.Step;
+
+import java.text.DecimalFormat;
+import java.util.List;
 
 public class CompassActivity extends Activity implements SensorEventListener {
 	
@@ -116,12 +117,13 @@ public class CompassActivity extends Activity implements SensorEventListener {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+            if(intent.getExtras() != null){
 			double lat = intent.getExtras().getDouble("lat", 0);
 			double lng = intent.getExtras().getDouble("long", 0);
-			
-			currentLocation = new Location("");//provider name is unecessary
+						currentLocation = new Location("");//provider name is unecessary
 			currentLocation.setLatitude(lat);//your coords of course
 			currentLocation.setLongitude(lng);
+            }
 		}
     	
     }
@@ -336,7 +338,7 @@ public class CompassActivity extends Activity implements SensorEventListener {
     	float sensorDeltaDegree = Math.round(event.values[0]);    	
     	if( currentLocation!=null && navLocation!=null ){    		
     		currentBearingDegree = currentLocation.bearingTo(navLocation) - sensorDeltaDegree;
-    		tvDist.setText(getString(R.string.distance) + currentLocation.distanceTo(navLocation) + " metres");
+    		tvDist.setText(getString(R.string.distance) + currentLocation.distanceTo(navLocation) + " " + getResources().getString(R.string.meters));
     		tvLocation.setText(getString(R.string.current_location) + df.format(currentLocation.getLatitude()) + " - " + df.format(currentLocation.getLongitude()));
     		tvNav.setText(getString(R.string.destination) + df.format(navLocation.getLatitude()) + " - " + df.format(navLocation.getLongitude()));
     	}                        

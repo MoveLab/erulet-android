@@ -1,12 +1,5 @@
 package net.movelab.sudeau;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Date;
-
-import net.movelab.sudeau.model.HighLight;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -24,10 +17,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.movelab.sudeau.model.HighLight;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Date;
 
 public class EditHighLightActivity extends Activity {
 
@@ -71,7 +71,6 @@ public class EditHighLightActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         if (app == null) {
             app = (EruletApp) getApplicationContext();
@@ -135,7 +134,6 @@ public class EditHighLightActivity extends Activity {
                 btn_video.setVisibility(View.VISIBLE);
             } else {
                 currentPhoto = new File(uri.getPath());
-                Log.i("CURRENT PHOTO", currentPhoto.getAbsolutePath());
                 try {
                     createThumbnail();
                     btn_picture.setImageBitmap(thumbnail);
@@ -208,7 +206,6 @@ public class EditHighLightActivity extends Activity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
         super.onConfigurationChanged(newConfig);
         checkHighLightType(selectedHlType);
         if (currentVideo != null) {
@@ -287,7 +284,7 @@ public class EditHighLightActivity extends Activity {
     }
 
     private void createVideoFile() throws IOException {
-        String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
+        String imageFileName = "Holet_" + app.formatDateMediaTimestamp(new Date()) + "_";
         //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         File storageDir = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMediaFolder);
         currentVideo = File.createTempFile(
@@ -302,7 +299,7 @@ public class EditHighLightActivity extends Activity {
 
     private void createImageFile() throws IOException {
         // Create an image file name
-        String imageFileName = "Erulet_" + app.formatDateMediaTimestamp(new Date()) + "_";
+        String imageFileName = "Holet_" + app.formatDateMediaTimestamp(new Date()) + "_";
         //File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File storageDir = new File(Environment.getExternalStorageDirectory(), Util.baseFolder + "/" + Util.routeMediaFolder);
         currentPhoto = File.createTempFile(
@@ -413,8 +410,12 @@ public class EditHighLightActivity extends Activity {
         btn_save.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("hlName", tvName.getText().toString());
-                returnIntent.putExtra("hlLongText", tvLongText.getText().toString());
+                if(tvName.getText() != null){
+                    returnIntent.putExtra("hlName", tvName.getText().toString());
+                }
+                if(tvLongText.getText() != null){
+                    returnIntent.putExtra("hlLongText", tvLongText.getText().toString());
+                }
                 returnIntent.putExtra("hlid", editedHighLightId);
                 int selectedRb = imageOrVideo.getCheckedRadioButtonId();
                 switch (selectedRb) {

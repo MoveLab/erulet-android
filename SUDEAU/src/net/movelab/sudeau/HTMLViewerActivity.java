@@ -50,6 +50,7 @@ public class HTMLViewerActivity extends FragmentActivity {
 	WebView wv;
     String base_url;
     boolean firstload;
+    ArrayList<HtmlPathPair> html_list;
     String locale;
     private HighLight hl;
     Context context;
@@ -87,7 +88,6 @@ public class HTMLViewerActivity extends FragmentActivity {
         Bundle extras = getIntent().getExtras();
         if(extras!=null){
             int idHighLight = extras.getInt("highlight_id");
-            Log.d("Highlight ID: ", "" + idHighLight);
             // TODO make sure to pass highlight id when calling this activity now!!!
             hl = DataContainer.findHighLightById(idHighLight, app.getDataBaseHelper());
             if (hl.getReferences() != null) {
@@ -119,10 +119,7 @@ public class HTMLViewerActivity extends FragmentActivity {
             }
 
 
-                Log.i("ratings", "htmlview top of code");
                 if(hl != null){
-                    Log.i("ratings", "hl not null");
-
                     final ImageButton ratingButton = (ImageButton) findViewById(R.id.ratingButton);
                     ratingButton.setVisibility(View.VISIBLE);
                     ratingButton.setOnClickListener(new View.OnClickListener() {
@@ -131,10 +128,10 @@ public class HTMLViewerActivity extends FragmentActivity {
                             // custom dialog
                             final Dialog dialog = new Dialog(thisContext);
                             dialog.setContentView(R.layout.rating_bar_dialog);
-                            dialog.setTitle("Highlight Ratings");
+                            dialog.setTitle(getResources().getString(R.string.highlight_ratings_title));
                             TextView ratingLabel = (TextView) dialog.findViewById(R.id.tvGlobalRating);
                             if(hl.getGlobalRating() >=0){
-                                ratingLabel.setText("Average rating: " + String.format("%.2f", hl.getGlobalRating()));
+                                ratingLabel.setText(getResources().getString(R.string.average_rating) + ": " + String.format("%.2f", hl.getGlobalRating()));
                             }
                             RatingBar myRating = (RatingBar)dialog.findViewById(R.id.ratBarUser);
                             myRating.setStepSize(1.0f);
@@ -175,7 +172,38 @@ public class HTMLViewerActivity extends FragmentActivity {
                     });
                 }
 
-        loadHTML();
+           html_list = getReferenceString();
+
+           ArrayList<String> video_list = getVideoUris(html_list);
+
+                // videos
+                if (video_list != null && video_list.size() > 0) {
+
+                    ImageButton videoButton = (ImageButton) findViewById(R.id.videobutton);
+                    videoButton.setVisibility(View.VISIBLE);
+
+                    final CharSequence[] video_labels = new CharSequence[video_list.size()];
+                    final String[] video_uris = new String[video_list.size()];
+
+                    int i = 0;
+                    for(String video_uri : video_list){
+                        //TODO localize string
+                        video_labels[i] = "Video" + (i + 1);
+                        video_uris[i] = video_uri;
+                        i++;
+                    }
+
+                    videoButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            showVideoDialog(video_labels, video_uris);
+                        }
+                    });
+
+                }
+
+
+                loadHTML(html_list);
 
             } else{
 // TODO fallback on normal view
@@ -198,26 +226,50 @@ public class HTMLViewerActivity extends FragmentActivity {
 //		return super.onOptionsItemSelected(item);
 //	}
 
-	private ArrayList<String> getReferenceString(){
-                ArrayList<String> html_list = new ArrayList<String>();
+    private ArrayList<String> getVideoUris(ArrayList<HtmlPathPair> html_list){
+        ArrayList<String> video_list = new ArrayList<String>();
+        for(HtmlPathPair html_path_pair : html_list){
+            String[] s1 = html_path_pair.getHtmlString().split(".mp4");
+            for(int i = 0; i < s1.length; i = i + 2){
+                video_list.add((new File(html_path_pair.getHtmlPath(), s1[i].split("href=\"")[s1[i].split("href=\"").length - 1] + ".mp4")).getAbsolutePath());
+            }
+            }
+        return video_list;
+        }
+
+    private class HtmlPathPair{
+
+        private String html_string;
+        private String html_path;
+
+        public HtmlPathPair(String html_string, String html_path){
+            this.html_path = html_path;
+            this.html_string = html_string;
+        }
+
+        public String getHtmlString(){
+            return html_string;
+        }
+        public String getHtmlPath(){
+            return html_path;
+        }
+
+    }
+
+    private ArrayList<HtmlPathPair> getReferenceString(){
+                ArrayList<HtmlPathPair> html_list = new ArrayList<HtmlPathPair>();
                 for(Reference ref : hl.getReferences()){
                     final int this_ref_id = ref.getId();
                     Reference r = DataContainer.findReferenceById(this_ref_id, app.getDataBaseHelper());
-                    Log.d("Ref html path", r.getHtmlPath(locale));
                     if(r != null && r.getHtmlPath(locale) != null && !r.getHtmlPath(locale).isEmpty()){
-                        Log.d("Reference URL: ", "file://" + r.getHtmlPath(locale));
                         String[] url_chop = r.getHtmlPath(locale).split("/");
                         base_url = "file://";
                         for(int i = 0; i < (url_chop.length-1); i++){
                             base_url += url_chop[i] + "/";
                         }
 
-                        Log.d("base URL: ", base_url);
-
                         File f = new File(r.getHtmlPath(locale));
-
-                        Log.i("html ", f.getPath());
-
+                        String this_path = f.getPath();
                         StringBuilder html_text = new StringBuilder();
 
                         try {
@@ -235,9 +287,7 @@ public class HTMLViewerActivity extends FragmentActivity {
 
                         String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("holet-ref-style.css", "erholet-ref-style.css");
 
-                        Log.i("htmltext ", modified_html_text);
-
-                        html_list.add(modified_html_text);
+                        html_list.add(new HtmlPathPair(modified_html_text, this_path));
 
                     }
             }
@@ -246,10 +296,10 @@ public class HTMLViewerActivity extends FragmentActivity {
 			return html_list;
 	}
 
-	private void loadHTML(){
+	private void loadHTML(ArrayList<HtmlPathPair> html_list){
 
         // for now we are simply going to use the first reference and ignore the rest. But for future TODO we can add some navigation to the others
-        wv.loadDataWithBaseURL(base_url, getReferenceString().get(0), "text/html","utf-8", null);
+        wv.loadDataWithBaseURL(base_url, html_list.get(0).getHtmlString(), "text/html","utf-8", null);
 	}
 
 
@@ -258,7 +308,7 @@ public class HTMLViewerActivity extends FragmentActivity {
         final int[] these_ii_ids = ii_ids;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose interactive image")
+        builder.setTitle(getResources().getString(R.string.choose_interactive_image))
                 .setItems(ii_items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(
@@ -274,20 +324,40 @@ public class HTMLViewerActivity extends FragmentActivity {
 
     }
 
-	/**
+    public void showVideoDialog(CharSequence[] video_labels, String[] video_uris){
+
+        final String[] these_video_uris = video_uris;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //TODO localize
+        builder.setTitle("Choose video")
+                .setItems(video_labels, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(
+                                HTMLViewerActivity.this,
+                                VideoPlayActivity.class);
+                        i.putExtra("video_uri", these_video_uris[which]);
+                        dialog.dismiss();
+                        startActivity(i);
+                    }
+                });
+
+        builder.show();
+
+    }
+
+
+    /**
 	 * This allows navigation between a webview and a link opening another webview
 	 */
 	@Override
 	public void onBackPressed() {
 		WebView wv;
         wv = (WebView) findViewById(R.id.wb_webView);
-        Log.i("WV BACK: ", wv.getUrl());
         if(wv.canGoBack() && !wv.getUrl().equals("about:blank")){
         	wv.goBack();
-            Log.i("WV BACKED: ", wv.getUrl());
             if(wv.getUrl().equals("about:blank")){
-                Log.i("WV BACKED LOADING: ", wv.getUrl());
-                loadHTML();
+                loadHTML(html_list);
             }
         }else{
         	super.onBackPressed();
@@ -297,28 +367,24 @@ public class HTMLViewerActivity extends FragmentActivity {
 	private class MyWebViewClient extends WebViewClient {
 	    @Override
 	    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.i("OVERRIDE URL LOADING TOP", url);
             view.loadUrl(url);
 	        if (url.contains("mp4")) {
-                Log.i("OVERRIDE URL LOADING MP4", url.toString());
                 Intent ihtml = new Intent(HTMLViewerActivity.this,
 						VideoPlayActivity.class);
 				ihtml.putExtra("videourl", url);
 				startActivity(ihtml);
 	            return false;
 	        }else{
-                Log.i("OVERRIDE URL LOADING ELSE", url);
 	            return true;
 	        }
 	    }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            Log.i("ON PAGE FINISHED", "");
             super.onPageFinished(view, url);
             // this is a hack to get the images to display when first loaded
             if(firstload){
-            loadHTML();
+            loadHTML(html_list);
             firstload = false;
             }
 

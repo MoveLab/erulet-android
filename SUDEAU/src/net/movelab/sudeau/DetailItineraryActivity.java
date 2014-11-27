@@ -1,25 +1,5 @@
 package net.movelab.sudeau;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.FileManifest;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
-import net.movelab.sudeau.model.Route;
-import net.movelab.sudeau.model.Step;
-import net.movelab.sudeau.model.Track;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -35,7 +15,6 @@ import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -64,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -79,7 +59,26 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+
+import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.FileManifest;
+import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Reference;
+import net.movelab.sudeau.model.Route;
+import net.movelab.sudeau.model.Step;
+import net.movelab.sudeau.model.Track;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 public class DetailItineraryActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -142,6 +141,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
     boolean surveyGiven = false;
     public boolean isUserHighlightsOn = false;
 
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +153,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
             app = (EruletApp) getApplicationContext();
         }
 
-        Context context = getApplication();
+        context = getApplication();
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
@@ -325,7 +326,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
     public void onWindowFocusChanged(boolean hasFocus) {
         int[] rulerOnScreen = new int[2];
         ruler.getLocationOnScreen(rulerOnScreen);
-        Log.i("SCALE", "locationOnScreen: " + rulerOnScreen[0] + ", " + rulerOnScreen[1]);
         rulerScreenLeft = rulerOnScreen[0];
         rulerScreenRight = rulerScreenLeft + ruler.getMeasuredWidth();
         updateScale();
@@ -340,9 +340,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     public void onBackPressed() {
-        // if (routeMode == 1 && tracking) {
-        // stopTracking();
-        // }
+
         if ((routeMode == 1 || routeMode == 2) && app.isTrackingServiceOn()) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -377,9 +375,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 String hlName = data.getStringExtra("hlName");
                 String hlLongText = data.getStringExtra("hlLongText");
                 String imagePath = data.getStringExtra("imagePath");
-                Log.i("Highlight Result image path", imagePath);
+
                 int hlId = data.getIntExtra("hlid", -1);
-                Log.i("SAVE HIGHLIGHT", "activity result id: " + hlId);
+
                 int hlType = data.getIntExtra("hlType", HighLight.WAYPOINT);
                 HighLight hl = null;
                 if (hlId == -1) {
@@ -394,9 +392,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
                 hl.setType(hlType);
                 if (hlId == -1) {
                     saveHighLight(hl);
-                    Log.i("SAVE HIGHLIGHT", "saved");
+
                 } else {
-                    Log.i("SAVE HIGHLIGHT", "updated");
+
                     updateHighLight(hl);
                 }
             } else if (resultCode == RESULT_CANCELED) {
@@ -464,7 +462,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         Step s = DataContainer.findStepById(stepBeingEditedId,
                 app.getDataBaseHelper());
         if (s == null) {
-            Log.e("SAVE HIGHLIGHT 469", "step is null");
+            Log.e("SAVE HIGHLIGHT", "step is null");
             // Something has gone very wrong
         } else {
             DataContainer.addHighLightToStep(s, h,
@@ -490,7 +488,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
         Step s = DataContainer.findStepById(stepBeingEditedId,
                 app.getDataBaseHelper());
         if (s == null) {
-            Log.e("UPDATE HIGHLIGHT 466", "step is null");
+            Log.e("UPDATE HIGHLIGHT", "step is null");
             // Something has gone very wrong
         } else {
 
@@ -553,7 +551,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private void startOrResumeTracking() {
 Log.i("startOrResumeTracking", "top");
         if (routeMode > 0) {
-            Log.i("startOrResumeTracking", "routeMode > 0");
 
             app.startTrackingService();
             fixFilter = new IntentFilter(getResources().getString(
@@ -624,26 +621,7 @@ Log.i("startOrResumeTracking", "top");
         countDown.start();
     }
 
-    // private Route createNewRoute() {
-    // ArrayList<Step> currentSteps = fixReceiver.getStepsInProgress();
-    // String android_id = Secure.getString(getBaseContext()
-    // .getContentResolver(), Secure.ANDROID_ID);
-    // Track t = new Track();
-    // t.setSteps(currentSteps);
-    // for (int i = 0; i < currentSteps.size(); i++) {
-    // Step s = currentSteps.get(i);
-    // s.setTrack(t);
-    // }
-    // // Save route
-    // Route r = new Route();
-    // if (selectedRoute != null)
-    // r.setIdRouteBasedOn(selectedRoute.getId());
-    // r.setUserId(android_id);
-    // r.setTrack(t);
-    // return r;
-    // }
-
-    private void saveRoute() {
+       private void saveRoute() {
 
         if (routeInProgress != null) {
             DataContainer.refreshRouteForTrack(routeInProgress, app.getDataBaseHelper());
@@ -688,8 +666,8 @@ Log.i("startOrResumeTracking", "top");
                         // Route has more than 2 steps - still offer the chance to directly delete
 
                         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                        // TODO externalize and translate
-                        dialog.setMessage("Would you like to save the track you just created or discard it?");
+
+                        dialog.setMessage(getResources().getString(R.string.save_or_delete_route_message));
                         dialog.setPositiveButton(getString(R.string.discard_trip),
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -912,7 +890,7 @@ Log.i("startOrResumeTracking", "top");
                         if (s == null) {
                             if (routeInProgressMarkers != null) {
                                 s = routeInProgressMarkers.get(marker);
-                                Log.i("SAVE HIGHLIGHT 925", s == null ? "s is null" : "s not null");
+
                                 isUserMarker = true;
                             }
                         }
@@ -1101,16 +1079,14 @@ Log.i("startOrResumeTracking", "top");
                                             picture.setImageResource(R.drawable.ic_itinerary_icon);
                                         }
                                     } else { // Has multiple highlights
-                                        title.setText("Multiples elements d'd'interès");
-                                        snippet.setText("Fes clic per veure la llista...");
+                                        title.setText(getResources().getString(R.string.multiple_highlights_title));
+                                        snippet.setText(getResources().getString(R.string.multiple_highlights_message));
                                     }
                                 } else { // Not user marker
                                     if (s.hasSingleHighLight()) {
                                         List<HighLight> highLights = DataContainer
                                                 .getStepHighLights(s,
                                                         app.getDataBaseHelper());
-                                        // (List<HighLight>) s.getHighlights();
-                                        // HighLight h1 = s.getHighlight();
                                         HighLight h1 = highLights.get(0);
                                         title.setText(h1.getName(locale));
                                         snippet.setText(h1.getLongText(locale));
@@ -1142,8 +1118,8 @@ Log.i("startOrResumeTracking", "top");
                                         }
                                     } else { // Multiple highlights
                                         // �$$�
-                                        title.setText("Multiples elements d'interès");
-                                        snippet.setText("Fes clic per veure la llista...");
+                                        title.setText(getResources().getString(R.string.multiple_highlights_title));
+                                        snippet.setText(getResources().getString(R.string.multiple_highlights_message));
                                     }
                                 }
 
@@ -1220,7 +1196,6 @@ Log.i("startOrResumeTracking", "top");
         i.putExtra("date", app.formatDateDayMonthYear(s.getAbsoluteTime()));
         if (h != null) {
             i.putExtra("hlid", h.getId());
-            Log.i("SAVE HIGHLIGHT", "LAUNCHING ID: " + h.getId());
             i.putExtra("hlname", h.getName(locale));
             i.putExtra("hllongtext", h.getLongText(locale));
             DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
@@ -1253,17 +1228,17 @@ Log.i("startOrResumeTracking", "top");
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(
                 DetailItineraryActivity.this);
         builderSingle.setIcon(R.drawable.ic_launcher);
-        builderSingle.setTitle("Tria per editar, o afegeix nou...");
+        builderSingle.setTitle(getResources().getString(R.string.existing_highlight_title));
         final HighLightArrayAdapter arrayAdapter = new HighLightArrayAdapter(DetailItineraryActivity.this, highLights);
 
-        builderSingle.setNegativeButton("cancel·lar",
+        builderSingle.setNegativeButton(getResources().getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-        builderSingle.setPositiveButton("Afegir nou punt d'interès",
+        builderSingle.setPositiveButton(getResources().getString(R.string.existing_highlight_button_make_new),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1285,10 +1260,8 @@ Log.i("startOrResumeTracking", "top");
     private void showAddMarkerOnTapDialog(final Step s) {
         Marker alreadyThereMarker;
         if ((alreadyThereMarker = markerAlreadyOnStep(s)) == null) {
-            Log.i("SAVE HIGHLGHT", "alreadyThereMarker null");
             if (routeInProgressMarkers == null) {
                 routeInProgressMarkers = new Hashtable<Marker, Step>();
-                Log.i("SAVE HIGHLGHT", "new routeInProgressMarkers made");
             }
 
             LatLng point = new LatLng(s.getLatitude(), s.getLongitude());
@@ -1344,9 +1317,7 @@ Log.i("startOrResumeTracking", "top");
             if (s.hasHighLights()) {
                 // Show multiple highlight dialog
                 showEditMultipleHighLightDialog(s);
-                Log.i("SAVE HIGHLGHT", "alreadyThereMarker has highlight");
             } else {
-                Log.i("SAVE HIGHLGHT", "alreadyThereMarker has not highlight");
                 // New highlight
                 launchHighLightEditIntent(s, null);
             }
@@ -1431,11 +1402,11 @@ Log.i("startOrResumeTracking", "top");
                if(official){
                 m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
                         new LatLng(step.getLatitude(), step.getLongitude()),
-                        "Multiples punts d'interes", "", HighLight.CONTAINER_N);
+                        getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
                }else{
                    m = MapObjectsFactory.addUserHighLightMarker(mMap,
                            new LatLng(step.getLatitude(), step.getLongitude()),
-                           "Multiples punts d'interes", "", HighLight.CONTAINER_N);
+                           getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
 
                }
             }
@@ -1501,13 +1472,13 @@ Log.i("startOrResumeTracking", "top");
 
         // add user's markers from all related routes if set on in preferences
         if (isUserHighlightsOn && relatedRoutes != null && relatedRoutes.size() > 0) {
-            Log.i("related routes,", "ahout to add markers");
+
             for (Route relatedRoute : relatedRoutes) {
-                Log.i("related routes,", "route loop");
+
                 relatedRouteSteps = DataContainer.getTrackSteps(relatedRoute.getTrack(),
                         app.getDataBaseHelper());
                 for (Step thisStep : relatedRouteSteps) {
-                    Log.i("related routes,", "step loop");
+
                     addMarkerIfNeeded(thisStep, false);
                 }
             }
@@ -1606,9 +1577,9 @@ Log.i("startOrResumeTracking", "top");
                     AlertDialog.Builder missedFixesAlert = new AlertDialog.Builder(
                             DetailItineraryActivity.this);
                     missedFixesAlert.setIcon(R.drawable.ic_action_location_searching);
-                    missedFixesAlert.setTitle("Searching");
-                    missedFixesAlert.setMessage("Eth Holet is having trouble finding your location right now, so make sure to pay attention to your map and your surroundings rather than relying on your GPS.");
-                    missedFixesAlert.setNegativeButton("OK",
+                    missedFixesAlert.setTitle(getResources().getString(R.string.searching_title));
+                    missedFixesAlert.setMessage(getResources().getString(R.string.searching_message));
+                    missedFixesAlert.setNegativeButton(getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1629,10 +1600,6 @@ Log.i("startOrResumeTracking", "top");
         Projection thisProjection = mMap.getProjection();
         LatLng startLatLng = thisProjection.fromScreenLocation(new Point(rulerScreenLeft, 0));
         LatLng endLatLng = thisProjection.fromScreenLocation(new Point(rulerScreenRight, 0));
-        Log.i("SCALE", "rulerScreenLeft:" + rulerScreenLeft);
-        Log.i("SCALE", "rulerScreenRight:" + rulerScreenRight);
-        Log.i("SCALE", "leftLatLng: " + startLatLng.latitude + ", " + startLatLng.longitude);
-        Log.i("SCALE", "RightLatLng: " + endLatLng.latitude + ", " + endLatLng.longitude);
         Location startLoc = new Location("");
         Location endLoc = new Location("");
         startLoc.setLatitude(startLatLng.latitude);
@@ -1640,9 +1607,8 @@ Log.i("startOrResumeTracking", "top");
         endLoc.setLatitude(endLatLng.latitude);
         endLoc.setLongitude(endLatLng.longitude);
         int thisDistance = Math.round(startLoc.distanceTo(endLoc));
-        String units = thisDistance >= 1000 ? "km" : "m";
+        String units = thisDistance >= 1000 ? getResources().getString(R.string.kilometer_abbreviation) : getResources().getString(R.string.meter_abbreviation);
         int printedDistance = thisDistance >= 1000 ? Math.round((float) thisDistance / 1000) : thisDistance;
-        Log.i("SCALE", "thisDistance: " + thisDistance);
         ruler.setText(printedDistance + " " + units);
     }
 
@@ -1800,8 +1766,6 @@ Log.i("startOrResumeTracking", "top");
                         effectivePopRadius = Util.MINIMUM_POP_DISTANCE_RADIUS;
                     }
                     if (results[0] <= effectivePopRadius) {
-                        Log.d("HIT", "Hit interest area - distance: "
-                                + results[0] + " radius: " + effectivePopRadius);
                         found = true;
                         proximityWarning.issueWarning(m);
                         warningList.add(s);
@@ -1827,9 +1791,6 @@ Log.i("startOrResumeTracking", "top");
                 boolean locationExists = locationExists(location, stepsInProgress);
                 // Point is same as last, we don't add it to the track
 
-                Log.d("onReceive", "Received new location " + lat + " " + lng
-                        + " t " + app.formatDateHoursMinutesSeconds(time)
-                        + " already logged");
 
                 if (!locationExists) {
                     if (mMap != null && mMap.getCameraPosition() != null) {
@@ -1862,8 +1823,6 @@ Log.i("startOrResumeTracking", "top");
                                 PropertyHolder.getUserId(),
                                 app.getDataBaseHelper());
                     }
-                    Log.d("onReceive", "Received new location " + lat + " " + lng
-                            + " t " + app.formatDateHoursMinutesSeconds(time));
                 }
                 if (routeMode == 1) {
                     checkNearbyMarkers(location);
@@ -1939,16 +1898,16 @@ Log.i("startOrResumeTracking", "top");
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
-        menu.add(group1, second_id, second_id, isUserHighlightsOn ?"Hide my highlights":"Show my highlights");
+        menu.add(group1, second_id, second_id, isUserHighlightsOn ? getResources().getString(R.string.hide_my_highlights): getResources().getString(R.string.show_my_highlights));
         menu.add(group1, third_id, third_id, getString(R.string.take_survey));
         return true;
     }
 
-    public static String userHighlightsMenuItemText(boolean ison){
+    public static String userHighlightsMenuItemText(boolean ison, Context this_context){
         if(ison)
-            return "Hide my highlights";
+            return this_context.getResources().getString(R.string.hide_my_highlights);
         else
-            return "Show my highlights";
+            return this_context.getResources().getString(R.string.show_my_highlights);
     }
 
 
@@ -1962,7 +1921,7 @@ Log.i("startOrResumeTracking", "top");
             case 2:
                 PropertyHolder.setUserHighlightsOn(!isUserHighlightsOn);
                 isUserHighlightsOn = !isUserHighlightsOn;
-                item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn));
+                item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn, context));
                 if(!isUserHighlightsOn){
                     resetSelectedRouteMarkers();
                 }

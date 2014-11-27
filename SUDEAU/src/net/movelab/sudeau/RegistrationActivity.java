@@ -1,11 +1,8 @@
 package net.movelab.sudeau;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -13,17 +10,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.JSONConverter;
-
-import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 
 public class RegistrationActivity extends Activity {
@@ -39,7 +27,7 @@ public class RegistrationActivity extends Activity {
         WebView myWebView = (WebView) findViewById(R.id.wvRegistration);
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        myWebView.loadUrl(UtilLocal.URL_REGISTRATION);
+        myWebView.loadUrl(Util.getLocalizedRegistrationUrl(context));
 
 
         myWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
@@ -48,9 +36,10 @@ public class RegistrationActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.e("login", "page finished top. url is " + url);
-                if(url.contains("/show_credentials/")){
-                view.loadUrl("javascript:window.HTMLOUT.processHTML(document.getElementById('credentials').innerHTML);");
-            }}
+                if (url.contains("/show_credentials/")) {
+                    view.loadUrl("javascript:window.HTMLOUT.processHTML(document.getElementById('credentials').innerHTML);");
+                }
+            }
 
         });
 

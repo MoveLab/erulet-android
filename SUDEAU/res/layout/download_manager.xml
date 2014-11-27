@@ -47,7 +47,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dip"
             android:background="@drawable/ic_download_dark"
-            android:contentDescription="TODO"
             android:gravity="center_vertical" />
 
 

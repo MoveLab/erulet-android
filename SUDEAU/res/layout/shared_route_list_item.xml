@@ -11,7 +11,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="6dip"
-        android:contentDescription="TODO"        
         android:src="@drawable/ic_share_icon" />
      
      <TextView
@@ -24,7 +23,6 @@
          android:layout_alignWithParentIfMissing="true"         
          android:layout_toRightOf="@id/sh_route_pic"
          android:gravity="center_vertical"
-         android:text="Nom de la ruta"
          android:textSize="12sp" />
      
      <ImageView
@@ -36,7 +34,6 @@
          android:layout_alignTop="@+id/sh_route_pic"
          android:layout_marginLeft="6dip"
          android:layout_toRightOf="@id/sh_route_name"
-         android:contentDescription="TODO"
          android:src="@drawable/ic_download" />
 
      <RatingBar

@@ -1,54 +1,24 @@
 package net.movelab.sudeau;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.io.FileInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.RBB;
-import net.movelab.sudeau.model.Route;
-import net.movelab.sudeau.model.Step;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,16 +27,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.maps.android.ui.IconGenerator;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
-import java.net.URL;
+import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.RBB;
+import net.movelab.sudeau.model.Route;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 public class ChooseItineraryActivity extends FragmentActivity {
 
@@ -75,15 +44,10 @@ public class ChooseItineraryActivity extends FragmentActivity {
 
 	private GoogleMap mMap;
 	private MapBoxOfflineTileProvider tileProvider;
-//	private static final LatLng MY_POINT = new LatLng(41.66, 1.54);
-//	private static final LatLng VALL_ARAN_1 = new LatLng(42.74, 0.79);
-//	private static final LatLng VALL_ARAN_2 = new LatLng(42.73, 0.82);		
-	//private DataBaseHelper dataBaseHelper;
 	private Hashtable<Marker, RBB> routeTable;
 	private Marker selectedMarker;
 	private List<Route> routes;
 	
-	//private static final String TITLE = "Tria la opci� de ruta que prefereixes:";
 	private String TITLE;
  	private String OPTION_1;
 	private String OPTION_2;
@@ -96,8 +60,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	private ProgressBar progressBar;
 	
 	private EruletApp app;
-
-	private static final String TAG = "ChooseItineraryActivity";
 
     private String currentLocale;
 
@@ -143,18 +105,18 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));
         menu.add(group1, second_id, second_id, getString(R.string.preferences));
 
-        menu.add(group1, third_id, third_id, userItineraryMenuItemText(isUserItinerariesOn));
+        menu.add(group1, third_id, third_id, userItineraryMenuItemText(isUserItinerariesOn, context));
 
         // TODO decide if we want this in - I am removing it for now
 //		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
 		return super.onCreateOptionsMenu(menu);
 	}
 
-    public static String userItineraryMenuItemText(boolean ison){
+    public static String userItineraryMenuItemText(boolean ison, Context this_context){
         if(ison)
-            return "Hide my routes";
+            return this_context.getResources().getString(R.string.hide_my_routes);
         else
-            return "Show my routes";
+            return this_context.getResources().getString(R.string.show_my_routes);
     }
 
 	@Override
@@ -172,7 +134,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
             case 3:
                 PropertyHolder.setUseritinerariesOn(!isUserItinerariesOn);
                 isUserItinerariesOn = !isUserItinerariesOn;
-                item.setTitle(userItineraryMenuItemText(isUserItinerariesOn));
+                item.setTitle(userItineraryMenuItemText(isUserItinerariesOn, context));
                 mMap.clear();
                 mMap = null;
                 setUpMapIfNeeded();
@@ -200,13 +162,10 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		}		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final RBB rbb = routeTable.get(selectedMarker);
-            // rbb[2] is localized name
             builder.setTitle(rbb.name);
             builder.setIcon(R.drawable.ic_pin_info);
-            // rbb[3] is localized description
-            Log.i("rbb4", Float.toString(rbb.globalRating));
             if(rbb.globalRating>=0)
-                builder.setMessage(Html.fromHtml(rbb.description + "<br><br><b>Average Rating: " + Float.toString(rbb.globalRating)+ "</b>"));
+                builder.setMessage(Html.fromHtml(rbb.description + "<br><br><b>" + getResources().getString(R.string.average_rating) + ":" + Float.toString(rbb.globalRating)+ "</b>"));
             else
                 builder.setMessage(rbb.description);
             builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
@@ -272,7 +231,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 				addRouteMarkersFromDB();
 			}
 			if (mMap != null) {
-				tileProvider = initTileProvider(context);
+				tileProvider = initTileProvider();
 				if(tileProvider!=null){
 					TileOverlay tileOverlay = mMap
 							.addTileOverlay(new TileOverlayOptions()
@@ -321,12 +280,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 					Marker m = markers.nextElement();
 					bounds = bounds.including(m.getPosition());
 					Util.fitMapViewToBounds(mMap, getBaseContext(), bounds, 20);
-//					int[] screen_sizes = Util.getScreenSize(getBaseContext());
-//					int wsize = Util.getSmallerDimension(screen_sizes);
-//					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,wsize,wsize,20));
-					//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,200,200,20));
-					//mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,0));
-					//mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 10));
 				}
 			}									
 		}		
@@ -337,7 +290,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		if(tileProvider!=null){
 			tileProvider.close();
 		}
-		tileProvider = initTileProvider(context);
+		tileProvider = initTileProvider();
 		if(tileProvider!=null){
 			TileOverlay tileOverlay = mMap
 					.addTileOverlay(new TileOverlayOptions()
@@ -368,7 +321,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			routeTable = new Hashtable<Marker, RBB>();
 		}
 		for(RBB rbb : routesBareBones){
-            Log.i("rbb orig", "rbb4: " + Float.toString(rbb.globalRating));
 			LatLng middle = DataContainer.getRouteMiddleFast(Integer.toString(rbb.trackId), app.getDataBaseHelper());
 			if(middle!=null){
 				Marker my_marker = mMap.addMarker(new MarkerOptions()
@@ -379,31 +331,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		}
 	}
 
-	private MapBoxOfflineTileProvider initTileProvider(Context context) {
-        AssetManager am = context.getAssets();
-        File sdcard = new File(Environment.getExternalStorageDirectory(),
-                Util.baseFolder + "/" + Util.routeMapsFolder);
-
-
+	private MapBoxOfflineTileProvider initTileProvider() {
         File f = new File(PropertyHolder.getGeneralMapPath());
-
-        //File f = new File(getCacheDir() + "/Vista_general_vielha.mbtiles");
-//		if (!f.exists())
-//			try {
-//				InputStream is = getAssets().open(
-//						"Vista_general_vielha.mbtiles");
-//				int size = is.available();
-//				byte[] buffer = new byte[size];
-//				is.read(buffer);
-//				is.close();
-//				FileOutputStream fos = new FileOutputStream(f);
-//				fos.write(buffer);
-//				fos.close();
-//			} catch (Exception e) {
-//				throw new RuntimeException(e);
-//			}
 		if (f.exists()){
-
             return new MapBoxOfflineTileProvider(f.getPath());
 		}else{
 		}

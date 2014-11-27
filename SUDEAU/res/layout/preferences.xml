@@ -24,7 +24,7 @@
             android:id="@+id/version_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:textSize="16sp"
-            android:text="Eth Holet Version"
+            android:text="@string/version"
             android:layout_margin="10dp"
             />
         <View
@@ -34,7 +34,7 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="10dp" >
@@ -101,7 +101,7 @@
                 android:id="@+id/auto_center_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="visible"
                 android:layout_margin="10dp">
 
@@ -109,11 +109,20 @@
                     android:id="@+id/tvAutoCenter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Auto-center map"
+                    android:text="@string/auto_center"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/tvAutoCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_center_explanation"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
 
                 <ToggleButton
                     android:id="@+id/toggleAutoCenter"
+                    android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 </LinearLayout>
@@ -136,22 +145,37 @@
                 android:id="@+id/tvStepInterval"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Step Interval (Seconds)"
+                android:text="@string/fix_interval"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <EditText
+                <TextView
+                    android:id="@+id/tvStepInterval"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fix_interval_explanation"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+                <EditText
                 android:id="@+id/etFixInterval"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"/>
 
-            <Button
-                android:id="@+id/bOK"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="OK"/>
 
             </LinearLayout>
+
+            <View
+                android:background="#fff"
+                android:layout_width = "fill_parent"
+                android:layout_height="1dip"/>
+
+            <Button
+                android:id="@+id/bOK"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/ok"/>
 
 
         </LinearLayout>

@@ -17,8 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:layout_marginBottom="5dip"
-            android:text="Erulet"
-            android:textStyle="bold"            
+            android:textStyle="bold"
             android:textSize="25sp"/>
 
         <LinearLayout
@@ -45,7 +44,6 @@
             android:layout_marginBottom="5dip"
             android:gravity="center"
             android:textStyle="bold"
-            android:text="Aquesta aplicació per dispositius mòbils ha estat desenvolupada en el marc del projecte:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="15sp" />
 
@@ -64,12 +62,11 @@
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="15sp"
-            android:text="Coordinació i disseny de continguts:"/>
+/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="40dip"
             android:gravity="center" >
 
@@ -92,13 +89,13 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Disseny tècnic:"
+
             android:textSize="15sp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
+
             android:layout_marginBottom="40dip"
             android:src="@drawable/ic_movelab" />
 
@@ -110,13 +107,13 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Organitza:"
+
             android:textSize="15sp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
+
             android:layout_marginBottom="40dip"
             android:src="@drawable/ic_ajunt" />
 
@@ -128,13 +125,13 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Financia:"
+
             android:textSize="15sp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
+
             android:layout_marginBottom="40dip"
             android:src="@drawable/ic_sudoe_eu" />
 
@@ -146,7 +143,7 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Han col·laborat:"
+
             android:textSize="15sp" />
 
         <TextView
@@ -157,7 +154,7 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Lluís Camarero, Jordi Catalan, Frederic Bartumeus, John Palmer, Agustí Escobar, Enric Ballesteros, Guillermo de Mendoza, Fulanito de Tal, Laltre També, I. Elde Mesenllà"
+
             android:textSize="15sp" />
     </LinearLayout>
 

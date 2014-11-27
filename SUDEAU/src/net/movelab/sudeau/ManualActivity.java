@@ -1,20 +1,14 @@
 package net.movelab.sudeau;
 
-        import android.app.Activity;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.res.Resources;
-        import android.os.Build;
-        import android.os.Bundle;
-        import android.view.KeyEvent;
-        import android.support.v4.app.FragmentActivity;
-        import android.view.Menu;
-        import android.view.MenuInflater;
-        import android.view.MenuItem;
-        import android.webkit.WebSettings;
-        import android.webkit.WebView;
-        import android.webkit.WebViewClient;
-        import net.movelab.sudeau.R;
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * Main activity that user interacts with while performing the search..

@@ -36,7 +36,6 @@
         android:layout_marginLeft="6dip"
         android:layout_toRightOf="@id/route_description"
         android:background="@drawable/ic_download_dark"
-        android:contentDescription="TODO"
         android:gravity="center_vertical" />
 
 </RelativeLayout>

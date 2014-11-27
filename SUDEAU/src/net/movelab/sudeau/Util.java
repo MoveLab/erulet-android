@@ -7,7 +7,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -15,7 +14,6 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -29,33 +27,26 @@ import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.Route;
 
-import org.apache.http.Header;
-import org.apache.http.NameValuePair;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -63,18 +54,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -1069,9 +1055,9 @@ public class Util {
         } else {
 
             int server_id = jsonData.optInt("server_id", -1);
-            if(server_id == -1){
-            result = postJsonString(jsonData.toString(), apiEndpoint, context);
-            } else{
+            if (server_id == -1) {
+                result = postJsonString(jsonData.toString(), apiEndpoint, context);
+            } else {
                 String targetUrl = apiEndpoint + server_id + "/";
                 Log.i("postJson", "endpoint: " + targetUrl);
                 Log.i("postJson", "json: " + jsonData.toString());
@@ -1084,7 +1070,7 @@ public class Util {
     }
 
 
-    public static HttpResponse postJsonString(String jsonString, String targetUrl, Context context){
+    public static HttpResponse postJsonString(String jsonString, String targetUrl, Context context) {
         HttpResponse result = null;
         try {
             HttpParams httpParameters = new BasicHttpParams();
@@ -1114,10 +1100,10 @@ public class Util {
             Util.logError(context, TAG, "error: " + e);
         }
 
-    return result;
+        return result;
     }
 
-    public static HttpResponse postJsonStringAsUpdate(String jsonString, String targetUrl, Context context){
+    public static HttpResponse postJsonStringAsUpdate(String jsonString, String targetUrl, Context context) {
         HttpResponse result = null;
         try {
             HttpParams httpParameters = new BasicHttpParams();
@@ -1151,7 +1137,7 @@ public class Util {
     }
 
 
-    public static HttpResponse putJsonString(String jsonString, String targetUrl, Context context){
+    public static HttpResponse putJsonString(String jsonString, String targetUrl, Context context) {
 // TODO: fix this. Currently, the server returns an OK response but does not change any of the target record. In contrast, put requests work fine with Postman and via the REST Framework browsable API.
 
         HttpResponse result = null;
@@ -1191,7 +1177,7 @@ public class Util {
     }
 
     public static HttpResponse patchJsonString(String jsonString,
-                                          String targetUrl, Context context) {
+                                               String targetUrl, Context context) {
 
         HttpResponse response = null;
 
@@ -1225,9 +1211,9 @@ public class Util {
             response = httpclient.execute(httppatch);
 
         } catch (ClientProtocolException e) {
-       //TODO
+            //TODO
         } catch (IOException e) {
-      //TODO
+            //TODO
         }
 
         return response;
@@ -1253,7 +1239,7 @@ public class Util {
                 reader = new BufferedReader(new InputStreamReader(response
                         .getEntity().getContent(), "UTF-8"));
                 StringBuilder builder = new StringBuilder();
-                for (String line = null; (line = reader.readLine()) != null;) {
+                for (String line = null; (line = reader.readLine()) != null; ) {
                     builder.append(line).append("\n");
                 }
                 json = new JSONObject(builder.toString());
@@ -1272,22 +1258,22 @@ public class Util {
     }
 
     public static String parseInputStream(Context context, InputStream is) {
-            String result = "";
-            BufferedReader reader;
-            try {
-                reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                StringBuilder builder = new StringBuilder();
-                for (String line = null; (line = reader.readLine()) != null;) {
-                    builder.append(line).append("\n");
-                }
-                result = builder.toString();
+        String result = "";
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            StringBuilder builder = new StringBuilder();
+            for (String line = null; (line = reader.readLine()) != null; ) {
+                builder.append(line).append("\n");
+            }
+            result = builder.toString();
 
-            } catch (UnsupportedEncodingException e) {
-                Util.logError(context, TAG, "error: " + e);
-            } catch (IllegalStateException e) {
-                Util.logError(context, TAG, "error: " + e);
-            } catch (IOException e) {
-                Util.logError(context, TAG, "error: " + e);
+        } catch (UnsupportedEncodingException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (IllegalStateException e) {
+            Util.logError(context, TAG, "error: " + e);
+        } catch (IOException e) {
+            Util.logError(context, TAG, "error: " + e);
         }
         return result;
     }
@@ -1469,14 +1455,14 @@ public class Util {
         return result;
     }
 
-    public static int getLargestScreenDimension(Context context){
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager windowManager = (WindowManager) context
-                    .getSystemService(Context.WINDOW_SERVICE);
-            windowManager.getDefaultDisplay().getMetrics(metrics);
-            // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
-            return Math.max(metrics.widthPixels, metrics.heightPixels);
-        }
+    public static int getLargestScreenDimension(Context context) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        // I am setting the width to whichever is the longer dimension (since we don't know the orientation). This way, images will always be fully sharp and full width in landcape mode, and they can be rescaled on phone for portrait.
+        return Math.max(metrics.widthPixels, metrics.heightPixels);
+    }
 
 
     public static String getUrlGeneralReferences(Context context) {
@@ -1552,5 +1538,18 @@ public class Util {
         return response;
     }
 
+
+    public static String getLocalizedRegistrationUrl(Context context) {
+        if (!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        String lang = PropertyHolder.getLocale();
+        return UtilLocal.URL_SERVULET + lang + "/" + UtilLocal.API_REGISTRATION;
+    }
+    public static String getLocalizedLoginUrl(Context context) {
+        if (!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        String lang = PropertyHolder.getLocale();
+        return UtilLocal.URL_SERVULET + lang + "/" + UtilLocal.API_LOGIN;
+    }
 
 }

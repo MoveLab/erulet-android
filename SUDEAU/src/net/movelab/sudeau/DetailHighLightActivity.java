@@ -1,45 +1,32 @@
 package net.movelab.sudeau;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import net.movelab.sudeau.database.DataBaseHelper;
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.InteractiveImage;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
-import net.movelab.sudeau.model.Route;
-import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Route;
+import net.movelab.sudeau.model.Step;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 public class DetailHighLightActivity extends Activity {
 	
@@ -53,8 +40,7 @@ public class DetailHighLightActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_highlight_picture);
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
@@ -104,7 +90,7 @@ public class DetailHighLightActivity extends Activity {
         TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
         String rating_text = getString(R.string.your_rating);
         if(hl.getGlobalRating() >=0){
-            rating_text = "Ave. rating: " + String.format("%.2f", hl.getGlobalRating()) + "\n\n" + rating_text;
+            rating_text = getResources().getString(R.string.average_rating) + ": " + String.format("%.2f", hl.getGlobalRating()) + "\n\n" + rating_text;
         }
         ratingLabel.setText(rating_text);
 

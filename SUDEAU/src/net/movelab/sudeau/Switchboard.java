@@ -1,30 +1,16 @@
 package net.movelab.sudeau;
 
-import net.movelab.sudeau.database.DataBaseHelper;
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.FileManifest;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.InteractiveImage;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
-import net.movelab.sudeau.model.Route;
-import net.movelab.sudeau.model.Step;
-
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,35 +20,31 @@ import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import org.apache.http.Header;
+import net.movelab.sudeau.database.DataBaseHelper;
+import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.FileManifest;
+import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
+import net.movelab.sudeau.model.JSONConverter;
+import net.movelab.sudeau.model.Reference;
+import net.movelab.sudeau.model.Route;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -100,7 +82,7 @@ public class Switchboard extends FragmentActivity {
         setContentView(R.layout.activity_switchboard);
         initButtons();
 
-        if(!PropertyHolder.isInit())
+        if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
 
 
@@ -126,7 +108,7 @@ public class Switchboard extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        if(PropertyHolder.getTripInProgressFollowing() != -1){
+        if (PropertyHolder.getTripInProgressFollowing() != -1) {
             Intent intent = new Intent(Switchboard.this,
                     DetailItineraryActivity.class);
             startActivity(intent);
@@ -152,29 +134,14 @@ public class Switchboard extends FragmentActivity {
 
 
     private void tryToLogin() {
-            if (Util.isOnline(getBaseContext())) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, getString(R.string.no_data_access), Toast.LENGTH_SHORT).show();
-            }
+        if (Util.isOnline(getBaseContext())) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getString(R.string.no_data_access), Toast.LENGTH_SHORT).show();
+        }
     }
 
-
-    public void showNoRegistrationDialog(){
-    AlertDialog.Builder b = new AlertDialog.Builder(
-            Switchboard.this);
-    b.setIcon(R.drawable.ic_launcher);
-    b.setTitle("Eth Holet Registration");
-    b.setMessage("The final version of this app will let you create an account on the Eth Holet server so that ou can synchronized your data across devices and share highlights and ratings. For beta testing, however, no information is being sent to the server.");
-    b.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            dialogInterface.dismiss();
-        }
-    });
-    b.show();
-}
 
     private int group1 = 1;
     private int first_id = Menu.FIRST;
@@ -189,10 +156,10 @@ public class Switchboard extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
         menu.add(group1, second_id, second_id, getString(R.string.register_user));
-        menu.add(group1, third_id, third_id, "login");
-        menu.add(group1, fourth_id, fourth_id, "Sync");
-        menu.add(group1, fifth_id, fifth_id,getString(R.string.choose_it_my_itineraries));
-        menu.add(group1, sixth_id, sixth_id,getString(R.string.take_survey));
+        menu.add(group1, third_id, third_id, getResources().getString(R.string.login));
+        menu.add(group1, fourth_id, fourth_id, getResources().getString(R.string.sync));
+        menu.add(group1, fifth_id, fifth_id, getString(R.string.choose_it_my_itineraries));
+        menu.add(group1, sixth_id, sixth_id, getString(R.string.take_survey));
 
         //getMenuInflater().inflate(R.menu.switchboard, menu);
         return true;
@@ -279,16 +246,16 @@ public class Switchboard extends FragmentActivity {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(
                 Switchboard.this);
         builderSingle.setIcon(R.drawable.ic_launcher);
-        builderSingle.setTitle("Holet is still syncing");
-        builderSingle.setMessage("Holet needs to complete an initial sync with the server in order to have all necessary contents for offline use in the mountains. Wouuld you like to try the sync now? (You can always do it later by choosing the 'sync' option from the menu on this screen.");
-        builderSingle.setNegativeButton("Cancel",
+        builderSingle.setTitle(getResources().getString(R.string.still_syncing_title));
+        builderSingle.setMessage(getResources().getString(R.string.still_syncing_message));
+        builderSingle.setNegativeButton(getResources().getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-        builderSingle.setNeutralButton("Sync Later",
+        builderSingle.setNeutralButton(getResources().getString(R.string.sync_later),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -297,7 +264,7 @@ public class Switchboard extends FragmentActivity {
                         startActivity(i);
                     }
                 });
-        builderSingle.setPositiveButton("Sync Now",
+        builderSingle.setPositiveButton(getResources().getString(R.string.sync_now),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -312,16 +279,16 @@ public class Switchboard extends FragmentActivity {
         AlertDialog.Builder b = new AlertDialog.Builder(
                 Switchboard.this);
         b.setIcon(R.drawable.ic_launcher);
-        b.setTitle("Welcome to Eth Holet!");
-        b.setMessage("Thanks for trying out the beta version of our app. You will see that the app communicates with you in a mixture of English and Catalan (regardless of the language setting you choose). This will change in the next few weeks once we have everything translated, so please bear with us for now.\n\nIn order to function offline in the mountains, Eth Holet needs to perform an initial sync with the server, which will take several minutes. If you have an internet connection and would like to do this now, please click 'OK'. Otherwise, you can always do it later by choosing the 'sync' option from the menu on this screen.");
-         b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-             @Override
-             public void onClick(DialogInterface dialogInterface, int i) {
-                 startInitialSync();
-                 dialogInterface.dismiss();
-             }
-         });
-        b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        b.setTitle(getResources().getString(R.string.welcome_title));
+        b.setMessage(getResources().getString(R.string.welcome_message));
+        b.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startInitialSync();
+                dialogInterface.dismiss();
+            }
+        });
+        b.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -331,17 +298,15 @@ public class Switchboard extends FragmentActivity {
     }
 
 
-
-
     private void startInitialSync() {
 
         if (Util.isOnline(context)) {
             new InitialSyncAsync().execute(context);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Eth Holet Needs the Internet");
+            builder.setTitle(getResources().getString(R.string.internet_needed_title));
             builder.setIcon(R.drawable.ic_erulet_new);
-            builder.setMessage("Eth Holet needs an internet connection so he can get offline maps and route media from the server. Before starting a trip, please connect to the internet and choose 'Sync' from the options menu.");
+            builder.setMessage(getResources().getString(R.string.internet_needed_message_content));
 
             builder.setCancelable(true);
             builder.show();
@@ -362,7 +327,7 @@ public class Switchboard extends FragmentActivity {
             super.onPreExecute();
 
             prog = new ProgressDialog(context);
-            prog.setTitle("Holet is synching. Please stay connected to the internet.");
+            prog.setTitle(getResources().getString(R.string.syncing));
             prog.setIndeterminate(false);
             prog.setMax(100);
             prog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -382,50 +347,50 @@ public class Switchboard extends FragmentActivity {
 
             // JSON
 // TODO testing - iimplement better test for needing update
-            if(true){
+            if (true) {
 
-            myProgress = 10;
-            publishProgress(myProgress);
+                myProgress = 10;
+                publishProgress(myProgress);
 
-            myProgress += 20;
-            publishProgress(myProgress);
-            String jsonArrayString = Util.getJSON(UtilLocal.API_ROUTES, context[0]);
-            Util.logInfo(context[0], "API", jsonArrayString);
-            myProgress += 20;
-            publishProgress(myProgress);
-            try {
-                JSONArray ja = null;
-                try {
-                    ja = new JSONArray(jsonArrayString);
-                    myProgress += 10;
-                    publishProgress(myProgress);
-
-                } catch (JSONException e) {
-                    Util.logError(context[0], "JSON download 1", "" + e);
-                }
-                ArrayList<Route> these_routes = JSONConverter.jsonArrayToRouteArray(ja, app.getDataBaseHelper());
                 myProgress += 20;
                 publishProgress(myProgress);
-                int nDone = 0;
-                int totalRoutes = these_routes.size();
-                for (Route route : these_routes) {
-                    if (isCancelled()) {
-                        break;
-                    } else {
-                        Route existingRoute = DataContainer.findRouteByServerId(route.getServerId(), dataBaseHelper);
-                        if(existingRoute == null){
-                        DataContainer.insertRoute(route, dataBaseHelper);
-                        } else{
-                            DataContainer.updateRouteFromServer(route, existingRoute, app);
+                String jsonArrayString = Util.getJSON(UtilLocal.API_ROUTES, context[0]);
+                Util.logInfo(context[0], "API", jsonArrayString);
+                myProgress += 20;
+                publishProgress(myProgress);
+                try {
+                    JSONArray ja = null;
+                    try {
+                        ja = new JSONArray(jsonArrayString);
+                        myProgress += 10;
+                        publishProgress(myProgress);
+
+                    } catch (JSONException e) {
+                        Util.logError(context[0], "JSON download 1", "" + e);
+                    }
+                    ArrayList<Route> these_routes = JSONConverter.jsonArrayToRouteArray(ja, app.getDataBaseHelper());
+                    myProgress += 20;
+                    publishProgress(myProgress);
+                    int nDone = 0;
+                    int totalRoutes = these_routes.size();
+                    for (Route route : these_routes) {
+                        if (isCancelled()) {
+                            break;
+                        } else {
+                            Route existingRoute = DataContainer.findRouteByServerId(route.getServerId(), dataBaseHelper);
+                            if (existingRoute == null) {
+                                DataContainer.insertRoute(route, dataBaseHelper);
+                            } else {
+                                DataContainer.updateRouteFromServer(route, existingRoute, app);
+                            }
                         }
                     }
-                }
-                myProgress += 20;
-                publishProgress(myProgress);
+                    myProgress += 20;
+                    publishProgress(myProgress);
 
-            } catch (Exception e) {
-                Util.logError(context[0], "JSON download 2", "" + e);
-            }
+                } catch (Exception e) {
+                    Util.logError(context[0], "JSON download 2", "" + e);
+                }
             }
             //General Maps
             boolean mapSuccess = true;
@@ -528,106 +493,106 @@ public class Switchboard extends FragmentActivity {
 
 //Route Maps
             List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
-            for(Route route: routes){
+            for (Route route : routes) {
                 boolean routeMapSuccess = true;
-                if(route.getLocalCarto() != null && !route.getLocalCarto().equals("") && !route.getLocalCarto().equals("none")){
-            try {
-                HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    if (response.containsHeader("Content-Length")) {
-                        int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
-                        HttpEntity entity = response.getEntity();
-                        File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
-                        String destinationPath = destinationFile.getPath();
-                        InputStream input = new BufferedInputStream(entity.getContent());
-                        OutputStream output = new FileOutputStream(destinationPath);
-                        byte data[] = new byte[1024];
-                        int total = 0;
-                        while ((count = input.read(data)) != -1) {
-                            if (isCancelled()) {
-                                routeMapSuccess = false;
-                                break;
-                            } else {
-                                output.write(data, 0, count);
-                                total += count;
-                                myProgress = (int) ((total * 90) / fileSize);
-                                publishProgress(myProgress);
-                            }
-                        }
-                        output.flush();
-                        output.close();
-                        input.close();
-                        // NOW UNZIP IT
-                        ZipFile thisZipfile = new ZipFile(destinationPath);
-                        int nEntries = thisZipfile.size();
-                        int zipCounter = 0;
-                        String zipFilePath = destinationPath;
-                        File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMapsFolder);
-                        String destDirectory = target_directory.getPath();
-                        try {
-                            final int BUFFER_SIZE = 4096;
-                            File destDir = new File(destDirectory);
-                            if (!destDir.exists()) {
-                                destDir.mkdirs();
-                            }
-                            ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-                            ZipEntry entry = zipIn.getNextEntry();
-                            // iterates over entries in the zip file. THE server should put only one in it, and I will save only the last entry as the map destination in shared preferences. But I am keeping the iteration just in case that would change in future.
-                            while (entry != null) {
-                                if (isCancelled()) {
-                                    routeMapSuccess = false;
-                                    break;
-                                } else {
-                                    String filePath = destDirectory + File.separator + entry.getName();
-                                    PropertyHolder.setGeneralMapPath(filePath);
-                                    if (!entry.isDirectory()) {
-                                        // if the entry is a file, extracts it
-                                        File f = new File(filePath);
-                                        File dir = new File(f.getParent());
-                                        dir.mkdirs();
-                                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-                                        byte[] bytesIn = new byte[BUFFER_SIZE];
-                                        int read = 0;
-                                        while ((read = zipIn.read(bytesIn)) != -1) {
-                                            bos.write(bytesIn, 0, read);
-                                        }
-                                        bos.close();
-
-                                        // add it to route
-                                        route.setLocalCarto(filePath);
-                                        route.setLocalCartoLastUpdatedNow();
-                                        DataContainer.updateRoute(route, app.getDataBaseHelper());
+                if (route.getLocalCarto() != null && !route.getLocalCarto().equals("") && !route.getLocalCarto().equals("none")) {
+                    try {
+                        HttpResponse response = Util.getResponse(Util.getUrlRouteMap(route), 180000);
+                        int statusCode = response.getStatusLine().getStatusCode();
+                        if (statusCode == 200) {
+                            if (response.containsHeader("Content-Length")) {
+                                int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
+                                HttpEntity entity = response.getEntity();
+                                File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
+                                String destinationPath = destinationFile.getPath();
+                                InputStream input = new BufferedInputStream(entity.getContent());
+                                OutputStream output = new FileOutputStream(destinationPath);
+                                byte data[] = new byte[1024];
+                                int total = 0;
+                                while ((count = input.read(data)) != -1) {
+                                    if (isCancelled()) {
+                                        routeMapSuccess = false;
+                                        break;
                                     } else {
-                                        // if the entry is a directory, make the directory
-                                        File dir = new File(filePath);
-                                        dir.mkdirs();
+                                        output.write(data, 0, count);
+                                        total += count;
+                                        myProgress = (int) ((total * 90) / fileSize);
+                                        publishProgress(myProgress);
                                     }
                                 }
-                                myProgress += (int) ((++zipCounter * 10) / nEntries);
-                                publishProgress(myProgress);
-                                zipIn.closeEntry();
-                                entry = zipIn.getNextEntry();
+                                output.flush();
+                                output.close();
+                                input.close();
+                                // NOW UNZIP IT
+                                ZipFile thisZipfile = new ZipFile(destinationPath);
+                                int nEntries = thisZipfile.size();
+                                int zipCounter = 0;
+                                String zipFilePath = destinationPath;
+                                File target_directory = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/" + Util.routeMapsFolder);
+                                String destDirectory = target_directory.getPath();
+                                try {
+                                    final int BUFFER_SIZE = 4096;
+                                    File destDir = new File(destDirectory);
+                                    if (!destDir.exists()) {
+                                        destDir.mkdirs();
+                                    }
+                                    ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+                                    ZipEntry entry = zipIn.getNextEntry();
+                                    // iterates over entries in the zip file. THE server should put only one in it, and I will save only the last entry as the map destination in shared preferences. But I am keeping the iteration just in case that would change in future.
+                                    while (entry != null) {
+                                        if (isCancelled()) {
+                                            routeMapSuccess = false;
+                                            break;
+                                        } else {
+                                            String filePath = destDirectory + File.separator + entry.getName();
+                                            PropertyHolder.setGeneralMapPath(filePath);
+                                            if (!entry.isDirectory()) {
+                                                // if the entry is a file, extracts it
+                                                File f = new File(filePath);
+                                                File dir = new File(f.getParent());
+                                                dir.mkdirs();
+                                                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+                                                byte[] bytesIn = new byte[BUFFER_SIZE];
+                                                int read = 0;
+                                                while ((read = zipIn.read(bytesIn)) != -1) {
+                                                    bos.write(bytesIn, 0, read);
+                                                }
+                                                bos.close();
+
+                                                // add it to route
+                                                route.setLocalCarto(filePath);
+                                                route.setLocalCartoLastUpdatedNow();
+                                                DataContainer.updateRoute(route, app.getDataBaseHelper());
+                                            } else {
+                                                // if the entry is a directory, make the directory
+                                                File dir = new File(filePath);
+                                                dir.mkdirs();
+                                            }
+                                        }
+                                        myProgress += (int) ((++zipCounter * 10) / nEntries);
+                                        publishProgress(myProgress);
+                                        zipIn.closeEntry();
+                                        entry = zipIn.getNextEntry();
+                                    }
+                                    zipIn.close();
+                                } catch (Exception ex) {
+                                    routeMapSuccess = false;
+                                }
+
+                            } else {
                             }
-                            zipIn.close();
-                        } catch (Exception ex) {
+                        } else {
                             routeMapSuccess = false;
                         }
+                    } catch (ClientProtocolException e) {
+                        routeMapSuccess = false;
 
-                    } else {
+                    } catch (IOException e) {
+                        routeMapSuccess = false;
                     }
-                } else {
-                   routeMapSuccess = false;
-                }
-            } catch (ClientProtocolException e) {
-                routeMapSuccess = false;
-
-            } catch (IOException e) {
-                routeMapSuccess = false;
-            }
-            if (routeMapSuccess) {
-              route.setLocalCartoLastUpdatedNow();
-            }
+                    if (routeMapSuccess) {
+                        route.setLocalCartoLastUpdatedNow();
+                    }
                 }
             }
 // GENERAL REFS
@@ -754,7 +719,7 @@ public class Switchboard extends FragmentActivity {
                     int statusCode = response.getStatusLine().getStatusCode();
                     if (statusCode == 200) {
                         if (response.containsHeader("Content-Length")) {
-                        Log.d("Route Media status code: ", "" + statusCode);
+                            Log.d("Route Media status code: ", "" + statusCode);
                             int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
                             HttpEntity entity = response.getEntity();
                             File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
@@ -846,8 +811,8 @@ public class Switchboard extends FragmentActivity {
                                                     Reference this_reference = DataContainer.findReferenceByServerId(Integer.parseInt(this_reference_server_id), app.getDataBaseHelper());
                                                     this_file_manifest.setReference(this_reference);
                                                     DataContainer.updateFileManifest(this_file_manifest, app.getDataBaseHelper());
-                                                    if(filePath.contains(".html")){
-                                                        String lang = filePath.substring(filePath.length()-7, filePath.length()-5);
+                                                    if (filePath.contains(".html")) {
+                                                        String lang = filePath.substring(filePath.length() - 7, filePath.length() - 5);
                                                         this_reference.setHtmlPath(lang, filePath);
 
                                                         DataContainer.updateReference(this_reference, app.getDataBaseHelper());
@@ -929,11 +894,11 @@ public class Switchboard extends FragmentActivity {
             String srMessage;
 
             if (Util.hasMinimumContents(context, app)) {
-                srTitle = "Success!";
-                srMessage = "Eth Holet has all the data he needs. You can go ahead and start hiking!";
+                srTitle = getResources().getString(R.string.sync_success_title);
+                srMessage = getResources().getString(R.string.sync_success_message);
             } else {
-                srTitle = "We had some trouble...";
-                srMessage = "Eth Holet was not able to get all of the data he needs from the server. Please check you internet connection and try again.";
+                srTitle = getResources().getString(R.string.sync_error_title);
+                srMessage = getResources().getString(R.string.sync_error_message);
 
             }
 
@@ -942,7 +907,7 @@ public class Switchboard extends FragmentActivity {
             syncReport.setIcon(R.drawable.ic_launcher);
             syncReport.setTitle(srTitle);
             syncReport.setMessage(srMessage);
-            syncReport.setNegativeButton("OK",
+            syncReport.setNegativeButton(getResources().getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

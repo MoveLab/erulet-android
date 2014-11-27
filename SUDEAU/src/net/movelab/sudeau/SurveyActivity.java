@@ -9,14 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SurveyActivity extends FragmentActivity {
 
@@ -71,7 +66,7 @@ public class SurveyActivity extends FragmentActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 Log.e("login", "page started top. url is " + url);
                 if(url.contains("/ok/")){
-                    Util.toast(context, "Survey submitted - thanks you!");
+                    Util.toast(context, getResources().getString(R.string.survey_submitted));
                     finish();
                 }}
 
@@ -79,7 +74,7 @@ public class SurveyActivity extends FragmentActivity {
             public void onPageFinished(WebView view, String url) {
                 Log.e("login", "page finished top. url is " + url);
                 if(url.contains("/ok/")){
-                    Util.toast(context, "Survey submitted - thank you!");
+                    Util.toast(context, getResources().getString(R.string.survey_submitted));
                     finish();
             }}
 
@@ -100,8 +95,6 @@ public class SurveyActivity extends FragmentActivity {
         String this_url = UtilLocal.URL_SERVULET + lang + "/survey/mob/" + survey_type + "/" + route_server_id;
         myWebView.loadUrl(this_url);
 
-
-
         }
 
         super.onResume();
@@ -113,9 +106,9 @@ public class SurveyActivity extends FragmentActivity {
         AlertDialog.Builder b = new AlertDialog.Builder(
                 SurveyActivity.this);
         b.setIcon(R.drawable.ic_launcher);
-        b.setTitle("Eth Holet Needs the Internet");
-        b.setMessage("To complete the survey, you need to have an internet connection. Please check your settings and return to this activity when you have a connection");
-        b.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        b.setTitle(getResources().getString(R.string.internet_needed_title));
+        b.setMessage(getResources().getString(R.string.internet_needed_message));
+        b.setNeutralButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

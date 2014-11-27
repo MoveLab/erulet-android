@@ -43,6 +43,7 @@ public class EditRouteActivity extends Activity {
     private RatingBar myRating;
     private SharedPreferences.Editor mPrefEditor;
     private boolean changed;
+    Context context;
 
     String locale;
     //TODO Improve default name, allow for multiple non-colliding defaults
@@ -60,7 +61,7 @@ public class EditRouteActivity extends Activity {
             app = (EruletApp) getApplicationContext();
         }
 
-        Context context = getApplication();
+        context = getApplication();
         if(!PropertyHolder.isInit())
             PropertyHolder.init(context);
         locale = PropertyHolder.getLocale();
@@ -106,18 +107,15 @@ public class EditRouteActivity extends Activity {
 
     private int save(String userId) {
 
-        Log.i("ahh", "help");
-
-        Log.d("save edited route", routeName.getText().toString());
-        Log.d("save edited route", locale);
-
+        if(routeName.getText() != null){
         editedRoute.setName(locale, routeName.getText().toString());
+        }
 
-        Log.d("save edited route", editedRoute.getName(locale));
-
+        if(routeDescription.getText() != null){
         editedRoute.setDescription(locale, routeDescription.getText().toString());
+        }
         DataContainer.updateRoute(editedRoute, app.getDataBaseHelper());
-        Toast.makeText(getApplicationContext(), getString(R.string.save_succesful), Toast.LENGTH_LONG).show();
+        Toast.makeText(context, getString(R.string.save_succesful), Toast.LENGTH_LONG).show();
         return editedRoute.getId();
     }
 
@@ -131,7 +129,7 @@ public class EditRouteActivity extends Activity {
         TextView ratingLabel = (TextView) findViewById(R.id.tvUserRating);
         String rating_text = getString(R.string.your_rating);
         if(editedRoute.getGlobalRating() >=0){
-            rating_text = "Ave. rating of the route you were following: " + editedRoute.getGlobalRating() + "\n" + rating_text;
+            rating_text = getResources().getString(R.string.average_rating_of_followed_route) + ": " + editedRoute.getGlobalRating() + "\n" + rating_text;
         }
         ratingLabel.setText(rating_text);
 
@@ -159,13 +157,6 @@ public class EditRouteActivity extends Activity {
             }
         });
 
-
-//		RatingBar globalRating = (RatingBar)findViewById(R.id.ratBarGlobalRoute);
-//		globalRating.setStepSize(1.0f);
-//		if(editedRoute.getIdRouteBasedOn() != null){
-//			Route basedOn = DataContainer.findRouteById(editedRoute.getIdRouteBasedOn(), app.getDataBaseHelper());
-//			globalRating.setRating( basedOn.getGlobalRating() );
-//		}
 
         routeName.addTextChangedListener(new TextWatcher() {
             @Override

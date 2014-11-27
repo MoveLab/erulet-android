@@ -8,7 +8,6 @@
         android:id="@+id/tvDescripcio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aquesta és la pantalla d&apos;informació de l&apos;aplicació. Aquí hi posarem informació sobre la versió, així com una breu descripció de per què serveix, i el context en que s&apos;ha desenvolupat..."
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>
