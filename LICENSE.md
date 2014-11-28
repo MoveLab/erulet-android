@@ -1,6 +1,6 @@
 <p>Erulet is an open source mobile application that aims to disseminate information, facilitate visits, and engage the public to participate in studying and protecting natural areas of the Val d'Aran.
 
-<p>Copyright &#169; 2014 Agustí Escobar</p>
+<p>Copyright &#169; 2014 Agustí Escobar and John R.B. Palmer</p>
  
 <p>Erulet is free software: you can redistribute it and/or modify 
  it under the terms of the GNU General Public License as published by 

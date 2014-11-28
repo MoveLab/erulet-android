@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -187,6 +189,8 @@ public class HTMLViewerActivity extends FragmentActivity {
 
                     int i = 0;
                     for(String video_uri : video_list){
+
+                        Log.i("video", video_uri);
                         //TODO localize string
                         video_labels[i] = "Video" + (i + 1);
                         video_uris[i] = video_uri;
@@ -231,7 +235,11 @@ public class HTMLViewerActivity extends FragmentActivity {
         for(HtmlPathPair html_path_pair : html_list){
             String[] s1 = html_path_pair.getHtmlString().split(".mp4");
             for(int i = 0; i < s1.length; i = i + 2){
-                video_list.add((new File(html_path_pair.getHtmlPath(), s1[i].split("href=\"")[s1[i].split("href=\"").length - 1] + ".mp4")).getAbsolutePath());
+                // TODO finish this
+                if(false){
+                    String this_path = html_path_pair.getHtmlPath();
+                    video_list.add((new File(this_path, s1[i].split("href=\"")[s1[i].split("href=\"").length - 1] + ".mp4")).getAbsolutePath());
+                }
             }
             }
         return video_list;

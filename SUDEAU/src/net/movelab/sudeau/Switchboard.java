@@ -108,7 +108,7 @@ public class Switchboard extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        if (PropertyHolder.getTripInProgressFollowing() != -1) {
+        if (PropertyHolder.getTripInProgressTracking() >= 0) {
             Intent intent = new Intent(Switchboard.this,
                     DetailItineraryActivity.class);
             startActivity(intent);
@@ -715,7 +715,7 @@ public class Switchboard extends FragmentActivity {
             for (Route route : routes) {
                 boolean routeSuccess = true;
                 try {
-                    HttpResponse response = Util.getResponse(Util.getUrlRouteContent(context[0], route.getServerId(), route.getRouteContentLastUpdated()), 180000);
+                    HttpResponse response = Util.getResponse(Util.getUrlRouteContent(context[0], route.getServerId(), route.getRouteContentLastUpdated()), 900000);
                     int statusCode = response.getStatusLine().getStatusCode();
                     if (statusCode == 200) {
                         if (response.containsHeader("Content-Length")) {
