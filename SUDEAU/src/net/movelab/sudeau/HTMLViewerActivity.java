@@ -44,6 +44,7 @@ public class HTMLViewerActivity extends FragmentActivity {
     String base_url;
     boolean firstload;
     String locale;
+    boolean onInitialPage = false;
     private HighLight hl;
     Context context;
     Context thisContext = this;
@@ -226,7 +227,7 @@ public class HTMLViewerActivity extends FragmentActivity {
                 }
 
 
-                String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("’", "&#39;").replace("`", "&#39;");
+                String modified_html_text = html_text.toString().replace("../", "file://" + Environment.getExternalStorageDirectory().getPath() + "/" + Util.baseFolder + "/" ).replace("</head>","</head><body>").replace("</html>", "</body></html>").replace("’", "&#39;").replace("`", "&#39;").replace("\u0092", "&#39;");
 
                 Log.i("htmltext ", modified_html_text);
 
@@ -275,14 +276,11 @@ public class HTMLViewerActivity extends FragmentActivity {
         WebView wv;
         wv = (WebView) findViewById(R.id.wb_webView);
         Log.i("WV BACK: ", wv.getUrl());
-        if(wv.canGoBack() && !wv.getUrl().equals("about:blank")){
-            wv.goBack();
-            Log.i("WV BACKED: ", wv.getUrl());
-            if(wv.getUrl().equals("about:blank")){
-                Log.i("WV BACKED LOADING: ", wv.getUrl());
+        if(wv.canGoBack() && !onInitialPage){
                 loadHTML();
-            }
-        }else{
+                onInitialPage = true;
+        }
+        else{
             super.onBackPressed();
         }
     }

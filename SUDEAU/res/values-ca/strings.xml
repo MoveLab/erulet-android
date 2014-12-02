@@ -5,7 +5,7 @@
  Release: Working copy
  Locale: ca_ES, Catalan (Spain)
  Exported by: John Palmer
- Exported at: Fri, 28 Nov 2014 17:49:05 +0000
+ Exported at: Tue, 02 Dec 2014 02:37:56 +0000
 -->
 <resources>
     <string name="Aranese">Aranés</string>
@@ -177,7 +177,6 @@
     <string name="info">Informació</string>
     <string name="interactive_image">Imatge interactiva</string>
     <string name="interactive_pic">Fotografia interactiva</string>
-    <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
     <string name="internet_needed_message">Et cal una connexió a Internet per respondre l\'enquesta. Si us plau, comprova els ajustos i torna a aquesta activitat quan tinguis connexió\n</string>
     <string name="internet_needed_message_content">A Eth Holet li cal una connexió a Internet per descarregar els mapes i els continguts dels itineraris. Abans de començar una excursió connecta\'t a Internet i selecciona \'Sincronitzar\' a les opcions del menú, si us plau.\n</string>
     <string name="internet_needed_title">Cal Internet</string>
@@ -196,7 +195,7 @@
     <string name="last_name">Cognoms</string>
     <string name="latitude">Latitud:\u0020</string>
     <string name="latitude_short">Lat:\u0020</string>
-    <string name="list_my_routes">Llista els meus\u0020</string>
+    <string name="list_my_routes">Llista els meus itineraris</string>
     <string name="location">Ubicació:</string>
     <string name="location_not_enabled">La localització del dispositiu no està activada; cal activar-la.</string>
     <string name="login">Log in to existing account</string>
@@ -215,7 +214,6 @@
     <string name="lp_guide_along_rivers">Eth Holet et guiarà al llarg dels rius i fins adalt als estanys, i t’ensenyarà els secrets de les aigües dels seus amagatalls als boscos i muntanyes.</string>
     <string name="lp_holet_is_FOSS">Eth Holet està programat en codi lliure i obert. Comprova la nostra &lt;a href=\'../api/\'&gt;API&lt;/a&gt; o segueix-nos a &lt;a href=\'http://github.com/MoveLab\'&gt;Github&lt;/a&gt;!</string>
     <string name="lp_holet_team">Equip d\'Eth Holet: LOOP i MoveLab (CEAB-CSIC, CREAF i UB)</string>
-    <string name="lp_holet_will_guide_you">Eth Holet et guiarà a través dels camins de la Val d’Aran. Rebràs avisos i informació suplementària quan estiguis a prop dels punts d’interès.</string>
     <string name="lp_learn_about_rivers_and_lakes">Aprèn sobre els rius i estanys de la Val d’Aran. Eth Holet està ple de materials divulgatius fets per científics que han treballat aquí des de fa anys.</string>
     <string name="lp_learn_more">Saber més</string>
     <string name="lp_meet_holet_text">Eth Holet (es pronuncia er-ulet) és un personatge de la mitologia aranesa. És un follet que viu amagat als boscos, i representa l’esperit de la Natura. I ara ve a trobar-te . . . en una app!</string>
@@ -239,7 +237,7 @@
     <string name="manual_buttons_text">&lt;p&gt;Dintre dels itineraris (virtuals o reals) tenim botons que ens permeten fer accions.&lt;/p&gt;&lt;ul class=\'no_bullet\'&gt;&lt;li class=\'image_bullet stop\'&gt;Final del recorregut. Surt de l\'itinerari i ens dóna l\'opció de desar el recorregut i la informació que hem introduït.&lt;/li&gt;&lt;li class=\'image_bullet add_info\'&gt;Afegir informació. Permet a l\'usuari afegir informació (comentaris, fotos i videos) amb la seva localització geogràfica.&lt;/li&gt;&lt;li class=\'image_bullet compass\'&gt;Brúixola. Obre la utilitat de brúixola.&lt;/li&gt;&lt;li class=\'image_bullet where\'&gt;Posició actual. Mostra al mapa la nostra posició.&lt;/li&gt;&lt;/ul&gt;</string>
     <string name="manual_itineraries">ITINERARIS:</string>
     <string name="manual_itineraries_text">&lt;p&gt;Sobre els mapes dels itineraris poden apar&amp;egrave;ixer tres tipus d\'icones:&lt;/p&gt;\n&lt;ul class=\"no_bullet\"&gt;\n&lt;li class=\"image_bullet_tall waypoint\"&gt;Punt de ruta. Clicant a sobre obtenim informaci&amp;oacute; de com arribar des d\'aqu&amp;iacute; al seg&amp;uuml;ent punt de ruta.&lt;/li&gt;\n&lt;li class=\"image_bullet_tall poi\"&gt;Punt d\'inter&amp;egrave;s. Clicant a sobre es desplega informaci&amp;oacute; sobre algun tema d\'inter&amp;egrave;s relacionat amb el lloc on ens trobem.&lt;/li&gt;\n&lt;li class=\"image_bullet_tall holet_alert\"&gt;Av&amp;iacute;s. Clicant a sobre obtenim avisos sobre temes de seguretat o afectacions al medi ambient en el lloc on ens trobem.&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;Durant el recorregut el vibrador i un senyal ac&amp;uacute;stic del dispositiu ens avisaran que estem arribant a algun d\'aquests punts.&lt;/p&gt;</string>
-    <string name="manual_itinerary_selection">SELECCIÓ DITINERARIS:</string>
+    <string name="manual_itinerary_selection">SELECCIÓ D\'ITINERARIS:</string>
     <string name="manual_itinerary_selection_text">&lt;p&gt;Desplega el mapa general amb tots els itineraris disponibles.&lt;/p&gt;&lt;p&gt;Clicant sobre cadascun dels itineraris es desplega una descripció general de l\'itinerari.&lt;/p&gt;&lt;p&gt;Fent clic a sobre de la descripció entrem dintre de l\'itinerari, amb dues opcions:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;VISUALITZAR la ruta (ens permet fer un recorregut virtual de la ruta)&lt;/li&gt;&lt;li&gt;RECÓRRER la ruta (activa el sistema de guia de la ruta, enregistra el recorregut i ens permet afegir informació pròpia a l\'itinerari).&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;El botó de menú secundari permet editar els nostres itineraris i fer la valoració dels itineraris compartits.&lt;/p&gt;</string>
     <string name="manual_main_screen">PANTALLA PRINCIPAL:</string>
     <string name="manual_main_screen_text">&lt;p&gt;Permet accedir a informació general de l\'app i a la pantalla de selecció d\'itineraris.&lt;/p&gt;&lt;p&gt;El botó de menú secundari permet fixar les preferències (l\'idioma i l\'interval de temps entre posicionaments GPS consecutius) i registrar-se com a usuari/a (opcional).&lt;/p&gt;</string>
@@ -344,7 +342,7 @@
     <string name="replace_ii">Canviar una imatge interactiva\u0020</string>
     <string name="replace_ii_explanation">Per canviar una imatge interactiva, primer carregar un fitxer d\'imatge en aquesta pàgina. En la pàgina següent podràs crear arees clicables sobre la imatge i especificar el text que es mostrarà quan es clica cada àrea.</string>
     <string name="replace_ii_text">Carregar una nova imatge que tindrà àrees clicables.</string>
-    <string name="response_standard_deviation">Desviació estàndar de les respostes:</string>
+    <string name="response_standard_deviation">Desviació estàndard de les respostes:</string>
     <string name="restart_needed">S\'ha canviat l\'idioma de l\'aplicació. Per tal que els canvis tinguin efecte, cal reiniciar.</string>
     <string name="restart_now">Reiniciar ara?</string>
     <string name="return_home">Tornar a la pàgina inicial</string>
@@ -397,7 +395,7 @@
     <string name="take_survey">Respondre l\'enquesta</string>
     <string name="temp_marker">Marcador temporal</string>
     <string name="terms">Condicions</string>
-    <string name="thank_you">gràcies!</string>
+    <string name="thank_you">Gràcies!</string>
     <string name="total_distance">Distància total</string>
     <string name="total_time">Temps total</string>
     <string name="track">Recorregut</string>

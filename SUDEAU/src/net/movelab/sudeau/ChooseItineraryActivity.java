@@ -138,6 +138,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                 mMap.clear();
                 mMap = null;
                 setUpMapIfNeeded();
+                refreshMapView();
                 return true;
 			default:
 				break;
@@ -225,12 +226,12 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		if (mMap == null) {
 			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
 					R.id.map)).getMap();
+        }
 			// Check if we were successful in obtaining the map.
 			if (mMap != null) {
 				// addMarkers
 				addRouteMarkersFromDB();
-			}
-			if (mMap != null) {
+
 				tileProvider = initTileProvider();
 				if(tileProvider!=null){
 					TileOverlay tileOverlay = mMap
@@ -266,7 +267,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 			});
 			
 
-		}}
+		}
 	}
 	
 	private void setUpCamera(){				

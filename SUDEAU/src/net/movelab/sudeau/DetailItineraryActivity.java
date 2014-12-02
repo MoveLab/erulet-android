@@ -1898,7 +1898,9 @@ Log.i("startOrResumeTracking", "top");
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
+        if(selectedRoute.getOfficial()){
         menu.add(group1, second_id, second_id, isUserHighlightsOn ? getResources().getString(R.string.hide_my_highlights): getResources().getString(R.string.show_my_highlights));
+        }
         menu.add(group1, third_id, third_id, getString(R.string.take_survey));
         return true;
     }

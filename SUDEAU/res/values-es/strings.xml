@@ -5,7 +5,7 @@
  Release: Working copy
  Locale: es_ES, Spanish
  Exported by: John Palmer
- Exported at: Fri, 28 Nov 2014 17:49:05 +0000
+ Exported at: Tue, 02 Dec 2014 02:37:56 +0000
 -->
 <resources>
     <string name="Aranese">Aranés</string>
@@ -29,6 +29,7 @@
     <string name="add_marker_confirm">¿Quieres añadir este marcador?</string>
     <string name="add_or_not">¿Añadimos o no?</string>
     <string name="all_about_water">Todo sobre el agua</string>
+    <string name="all_routes">Todos los itinerarios</string>
     <string name="already_registered">Ya estás registrado/a.</string>
     <string name="already_registered_q">¿Ya te has registrado?</string>
     <string name="altitude">Altitud:</string>
@@ -39,8 +40,10 @@
     <string name="auto_center_explanation">Si seleccionas SÏ, el mapa se centrará automáticamente en tu posición a medida que te vayas moviendo.</string>
     <string name="average_rating">Valoración promedio</string>
     <string name="average_rating_of_followed_route">Valoración promedio del itinerario que has recorrido</string>
+    <string name="average_response">Respuesta promedio:</string>
     <string name="avg_distance_samples">Distancia media entre muestras</string>
     <string name="avg_speed">Velocidad media</string>
+    <string name="back_to_route">Vuelve al itinerario</string>
     <string name="bassa_d_oles">Bassa d’Oles.</string>
     <string name="bearing">Orientación:</string>
     <string name="before_leaving">Antes de salir</string>
@@ -75,6 +78,11 @@
     <string name="date">Fecha:</string>
     <string name="degrees">grados</string>
     <string name="description">Descripción:</string>
+    <string name="description_aranese">Descripción - Aranés</string>
+    <string name="description_catalan">Descripción - Catalán</string>
+    <string name="description_english">Descripción - Inglés</string>
+    <string name="description_french">Descripción - Francés</string>
+    <string name="description_spanish">Descripción - Español</string>
     <string name="destination">Ubicación destino:</string>
     <string name="destination_undef">Ubicación destino: ????</string>
     <string name="detail_highlight">Vista de detalle</string>
@@ -90,6 +98,7 @@
     <string name="edit_ii_box_text">Editar el mensaje o arrastrar el cursor para cambiar las dimensiones y la posición de la ventana sobre la imagen.</string>
     <string name="edit_profile">Editar el perfil</string>
     <string name="edit_ref_cancel">Cancelar</string>
+    <string name="edit_ref_explanation">Para reemplazar un artículo utilizar este formulario para cargar una carpeta ZIP que contenga entre uno y cinco ficheros HTML junto con todos los ficheros CSS, JPG, PNG, GIF, y/o MP4 relacionados (solo estos tipos de ficheros están permitidos). Los ficheros HTML han de tener nombres que acaben en -XX.html, donde XX es el código del idioma. Utilizar oc para el aranés, es para el español, ca para el catalán, fr para el francés, en para el inglés y to para todos los idiomas (nota: se pueden utilizar mayúscules y códigos de tres letras, pero solo se evaluarán las dos primeras letras después del guión. Los ficheros acabados en \'-to.html\' se mostrarán a los usuarios/as de todos los idiomas). Comprobar que los enlaces en los ficheros HTML utilizan rutas relativas (p.ex. src=\'poi.png\' y no src=\'http://holet.com/poi.png\') excepto si son enlaces a otro servidor. En este caso utilizar la ruta absoluta al servidor en cuestión (p.ex. src=\'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Agapanthia_pustulifera_copulation_1.jpg). No es imprescindible incluir los CSS relacionados. Si no se incluye ningún CSS el servidor creará uno que se utilizará cuando el artículo se muestre en la app Eth Holet en los móviles. Cuando el artículo se muestre en este website utilizará un único CSS para adaptarse al formato de la web, independientemente de si se ha incluido un fichero CSS.</string>
     <string name="edit_reference">Editar el artículo</string>
     <string name="edit_reference_explanation">Para cambiar un artículo en HTML utilizar este formulario para cargar una carpeta ZIP que contenga entre uno y cinco ficheros HTML junto con todos los ficheros CSS, JPG, PNG, GIF, y/o MP4 relacionados (solo estos tipos de ficheros están permitidos). Los ficheros HTML han de tener nombres que acaben en -XX.html, donde XX es el código del idioma. Utilizar oc para el aranés, es para el español, ca para el catalán, fr para el francés, en para el inglés y to para todos los idiomas (nota: se pueden utilizar mayúscules y códigos de tres letras, pero solo se evaluarán las dos primeras letras después del guión. Los ficheros acabados en \'-to.html\' se mostrarán a los usuarios/as de todos los idiomas). Comprobar que los enlaces en los ficheros HTML utilizan rutas relativas (p.ex. src=\'poi.png\' y no src=\'http://holet.com/poi.png\') excepto si son enlaces a otro servidor. En este caso utilizar la ruta absoluta al servidor en cuestión (p.ex. src=\'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Agapanthia_pustulifera_copulation_1.jpg). No es imprescindible incluir los CSS relacionados. Si no se incluye ningún CSS el servidor creará uno que se utilizará cuando el artículo se muestre en la app Eth Holet en los móviles. Cuando el artículo se muestre en este website utilizará un único CSS para adaptarse al formato de la web, independientemente de si se ha incluido un fichero CSS.</string>
     <string name="edit_reference_text">Cambiar el nombre del artículo o cargar una carpeta ZIP para cambiar el fichero HTML.</string>
@@ -101,12 +110,14 @@
     <string name="error">Error</string>
     <string name="error_gplay_connect">Error en la conexión a servicios de Google Play</string>
     <string name="error_image_capture">Error capturando imagen...</string>
+    <string name="error_no_file_selected">No hay ningún fichero seleccionado</string>
     <string name="error_try_again">Algo ha ido mal - vuelve a intentarlo más tarde, por favor</string>
     <string name="error_username_password_no_match">Tu nombre de usuario/a y la contraseña no coinciden. Por favor, vuelve a intentarlo.</string>
     <string name="error_video_capture">Error capturando el vídeo...</string>
     <string name="error_wrong_file_type">Tipo de fichero incorrecto: Asegurate de que el fichero que has seleccionado sea JPG, PNG, GIF, MP4, WEBM, o OGG.</string>
     <string name="erulet">Eth Holet</string>
     <string name="erulet_lore">Eth Holet (pronunciación: er-ulet) es un personaje de la mitología aranesa. Es un duende que vive escondido en los bosques, y representa el espíritu de la Naturaleza. Esta aplicación permite a Eth Holet introducirse en tu dispositivo, y guiarte a lo largo de varios itinerarios en espacios naturales en los que el agua es protagonista.</string>
+    <string name="eth_holet_survey">Encuesta de Eth Holet</string>
     <string name="existing_highlight_button_make_new">Añadir un comentario</string>
     <string name="existing_highlight_title">Selecciona para editar. o añade nuevo...</string>
     <string name="filetype_not_supported">Tipo de fichero no compatible.</string>
@@ -122,9 +133,14 @@
     <string name="follow_trip">Seguimiento itinerario...</string>
     <string name="general_references">Artículos generales</string>
     <string name="global_rating">Valoración global</string>
+    <string name="gpx_poi">Puntos de interés GPX</string>
+    <string name="gpx_track">Recorrido GPX</string>
+    <string name="gpx_waypoints">Puntos de ruta GPX</string>
+    <string name="gr_edit_reference">Editar el artículo</string>
     <string name="guided_hikes">Itinerarios guiados</string>
     <string name="hide_my_highlights">Ocultar mis comentarios</string>
     <string name="hide_my_routes">Ocultar mis itinerarios</string>
+    <string name="highlight">Editar una reseña</string>
     <string name="highlight_ratings_title">Valoraciones de los comentarios</string>
     <string name="highlight_translation">Traducción de reseñas de Eth Holet</string>
     <string name="holet_admin">Admin Eth Holet</string>
@@ -135,6 +151,7 @@
     <string name="holet_privacy_policy">Política de privacidad de Eth Holet</string>
     <string name="holet_registration">Registro en Eth Holet</string>
     <string name="holet_team">por el equip de Eth Holet del LOOP y MoveLab (CEAB-CSIC y CREAF)</string>
+    <string name="holets_routes">Itinerarios de Eth Holet</string>
     <string name="home_add_route">Añadir un itinerario</string>
     <string name="home_add_route_text">Añadir un nuevo itinerario utilizando ficheros GPX.</string>
     <string name="home_consult_map">Consultar el mapa</string>
@@ -160,10 +177,10 @@
     <string name="info">Información</string>
     <string name="interactive_image">Imagen interactiva</string>
     <string name="interactive_pic">Fotografía interactiva</string>
-    <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
     <string name="internet_needed_message">Te hace falta una conexión a Internet para responder la encuesta. Por favor, comprueba los ajustes y vuelve a esta actividad cuando tengas conexión</string>
     <string name="internet_needed_message_content">Eth Holet necesita una conexión a Internet para descargar los mapas y los contenidos de los itinerarios. Antes de empezar una excursión conéctate a Internet y selecciona \'Sincronizar\' en las opciones del menú, por favor.</string>
     <string name="internet_needed_title">Hace falta Internet</string>
+    <string name="ios_by">Aplicación iOS:</string>
     <string name="it_was_financed_by_the_european_union_through_the_">Ha sido financiado por la Unión Europea a través del proyecto Sud\'Eau2.</string>
     <string name="keep_filesize_under">Por favor, el fichero ha de ser menor de 2.5 MB. tamaño actual %s</string>
     <string name="kilometer_abbreviation">km</string>
@@ -178,6 +195,7 @@
     <string name="last_name">Apellidos</string>
     <string name="latitude">Latitud:</string>
     <string name="latitude_short">Lat:</string>
+    <string name="list_my_routes">Lista mis itinerarios</string>
     <string name="location">Ubicación:</string>
     <string name="location_not_enabled">La localización del dispositivo no está activada; hay que activarla.</string>
     <string name="login">entrar</string>
@@ -196,7 +214,6 @@
     <string name="lp_guide_along_rivers">Eth Holet te guiará a lo largo de los ríos y hasta arriba a los ibones, y te enseñará los secretos de las aguas de sus escondites en los bosques y montañas.</string>
     <string name="lp_holet_is_FOSS">Eth Holet está programado en código libre y abierto. Comprueba nuestra &lt;a href=\'../api/\'&gt;API&lt;/a&gt; o síguenos en &lt;a href=\'http://github.com/MoveLab\'&gt;Github&lt;/a&gt;!</string>
     <string name="lp_holet_team">Equipo de Eth Holet: LOOP y MoveLab (CEAB-CSIC, CREAF y UB)</string>
-    <string name="lp_holet_will_guide_you">Eth Holet te guiará a través de los caminos de la Val d\'Aran. Recibirás avisos e información suplementaria cuando estés cerca de los puntos de interés.</string>
     <string name="lp_learn_about_rivers_and_lakes">Aprende sobre los ríos e ibones de la Val d\'Aran. Eth Holet está lleno de contenidos divulgativos hechos por científicos que han trabajado aquí desde hace años.</string>
     <string name="lp_learn_more">Saber más</string>
     <string name="lp_meet_holet_text">Eth Holet (se pronuncia er-ulet) es un personaje de la mitología aranesa. Es un duende que vive escondido en los bosques, y representa el espíritu de la Naturaleza. Y ahora viene a encontrarse contigo . . . ¡en una app!</string>
@@ -224,18 +241,34 @@
     <string name="manual_itinerary_selection_text">&lt;p&gt;Despliega el mapa general con todos los itinerarios disponibles.&lt;/p&gt;&lt;p&gt;Clicando sobre cada uno de los itinerarios se despliega una descripción general del itinerario.&lt;/p&gt;&lt;p&gt;Haciendo clic sobre la descripción entramos dentro del itinerario, con dos opciones:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;VISUALIZAR la ruta (nos permite hacer un recorrido virtual de la ruta)&lt;/li&gt;&lt;li&gt;RECORRER la ruta (activa el sistema de guía de la ruta, graba el recorrido y nos permite añadir información propia al itinerario).&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;El botón de menú secundario permite editar nuestros itinerarios y hacer la valoración de los itineraris compartidos.&lt;/p&gt;</string>
     <string name="manual_main_screen">PANTALLA PRINCIPAL:</string>
     <string name="manual_main_screen_text">&lt;p&gt;Permite acceder a información general de la app y a la pantalla de selección de itinerarios.&lt;/p&gt;&lt;p&gt;El botón de menú secundario permite fijar las preferencias (el idioma y el intervalo de tiempo entre posicionamientos GPS consecutivos) y registrarse como usuario/a (opcional).&lt;/p&gt;</string>
+    <string name="manual_my_routes">MIS ITINERARIOS</string>
+    <string name="maximum_response">Respuesta máxima:</string>
+    <string name="media">material gráfico</string>
     <string name="meet_holet">Réunete con Eth Holet</string>
+    <string name="message_aranese">Mensaje - Aranés</string>
+    <string name="message_catalan">Mensaje - Catalán</string>
+    <string name="message_english">Mensaje - Inglés</string>
+    <string name="message_french">Mensaje - Francés</string>
+    <string name="message_spanish">Mensaje - Español</string>
     <string name="meter_abbreviation">m</string>
     <string name="meters">metros</string>
+    <string name="minimum_response">Respuesta mínima:</string>
     <string name="minutes">minutos</string>
     <string name="more_or_less_par">(más o menos)</string>
     <string name="multiple_highlights_message">Haz clic para ver la lista...</string>
     <string name="multiple_highlights_title">Multiples comentarios</string>
     <string name="my_itineraries">Mis itinerarios...</string>
+    <string name="my_itineraries_text">&lt;ul class=\"no_bullet\"&gt;\n&lt;li class=\"image_bullet edit\"&gt;Abre la pantalla de edici&amp;oacute;n del itinerario.&lt;/li&gt;\n&lt;li class=\"image_bullet upload\"&gt;Env&amp;iacute;a nuestro itinerario a la nube.&lt;/li&gt;\n&lt;li class=\"image_bullet delete\"&gt;Borra el itinerario&lt;/li&gt;\n&lt;/ul&gt;</string>
+    <string name="my_routes">Mis itinerarios</string>
     <string name="n_poi_created">Número de puntos de interés creados</string>
     <string name="n_routes_created">Número de itinerarios creados</string>
     <string name="name">Nombre:</string>
+    <string name="name_aranese">Aranés</string>
+    <string name="name_catalan">Català</string>
+    <string name="name_english">English</string>
+    <string name="name_french">Français</string>
     <string name="name_null">Nombre: no asignado</string>
+    <string name="name_spanish">Español</string>
     <string name="nav_to_point">Navegación a punto...</string>
     <string name="navbar_about">Sobre Eth Holet</string>
     <string name="navbar_app_manual">Manual de la App</string>
@@ -276,12 +309,16 @@
     <string name="no_route">No hay ningún itinerario</string>
     <string name="no_route_selected">No se ha seleccionado ningún itinerario; por favor, escoge uno...</string>
     <string name="no_route_text">No hay ningún itinerario con el identificador que pides. Prueba con otro identificador.</string>
+    <string name="no_video_browser">Tu navegador no soporta este tipo de vídeo</string>
     <string name="nothing">Nada</string>
     <string name="now_logged_in_as">Te has conectado como</string>
+    <string name="number_of_responses">Número de respuestas:</string>
+    <string name="official_route">Itinerario oficial</string>
     <string name="offline_try_again">Ahora mismo no tienes conexión a Internet. Vuelve a intentarlo más tarde, por favor.</string>
     <string name="ok">De acuerdo</string>
     <string name="only_edit_your_routes">Solo puedes editar los itinerarios que tu has creado.</string>
     <string name="organitza">Organiza:</string>
+    <string name="other_hikers_routes">Itinerarios de los amogos d\'Eth Holet</string>
     <string name="passwords_no_match">Los dos campos de contraseña no son iguales.</string>
     <string name="point_name">Nombre del punto:</string>
     <string name="point_no_description">El punto no tiene descripción</string>
@@ -297,12 +334,15 @@
     <string name="processing">Procesando</string>
     <string name="processing_long">Procesando, espera por favor. (Esto puede tardar unos pocos minutos)</string>
     <string name="profile">Perfil en Eth Holet</string>
+    <string name="radius">Radio</string>
     <string name="really_continue">¿Seguro que quieres continuar?</string>
+    <string name="reference">Nuevo artículo</string>
     <string name="register">Registrarse</string>
     <string name="register_user">Registrar usuario/a</string>
     <string name="replace_ii">Cambiar una imagen interactiva</string>
     <string name="replace_ii_explanation">Para cambiar una imagen interactiva, cargar primero un fichero de imagen en esta página. En la página siguiente podrás crear áreas clicables sobre la imagen y especificar el texto que se mostrará cuando se clica sobre cada área.</string>
     <string name="replace_ii_text">Cargar una nueva imagen que tendrá áreas clicables.</string>
+    <string name="response_standard_deviation">desviación estándar de las respuestas:</string>
     <string name="restart_needed">Se ha cambiado el idioma de la aplicación. Para que los cambios tengan efecto hace falta reiniciar.</string>
     <string name="restart_now">¿Reiniciar ahora?</string>
     <string name="return_home">Volver a la página inicial</string>
@@ -322,6 +362,11 @@
     <string name="seconds">segundos</string>
     <string name="security_recomm">Antes de salir</string>
     <string name="shared_itineraries">Itinerarios compartidos...</string>
+    <string name="short_description_aranese">Descripción breve - Aranés</string>
+    <string name="short_description_catalan">Descripción breve - Catalán</string>
+    <string name="short_description_english">Descripción breve - Inglés</string>
+    <string name="short_description_french">Descripción breve - Francés</string>
+    <string name="short_description_spanish">Descripción breve - Español</string>
     <string name="show_all_languages">Mostrar todos los idiomas</string>
     <string name="show_my_highlights">Mostrar mis comentarios</string>
     <string name="show_my_routes">Mostrar mis itinerarios</string>
@@ -332,8 +377,12 @@
     <string name="still_syncing_title">Eth Holet todavía está sincronizando</string>
     <string name="submit">Enviar</string>
     <string name="success">éxito</string>
+    <string name="sure_delete_highlight_media_q">¿Seguro que quieres borrar el material gràfico de este comentario (la imagen o el vídeo de abajo)?</string>
     <string name="sure_delete_ii">¿Seguro que quieres borrar esta imagen interactiva?</string>
     <string name="sure_delete_ref_q">¿Seguro que quieres borrar este artículo?</string>
+    <string name="survey_error">Error</string>
+    <string name="survey_intro">A Eth Holet le gustaría conocer tu opinión sobre el agua y el medio ambiente, y sobre la participación de la ciudadanía en su gestión. Por favor, responde en una escala de 0 a 100 las siguientes preguntas:</string>
+    <string name="survey_results">Resultados de la encuesta</string>
     <string name="survey_submitted">Encuesta enviada. ¡Gracias!</string>
     <string name="sync">Sincronizar</string>
     <string name="sync_error_message">Eth Holet no ha podido obtener todos los datos que necesita del servidor. Por favor, comprueba la conexión a Internet y vuelve a intentarlo.</string>
@@ -346,8 +395,10 @@
     <string name="take_survey">Responder la encuesta</string>
     <string name="temp_marker">Marcador temporal</string>
     <string name="terms">Condiciones</string>
+    <string name="thank_you">¡Gracias!</string>
     <string name="total_distance">Distancia total</string>
     <string name="total_time">Tiempo total</string>
+    <string name="track">Recorrido</string>
     <string name="tracking_notification">Eth Holet está siguiendo tu ruta</string>
     <string name="tracking_notification_initial">¡Eth Holet está rastreando!</string>
     <string name="tracking_notification_subject">Eth Holet está rastreando</string>
@@ -369,6 +420,7 @@
     <string name="trip_statistics">Estadísticas de la ruta</string>
     <string name="trip_with_less_than_2_steps">La ruta que has grabado tiene menos de 2 puntos. ¿Seguro que quieres guardarla?¿O quieres descartarla?</string>
     <string name="trips">Itinerarios</string>
+    <string name="type">Tipo</string>
     <string name="uploaded">Cargado</string>
     <string name="uploading">Cargando</string>
     <string name="use_without_registering">¿Quieres continuar sin registrarte?</string>
@@ -382,14 +434,16 @@
     <string name="view_detailed_reference">ver el artículo detallado</string>
     <string name="view_details">Ver los detalles</string>
     <string name="view_route">Ver itinerario</string>
+    <string name="vote">vota</string>
+    <string name="votes">votos</string>
     <string name="warning">¡Atención!\u0020</string>
     <string name="warning_confirm_delete_route">¿Seguro que quieres borrar este itinerario (y todas las reseñas, artículos, imágenes interactivas y otros contenidos asociados)?</string>
     <string name="website_and_server_by">Website y apoyo desde el servidor:</string>
-    <string name="welcome">Eth Holet te da la bienvenida</string>
+    <string name="welcome">¡Eth Holet te da la bienvenida</string>
     <string name="welcome_exclaimation">¡Eth Holet te da la bienvenida!</string>
     <string name="welcome_message">Para poder funcionar sin conexión en la montaña Eth Holet ha de sincronizarse con el servidor. Esto puede durar varios minutos. Si tienes conexión a Internet y quieres hacerlo ahora, clica \'De acuerdo\'. Si no, siempre puedes hacerlo en otro momento seleccionando la opción \'Sincronizar\' en el menú de esta pantalla.</string>
     <string name="welcome_title">¡Eth Holet te da la bienvenida!</string>
-    <string name="what_today">¿Que te gustaría hacer hoy?</string>
+    <string name="what_today">¿Qué te gustaría hacer hoy?</string>
     <string name="wrong_file_type">Tipo de fichero erróneo</string>
     <string name="wrong_file_type_text">Solo puedes cargar un fichero HTML, o una carpeta ZIP que contenga solo ficheros JPG, PNG, GIF, MP4, HTML, y/o CSS. ¿Quieres volver a intentarlo?</string>
     <string name="yes">Sí</string>
@@ -403,4 +457,5 @@
     <string name="zip_error_no_html">No hay ficheros HTML en esta carpeta ZIP. Por favor, incluye como mínimo un fichero HTML.</string>
     <string name="zip_error_no_zip_no_html">Has intentado cargar algo que no es un fichero HTML o ZIP. Por favor, comprueba el fichero y vuelve a probar.</string>
     <string name="zip_error_path_outside_archive">Hay algún fichero en tu carpeta ZIP que tiene una ruta que empieza por \"../\". Por favor, no asignes a los ficheros de la carpeta rutas que se dirijan fuera de la propia carpeta.</string>
+    <string name="zip_file">Fichero ZIP</string>
 </resources>

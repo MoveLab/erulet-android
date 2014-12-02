@@ -337,6 +337,17 @@ public class DataContainer {
         return tracks;
     }
 
+
+    public static List<Track> getOfficialTracks(DataBaseHelper db) {
+        ArrayList<Track> tracks = new ArrayList<Track>();
+        List<Route> routes = getAllOfficialRoutes(db);
+        for(Route r: routes){
+            tracks.add(r.getTrack());
+        }
+        return tracks;
+    }
+
+
     public static List<Route> getUserRoutes(DataBaseHelper db, String userId) {
         List<Route> userRoutes = new ArrayList<Route>();
         QueryBuilder<Route, Integer> queryBuilder = db.getRouteDataDao()

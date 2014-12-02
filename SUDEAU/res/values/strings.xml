@@ -5,7 +5,7 @@
  Release: Working copy
  Locale: oc_ES, Aranese
  Exported by: John Palmer
- Exported at: Fri, 28 Nov 2014 17:49:05 +0000
+ Exported at: Tue, 02 Dec 2014 02:37:56 +0000
 -->
 <resources>
     <string name="Aranese">Aranés</string>
@@ -29,6 +29,7 @@
     <string name="add_marker_confirm">Vòs híger aguest marcador?</string>
     <string name="add_or_not">Hígem o non?</string>
     <string name="all_about_water">Tot sus era aigua</string>
+    <string name="all_routes">Toti es itineraris</string>
     <string name="already_registered">Ja ès registrat/ada.</string>
     <string name="already_registered_q">Ja t\'as registrat?</string>
     <string name="altitude">Nautada:</string>
@@ -39,8 +40,10 @@
     <string name="auto_center_explanation">Se trigues ÒC, era mapa se centrarà automaticament ena tua posicion quan te botges.</string>
     <string name="average_rating">Avaloracion mieja</string>
     <string name="average_rating_of_followed_route">Avaloracion mieja der itinerari qu\'as recorrut</string>
+    <string name="average_response">Responsa mieja</string>
     <string name="avg_distance_samples">Distància mieja entre mòstres</string>
     <string name="avg_speed">Velocitat mieja</string>
+    <string name="back_to_route">Torna ar itinerari</string>
     <string name="bassa_d_oles">Bassa d’Oles.</string>
     <string name="bearing">Orientacion:</string>
     <string name="before_leaving">Abans de gésser</string>
@@ -75,6 +78,11 @@
     <string name="date">Data:</string>
     <string name="degrees">grads</string>
     <string name="description">Descripcion:</string>
+    <string name="description_aranese">Descripcion - Aranés</string>
+    <string name="description_catalan">Descripcion - Catalan</string>
+    <string name="description_english">Descripcion - Anglés</string>
+    <string name="description_french">Descripcion - Francés</string>
+    <string name="description_spanish">Descripcion - Castelhan</string>
     <string name="destination">Emplaçament destin:</string>
     <string name="destination_undef">Emplaçament destin: ????</string>
     <string name="detail_highlight">Vista de detalh</string>
@@ -90,6 +98,7 @@
     <string name="edit_ii_box_text">Editar messatge o arrossegar eth cursor entà cambiar era dimension e era posicion dera hièstra sus era imatge.</string>
     <string name="edit_profile">Editar eth perfil</string>
     <string name="edit_ref_cancel">Cancellar</string>
+    <string name="edit_ref_explanation">Entà remplaçar un article utilizar aguest formulari entà cargar ua carpeta ZIP que contegue entre un e cinc fichèrs HTML amassa damb toti es fichèrs CSS, JPG, PNG, GIF, e/o MP4 restacadi (sonque aguest tipe de fichèrs son permetudi). Es fichèrs HTML an d\'auer nòms qu\'acaben en -XX.html, a on XX ei eth còdi der idiòma. Utilizar òc entar aranés, es entath castelhan, ca entath catalan, fr entath francés, en entar anglés e to entà toti es idiòmes (remèrca: se pòden utilizar màgers e còdis de tres letres, mès sonque s\'avaloraràn es dues prumères letres dempús deth junhent. Es fichèrs acabadi en \'-to.html\' se mostraràn as usatgèrs/es de toti es idiòmes). Comprovar qu\'es ligams enes fichèrs HTML utilizen rotes relatives (p.ex. src=\'poi.png\' e non src=\'http://holet.com/poi.png\') exceptat se son ligams en un aute servidor. En aguest cas utilizar era rota absoluda ath servidor en qüestion (p.ex. src=\'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Agapanthia_pustulifera_copulation_1.jpg). Non ei imprescindible includir es CSS restacadi. Se non s\'includís cap CSS eth servidor ne crearà un que s\'utilizarà quan er article se mòstre ena app Eth Holet enes mobils. Quan er article se mòstre en aguest website utilizarà sonque un CSS entà adaptar-se ath format dera web, independentament de se s\'a includit un fichèr CSS.</string>
     <string name="edit_reference">Editar er article</string>
     <string name="edit_reference_explanation">Entà cambiar un nau article en HTML utilizar aguest formulari tà cargar ua carpeta ZIP que contengue entre un e cinc fichèrs HTML amassa damb toti es fichèrs CSS, JPG, PNG, GIF, e/o MP4 restacadi (sonque aguest tipe de fichèrs son permetudi). Es fichèrs HTML an d\'auer nòms qu\'acaben en -XX.html, a on XX ei eth còdi der idiòma. Utilizar òc entar aranès, es entath castelhan, ca entath catalan, fr entath francés, en entar anglés e to entà toti es idiòmes (remèrca: se pòden utilizar màgers e còdis de tres letres, mès sonque s\'avaloraràn es dues prumères letres dempús deth junhent. Es fichèrs acabadi en \'-to.html\' s\'ensenharàn as usatgèrs de toti es idiòmes). Comprovar qu\'es ligams enes fichèrs HTML utilizen rotes relatives (p.ex. src=\'poi.png\' e non src=\'http://holet.com/poi.png\') exceptat se son ligams en un aute servidor. En aguest cas utilizar era rota absoluta ath servidor en qüestión (p.ex. src=\'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Agapanthia_pustulifera_copulation_1.jpg). Non ei de besonh includir es CSS restacadi. Se non s\'includís cap CSS eth servidor ne crearà un que s\'utilizarà quan er article se mòstre ena app Eth Holet enes mobils. Quan er article se mòstre en aguest website utilizarà un solet CSS entà adaptar-se ath format dera web, independentament de se s\'a includit un fichèr CSS.</string>
     <string name="edit_reference_text">Cambiar eth nòm der article o cargar ua carpeta ZIP entà cambiar eth fichèr HTML.</string>
@@ -101,12 +110,14 @@
     <string name="error">Error</string>
     <string name="error_gplay_connect">Error ena connexion as servicis de Google Play</string>
     <string name="error_image_capture">Error capturant imatge...</string>
+    <string name="error_no_file_selected">Non i a cap fichèr seleccionat</string>
     <string name="error_try_again">Bèra causa non a foncionat - tornà\'c a provar mès tard, se te platz\u0020</string>
     <string name="error_username_password_no_match">Eth tòn nòm d\'usatgèr/a e era clau d’accès non\u0020\u0020coïncidissen. Se te platz torna a provà\'c.</string>
     <string name="error_video_capture">Error capturant vidèo...</string>
     <string name="error_wrong_file_type">Tipe de fichèr incorrècte: Compròva qu\'eth fitchèr qu\'as seleccionat sigue JPG, PNG, GIF, MP4, WEBM, o OGG.</string>
     <string name="erulet">Eth Holet</string>
     <string name="erulet_lore">Eth Holet ei un personatge dera mitologia aranesa. Viu amagat enes bòsqui, e represente er esperit dera natura. Aguesta aplicacion permet a Eth Holet introdusir-se en vòste dispositiu, e guidar-vos ath long de diferenti itineraris en espacis naturaus enes quaus era aigua ei protagonista.</string>
+    <string name="eth_holet_survey">Enquèsta d\'Eth Holet</string>
     <string name="existing_highlight_button_make_new">Híger nau comentari</string>
     <string name="existing_highlight_title">Triga entà editar, o hig nau...</string>
     <string name="filetype_not_supported">Tipe de fichèr non compatible.</string>
@@ -122,9 +133,14 @@
     <string name="follow_trip">Seguiment itinerari...</string>
     <string name="general_references">Articles generaus</string>
     <string name="global_rating">Avaloracion globau</string>
+    <string name="gpx_poi">Punts d\'interès GPX</string>
+    <string name="gpx_track">Recorrut GPX</string>
+    <string name="gpx_waypoints">Punts de rota GPX</string>
+    <string name="gr_edit_reference">Editar er article</string>
     <string name="guided_hikes">Itineraris guidadi</string>
     <string name="hide_my_highlights">Amaga es mèns comentaris</string>
     <string name="hide_my_routes">Amaga es mèns itineraris</string>
+    <string name="highlight">Editar ua ressenha</string>
     <string name="highlight_ratings_title">Avaloracions des comentaris</string>
     <string name="highlight_translation">Traduccion de ressenhes d\'Eth Holet</string>
     <string name="holet_admin">Admin Eth Holet</string>
@@ -135,6 +151,7 @@
     <string name="holet_privacy_policy">Politica de privacitat d\'eth Holet</string>
     <string name="holet_registration">Registrament en Eth Holet</string>
     <string name="holet_team">pera equipa d\'Eth Holet deth LOOP e MoveLab (CEAB-CSIC i CREAF)</string>
+    <string name="holets_routes">Itineraris d\'Eth Holet</string>
     <string name="home_add_route">Híger un itinerari</string>
     <string name="home_add_route_text">Híger un nau itinerari utilizant fichèrs GPX.</string>
     <string name="home_consult_map">Consultar era mapa</string>
@@ -160,10 +177,11 @@
     <string name="info">Informacion</string>
     <string name="interactive_image">Imatge interactiva</string>
     <string name="interactive_pic">Fotografia interactiva</string>
-    <string name="internal_message_id">net.movelab.sudeau.internal_message</string>
+    <string name="internal_message_id" translatable="false">net.movelab.sudeau.internal_message</string>
     <string name="internet_needed_message">Te cau ua connexion a Internet entà respóner era enquèsta. Se te platz, compròva es ajustaments e torna ad aguesta activitat quan ages connexion</string>
     <string name="internet_needed_message_content">A Eth Holet li cau ua connexion a Internet entà descargar es mapes e es contenguts des itineraris. Abans de començar ua excursion connècta-te a Internet e selecciona \'Sincronizar\' enes opcions deth menú, se te platz.</string>
     <string name="internet_needed_title">En çò d\'Internet</string>
+    <string name="ios_by">iOS app per\u0020</string>
     <string name="it_was_financed_by_the_european_union_through_the_">A estat finançat pera Union Europèa a trauès deth projècte Sud\'Eau2.</string>
     <string name="keep_filesize_under">Se te platz, eth fichèr a d\'èster mès petit de 2.5 MB. Mida actuau %s\u0020</string>
     <string name="kilometer_abbreviation">Km</string>
@@ -178,6 +196,7 @@
     <string name="last_name">Cognòms</string>
     <string name="latitude">Latitud:</string>
     <string name="latitude_short">Lat:</string>
+    <string name="list_my_routes">Lista es mèns itineraris</string>
     <string name="location">Emplaçament:</string>
     <string name="location_not_enabled">Era localizacion deth dispositiu non ei activada; cau activar-la.</string>
     <string name="login">inici</string>
@@ -223,18 +242,34 @@
     <string name="manual_itinerary_selection_text">&lt;p&gt;Desplega era mapa generau damb toti es itineraris disponibles.&lt;/p&gt;&lt;p&gt;Clicant sus cada un des itineraris se desplegue ua descripcion generau der itinerari.&lt;/p&gt;&lt;p&gt;Hènt clic dessús dera descripciom entram laguens der itinerari, damb dues opcions:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;VISUALIZAR era rota (mos permet hèr un recorrut virtuau dera rota)&lt;/li&gt;&lt;li&gt;RECÓRRER era rota (active eth sistèma de guida dera rota, enregistre eth recorrut e mos permet híger informacion nòsta en itinerari).&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Eth boton de menú segondari permet editar es nòsti itineraris e hèr era avaloracion des itineraris compartidi.&lt;/p&gt;</string>
     <string name="manual_main_screen">PANTALHA PRINCIPAU:</string>
     <string name="manual_main_screen_text">&lt;p&gt;Permet accedir ara informacion generau dera app e ara pantalha de seleccion d\'itineraris.&lt;/p&gt;&lt;p&gt;Eth boton de menú segondari permet fixar es preferéncies (er idiòma e er interval de temps entre posicionaments GPS consecutius) e registrar-se coma usatgèr (opcionau).&lt;/p&gt;</string>
+    <string name="manual_my_routes">ES MÈNS ITINERARIS</string>
+    <string name="maximum_response">Responsa maxima</string>
+    <string name="media">Materiau grafic</string>
     <string name="meet_holet">Tròba-te damb Eth Holet</string>
+    <string name="message_aranese">Messatge - Aranés</string>
+    <string name="message_catalan">Messatge - Catalan</string>
+    <string name="message_english">Messatge - Anglés</string>
+    <string name="message_french">Messatge - Francés</string>
+    <string name="message_spanish">Messatge - Castelhan</string>
     <string name="meter_abbreviation">m</string>
     <string name="meters">mètres</string>
+    <string name="minimum_response">Responsa minima</string>
     <string name="minutes">minutes</string>
     <string name="more_or_less_par">(mès o mens)</string>
     <string name="multiple_highlights_message">Hès clic entà veir era listra</string>
     <string name="multiple_highlights_title">Multiples comentaris</string>
     <string name="my_itineraries">Es mèns itineraris...</string>
+    <string name="my_itineraries_text">&lt;ul class=\"no_bullet\"&gt;\n&lt;li class=\"image_bullet edit\"&gt;Daur&amp;iacute;s era pantalha d\'edicion der itinerari. &lt;/li&gt;\n&lt;li class=\"image_bullet upload\"&gt;Envia eth n&amp;ograve;ste itinerari ara broma.&lt;/li&gt;\n&lt;li class=\"image_bullet delete\"&gt;\nEsfaça er itinerari.\n&lt;/li&gt;\n&lt;/ul&gt;\n</string>
+    <string name="my_routes">Es mèns itineraris</string>
     <string name="n_poi_created">Nombre de punts d\'interès creadi</string>
     <string name="n_routes_created">Nombre d\'itineraris creadi</string>
     <string name="name">Nòm:</string>
+    <string name="name_aranese">Aranés</string>
+    <string name="name_catalan">Català</string>
+    <string name="name_english">English</string>
+    <string name="name_french">Français</string>
     <string name="name_null">Nòm: non assignat</string>
+    <string name="name_spanish">Español</string>
     <string name="nav_to_point">Navegacion a punt...</string>
     <string name="navbar_about">Sus Eth Holet</string>
     <string name="navbar_app_manual">Manuau dera APP</string>
@@ -275,12 +310,16 @@
     <string name="no_route">Non i a cap itinerari</string>
     <string name="no_route_selected">Non i a cap itinerari seleccionat; se te platz triga un itinerari...</string>
     <string name="no_route_text">Non i a cap rota damb er identificador que demanes. Pròva damb un aute identificador.</string>
+    <string name="no_video_browser">Eth tòn navegador non supòrte aguest tipe de vidèo</string>
     <string name="nothing">Arren</string>
     <string name="now_logged_in_as">T\'as connectat damb</string>
+    <string name="number_of_responses">Nombre de responses</string>
+    <string name="official_route">Itinerari oficiau</string>
     <string name="offline_try_again">Ara madeish non as connexion a Internet. Tornà\'c a provar mès tard, se te platz</string>
     <string name="ok">D\'acòrd</string>
     <string name="only_edit_your_routes">Sonque pòs editar es itineraris que tu as creat.</string>
     <string name="organitza">Organize:</string>
+    <string name="other_hikers_routes">Itineraris des amics d\'Eth Holet\u0020</string>
     <string name="passwords_no_match">Es dus camps dera clau d’accès non son egaus.</string>
     <string name="point_name">Nòm deth punt:</string>
     <string name="point_no_description">Eth punt non a descripcion</string>
@@ -296,12 +335,15 @@
     <string name="processing">Processar</string>
     <string name="processing_long">Processar. Demora, se te platz (Açò pòt tardar quauques minutes)\u0020</string>
     <string name="profile">Perfil en Eth Holet</string>
+    <string name="radius">Radi</string>
     <string name="really_continue">Segur que vòs continuar?</string>
+    <string name="reference">Nau article</string>
     <string name="register">Resgistrar-se</string>
     <string name="register_user">Registrar usatgèr/a</string>
     <string name="replace_ii">Cambiar ua imatge interactiva</string>
     <string name="replace_ii_explanation">Tà cambiar ua imatge interactiva, prumèr cargar un fichèr d\'imatge en aguesta pagina. Ena pagina següenta poderàs crear airaus clicables sus era imatge e especificar eth tèxte que s\'ensenharà quan se clique cada airau.</string>
     <string name="replace_ii_text">Cargar ua naua imatge qu\'aurà airaus clicables.</string>
+    <string name="response_standard_deviation">Desviacion estandard des responses</string>
     <string name="restart_needed">S\'a cambiat er idiòma dera aplicacion. Entà qu\'es cambis agen efècte cau reiniciar.</string>
     <string name="restart_now">Reiniciar ara?</string>
     <string name="return_home">Tornar tara pagina d\'inici</string>
@@ -321,6 +363,11 @@
     <string name="seconds">segondes</string>
     <string name="security_recomm">Abans de gésser</string>
     <string name="shared_itineraries">Itineraris compartidi...</string>
+    <string name="short_description_aranese">Descripcion brèu - Aranès</string>
+    <string name="short_description_catalan">Descripcion brèu - Catalan</string>
+    <string name="short_description_english">Descripcion brèu - Anglés</string>
+    <string name="short_description_french">Descripcion brèu - Francés</string>
+    <string name="short_description_spanish">Descripcion brèu - Castelhan</string>
     <string name="show_all_languages">Ensenha toti es idiòmes</string>
     <string name="show_my_highlights">Mòstra es mèns comentaris</string>
     <string name="show_my_routes">Mostrar es mèns itineraris</string>
@@ -331,8 +378,12 @@
     <string name="still_syncing_title">Eth Holet encara se sincronize</string>
     <string name="submit">Enviar</string>
     <string name="success">succès</string>
+    <string name="sure_delete_highlight_media_q">Segur que vòs esfaçar eth materiau grafic d\'aguest comentari (era imatge o eth vidèo de dejós)?</string>
     <string name="sure_delete_ii">Segur que vòs esfaçar aguesta imatge interactiva?</string>
     <string name="sure_delete_ref_q">Segur que vòs esfaçar aguest article?</string>
+    <string name="survey_error">Error</string>
+    <string name="survey_intro">Eth Holet volerie conéisher era tua opinion sus era aigua e eth miei ambient, e sus era participacion dera ciutadania ena sua gestion. Se te platz respon en ua escala de 0 a 100 es preguntes següentes:</string>
+    <string name="survey_results">Resultats dera enquèsta</string>
     <string name="survey_submitted">Enquèsta enviada. Gràcies!</string>
     <string name="sync">Sincronizar</string>
     <string name="sync_error_message">Eth Holet non a podut obtier totes es dades que li calen deth servidor. Se te platz, compròva era connexion a Internet e torna a provà\'c</string>
@@ -345,8 +396,10 @@
     <string name="take_survey">Respóner era enquèsta</string>
     <string name="temp_marker">Marcador temporau</string>
     <string name="terms">Condicions</string>
+    <string name="thank_you">Gràcies!</string>
     <string name="total_distance">Distància totau</string>
     <string name="total_time">Temps totau</string>
+    <string name="track">Recorrut</string>
     <string name="tracking_notification">Eth Holet seguís era tua rota.</string>
     <string name="tracking_notification_initial">Eth Holet ara rastrege!</string>
     <string name="tracking_notification_subject">Eth Holet rastrege</string>
@@ -368,6 +421,7 @@
     <string name="trip_statistics">Estadistiques dera rota</string>
     <string name="trip_with_less_than_2_steps">Era rota qu\'as enregistrat a mens de 2 punts. Segur que vòs sauvar-la? O vòs descartar-la?</string>
     <string name="trips">Itineraris</string>
+    <string name="type">Tipe</string>
     <string name="uploaded">Cargat</string>
     <string name="uploading">Cargant</string>
     <string name="use_without_registering">Vòs continuar sense registrar-te?</string>
@@ -381,6 +435,8 @@
     <string name="view_detailed_reference">Veir er article detalhat</string>
     <string name="view_details">Veir es detalhs</string>
     <string name="view_route">Veir itinerari</string>
+    <string name="vote">vòta</string>
+    <string name="votes">vòts</string>
     <string name="warning">Atencion!\u0020</string>
     <string name="warning_confirm_delete_route">Segur que vòs esfaçar aguest itinerari (e totes es ressenhes, articles, imatges interactives e d\'auti contenguts associadi)?</string>
     <string name="website_and_server_by">Lòc web e supòrt des deth servidor:</string>
@@ -402,4 +458,5 @@
     <string name="zip_error_no_html">Non i a fichèrs HTML en aguesta carpeta ZIP. Se te platz, includís coma minim un fichèr HTML.</string>
     <string name="zip_error_no_zip_no_html">As sajat de cargar bèra causa que non ei un fichèr HTML o ZIP. Se te platz, compròva eth fichèr e torna a provar.</string>
     <string name="zip_error_path_outside_archive">I a bèth fichèr ena tua carpeta ZIP qu\'a ua rota que comence damb \"../\". Se te platz, non assignes as fichèrs dera carpeta rotes que s\'adrecen dehòra dera pròpia carpeta.</string>
+    <string name="zip_file">Fichèr ZIP</string>
 </resources>

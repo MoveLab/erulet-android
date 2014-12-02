@@ -28,21 +28,28 @@ public class RouteDrawerWorkerTask extends AsyncTask<EruletApp, Void, List<Polyl
 	
 	private final WeakReference<GoogleMap> mMapReference;
 	private final WeakReference<ProgressBar> progressBarReference;
+    private boolean isUserItinerariesOn = false;
+    List<Track> tracks;
 
 	public RouteDrawerWorkerTask(GoogleMap mMap, ProgressBar progressBar){
 		this.mMapReference=new WeakReference<GoogleMap>(mMap);
 		this.progressBarReference=new WeakReference<ProgressBar>(progressBar);
+        isUserItinerariesOn = PropertyHolder.isUserItinerariesOn();
 	}
 	
 	
 	@Override
 	protected List<PolylineOptions> doInBackground(EruletApp... app) {
-		List<PolylineOptions> retVal = new ArrayList<PolylineOptions>();		       
-            List<Track> tracks = DataContainer.getAllTracks(app[0].getDataBaseHelper());
+		List<PolylineOptions> retVal = new ArrayList<PolylineOptions>();
+        if(isUserItinerariesOn){
+                tracks = DataContainer.getAllTracks(app[0].getDataBaseHelper());
+        } else{
+            tracks = DataContainer.getOfficialTracks(app[0].getDataBaseHelper());
+        }
             int[] colors = {Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.WHITE};
             int colorCounter = 0;
         for(Track t : tracks){
-				List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app[0].getDataBaseHelper());
+                List<Step> selectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app[0].getDataBaseHelper());
 				PolylineOptions rectOptions = new PolylineOptions();
                 PolylineOptions rectOptionsBg = new PolylineOptions();
 				for(Step step : selectedRouteSteps) {
