@@ -50,13 +50,7 @@
         		android:id="@+id/radioLang"
         		android:layout_width="wrap_content"
         		android:layout_height="wrap_content" >        		
-	            <RadioButton
-	                android:id="@+id/rbCatala"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:onClick="onRadioButtonClicked"
-	                android:text="@string/lang_ca" />
-	
+
 	            <RadioButton
 	                android:id="@+id/rbAranes"
 	                android:layout_width="wrap_content"
@@ -70,23 +64,33 @@
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
 	                android:text="@string/lang_es_es" />
-	
-	            <RadioButton
+
+                <RadioButton
+                    android:id="@+id/rbCatala"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="@string/lang_ca" />
+
+                <RadioButton
 	                android:id="@+id/rbEnglish"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
+                    android:visibility="gone"
 	                android:text="@string/lang_en" />
 	            
 	            <RadioButton
 	                android:id="@+id/rbFrench"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
+                    android:visibility="gone"
 	                android:onClick="onRadioButtonClicked"
 	                android:text="@string/lang_fr" />
 	            <RadioButton
 	                android:id="@+id/rbDevice"
 	                android:layout_width="wrap_content"
+                    android:visibility="gone"
 	                android:layout_height="wrap_content"
 	                android:onClick="onRadioButtonClicked"
 	                android:text="@string/lang_device" />

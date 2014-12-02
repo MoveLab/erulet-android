@@ -156,7 +156,7 @@ public class Switchboard extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(group1, first_id, first_id, getString(R.string.preferences));
         menu.add(group1, second_id, second_id, getString(R.string.register_user));
-        menu.add(group1, third_id, third_id, getResources().getString(R.string.login));
+        menu.add(group1, third_id, third_id, getResources().getString(R.string.home_login));
         menu.add(group1, fourth_id, fourth_id, getResources().getString(R.string.sync));
         menu.add(group1, fifth_id, fifth_id, getString(R.string.choose_it_my_itineraries));
         menu.add(group1, sixth_id, sixth_id, getString(R.string.take_survey));
