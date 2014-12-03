@@ -169,13 +169,18 @@ public class HTMLViewerActivity extends FragmentActivity {
                     });
                 }
 
-                loadHTML();
 
             } else{
 // TODO fallback on normal view
             } }else{
 // TODO fallback on normal view
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadHTML();
     }
 
 
@@ -290,17 +295,18 @@ public class HTMLViewerActivity extends FragmentActivity {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Log.i("OVERRIDE URL LOADING TOP", url);
             view.loadUrl(url);
-//            if (url.contains("mp4")) {
- //               Log.i("OVERRIDE URL LOADING MP4", url.toString());
- //               Intent ihtml = new Intent(HTMLViewerActivity.this,
- //                       VideoPlayActivity.class);
- //               ihtml.putExtra("videourl", url);
-  //              startActivity(ihtml);
-   //             return false;
-    //        }else{
+            if (url.contains("mp4")) {
+                Log.i("OVERRIDE URL LOADING MP4", url);
+                Intent ihtml = new Intent(HTMLViewerActivity.this,
+                        VideoPlayActivity.class);
+                ihtml.putExtra("video_uri", url);
+                onInitialPage = true;
+                startActivity(ihtml);
+                return false;
+            }else{
                 Log.i("OVERRIDE URL LOADING ELSE", url);
                 return true;
-     //       }
+            }
         }
 
         @Override

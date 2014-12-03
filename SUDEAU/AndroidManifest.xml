@@ -77,7 +77,9 @@
         <activity android:name="net.movelab.sudeau.OtherItinerariesActivity" 
             android:theme="@android:style/Theme.Holo">
         </activity>
-        <activity android:name="net.movelab.sudeau.VideoPlayActivity" >
+        <activity android:name="net.movelab.sudeau.VideoPlayActivity"
+            android:screenOrientation="landscape"
+            >
         </activity>
         <activity android:name="net.movelab.sudeau.EditRouteActivity"
             android:theme="@android:style/Theme.Holo">

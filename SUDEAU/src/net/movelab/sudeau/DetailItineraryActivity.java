@@ -1456,7 +1456,7 @@ Log.i("startOrResumeTracking", "top");
         selectedRouteSteps = DataContainer.getTrackSteps(t,
                 app.getDataBaseHelper());
         refreshDecorations(selectedRouteSteps);
-        for (int j = 0; j < (selectedRouteSteps.size() - 1); j++) {
+        for (int j = 0; j < (selectedRouteSteps.size()); j++) {
             Step step = selectedRouteSteps.get(j);
             if (step.getOrder() != -1) {
                 rectOptions

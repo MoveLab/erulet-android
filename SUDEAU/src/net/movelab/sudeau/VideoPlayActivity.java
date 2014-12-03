@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.webkit.WebView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -24,5 +26,12 @@ public class VideoPlayActivity extends Activity {
 			view.start();
 		}
 	}
-	
+
+    @Override
+    public void onBackPressed() {
+
+        finish();
+    }
+
+
 }
