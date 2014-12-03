@@ -28,6 +28,7 @@ import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Route;
 
 import org.apache.http.HttpResponse;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -249,6 +250,31 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                     selectedRoute.setServerId(server_id);
                     DataContainer.updateRoute(selectedRoute, app.getDataBaseHelper());
 
+                    if (responseJson.has("track")) {
+                        JSONObject this_track = responseJson.optJSONObject("track");
+                        if (this_track.has("steps")) {
+                            JSONArray these_steps = this_track.optJSONArray("steps");
+                            for (int i = 0; i < these_steps.length(); i++) {
+                                JSONObject this_step = these_steps.optJSONObject(i);
+                                if (this_step != null && this_step.has("highlights")) {
+                                    JSONArray these_highlights = this_step.getJSONArray("highlights");
+                                    for (int j = 0; j < these_highlights.length(); j++) {
+                                        JSONObject this_highlight = these_highlights.optJSONObject(j);
+                                        if (this_highlight != null && this_highlight.has("id_on_creator_device") && this_highlight.has("server_id")) {
+                                            int this_highlight_local_id = this_highlight.optInt("id_on_creator_device");
+                                            int this_highlight_server_id = this_highlight.optInt("server_id");
+                                            HighLight highlight_in_need_of_server_id = DataContainer.findHighLightById(this_highlight_local_id, app.getDataBaseHelper());
+                                            if (highlight_in_need_of_server_id != null) {
+                                                highlight_in_need_of_server_id.setServerId(this_highlight_server_id);
+                                                DataContainer.updateHighLight(highlight_in_need_of_server_id, app.getDataBaseHelper());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 } else {
                     resultFlag = UPLOAD_ERROR;
                 }
@@ -264,7 +290,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                 DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
                 FileManifest this_fm = h.getFileManifest();
                 File media_file = new File(this_fm.getPath());
-                media_post_response = Util.postMedia(context[0], media_file.getAbsolutePath(), media_file.getName(), h.getId());
+                media_post_response = Util.postMedia(context[0], media_file.getAbsolutePath(), media_file.getName(), h.getServerId());
                 if (media_post_response < 200 || media_post_response >= 300) {
                     resultFlag = UPLOAD_ERROR;
                 }

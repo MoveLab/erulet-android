@@ -1279,7 +1279,7 @@ public class Util {
     }
 
 
-    public static int postMedia(Context context, String mediaPath, String mediaFileName, int id) {
+    public static int postMedia(Context context, String mediaPath, String mediaFileName, int server_id) {
         String targetUrl = UtilLocal.URL_USER_HIGHLIGHT_MEDIA;
         int response = 0;
         HttpURLConnection conn = null;
@@ -1316,9 +1316,9 @@ public class Util {
                     "multipart/form-data;boundary=" + boundary);
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"id_on_creator_device\""
+            dos.writeBytes("Content-Disposition: form-data; name=\"server_id\""
                     + lineEnd + lineEnd);
-            dos.writeBytes(id + lineEnd);
+            dos.writeBytes(server_id + lineEnd);
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"media\";filename=\""
                     + mediaFileName + "\"" + lineEnd);
