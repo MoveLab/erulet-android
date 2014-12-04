@@ -1,6 +1,5 @@
 package net.movelab.sudeau.model;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import net.movelab.sudeau.EruletApp;
@@ -8,8 +7,6 @@ import net.movelab.sudeau.Util;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 
-import java.io.File;
-import java.sql.Ref;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,20 +34,20 @@ public class JSONConverter {
     }
 
 
-
     public static Route jsonObjectToRoute(JSONObject j, DataBaseHelper db) throws JSONException {
 
         Route r;
         int server_id = j.optInt("server_id", -1);
-        if(server_id != -1){
+        if (server_id != -1) {
             r = DataContainer.findRouteByServerId(server_id, db);
-            if(r == null){
+            if (r == null) {
                 r = new Route();
                 r.setServerId(j.optInt("server_id", -1));
             }
-        } else{
+        } else {
             r = new Route();
-            r.setServerId(j.optInt("server_id", -1));}
+            r.setServerId(j.optInt("server_id", -1));
+        }
 
 
         r.setRouteJsonLastUpdatedNow();
@@ -72,10 +69,8 @@ public class JSONConverter {
         r.setDescription("en", j.optString("description_en", ""));
 
 
+        r.setIdRouteBasedOn(j.optInt("id_route_based_on", -1));
 
-            r.setIdRouteBasedOn(j.optInt("id_route_based_on", -1));
-
-// TODO more languages
         if (j.has("reference")) {
             if (j.optJSONObject("reference") != null) {
                 Reference ref = jsonObjectToReference(j.getJSONObject("reference"), db);
@@ -84,15 +79,53 @@ public class JSONConverter {
                 r.setReference(null);
             }
         }
+        ArrayList<Step> top_five_steps = new ArrayList<Step>();
+        if (j.has("top_five_user_highlights")) {
+            JSONArray t5array = j.optJSONArray("top_five_user_highlights");
+            if (t5array != null && t5array.length() > 0) {
+                for (int i = 0; i < t5array.length(); i++) {
+                    JSONObject this_t5 = t5array.optJSONObject(i);
+                    if (this_t5 != null) {
+                        if (this_t5.has("step")) {
+                            JSONObject step_json = this_t5.optJSONObject("step");
+                            if (step_json != null) {
+                                Step this_t5_s = jsonObjectToStep(step_json, db);
+                                HighLight this_highlight = jsonObjectToHighLight(this_t5, this_t5_s, db);
+                                this_highlight.setStep(this_t5_s);
+                                this_highlight.setMediaUrl(this_t5.optString("media_url", null));
+                                ArrayList<HighLight> h_as_collection = new ArrayList<HighLight>();
+                                h_as_collection.add(this_highlight);
+                                Log.i("t5", "hl url: " + this_highlight.getMediaUrl());
+                                this_t5_s.setHighlights(h_as_collection);
+                                top_five_steps.add(this_t5_s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (j.has("track")) {
             if (j.getJSONObject("track") != null) {
                 Track t = jsonObjectToTrack(j.getJSONObject("track"), r.getUniqueName(), db);
+                if (top_five_steps.size() > 0) {
+                    Log.i("t5", "top_five size gt 0");
+                    Collection<Step> track_steps = t.getSteps();
+                    for(Step s: top_five_steps){
+                        s.setTrack(t);
+                        track_steps.add(s);
+                        Log.i("t5", "lat: "+s.getLatitude()+ " lon: " + s.getLongitude());
+                    }
+                    t.setSteps(track_steps);
+                }
                 r.setTrack(t);
                 t.setRoute(r);
             } else {
                 r.setTrack(null);
             }
         }
+
+
         if (j.has("created_by")) {
             r.setUserId(j.optString("created_by", ""));
         }
@@ -104,14 +137,14 @@ public class JSONConverter {
         if (j.has("map")) {
             if (j.getJSONObject("map") != null && !j.getJSONObject("map").equals("null")) {
                 JSONObject mapj = j.getJSONObject("map");
-                if(mapj.getString("map_file_name") != null){
-                r.setLocalCarto(mapj.getString("map_file_name"));
+                if (mapj.getString("map_file_name") != null) {
+                    r.setLocalCarto(mapj.getString("map_file_name"));
                 }
             }
         }
 
 
-            r.setGlobalRating((float) j.optDouble("globalrating", -1.0));
+        r.setGlobalRating((float) j.optDouble("globalrating", -1.0));
 
         return r;
     }
@@ -127,15 +160,16 @@ public class JSONConverter {
 
         Track t;
         int server_id = j.optInt("server_id", -1);
-        if(server_id != -1){
-           t = DataContainer.findTrackByServerId(server_id, db);
-            if(t == null){
+        if (server_id != -1) {
+            t = DataContainer.findTrackByServerId(server_id, db);
+            if (t == null) {
                 t = new Track();
                 t.setServerId(j.optInt("server_id", -1));
             }
-        } else{
-        t = new Track();
-            t.setServerId(j.optInt("server_id", -1));}
+        } else {
+            t = new Track();
+            t.setServerId(j.optInt("server_id", -1));
+        }
 
 
         // again just using ca for now
@@ -150,7 +184,7 @@ public class JSONConverter {
             if (j.getJSONArray("steps") != null) {
                 List<Step> steps = jsonArrayToStepList(j.getJSONArray("steps"), route_id, db);
                 t.setSteps(steps);
-                for(Step this_step : steps){
+                for (Step this_step : steps) {
                     this_step.setTrack(t);
                 }
             }
@@ -163,7 +197,7 @@ public class JSONConverter {
         for (int i = 0; i < a.length(); i++) {
             JSONObject jsonHighLight = a.getJSONObject(i);
             HighLight hl = jsonObjectToHighLight(jsonHighLight, s, db);
-                retVal.add(hl);
+            retVal.add(hl);
 
         }
         return retVal;
@@ -182,15 +216,17 @@ public class JSONConverter {
 
         Step s;
         int server_id = j.optInt("server_id");
-        if(server_id != -1){
-            s = DataContainer.findStepByServerId(server_id, db);
-            if(s == null){
-                s = new Step();
-                s.setServerId(j.optInt("server_id", -1));
-            }
-        } else{
+
+//        if (server_id != -1) {
+//            s = DataContainer.findStepByServerId(server_id, db);
+ //           if (s == null) {
+  //              s = new Step();
+   //             s.setServerId(j.optInt("server_id", -1));
+    //        }
+    //    } else {
             s = new Step();
-            s.setServerId(j.optInt("server_id", -1));}
+            s.setServerId(j.optInt("server_id", -1));
+   //     }
 
         SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -217,7 +253,7 @@ public class JSONConverter {
 
         s.setPrecision(j.optDouble("precision", Util.DEFAULT_PRECISION));
 
-        if (j.has("absolute_time") && j.optString("absolute_time") != "null"){
+        if (j.has("absolute_time") && j.optString("absolute_time") != "null") {
             String dateString = j.getString("absolute_time");
             try {
                 s.setAbsoluteTime(spdf.parse(dateString));
@@ -236,15 +272,16 @@ public class JSONConverter {
 
         HighLight h;
         int server_id = j.optInt("server_id");
-        if(server_id != -1){
+        if (server_id != -1) {
             h = DataContainer.findHighlightByServerId(server_id, db);
-            if(h == null){
+            if (h == null) {
                 h = new HighLight();
                 h.setServerId(j.optInt("server_id", -1));
             }
-        } else{
+        } else {
             h = new HighLight();
-            h.setServerId(j.optInt("server_id", -1));}
+            h.setServerId(j.optInt("server_id", -1));
+        }
 
         h.setStep(s);
         h.setGlobalRating((float) j.optDouble("average_rating", -1.0));
@@ -272,11 +309,9 @@ public class JSONConverter {
         h.setRadius(j.optDouble("radius", Util.DEFAULT_HIGHLIGHT_RADIUS));
         h.setType(j.optInt("type", 0) == 0 ? 3 : 1);
 
-        // TODO deal with ratings
 
+        if(j.has("references")){
         JSONArray refs = j.optJSONArray("references");
-        JSONArray iis = j.optJSONArray("interactive_images");
-
 
         if (refs != null) {
             ArrayList<Reference> reflist = new ArrayList<Reference>();
@@ -287,7 +322,10 @@ public class JSONConverter {
             }
             h.setReferences(reflist);
         }
+        }
+        if(j.has("interactive_images")){
         // Now the interactive images
+        JSONArray iis = j.optJSONArray("interactive_images");
 
         if (iis != null) {
             ArrayList<InteractiveImage> iilist = new ArrayList<InteractiveImage>();
@@ -297,7 +335,7 @@ public class JSONConverter {
                 iilist.add(ii);
             }
             h.setInteractiveImages(iilist);
-
+        }
         }
         return h;
     }
@@ -306,15 +344,16 @@ public class JSONConverter {
 
         Reference r;
         int server_id = j.optInt("server_id");
-        if(server_id != -1){
+        if (server_id != -1) {
             r = DataContainer.findReferenceByServerId(server_id, db);
-            if(r == null){
+            if (r == null) {
                 r = new Reference();
                 r.setServerId(j.optInt("server_id", -1));
             }
-        } else{
+        } else {
             r = new Reference();
-            r.setServerId(j.optInt("server_id", -1));}
+            r.setServerId(j.optInt("server_id", -1));
+        }
 
 
         r.setName(j.optString("name_ca", "none"));
@@ -326,15 +365,16 @@ public class JSONConverter {
 
         InteractiveImage ii;
         int server_id = j.optInt("server_id");
-        if(server_id != -1){
+        if (server_id != -1) {
             ii = DataContainer.findInteractiveImageByServerId(server_id, db);
-            if(ii == null){
+            if (ii == null) {
                 ii = new InteractiveImage();
                 ii.setServerId(j.optInt("server_id", -1));
             }
-        } else{
+        } else {
             ii = new InteractiveImage();
-            ii.setServerId(j.optInt("server_id", -1));}
+            ii.setServerId(j.optInt("server_id", -1));
+        }
 
         ii.setOriginalHeight(j.optInt("original_height"));
         ii.setOriginalWidth(j.optInt("original_width"));
@@ -363,10 +403,10 @@ public class JSONConverter {
             return null;
         JSONObject j = new JSONObject();
         j.put("id", h.getId());
-        if(h.getFileManifest() != null){
-        DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
-            if(h.getFileManifest().getPath() != null && !h.getFileManifest().getPath().isEmpty()){
-        j.put("media_path", h.getFileManifest().getPath());
+        if (h.getFileManifest() != null) {
+            DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
+            if (h.getFileManifest().getPath() != null && !h.getFileManifest().getPath().isEmpty()) {
+                j.put("media_path", h.getFileManifest().getPath());
             }
         }
         j.put("name_oc", h.getName("oc"));
@@ -494,7 +534,6 @@ public class JSONConverter {
         return j;
     }
 
-
     public static JSONObject referenceToJSONObject(Reference r) throws JSONException {
         if (r == null)
             return null;
@@ -531,7 +570,7 @@ public class JSONConverter {
         if (iilist == null)
             return null;
         JSONArray ja = new JSONArray();
-        for(InteractiveImage ii:iilist){
+        for (InteractiveImage ii : iilist) {
             ja.put(iiToJSONObject(ii));
         }
         return ja;
@@ -541,7 +580,7 @@ public class JSONConverter {
         if (rlist == null)
             return null;
         JSONArray ja = new JSONArray();
-        for(Reference ref:rlist){
+        for (Reference ref : rlist) {
             ja.put(referenceToJSONObject(ref));
         }
         return ja;
@@ -633,7 +672,6 @@ public class JSONConverter {
         result.put("route", r.getServerId());
         return result;
     }
-
 
 
 }

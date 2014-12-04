@@ -37,6 +37,8 @@ public class HighLight {
     private String longText_fr;
     @DatabaseField
     private String longText_en;
+    @DatabaseField
+    private String media_url;
     @DatabaseField(foreign = true, columnName = "fileManifestId")
     private FileManifest file_manifest;
     @DatabaseField
@@ -48,9 +50,9 @@ public class HighLight {
     @DatabaseField
     private int totalRatings;
     @DatabaseField
-    private int userRating;
+    private int userRating = -1;
     @DatabaseField
-    private boolean userRatingUploaded;
+    private boolean userRatingUploaded = false;
     @DatabaseField
     private long userRatingTime;
     @DatabaseField(foreign = true, columnName = "stepId")
@@ -118,6 +120,15 @@ public class HighLight {
     public void setServerId(int server_id) {
         this.server_id = server_id;
     }
+
+    public String getMediaUrl() {
+        return media_url;
+    }
+
+    public void setMediaUrl(String media_url) {
+        this.media_url = media_url;
+    }
+
 
 
     @Override

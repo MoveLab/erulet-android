@@ -209,9 +209,12 @@ public class DataContainer {
     }
 
     public static void deleteReference(Reference r, EruletApp app) {
+        refreshReference(r, app.getDataBaseHelper());
         Collection<FileManifest> fms = r.getFileManifests();
+        if(fms != null){
         for(FileManifest fm : fms){
             app.getDataBaseHelper().getFileManifestDataDao().delete(fm);
+        }
         }
         app.getDataBaseHelper().getReferenceDataDao().delete(r);
     }

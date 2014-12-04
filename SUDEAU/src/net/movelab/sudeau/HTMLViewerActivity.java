@@ -125,10 +125,10 @@ public class HTMLViewerActivity extends FragmentActivity {
                             // custom dialog
                             final Dialog dialog = new Dialog(thisContext);
                             dialog.setContentView(R.layout.rating_bar_dialog);
-                            dialog.setTitle("Highlight Ratings");
+                            dialog.setTitle(getResources().getString(R.string.highlight_ratings));
                             TextView ratingLabel = (TextView) dialog.findViewById(R.id.tvGlobalRating);
                             if(hl.getGlobalRating() >=0){
-                                ratingLabel.setText("Average rating: " + String.format("%.2f", hl.getGlobalRating()));
+                                ratingLabel.setText(getResources().getString(R.string.average_rating) + ": " + String.format("%.2f", hl.getGlobalRating()));
                             }
                             RatingBar myRating = (RatingBar)dialog.findViewById(R.id.ratBarUser);
                             myRating.setStepSize(1.0f);
@@ -248,7 +248,9 @@ public class HTMLViewerActivity extends FragmentActivity {
     private void loadHTML(){
 
         // for now we are simply going to use the first reference and ignore the rest. But for future TODO we can add some navigation to the others
+        if(getReferenceString() !=null && getReferenceString().size() >0){
         wv.loadDataWithBaseURL(base_url, getReferenceString().get(0), "text/html","utf-8", null);
+        }
     }
 
 
@@ -257,7 +259,7 @@ public class HTMLViewerActivity extends FragmentActivity {
         final int[] these_ii_ids = ii_ids;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose interactive image")
+        builder.setTitle(getResources().getString(R.string.choose_interactive_image))
                 .setItems(ii_items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(
@@ -280,7 +282,6 @@ public class HTMLViewerActivity extends FragmentActivity {
     public void onBackPressed() {
         WebView wv;
         wv = (WebView) findViewById(R.id.wb_webView);
-        Log.i("WV BACK: ", wv.getUrl());
         if(wv.canGoBack() && !onInitialPage){
                 loadHTML();
                 onInitialPage = true;

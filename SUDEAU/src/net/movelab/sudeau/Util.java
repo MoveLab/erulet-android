@@ -1053,18 +1053,7 @@ public class Util {
         if (!isOnline(context)) {
             return null;
         } else {
-
-            int server_id = jsonData.optInt("server_id", -1);
-            if (server_id == -1) {
-                result = postJsonString(jsonData.toString(), apiEndpoint, context);
-            } else {
-                String targetUrl = apiEndpoint + server_id + "/";
-                Log.i("postJson", "endpoint: " + targetUrl);
-                Log.i("postJson", "json: " + jsonData.toString());
-                result = putJsonString(jsonData.toString(), targetUrl, context);
-                // As alternative, trying?
-//                result = patchJsonString(jsonData.toString(), targetUrl, context);
-            }
+            result = postJsonString(jsonData.toString(), apiEndpoint, context);
             return result;
         }
     }
@@ -1374,10 +1363,10 @@ public class Util {
         } else {
 
             HttpParams httpParameters = new BasicHttpParams();
-            int timeoutConnection = 8000;
+            int timeoutConnection = 120000;
             HttpConnectionParams.setConnectionTimeout(httpParameters,
                     timeoutConnection);
-            int timeoutSocket = 8000;
+            int timeoutSocket = 120000;
             HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 
             StringBuilder builder = new StringBuilder();

@@ -141,6 +141,7 @@
     <string name="hide_my_highlights">Ocultar mis comentarios</string>
     <string name="hide_my_routes">Ocultar mis itinerarios</string>
     <string name="highlight">Editar una reseña</string>
+    <string name="highlight_ratings">Valoración del comentario</string>
     <string name="highlight_ratings_title">Valoraciones de los comentarios</string>
     <string name="highlight_translation">Traducción de reseñas de Eth Holet</string>
     <string name="holet_admin">Admin Eth Holet</string>

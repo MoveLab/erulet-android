@@ -429,7 +429,7 @@ public class EditHighLightActivity extends Activity {
                         break;
                     case R.id.rbVideo:
                         if (currentVideo != null) {
-                            returnIntent.putExtra("imagePath", Uri.fromFile(currentVideo).toString());
+                            returnIntent.putExtra("imagePath", currentVideo.getPath());
                         } else {
                             returnIntent.putExtra("imagePath", "");
                         }

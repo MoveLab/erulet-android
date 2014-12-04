@@ -145,10 +145,12 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("detailed itinerari", "oc1");
         super.onCreate(savedInstanceState);
         // getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         // | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.detail_itinerary_map);
+        Log.i("detailed itinerari", "oc2");
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
@@ -166,6 +168,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
         ruler = (TextView) findViewById(R.id.ruler);
 
         proximityWarning = new ProximityWarning(app);
+        Log.i("detailed itinerari", "oc3");
+
         mObjFactory = new MapObjectsFactory();
         // Check availability of google play services
         int status = GooglePlayServicesUtil
@@ -178,8 +182,10 @@ public class DetailItineraryActivity extends FragmentActivity implements
             dialog.show();
         } else { // Proceed normally
 
+            Log.i("detailed itinerari", "oc4");
             setWorkingMode();
             setupView();
+            Log.i("detailed itinerari", "oc5");
 
             locationAlerts = (ImageButton) findViewById(R.id.location_alerts);
 
@@ -274,6 +280,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
             startOrResumeTracking();
 
             locationClient = new LocationClient(this, this, this);
+
+            Log.i("detailed itinerari", "oc6");
+
         }
     }
 
@@ -309,9 +318,13 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     protected void onResume() {
+        Log.i("detailed itinerari", "or1");
         super.onResume();
+        Log.i("detailed itinerari", "or2");
         updateLocationAlerts(false);
+        Log.i("detailed itinerari", "or3");
         updateSelectedRoute();
+        Log.i("detailed itinerari", "or4");
     }
 
 
@@ -1455,7 +1468,8 @@ Log.i("startOrResumeTracking", "top");
         Track t = selectedRoute.getTrack();
         selectedRouteSteps = DataContainer.getTrackSteps(t,
                 app.getDataBaseHelper());
-        refreshDecorations(selectedRouteSteps);
+        List<Step> orderedSelectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app.getDataBaseHelper());
+        refreshDecorations(orderedSelectedRouteSteps);
         for (int j = 0; j < (selectedRouteSteps.size()); j++) {
             Step step = selectedRouteSteps.get(j);
             if (step.getOrder() != -1) {

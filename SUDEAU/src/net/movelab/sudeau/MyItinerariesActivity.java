@@ -239,6 +239,8 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
 
         protected Boolean doInBackground(Context... context) {
 
+            // TODO deal with updating routes already uploaded. Since only flat route  content could change, post these to flat user route endpoint
+            if(selectedRoute.getServerId()>=0){
             try {
                 JSONObject this_route_json = JSONConverter.userRouteToServerJSONObject(selectedRoute, app);
                 response = Util.postJSON(this_route_json, UtilLocal.URL_USER_ROUTES, context[0]);
@@ -290,12 +292,14 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                 DataContainer.refreshHighlightForFileManifest(h, app.getDataBaseHelper());
                 FileManifest this_fm = h.getFileManifest();
                 File media_file = new File(this_fm.getPath());
+                Log.i("media", this_fm.getPath());
+                Log.i("media", media_file.getAbsolutePath());
                 media_post_response = Util.postMedia(context[0], media_file.getAbsolutePath(), media_file.getName(), h.getServerId());
                 if (media_post_response < 200 || media_post_response >= 300) {
                     resultFlag = UPLOAD_ERROR;
                 }
             }
-
+            }
 
             // Now try ratings (or move this into pure background service)
 
@@ -307,7 +311,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                     responseJson = Util.parseResponse(context[0], response);
                     if (statusCode >= 200 && statusCode < 300) {
                         this_route.setUserRatingUploaded(true);
-                        DataContainer.updateRoute(selectedRoute, app.getDataBaseHelper());
+                        DataContainer.updateRoute(this_route, app.getDataBaseHelper());
                     } else {
                         //TODO
                     }
@@ -324,7 +328,7 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                     responseJson = Util.parseResponse(context[0], response);
                     if (statusCode >= 200 && statusCode < 300) {
                         this_hl.setUserRatingUploaded(true);
-                        DataContainer.updateRoute(selectedRoute, app.getDataBaseHelper());
+                        DataContainer.updateHighLight(this_hl, app.getDataBaseHelper());
                     } else {
                         //TODO
                     }
@@ -353,13 +357,13 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
                 if (resultFlag == OFFLINE) {
                     buildCustomAlert(context.getResources().getString(R.string.offline_try_again));
                 } else if (resultFlag == UPLOAD_ERROR) {
-                    buildCustomAlert(context.getResources().getString(R.string.error_try_again));
+                    buildCustomAlert(context.getResources().getString(R.string.error_try_again) + responseJson.toString());
                     Log.e("upload error", responseJson.toString());
                 } else if (resultFlag == DATABASE_ERROR) {
-                    buildCustomAlert(context.getResources().getString(R.string.error_try_again));
+                    buildCustomAlert(context.getResources().getString(R.string.error_try_again) + responseJson.toString());
                     Log.e("database error", "error");
                 } else if (resultFlag == JSON_ERROR) {
-                    buildCustomAlert(context.getResources().getString(R.string.error_try_again));
+                    buildCustomAlert(context.getResources().getString(R.string.error_try_again) + responseJson.toString());
                     Log.e("json error", "error");
                 }
 

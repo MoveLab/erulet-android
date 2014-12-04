@@ -358,16 +358,12 @@ public class Switchboard extends FragmentActivity {
                 Util.logInfo(context[0], "API", jsonArrayString);
                 myProgress += 20;
                 publishProgress(myProgress);
-                try {
                     JSONArray ja = null;
                     try {
                         ja = new JSONArray(jsonArrayString);
                         myProgress += 10;
                         publishProgress(myProgress);
 
-                    } catch (JSONException e) {
-                        Util.logError(context[0], "JSON download 1", "" + e);
-                    }
                     ArrayList<Route> these_routes = JSONConverter.jsonArrayToRouteArray(ja, app.getDataBaseHelper());
                     myProgress += 20;
                     publishProgress(myProgress);
@@ -388,9 +384,10 @@ public class Switchboard extends FragmentActivity {
                     myProgress += 20;
                     publishProgress(myProgress);
 
-                } catch (Exception e) {
-                    Util.logError(context[0], "JSON download 2", "" + e);
-                }
+                    } catch (JSONException e) {
+                        Log.e("JSON download 1", "" + e);
+                    }
+
             }
             //General Maps
             boolean mapSuccess = true;
@@ -722,10 +719,8 @@ public class Switchboard extends FragmentActivity {
                             Log.d("Route Media status code: ", "" + statusCode);
                             int fileSize = Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
                             HttpEntity entity = response.getEntity();
-                            File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route_map.zip");
+                            File destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route.zip");
                             String destinationPath = destinationFile.getPath();
-                            destinationFile = new File(Environment.getExternalStorageDirectory().getPath(), Util.baseFolder + "/route.zip");
-                            destinationPath = destinationFile.getPath();
                             entity = response.getEntity();
                             InputStream input = new BufferedInputStream(entity.getContent());
                             OutputStream output = new FileOutputStream(destinationPath);

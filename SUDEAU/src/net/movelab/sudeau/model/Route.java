@@ -23,7 +23,7 @@ public class Route {
     @DatabaseField(generatedId=true)
     private int id;
     @DatabaseField
-    private int server_id;
+    private int server_id = -1;
     @DatabaseField
     private boolean official;
 	@DatabaseField
@@ -69,9 +69,9 @@ public class Route {
     @DatabaseField
     private int totalRatings;
 	@DatabaseField
-	private int userRating;
+	private int userRating = -1;
     @DatabaseField
-    private boolean userRatingUploaded;
+    private boolean userRatingUploaded = false;
     @DatabaseField
     private long userRatingTime;
 

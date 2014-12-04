@@ -141,6 +141,7 @@
     <string name="hide_my_highlights">Amagar els meus comentaris</string>
     <string name="hide_my_routes">Amagar els meus itineraris</string>
     <string name="highlight">Editar una ressenya</string>
+    <string name="highlight_ratings">Valoració del comentari</string>
     <string name="highlight_ratings_title">Valoracions dels comentaris</string>
     <string name="highlight_translation">Traducció de ressenyes d\'Eth Holet</string>
     <string name="holet_admin">Admin Eth Holet</string>
