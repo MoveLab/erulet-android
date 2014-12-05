@@ -68,8 +68,8 @@
         <activity android:name="net.movelab.sudeau.HTMLViewerActivity"
             android:hardwareAccelerated="true">
         </activity>
-        <activity android:name="net.movelab.sudeau.InteractiveImageActivityHeatMap" 
-            android:theme="@android:style/Theme.Holo">
+        <activity android:name="net.movelab.sudeau.InteractiveImageActivityHeatMap"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
         </activity>
         <activity android:name="net.movelab.sudeau.MyItinerariesActivity"
             android:theme="@android:style/Theme.Holo">
@@ -79,7 +79,7 @@
         </activity>
         <activity android:name="net.movelab.sudeau.VideoPlayActivity"
             android:screenOrientation="landscape"
-            >
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
         </activity>
         <activity android:name="net.movelab.sudeau.EditRouteActivity"
             android:theme="@android:style/Theme.Holo">

@@ -2,6 +2,7 @@ package net.movelab.sudeau;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,8 +16,10 @@ import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -30,6 +33,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,26 +63,43 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
+import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class DetailItineraryActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -140,17 +161,18 @@ public class DetailItineraryActivity extends FragmentActivity implements
     ImageButton locationAlerts;
     boolean surveyGiven = false;
     public boolean isUserHighlightsOn = false;
+    RelativeLayout trans_prog;
 
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("detailed itinerari", "oc1");
         super.onCreate(savedInstanceState);
         // getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         // | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.detail_itinerary_map);
-        Log.i("detailed itinerari", "oc2");
+        trans_prog = (RelativeLayout) findViewById(R.id.trans_prog);
+        trans_prog.setVisibility(View.VISIBLE);
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
@@ -168,7 +190,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
         ruler = (TextView) findViewById(R.id.ruler);
 
         proximityWarning = new ProximityWarning(app);
-        Log.i("detailed itinerari", "oc3");
 
         mObjFactory = new MapObjectsFactory();
         // Check availability of google play services
@@ -182,10 +203,8 @@ public class DetailItineraryActivity extends FragmentActivity implements
             dialog.show();
         } else { // Proceed normally
 
-            Log.i("detailed itinerari", "oc4");
             setWorkingMode();
             setupView();
-            Log.i("detailed itinerari", "oc5");
 
             locationAlerts = (ImageButton) findViewById(R.id.location_alerts);
 
@@ -281,8 +300,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
             locationClient = new LocationClient(this, this, this);
 
-            Log.i("detailed itinerari", "oc6");
-
         }
     }
 
@@ -318,13 +335,11 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     protected void onResume() {
-        Log.i("detailed itinerari", "or1");
+        trans_prog.setVisibility(View.VISIBLE);
         super.onResume();
-        Log.i("detailed itinerari", "or2");
         updateLocationAlerts(false);
-        Log.i("detailed itinerari", "or3");
         updateSelectedRoute();
-        Log.i("detailed itinerari", "or4");
+        trans_prog.setVisibility(View.GONE);
     }
 
 
@@ -1045,9 +1060,6 @@ Log.i("startOrResumeTracking", "top");
                             TextView title = (TextView) myContentView
                                     .findViewById(R.id.info_title);
 
-                            // removing title from popups as per Lluis's request
-                            title.setVisibility(View.GONE);
-
                             Step s = selectedRouteMarkers.get(marker);
                             boolean isUserMarker = false;
                             if (s == null) {
@@ -1096,6 +1108,11 @@ Log.i("startOrResumeTracking", "top");
                                         snippet.setText(getResources().getString(R.string.multiple_highlights_message));
                                     }
                                 } else { // Not user marker
+                                    // removing title from official popups as per Lluis's request
+                                    if(marker != startMarker && marker != arrivalMarker){
+                                    title.setVisibility(View.GONE);
+                                    }
+
                                     if (s.hasSingleHighLight()) {
                                         List<HighLight> highLights = DataContainer
                                                 .getStepHighLights(s,
@@ -1498,6 +1515,32 @@ Log.i("startOrResumeTracking", "top");
             }
         }
     }
+
+
+
+    class InitialSyncAsync extends AsyncTask<Context, Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Context... context) {
+            return true;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+
+        protected void onPostExecute(Boolean result) {
+
+        }
+    }
+
 
     private void refreshDecorations(List<Step> steps) {
         if (directionMarkers == null) {

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
@@ -34,7 +35,8 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 	private int scaledWidth;
 	private int originalHeight;
 	private int originalWidth;
-	
+    HorizontalScrollView scrollView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -45,11 +47,9 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
         }
 		image = (ImageView)findViewById(R.id.int_image);
 
-        // Attempted fix for centering issue that does not work
-//        int middleHorizontal = Util.getScreenSize(getApplicationContext())[0];
- //       HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.heatMapScrollView);
-  //      scrollView.scrollTo(middleHorizontal, 0);
-		
+        scrollView = (HorizontalScrollView) findViewById(R.id.heatMapScrollView);
+
+
 		InteractiveImage interactiveImage = null;
 		Bundle extras = getIntent().getExtras();		
 		if (extras != null) {
@@ -83,7 +83,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		}				
 		image.setOnTouchListener(this);
 	}}
-	
+
 	private int getBitmapXCoord(int screenXCoord){
 		float result;
 		result = (originalWidth * screenXCoord)/scaledWidth;
