@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Step;
 import android.app.Activity;
 import android.content.Intent;

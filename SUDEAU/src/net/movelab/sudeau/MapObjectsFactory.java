@@ -37,7 +37,7 @@ public class MapObjectsFactory {
 		.snippet(snippet)
 		.position(new LatLng(-27, 133))
 		.icon(BitmapDescriptorFactory
-				.fromResource(R.drawable.ic_erulet_v2)));
+				.fromResource(R.drawable.ic_erulet_new)));
 	}
 
 

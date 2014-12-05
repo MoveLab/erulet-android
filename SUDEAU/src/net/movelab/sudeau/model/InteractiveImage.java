@@ -1,7 +1,5 @@
 package net.movelab.sudeau.model;
 
-import android.util.Log;
-
 import java.util.Collection;
 
 import com.j256.ormlite.field.DatabaseField;

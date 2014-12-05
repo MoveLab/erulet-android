@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.movelab.sudeau.model.Step;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;

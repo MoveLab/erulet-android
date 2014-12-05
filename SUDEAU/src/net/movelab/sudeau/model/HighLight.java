@@ -6,8 +6,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.movelab.sudeau.database.DataBaseHelper;
-
 import java.util.Collection;
 
 @DatabaseTable(tableName = "highlight")

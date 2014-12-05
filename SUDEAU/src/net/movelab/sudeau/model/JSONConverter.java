@@ -135,7 +135,7 @@ public class JSONConverter {
         }
         r.setLocalCarto("none");
         if (j.has("map")) {
-            if (j.getJSONObject("map") != null && !j.getJSONObject("map").equals("null")) {
+            if (j.optJSONObject("map") != null) {
                 JSONObject mapj = j.getJSONObject("map");
                 if (mapj.getString("map_file_name") != null) {
                     r.setLocalCarto(mapj.getString("map_file_name"));

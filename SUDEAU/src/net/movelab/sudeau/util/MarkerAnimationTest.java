@@ -2,7 +2,6 @@ package net.movelab.sudeau.util;
 
 import android.animation.ValueAnimator;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.view.animation.BounceInterpolator;
 
 import com.google.android.gms.maps.model.Marker;
