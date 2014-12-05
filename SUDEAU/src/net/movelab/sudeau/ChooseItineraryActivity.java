@@ -179,8 +179,6 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute", rbb.id);
                     intent.putExtra("mode",0);
                     dialogInterface.dismiss();
-                    RelativeLayout trans_prog = (RelativeLayout) findViewById(R.id.trans_prog);
-                    trans_prog.setVisibility(View.VISIBLE);
                     startActivity(intent);				                }
             });
             builder.setNeutralButton(getString(R.string.trip_option_2), new DialogInterface.OnClickListener() {
@@ -192,10 +190,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",1);
                     dialogInterface.dismiss();
-                    RelativeLayout trans_prog = (RelativeLayout) findViewById(R.id.trans_prog);
-                    trans_prog.setVisibility(View.VISIBLE);
+                    finish();
                     startActivity(intent);
-                    finish();}
+                }
             });
             // this will be only for super users - need to set up check
             if(false){
@@ -208,10 +205,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",2);
                     dialogInterface.dismiss();
-                    RelativeLayout trans_prog = (RelativeLayout) findViewById(R.id.trans_prog);
-                    trans_prog.setVisibility(View.VISIBLE);
-                    startActivity(intent);
                     finish();
+                    startActivity(intent);
                 }
             });
             }

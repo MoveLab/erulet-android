@@ -117,7 +117,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
     private Polyline selectedRoutePolyLine;
     private List<Circle> selectedRoutePoints;
     private List<Step> selectedRouteSteps;
-    private List<Step> relatedRouteSteps;
     private List<Marker> directionMarkers;
     private Marker arrivalMarker;
     private Marker startMarker;
@@ -162,6 +161,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
     boolean surveyGiven = false;
     public boolean isUserHighlightsOn = false;
     RelativeLayout trans_prog;
+    Boolean firstLoad = true;
 
     Context context;
 
@@ -172,7 +172,6 @@ public class DetailItineraryActivity extends FragmentActivity implements
         // | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.detail_itinerary_map);
         trans_prog = (RelativeLayout) findViewById(R.id.trans_prog);
-        trans_prog.setVisibility(View.VISIBLE);
         if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
@@ -335,11 +334,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     @Override
     protected void onResume() {
-        trans_prog.setVisibility(View.VISIBLE);
         super.onResume();
         updateLocationAlerts(false);
         updateSelectedRoute();
-        trans_prog.setVisibility(View.GONE);
     }
 
 
@@ -1477,59 +1474,57 @@ Log.i("startOrResumeTracking", "top");
     }
 
     private void updateSelectedRoute() {
-        if (selectedRouteMarkers == null) {
-            selectedRouteMarkers = new Hashtable<Marker, Step>();
-        }
-        clearSelectedRoute();
-        PolylineOptions rectOptions = new PolylineOptions();
-        Track t = selectedRoute.getTrack();
-        selectedRouteSteps = DataContainer.getTrackSteps(t,
-                app.getDataBaseHelper());
-        List<Step> orderedSelectedRouteSteps = DataContainer.getTrackOrderedSteps(t, app.getDataBaseHelper());
-        refreshDecorations(orderedSelectedRouteSteps);
-        for (int j = 0; j < (selectedRouteSteps.size()); j++) {
-            Step step = selectedRouteSteps.get(j);
-            if (step.getOrder() != -1) {
-                rectOptions
-                        .add(new LatLng(step.getLatitude(), step.getLongitude()));
-                // Enable this maybe on options, obscures map too much
-                // addPrecisionRadius(step);
-            }
-            addMarkerIfNeeded(step, true);
-        }
-        rectOptions.zIndex(1);
-        rectOptions.color(Color.GRAY);
-        selectedRoutePolyLine = mMap.addPolyline(rectOptions);
 
-        // add user's markers from all related routes if set on in preferences
-        if (isUserHighlightsOn && relatedRoutes != null && relatedRoutes.size() > 0) {
+        new RouteUpdateAsyc().execute(context);
 
-            for (Route relatedRoute : relatedRoutes) {
-
-                relatedRouteSteps = DataContainer.getTrackSteps(relatedRoute.getTrack(),
-                        app.getDataBaseHelper());
-                for (Step thisStep : relatedRouteSteps) {
-
-                    addMarkerIfNeeded(thisStep, false);
-                }
-            }
-        }
     }
 
 
 
-    class InitialSyncAsync extends AsyncTask<Context, Integer, Boolean> {
+    class RouteUpdateAsyc extends AsyncTask<Context, Integer, Boolean> {
+
+        PolylineOptions rectOptions;
+        Track t;
+        List<Step> orderedSelectedRouteSteps;
+        DataBaseHelper db;
+        ArrayList<List<Step>> relatedRouteStepsAL;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
+            if(firstLoad){
+            trans_prog.setVisibility(View.VISIBLE);
+            }
+            firstLoad = false;
 
+            if (selectedRouteMarkers == null) {
+                selectedRouteMarkers = new Hashtable<Marker, Step>();
+            }
+            clearSelectedRoute();
+            rectOptions = new PolylineOptions();
+            t = selectedRoute.getTrack();
+            db = app.getDataBaseHelper();
+            relatedRouteStepsAL = new ArrayList<List<Step>>();
         }
 
         @Override
         protected Boolean doInBackground(Context... context) {
-            return true;
+
+            selectedRouteSteps = DataContainer.getTrackSteps(t,
+                    app.getDataBaseHelper());
+            orderedSelectedRouteSteps = DataContainer.getTrackOrderedSteps(t, db);
+
+            if (isUserHighlightsOn && relatedRoutes != null && relatedRoutes.size() > 0) {
+
+                for (Route relatedRoute : relatedRoutes) {
+
+                    relatedRouteStepsAL.add(DataContainer.getTrackSteps(relatedRoute.getTrack(),
+                            db));
+                }
+            }
+
+                return true;
         }
 
         protected void onProgressUpdate(Integer... progress) {
@@ -1537,6 +1532,29 @@ Log.i("startOrResumeTracking", "top");
 
 
         protected void onPostExecute(Boolean result) {
+
+            refreshDecorations(orderedSelectedRouteSteps);
+            for (Step step : selectedRouteSteps) {
+                if (step.getOrder() != -1) {
+                    rectOptions
+                            .add(new LatLng(step.getLatitude(), step.getLongitude()));
+                }
+                addMarkerIfNeeded(step, true);
+            }
+            rectOptions.zIndex(1);
+            rectOptions.color(Color.GRAY);
+            selectedRoutePolyLine = mMap.addPolyline(rectOptions);
+
+            // add user's markers from all related routes if set on in preferences
+            if (relatedRouteStepsAL !=null && relatedRouteStepsAL.size() > 0) {
+                for (List<Step> relatedRouteSteps : relatedRouteStepsAL) {
+                    for (Step thisStep : relatedRouteSteps) {
+                        addMarkerIfNeeded(thisStep, false);
+                    }
+                }
+            }
+
+            trans_prog.setVisibility(View.GONE);
 
         }
     }
