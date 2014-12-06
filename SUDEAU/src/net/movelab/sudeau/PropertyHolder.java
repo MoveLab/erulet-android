@@ -40,6 +40,8 @@ public class PropertyHolder {
     public static final String TRIP_IN_PROGRESS_TRACKING = "TRIP_IN_PROGRESS_TRACKING";
     public static final String TRIP_IN_PROGRESS_MODE = "TRIP_IN_PROGRESS_MODE";
 
+    public static final String CORE_DATA_STATUS = "CORE_DATA_STATUS";
+    public static final String ROUTE_CONTENT_STATUS_PREFIX = "ROUTE_CONTENT_STATUS_ROUTE";
 
     public static final String ARANESE = "oc";
     public static final String SPANISH = "es";
@@ -47,6 +49,10 @@ public class PropertyHolder {
     public static final String FRENCH = "fr";
     public static final String ENGLISH = "en";
 
+    public static final int STATUS_CODE_MISSING = 0;
+    public static final int STATUS_CODE_QUEUED = 1;
+    public static final int STATUS_CODE_DOWNLOADING = 2;
+    public static final int STATUS_CODE_READY = 3;
 
 
     /**
@@ -264,6 +270,25 @@ public class PropertyHolder {
         editor.putString(LOCALE, _locale);
         editor.apply();
     }
+
+    public static int getCoreDataStatus(){
+        return sharedPreferences.getInt(CORE_DATA_STATUS, 0);
+    }
+
+    public void setCoreDataStatus(int status_code){
+        editor.putInt(CORE_DATA_STATUS, status_code);
+        editor.apply();
+    }
+
+    public static int getRouteContentStatus(int route_id){
+        return sharedPreferences.getInt(ROUTE_CONTENT_STATUS_PREFIX + route_id, 0);
+    }
+
+    public void setRouteContentStatus(int route_id, int status_code){
+        editor.putInt(ROUTE_CONTENT_STATUS_PREFIX + route_id, status_code);
+        editor.apply();
+    }
+
 
 
 }

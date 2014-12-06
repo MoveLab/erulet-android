@@ -1440,8 +1440,7 @@ public class Util {
 
     public static String getUrlRouteMap(Route route) {
         long last_update = route.getLocalCartoLastUpdated();
-        String result = UtilLocal.URL_ROUTE_MAP + route.getServerId() + "/" + last_update + "/";
-        return result;
+        return UtilLocal.URL_ROUTE_MAP + route.getServerId() + "/" + last_update + "/";
     }
 
     public static int getLargestScreenDimension(Context context) {
