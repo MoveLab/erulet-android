@@ -2,7 +2,6 @@ package net.movelab.sudeau;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,13 +18,13 @@ import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,43 +62,27 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 public class DetailItineraryActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -430,6 +413,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
         }
         if (requestCode == END_TRIP) { //
 
+            Intent ratingUploadIntent = new Intent(DetailItineraryActivity.this, UploadRatings.class);
+            startService(ratingUploadIntent);
+
             PropertyHolder.setTripInProgressFollowing(-1);
             PropertyHolder.setTripInProgressTracking(-1);
             PropertyHolder.setTripInProgressMode(-1);
@@ -480,9 +466,9 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
     private void saveHighLight(HighLight h) {
 
-       // if (selectedMarker != null) {
-       //     selectedMarker.remove();
-       // }
+        // if (selectedMarker != null) {
+        //     selectedMarker.remove();
+        // }
 
         Step s = DataContainer.findStepById(stepBeingEditedId,
                 app.getDataBaseHelper());
@@ -574,7 +560,7 @@ public class DetailItineraryActivity extends FragmentActivity implements
 
 
     private void startOrResumeTracking() {
-Log.i("startOrResumeTracking", "top");
+        Log.i("startOrResumeTracking", "top");
         if (routeMode > 0) {
 
             app.startTrackingService();
@@ -646,7 +632,7 @@ Log.i("startOrResumeTracking", "top");
         countDown.start();
     }
 
-       private void saveRoute() {
+    private void saveRoute() {
 
         if (routeInProgress != null) {
             DataContainer.refreshRouteForTrack(routeInProgress, app.getDataBaseHelper());
@@ -721,13 +707,13 @@ Log.i("startOrResumeTracking", "top");
                                 });
                         dialog.show();
                     }
-                } else{
+                } else {
                     finish();
                 }
-            } else{
+            } else {
                 finish();
             }
-        } else{
+        } else {
             finish();
         }
     }
@@ -747,7 +733,7 @@ Log.i("startOrResumeTracking", "top");
         app.stopTrackingService();
         if (routeMode == 1 || routeMode == 2) {
             saveRoute();
-        } else{
+        } else {
             finish();
         }
 
@@ -809,13 +795,13 @@ Log.i("startOrResumeTracking", "top");
 
     private void setWorkingMode() {
         int mode = PropertyHolder.getTripInProgressMode();
-        if(mode == -1){
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            routeMode = extras.getInt("mode");
-            PropertyHolder.setTripInProgressMode(routeMode);
-        }
-        }else{
+        if (mode == -1) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                routeMode = extras.getInt("mode");
+                PropertyHolder.setTripInProgressMode(routeMode);
+            }
+        } else {
             routeMode = mode;
         }
     }
@@ -824,18 +810,18 @@ Log.i("startOrResumeTracking", "top");
 
         int following_id = PropertyHolder.getTripInProgressFollowing();
 
-        if(following_id == -1){
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            int idRoute = extras.getInt("idRoute", -1);
-            selectedRoute = DataContainer.findRouteById(idRoute,
-                    app.getDataBaseHelper());
+        if (following_id == -1) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                int idRoute = extras.getInt("idRoute", -1);
+                selectedRoute = DataContainer.findRouteById(idRoute,
+                        app.getDataBaseHelper());
 
-            PropertyHolder.setTripInProgressFollowing(idRoute);
+                PropertyHolder.setTripInProgressFollowing(idRoute);
 
-            relatedRoutes = DataContainer.findRelatedRoutesById(selectedRoute.getServerId(), app.getDataBaseHelper());
-        }
-        }else{
+                relatedRoutes = DataContainer.findRelatedRoutesById(selectedRoute.getServerId(), app.getDataBaseHelper());
+            }
+        } else {
             selectedRoute = DataContainer.findRouteById(following_id, app.getDataBaseHelper());
             relatedRoutes = DataContainer.findRelatedRoutesById(selectedRoute.getServerId(), app.getDataBaseHelper());
         }
@@ -845,19 +831,19 @@ Log.i("startOrResumeTracking", "top");
         // user hits
         if (routeInProgress == null && (routeMode == 1 || routeMode == 2)) {
             int tracking_route_id = PropertyHolder.getTripInProgressTracking();
-            if(tracking_route_id == -1){
-            // This is very important for the ratings system
-            int idRouteBasedOn = selectedRoute != null ? selectedRoute
-                    .getServerId() : -1;
-            routeInProgress = DataContainer.createEmptyRoute(locale,
-                    app.getDataBaseHelper(),
-                    PropertyHolder.getUserId(),
-                    idRouteBasedOn);
-            PropertyHolder.setTripInProgressTracking(routeInProgress.getId());
-            } else{
+            if (tracking_route_id == -1) {
+                // This is very important for the ratings system
+                int idRouteBasedOn = selectedRoute != null ? selectedRoute
+                        .getServerId() : -1;
+                routeInProgress = DataContainer.createEmptyRoute(locale,
+                        app.getDataBaseHelper(),
+                        PropertyHolder.getUserId(),
+                        idRouteBasedOn);
+                PropertyHolder.setTripInProgressTracking(routeInProgress.getId());
+            } else {
                 routeInProgress = DataContainer.findRouteById(tracking_route_id, app.getDataBaseHelper());
             }
-            }
+        }
     }
 
     // private void setUpDBIfNeeded() {
@@ -1106,8 +1092,8 @@ Log.i("startOrResumeTracking", "top");
                                     }
                                 } else { // Not user marker
                                     // removing title from official popups as per Lluis's request
-                                    if(marker != startMarker && marker != arrivalMarker){
-                                    title.setVisibility(View.GONE);
+                                    if (marker != startMarker && marker != arrivalMarker) {
+                                        title.setVisibility(View.GONE);
                                     }
 
                                     if (s.hasSingleHighLight()) {
@@ -1320,7 +1306,7 @@ Log.i("startOrResumeTracking", "top");
                             if (selectedMarker != null) {
                                 selectedMarker.hideInfoWindow();
                             }
-                         //   selectedMarker = m;
+                            //   selectedMarker = m;
                             m.remove();
                             routeInProgressMarkers.remove(m);
                             launchHighLightEditIntent(s, null);
@@ -1415,27 +1401,27 @@ Log.i("startOrResumeTracking", "top");
             if (step.hasSingleHighLight()) {
                 hl = highLights.get(0);
                 // Marker m = MapObjectsFactory.addHighLightMarker(
-            if(official){
-                m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
-                        new LatLng(step.getLatitude(), step.getLongitude()),
-                        hl.getName(locale), hl.getLongText(locale), hl.getType());
-            } else{
-                m = MapObjectsFactory.addUserHighLightMarker(mMap,
-                        new LatLng(step.getLatitude(), step.getLongitude()),
-                        hl.getName(locale), hl.getLongText(locale), hl.getType());
+                if (official) {
+                    m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
+                            new LatLng(step.getLatitude(), step.getLongitude()),
+                            hl.getName(locale), hl.getLongText(locale), hl.getType());
+                } else {
+                    m = MapObjectsFactory.addUserHighLightMarker(mMap,
+                            new LatLng(step.getLatitude(), step.getLongitude()),
+                            hl.getName(locale), hl.getLongText(locale), hl.getType());
 
-            }
+                }
             } else { // Multiple highlights
-               if(official){
-                m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
-                        new LatLng(step.getLatitude(), step.getLongitude()),
-                        getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
-               }else{
-                   m = MapObjectsFactory.addUserHighLightMarker(mMap,
-                           new LatLng(step.getLatitude(), step.getLongitude()),
-                           getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
+                if (official) {
+                    m = MapObjectsFactory.addOfficialHighLightMarker(mMap,
+                            new LatLng(step.getLatitude(), step.getLongitude()),
+                            getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
+                } else {
+                    m = MapObjectsFactory.addUserHighLightMarker(mMap,
+                            new LatLng(step.getLatitude(), step.getLongitude()),
+                            getResources().getString(R.string.multiple_highlights_title), "", HighLight.CONTAINER_N);
 
-               }
+                }
             }
             selectedRouteMarkers.put(m, step);
         }
@@ -1480,7 +1466,6 @@ Log.i("startOrResumeTracking", "top");
     }
 
 
-
     class RouteUpdateAsyc extends AsyncTask<Context, Integer, Boolean> {
 
         PolylineOptions rectOptions;
@@ -1493,8 +1478,8 @@ Log.i("startOrResumeTracking", "top");
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if(firstLoad){
-            trans_prog.setVisibility(View.VISIBLE);
+            if (firstLoad) {
+                trans_prog.setVisibility(View.VISIBLE);
             }
             firstLoad = false;
 
@@ -1524,7 +1509,7 @@ Log.i("startOrResumeTracking", "top");
                 }
             }
 
-                return true;
+            return true;
         }
 
         protected void onProgressUpdate(Integer... progress) {
@@ -1546,7 +1531,7 @@ Log.i("startOrResumeTracking", "top");
             selectedRoutePolyLine = mMap.addPolyline(rectOptions);
 
             // add user's markers from all related routes if set on in preferences
-            if (relatedRouteStepsAL !=null && relatedRouteStepsAL.size() > 0) {
+            if (relatedRouteStepsAL != null && relatedRouteStepsAL.size() > 0) {
                 for (List<Step> relatedRouteSteps : relatedRouteStepsAL) {
                     for (Step thisStep : relatedRouteSteps) {
                         addMarkerIfNeeded(thisStep, false);
@@ -1972,16 +1957,40 @@ Log.i("startOrResumeTracking", "top");
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(group1, first_id, first_id, getString(R.string.preferences));
-        if(selectedRoute.getOfficial()){
-        menu.add(group1, second_id, second_id, isUserHighlightsOn ? getResources().getString(R.string.hide_my_highlights): getResources().getString(R.string.show_my_highlights));
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        MenuItem hide_highlights_item = menu.findItem(R.id.hide_my_highlights);
+        if (hide_highlights_item != null) {
+            if(selectedRoute.getOfficial()){
+            hide_highlights_item.setTitle(userHighlightsMenuItemText(PropertyHolder.isUserHighlightsOn(), context));
+        } else{
+                hide_highlights_item.setVisible(false);
+            }
+
         }
-        menu.add(group1, third_id, third_id, getString(R.string.take_survey));
+        MenuItem hide_routes_item = menu.findItem(R.id.hide_my_routes);
+        if (hide_routes_item != null) {
+            hide_routes_item.setVisible(false);
+        }
         return true;
     }
 
-    public static String userHighlightsMenuItemText(boolean ison, Context this_context){
-        if(ison)
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu){
+
+        if(selectedRoute.getOfficial()){
+        MenuItem hide_routes_item = menu.findItem(R.id.hide_my_highlights);
+        if(hide_routes_item != null){
+            hide_routes_item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn, context));
+        }
+        }
+
+        return true;
+    }
+
+
+    public static String userHighlightsMenuItemText(boolean ison, Context this_context) {
+        if (ison)
             return this_context.getResources().getString(R.string.hide_my_highlights);
         else
             return this_context.getResources().getString(R.string.show_my_highlights);
@@ -1991,25 +2000,37 @@ Log.i("startOrResumeTracking", "top");
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 1:
+            case R.id.preferences:
                 Intent i = new Intent(DetailItineraryActivity.this, EruletPreferencesActivity.class);
                 startActivity(i);
                 break;
-            case 2:
-                PropertyHolder.setUserHighlightsOn(!isUserHighlightsOn);
-                isUserHighlightsOn = !isUserHighlightsOn;
-                item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn, context));
-                if(!isUserHighlightsOn){
-                    resetSelectedRouteMarkers();
-                }
-                updateSelectedRoute();
-                break;
-            case 3:
+            case R.id.account:
+                startActivity(new Intent(this, AccountActivity.class));
+                return true;
+            case R.id.holet_routes:
+                startActivity(new Intent(this,
+                        OfficialItinerariesActivity.class));
+                return true;
+            case R.id.my_routes:
+                startActivity(new Intent(this,
+                        MyItinerariesActivity.class));
+                return true;
+            case R.id.survey:
                 Intent survey_intent = new Intent(DetailItineraryActivity.this, SurveyActivity.class);
                 survey_intent.putExtra(SurveyActivity.SURVEY_TYPE_KEY, "general_survey");
                 startActivity(survey_intent);
                 break;
+            case R.id.hide_my_highlights:
+                PropertyHolder.setUserHighlightsOn(!isUserHighlightsOn);
+                isUserHighlightsOn = !isUserHighlightsOn;
+                item.setTitle(userHighlightsMenuItemText(isUserHighlightsOn, context));
+                if (!isUserHighlightsOn) {
+                    resetSelectedRouteMarkers();
+                }
+                updateSelectedRoute();
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

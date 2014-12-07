@@ -59,6 +59,7 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,9 @@ public class Util {
     public final static int DEFAULT_ORDER = -1;
     public final static int DEFAULT_ALTITUDE = -1;
 
+    public static String INTENT_CODE_CORE_DATE_RESPONSE = "core_data_response";
+    public static String INTENT_CODE_ROUTE_CONTENT_RESPONSE = "route_content_response";
+
     public final static String MESSAGE_STOP_FIXGET = ".STOP_FIXGET";
     public final static String MESSAGE_LONGSTOP_FIXGET = ".LONGSTOP_FIXGET";
     public final static String MESSAGE_SCHEDULE = ".SCHEDULE_SERVICE";
@@ -88,6 +92,8 @@ public class Util {
     public final static String MESSAGE_FIX_RECORDED = ".NEW_FIX_RECORDED";
     public final static String MESSAGE_FIX_UPLOADED = ".NEW_FIX_UPLOADED";
     public final static String MESSAGE_MISSED_FIXES = ".MISSED_FIXES";
+
+    public final static String MESSAGE_START_SYNC = ".START_SYNC";
 
     // Important! This must match the name given to the servey in the server database!
     public final static String ROUTE_SURVEY = "route_survey";
@@ -1430,6 +1436,20 @@ public class Util {
     }
 
 
+    public static long ecma262ToLong(String ecma_time) {
+        long result = -1;
+        String format = "yyyy-MM-dd'T'HH:mm:ss.SSZ";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        try {
+            Date date = sdf.parse(ecma_time);
+            result = date.getTime();
+        } catch (ParseException e) {
+            // TODO
+        }
+        return result;
+    }
+
+
     public static String getUrlGeneralMap(Context context) {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
@@ -1478,16 +1498,7 @@ public class Util {
             PropertyHolder.init(context);
         boolean hasGRs = PropertyHolder.getLastUpdateGeneralReferences() > 0;
         boolean hasMaps = PropertyHolder.getLastUpdateGeneralMap() > 0;
-        List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
-        Util.logInfo(context, "JSON download", "routes size: " + routes.size());
-        boolean hasJson = routes.size() > 0;
-        boolean hasRouteMedia = true;
-        for (Route route : routes) {
-            if (route.getRouteContentLastUpdated() == 0)
-                hasRouteMedia = false;
-        }
-        Log.e("HAS MIN CONTENT: ", "GR" + hasGRs + "MAP" + hasMaps + "JSON" + hasJson + "ROUTE MEDIA" + hasRouteMedia);
-        return hasGRs && hasMaps && hasJson && hasRouteMedia;
+        return hasGRs && hasMaps;
     }
 
     public static void forceNewDownloads(Context context, EruletApp app) {
@@ -1501,6 +1512,15 @@ public class Util {
         }
 
     }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
+    }
+
 
     public static void forceNewMapDownloads(Context context, EruletApp app) {
         if (!PropertyHolder.isInit())
@@ -1533,6 +1553,7 @@ public class Util {
         String lang = PropertyHolder.getLocale();
         return UtilLocal.URL_SERVULET + lang + "/" + UtilLocal.API_REGISTRATION;
     }
+
     public static String getLocalizedLoginUrl(Context context) {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);

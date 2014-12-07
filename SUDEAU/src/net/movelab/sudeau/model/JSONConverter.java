@@ -3,6 +3,7 @@ package net.movelab.sudeau.model;
 import android.util.Log;
 
 import net.movelab.sudeau.EruletApp;
+import net.movelab.sudeau.PropertyHolder;
 import net.movelab.sudeau.Util;
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
@@ -86,6 +87,11 @@ public class JSONConverter {
                 for (int i = 0; i < t5array.length(); i++) {
                     JSONObject this_t5 = t5array.optJSONObject(i);
                     if (this_t5 != null) {
+
+                        String created_by_username = this_t5.optString("created_by_username",null);
+                        // use the highlight only if it is not created by this user.
+                        if(created_by_username == null || !created_by_username.equals(PropertyHolder.getUserName())){
+
                         if (this_t5.has("step")) {
                             JSONObject step_json = this_t5.optJSONObject("step");
                             if (step_json != null) {
@@ -100,6 +106,7 @@ public class JSONConverter {
                                 top_five_steps.add(this_t5_s);
                             }
                         }
+                    }
                     }
                 }
             }

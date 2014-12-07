@@ -11,7 +11,7 @@
         android:background="@color/dark_grey"
         android:layout_marginBottom="10dip"
         android:gravity="center"
-        android:text="@string/my_itineraries"
+        android:text="@string/my_routes"
         android:textColor="@color/white"
         android:textSize="@dimen/activity_label_title" />
         

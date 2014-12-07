@@ -70,13 +70,7 @@ public class MyItinerariesActivity extends Activity {
     }
 
     private List<Route> loadRoutes(String userId) {
-        List<Route> myRoutes = DataContainer.getUserRoutes(app.getDataBaseHelper(), userId);
-        for (Route r : myRoutes) {
-            DataContainer.refreshRoute(r, app.getDataBaseHelper());
-            if (r.getTrack() != null)
-                DataContainer.getTrackSteps(r.getTrack(), app.getDataBaseHelper());
-        }
-        return myRoutes;
+        return DataContainer.getUserRoutes(app.getDataBaseHelper(), userId);
     }
 
     private void refreshListView(String userId) {
@@ -301,41 +295,10 @@ class MyRouteArrayAdapter extends ArrayAdapter<Route> {
             }
             }
 
-            // Now try ratings (or move this into pure background service)
+            // trigger ratings uploads
 
-            for (Route this_route : DataContainer.getRoutesWithRatingsNotUploaded(app.getDataBaseHelper())) {
-                try {
-                    JSONObject this_rating = JSONConverter.userRouteRatingToServerJSONObject(this_route);
-                    response = Util.postJSON(this_rating, UtilLocal.URL_USER_RATINGS, context[0]);
-                    statusCode = Util.getResponseStatusCode(response);
-                    responseJson = Util.parseResponse(context[0], response);
-                    if (statusCode >= 200 && statusCode < 300) {
-                        this_route.setUserRatingUploaded(true);
-                        DataContainer.updateRoute(this_route, app.getDataBaseHelper());
-                    } else {
-                        //TODO
-                    }
-                } catch (JSONException e) {
-                    //TODO
-                }
-            }
-
-            for (HighLight this_hl : DataContainer.getHighlightsWithRatingsNotUploaded(app.getDataBaseHelper())) {
-                try {
-                    JSONObject this_rating = JSONConverter.userHighlightRatingToServerJSONObject(this_hl);
-                    response = Util.postJSON(this_rating, UtilLocal.URL_USER_RATINGS, context[0]);
-                    statusCode = Util.getResponseStatusCode(response);
-                    responseJson = Util.parseResponse(context[0], response);
-                    if (statusCode >= 200 && statusCode < 300) {
-                        this_hl.setUserRatingUploaded(true);
-                        DataContainer.updateHighLight(this_hl, app.getDataBaseHelper());
-                    } else {
-                        //TODO
-                    }
-                } catch (JSONException e) {
-                    //TODO
-                }
-            }
+            Intent ratingUploadIntent = new Intent(context[0], UploadRatings.class);
+            context[0].startService(ratingUploadIntent);
 
 
             return true;

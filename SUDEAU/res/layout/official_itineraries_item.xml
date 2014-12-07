@@ -7,12 +7,20 @@
 
     <TextView
         android:id="@+id/route_name"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:singleLine="true"
+        android:ellipsize="marquee"/>
 
+    <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_discard"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true" />
 
     <ImageButton
         android:id="@+id/download_start_button"
@@ -20,7 +28,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_download"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"/>
 
     <ImageButton
         android:id="@+id/download_refresh_button"
@@ -28,17 +36,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_refresh"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@id/delete_button"
         android:visibility="gone" />
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress_bar"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/core_data_download_cancel_button" />
 
     <ImageButton
         android:id="@+id/download_cancel_button"
@@ -47,6 +46,15 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_cancel"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/download_cancel_button" />
 
 </RelativeLayout>

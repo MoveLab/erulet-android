@@ -21,12 +21,12 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/core_data_label"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:padding="5dp"
-            android:text="Core Data"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:text="@string/general_references"/>
 
 
         <ImageButton
@@ -46,15 +46,6 @@
             android:layout_alignParentRight="true"
             android:visibility="gone"/>
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:id="@+id/core_data_progressBar"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/core_data_download_cancel_button"/>
-
         <ImageButton
             android:id="@+id/core_data_download_cancel_button"
             android:layout_width="wrap_content"
@@ -64,7 +55,16 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>
 
-</RelativeLayout>
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:id="@+id/core_data_progressBar"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/core_data_download_cancel_button"/>
+
+    </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -57,6 +58,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	private int first_id = Menu.FIRST;
 	private int second_id = Menu.FIRST+1;
     private int third_id = Menu.FIRST+2;
+    private int fourth_id = Menu.FIRST+3;
+    private int fifth_id = Menu.FIRST+4;
+
 	private ProgressBar progressBar;
 	
 	private EruletApp app;
@@ -101,16 +105,31 @@ public class ChooseItineraryActivity extends FragmentActivity {
     }
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu){		
-		menu.add(group1,first_id,first_id,getString(R.string.choose_it_my_itineraries));
-        menu.add(group1, second_id, second_id, getString(R.string.preferences));
-
-        menu.add(group1, third_id, third_id, userItineraryMenuItemText(isUserItinerariesOn, context));
-
-        // TODO decide if we want this in - I am removing it for now
-//		menu.add(group1,second_id,second_id,getString(R.string.choose_it_shared_itineraries));
-		return super.onCreateOptionsMenu(menu);
+	public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        MenuItem hide_highlights_item = menu.findItem(R.id.hide_my_highlights);
+        if(hide_highlights_item != null){
+            hide_highlights_item.setVisible(false);
+        }
+        MenuItem hide_routes_item = menu.findItem(R.id.hide_my_routes);
+        if(hide_routes_item != null){
+            hide_routes_item.setTitle(userItineraryMenuItemText(isUserItinerariesOn, context));
+        }
+        return true;
 	}
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu){
+
+        MenuItem hide_routes_item = (MenuItem) menu.findItem(R.id.hide_my_routes);
+        if(hide_routes_item != null){
+            hide_routes_item.setTitle(userItineraryMenuItemText(isUserItinerariesOn, context));
+        }
+
+        return true;
+    }
+
 
     public static String userItineraryMenuItemText(boolean ison, Context this_context){
         if(ison)
@@ -122,16 +141,27 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
-			case 1:
-				Intent i1 = new Intent(ChooseItineraryActivity.this,
-						MyItinerariesActivity.class);				
-				startActivity(i1);
-			    return true;	
-			case 2:
-                Intent i = new Intent(ChooseItineraryActivity.this, EruletPreferencesActivity.class);
+			case R.id.preferences:
+                Intent i = new Intent(this, EruletPreferencesActivity.class);
                 startActivity(i);
-			    return true;
-            case 3:
+                return true;
+     		case R.id.account:
+                startActivity(new Intent(this, AccountActivity.class));
+                return true;
+            case R.id.holet_routes:
+                startActivity(new Intent(this,
+                        OfficialItinerariesActivity.class));
+                return true;
+            case R.id.my_routes:
+                startActivity(new Intent(this,
+                        MyItinerariesActivity.class));
+                return true;
+            case R.id.survey:
+                Intent survey_intent = new Intent(this, SurveyActivity.class);
+                survey_intent.putExtra(SurveyActivity.SURVEY_TYPE_KEY, "general_survey");
+                startActivity(survey_intent);
+            return true;
+            case R.id.hide_my_routes:
                 PropertyHolder.setUseritinerariesOn(!isUserItinerariesOn);
                 isUserItinerariesOn = !isUserItinerariesOn;
                 item.setTitle(userItineraryMenuItemText(isUserItinerariesOn, context));
@@ -319,6 +349,12 @@ public class ChooseItineraryActivity extends FragmentActivity {
         } else{
             routesBareBones = DataContainer.getOfficialRoutesBareBones(app.getDataBaseHelper(), currentLocale);
         }
+
+        // if no routes, send user to download activity:
+        if(routesBareBones.size() == 0){
+            startActivity(new Intent(ChooseItineraryActivity.this, OfficialItinerariesActivity.class));
+        }
+
 		if(routeTable == null){
 			routeTable = new Hashtable<Marker, RBB>();
 		}

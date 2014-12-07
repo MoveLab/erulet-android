@@ -32,7 +32,7 @@ public class PropertyHolder {
     public static final String LOCALE = "pref_locale";
     public static final String GENERAL_MAP_PATH = "GENERAL_MAP_PATH";
     public static final String GENERAL_REFERENCE_PATH = "GENERAL_REFERENCE_PATH";
-    public static final String NEEDS_SYNC_FIX = "NEEDS_SYNC_FIX_2";
+    public static final String SYNC_ALARM_ON = "SYNC_ALARM_ON";
     public static final String AUTOCENTER = "AUTOCENTER";
     public static final String USERHIGHLIGHTS = "USERHIGHLIGHTS";
     public static final String USERITINERARIES = "USERITINERARIES";
@@ -53,6 +53,7 @@ public class PropertyHolder {
     public static final int STATUS_CODE_QUEUED = 1;
     public static final int STATUS_CODE_DOWNLOADING = 2;
     public static final int STATUS_CODE_READY = 3;
+    public static final int STATUS_CODE_CANCELLED = 4;
 
 
     /**
@@ -164,12 +165,12 @@ public class PropertyHolder {
         editor.apply();
     }
 
-    public static boolean needsSyncFix() {
-        return sharedPreferences.getBoolean(NEEDS_SYNC_FIX, true);
+    public static boolean isSyncAlarmOn() {
+        return sharedPreferences.getBoolean(SYNC_ALARM_ON, false);
     }
 
-    public static void setNeedsSyncFix(boolean _needs_sync_fix) {
-        editor.putBoolean(NEEDS_SYNC_FIX, _needs_sync_fix);
+    public static void setSyncAlarmOn(boolean _alarm_on) {
+        editor.putBoolean(SYNC_ALARM_ON, _alarm_on);
         editor.apply();
     }
 
@@ -275,7 +276,7 @@ public class PropertyHolder {
         return sharedPreferences.getInt(CORE_DATA_STATUS, 0);
     }
 
-    public void setCoreDataStatus(int status_code){
+    public static void setCoreDataStatus(int status_code){
         editor.putInt(CORE_DATA_STATUS, status_code);
         editor.apply();
     }
@@ -284,7 +285,7 @@ public class PropertyHolder {
         return sharedPreferences.getInt(ROUTE_CONTENT_STATUS_PREFIX + route_id, 0);
     }
 
-    public void setRouteContentStatus(int route_id, int status_code){
+    public static void setRouteContentStatus(int route_id, int status_code){
         editor.putInt(ROUTE_CONTENT_STATUS_PREFIX + route_id, status_code);
         editor.apply();
     }

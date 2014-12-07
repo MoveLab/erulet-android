@@ -2,6 +2,7 @@ package net.movelab.sudeau;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory.Options;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -223,6 +224,8 @@ public class DetailHighLightActivity extends Activity {
             public void onClick(View view) {
                 if (ratingChange) {
                     app.getDataBaseHelper().getHlDataDao().update(hl);
+                    Intent ratingUploadIntent = new Intent(DetailHighLightActivity.this, UploadRatings.class);
+                    startService(ratingUploadIntent);
                 }
                 finish();
             }

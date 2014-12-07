@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/preferences"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/preferences"/>
+    <item
+        android:id="@+id/account"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_accounts"
+        android:title="@string/account"/>
+    <item
+        android:id="@+id/holet_routes"
+        android:showAsAction="never"
+        android:title="@string/holets_routes"/>
+    <item
+        android:id="@+id/my_routes"
+        android:showAsAction="never"
+        android:title="@string/my_routes"/>
+    <item
+        android:id="@+id/survey"
+        android:showAsAction="never"
+        android:title="@string/take_survey"/>
+    <item
+        android:id="@+id/hide_my_routes"
+        android:showAsAction="never"
+        android:title="@string/hide_my_routes"/>
+    <item
+        android:id="@+id/hide_my_highlights"
+        android:showAsAction="never"
+        android:title="@string/hide_my_highlights"/>
+
+</menu>

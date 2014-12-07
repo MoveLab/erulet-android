@@ -154,6 +154,9 @@ public class HTMLViewerActivity extends FragmentActivity {
                                 @Override
                                 public void onClick(View v) {
                                     app.getDataBaseHelper().getHlDataDao().update(hl);
+                                    Intent ratingUploadIntent = new Intent(HTMLViewerActivity.this, UploadRatings.class);
+                                    startService(ratingUploadIntent);
+
                                     dialog.dismiss();
                                 }
                             });

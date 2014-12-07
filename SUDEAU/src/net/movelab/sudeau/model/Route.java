@@ -85,6 +85,7 @@ public class Route {
 		setSharedSteps(new ArrayList<Step>());
         this.server_id = -1;
         routeContentLastUpdated = 0;
+        localCartoLastUpdated = 0;
 	}
 
     public void setId(int id){
