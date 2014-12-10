@@ -1,14 +1,18 @@
 package net.movelab.sudeau;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.movelab.sudeau.database.DataContainer;
+import net.movelab.sudeau.model.RBB;
 import net.movelab.sudeau.model.Route;
 
 import java.io.File;
@@ -252,7 +257,7 @@ public class OfficialItinerariesActivity extends Activity {
         return DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
     }
 
-    private void refreshListView() {
+    public void refreshListView() {
         List<Route> newRoutes = loadRoutes();
         routeArrayAdapter = new OfficialRouteArrayAdapter(this, locale, newRoutes, app);
         listView.setAdapter(routeArrayAdapter);
@@ -307,6 +312,12 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
             final Route currentRoute = routes.get(position);
             nom.setText(currentRoute.getName(locale));
             setUpRouteContentStatus(currentRoute, nom, progress_bar, download_start, download_refresh, download_cancel, delete);
+            nom.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showItineraryOptions(currentRoute, progress_bar, download_start, download_cancel, download_refresh, delete);
+                }
+            });
             delete.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -467,6 +478,71 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
                 }
                 break;
         }
+    }
+
+    public void showItineraryOptions(Route route, ProgressBar pg, ImageButton ds, ImageButton dc, ImageButton dr, ImageButton d){
+        String OPTION_1 = context.getString(R.string.trip_option_1);
+        String OPTION_2 = context.getString(R.string.trip_option_2);
+        final int this_route_id = route.getId();
+        final ProgressBar progress_bar = pg;
+        final ImageButton download_start = ds;
+        final ImageButton download_cancel = dc;
+        final ImageButton download_refresh = dr;
+        final ImageButton delete = d;
+
+        CharSequence[] items = null;
+            items = new CharSequence[]{OPTION_1,OPTION_2};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(route.getName(locale));
+        builder.setIcon(R.drawable.ic_pin_info);
+        if(route.getGlobalRating()>=0)
+            builder.setMessage(Html.fromHtml(route.getDescription(locale) + "<br><br><b>" + context.getString(R.string.average_rating) + ":" + Float.toString(route.getGlobalRating()) + "</b>"));
+        else
+            builder.setMessage(route.getDescription(locale));
+        if(PropertyHolder.getRouteContentStatus(route.getId()) == PropertyHolder.STATUS_CODE_READY){
+            builder.setNegativeButton(context.getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(context,
+                            DetailItineraryActivity.class);
+                    // rbb[0] is route id as string
+                    intent.putExtra("idRoute", this_route_id);
+                    intent.putExtra("mode",0);
+                    dialogInterface.dismiss();
+                    context.startActivity(intent);				                }
+            });
+            builder.setNeutralButton(context.getString(R.string.trip_option_2), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(context,
+                            DetailItineraryActivity.class);
+                    // rbb[0] is route ID as string
+                    intent.putExtra("idRoute", this_route_id);
+                    intent.putExtra("mode",1);
+                    dialogInterface.dismiss();
+                    ((Activity)context).finish();
+                    context.startActivity(intent);
+                }
+            });
+        } else{
+            builder.setNeutralButton(context.getString(R.string.download), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, this_route_id);
+                    context.startService(startRouteContentDownloadIntent);
+                    progress_bar.setVisibility(View.VISIBLE);
+                    download_cancel.setVisibility(View.VISIBLE);
+                    download_start.setVisibility(View.GONE);
+                    download_refresh.setVisibility(View.GONE);
+                    delete.setVisibility(View.GONE);
+                    dialogInterface.dismiss();
+                }
+            });
+        }
+
+        builder.show();
     }
 
 

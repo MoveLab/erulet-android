@@ -2,17 +2,21 @@ package net.movelab.sudeau;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,7 +66,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
     private int fifth_id = Menu.FIRST+4;
 
 	private ProgressBar progressBar;
-	
+    private RelativeLayout core_data_loading;
+
 	private EruletApp app;
 
     private String currentLocale;
@@ -92,16 +97,57 @@ public class ChooseItineraryActivity extends FragmentActivity {
 
         currentLocale = PropertyHolder.getLocale();
         progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
-		//setUpDBIfNeeded();
+        core_data_loading = (RelativeLayout) findViewById(R.id.core_data_loading);
+
+        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L){
 		setUpMapIfNeeded();
 		setUpCamera();
+        } else{
+            waitForCoreData();
+        }
 	}
-	
-	@Override
+
+    private void waitForCoreData(){
+        core_data_loading.setVisibility(View.VISIBLE);
+        IntentFilter coreDataResponseFilter = new IntentFilter(Util.INTENT_CODE_CORE_DATE_RESPONSE);
+        DownloadResultBroadcastReceiver mDownloadResultBroadcastReceiver =
+                new DownloadResultBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mDownloadResultBroadcastReceiver,
+                coreDataResponseFilter);
+    }
+
+    public class DownloadResultBroadcastReceiver extends BroadcastReceiver {
+
+        // Prevents instantiation
+        private DownloadResultBroadcastReceiver() {
+        }
+
+        public void onReceive(Context context, Intent intent) {
+
+            String this_action = intent.getAction();
+
+            if (this_action != null && this_action.equals(Util.INTENT_CODE_CORE_DATE_RESPONSE)) {
+                int response_code = intent.getIntExtra(DownloadCoreData.OUTGOING_MESSAGE_KEY_RESPONSE_CODE, -1);
+            if (response_code == DownloadCoreData.RESPONSE_CODE_SUCCESS || (PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L)) {
+                    core_data_loading.setVisibility(View.GONE);
+                    setUpMapIfNeeded();
+                    setUpCamera();
+                    refreshMapView();
+                }
+
+        }
+        }
+    }
+
+
+    @Override
 	protected void onResume() {	
 		super.onResume();
-		refreshMapView();
         currentLocale = PropertyHolder.getLocale();
+        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L){
+        refreshMapView();
+        }
     }
 	
 	@Override
@@ -199,6 +245,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
                 builder.setMessage(Html.fromHtml(rbb.description + "<br><br><b>" + getResources().getString(R.string.average_rating) + ":" + Float.toString(rbb.globalRating)+ "</b>"));
             else
                 builder.setMessage(rbb.description);
+            if(PropertyHolder.getRouteContentStatus(rbb.id) == PropertyHolder.STATUS_CODE_READY){
             builder.setNegativeButton(getString(R.string.trip_option_1), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -234,10 +281,23 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     intent.putExtra("idRoute",rbb.id);
                     intent.putExtra("mode",2);
                     dialogInterface.dismiss();
-                    finish();
                     startActivity(intent);
                 }
             });
+            }
+            } else{
+                builder.setNeutralButton(getString(R.string.download), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
+                        startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, rbb.id);
+                        context.startService(startRouteContentDownloadIntent);
+                        dialogInterface.dismiss();
+                        finish();
+                        startActivity(new Intent(ChooseItineraryActivity.this,
+                                OfficialItinerariesActivity.class));
+                    }
+                });
             }
 
 		builder.show();		

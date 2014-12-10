@@ -1,55 +1,16 @@
 package net.movelab.sudeau;
 
-import android.accounts.Account;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-
-import net.movelab.sudeau.database.DataBaseHelper;
-import net.movelab.sudeau.database.DataContainer;
-import net.movelab.sudeau.model.FileManifest;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.InteractiveImage;
-import net.movelab.sudeau.model.JSONConverter;
-import net.movelab.sudeau.model.Reference;
-import net.movelab.sudeau.model.Route;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 
 public class Switchboard extends FragmentActivity {
@@ -62,13 +23,6 @@ public class Switchboard extends FragmentActivity {
 
 
     Context context;
-
-    DataBaseHelper dataBaseHelper;
-
-    ContentResolver cr;
-    Cursor c;
-
-    static final int REGISTRATION_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,21 +38,6 @@ public class Switchboard extends FragmentActivity {
 
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
-
-
-        // check route size and force db updates at top
-        List<Route> routes = DataContainer.getAllOfficialRoutes(app.getDataBaseHelper());
-
-        //    if (PropertyHolder.isFirstTime()) {
-
-        // check that auto id is working
-        //  showWelcomeDialog();
-        //  PropertyHolder.setFirstTime(false);
-
-        // if first time is called after this update has been written no need for sync fix
-//            PropertyHolder.setNeedsSyncFix(false);
-
-        //      }
 
 
         if(!PropertyHolder.isSyncAlarmOn()){
@@ -193,13 +132,9 @@ public class Switchboard extends FragmentActivity {
         btn_routes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (Util.hasMinimumContents(context, app)) {
                     Intent i = new Intent(Switchboard.this,
                             ChooseItineraryActivity.class);
                     startActivity(i);
-                } else {
-                    showStillSyncingDialog();
-                }
             }
         });
         btn_credits = (Button) findViewById(R.id.btn_credits);
