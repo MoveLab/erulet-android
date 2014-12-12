@@ -74,7 +74,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, 
-			int newVersion) {		
+			int newVersion) {
+
 		try {
 			Log.i(DataBaseHelper.class.getName(), "onUpgrade");
 			TableUtils.dropTable(connectionSource, Route.class, true);
@@ -89,7 +90,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 		} catch (java.sql.SQLException e) {
 			Log.e(DataBaseHelper.class.getName(), "Can't drop databases", e);
 			throw new RuntimeException(e);
-		}		
+		}
+
 	}
 	
 	public Dao<Box, Integer> getBoxDao() throws java.sql.SQLException {

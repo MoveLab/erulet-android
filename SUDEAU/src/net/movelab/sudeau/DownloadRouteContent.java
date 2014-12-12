@@ -13,16 +13,21 @@ import android.os.ResultReceiver;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
+import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -55,8 +60,13 @@ public class DownloadRouteContent extends IntentService {
     Context context;
 
     public static String INCOMING_MESSAGE_KEY_ROUTE_ID = "route_id";
+    public static String INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID = "server_id";
+
+
     public static String OUTGOING_MESSAGE_KEY_ROUTE_ID = "route_id";
     public static String OUTGOING_MESSAGE_KEY_RESPONSE_CODE = "response_code";
+
+    public static int SERVER_ID_CODE_GET_SERVER_ID = -2;
 
     public static int RESPONSE_CODE_FAIL = 0;
     public static int RESPONSE_CODE_SUCCESS = 1;
@@ -73,6 +83,8 @@ public class DownloadRouteContent extends IntentService {
 
             route_id = intent.getIntExtra(INCOMING_MESSAGE_KEY_ROUTE_ID, -1);
 
+            Log.d("RouteDownload", "routeid incoming: " + route_id);
+
             PropertyHolder.setRouteContentStatus(route_id, PropertyHolder.STATUS_CODE_DOWNLOADING);
 
             if (app == null) {
@@ -84,8 +96,31 @@ public class DownloadRouteContent extends IntentService {
             if (Util.isOnline(context)) {
 
                 if (app != null) {
-                    Route route = DataContainer.findRouteById(route_id, app.getDataBaseHelper());
+                    DataBaseHelper dataBaseHelper = app.getDataBaseHelper();
+
+                    // First update route json
+                    Log.d("RouteDownload", "app not null");
+
+                    // check if has server ID in intent: if not, then route json was just updated so no need to get it
+                    if (intent.hasExtra(INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID)) {
+                        int this_server_id = intent.getIntExtra(INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID, -1);
+                        Log.d("RouteDownload", "serverId incoming: " + this_server_id);
+
+                        if (this_server_id >= 0) {
+                            getRoute(this_server_id, dataBaseHelper);
+                        } else {
+                            Route existing_route = DataContainer.findRouteById(route_id, dataBaseHelper);
+                            this_server_id = existing_route.getServerId();
+                            getRoute(this_server_id, dataBaseHelper);
+                            Log.d("RouteDownload", "called get route");
+
+                        }
+                    } // if not, no need to get json
+
+                    Route route = DataContainer.findRouteById(route_id, dataBaseHelper);
                     if (route != null) {
+
+                        Log.d("RouteDownload", "top of main");
 
                         // Media Content
 
@@ -153,12 +188,15 @@ public class DownloadRouteContent extends IntentService {
                                                         // This is a media file associated directly withy the highlight
                                                         Log.d("HighlightServerId: ", this_highlight_server_id);
                                                         HighLight this_highlight = DataContainer.findHighlightByServerId(Integer.parseInt(this_highlight_server_id), app.getDataBaseHelper());
+                                                        if (this_highlight != null){
                                                         this_highlight.setFileManifest(this_file_manifest);
                                                         DataContainer.updateHighLight(this_highlight, app.getDataBaseHelper());
+                                                        }
                                                     } else if (filePath.contains("reference")) {
                                                         // This is a reference
                                                         String this_reference_server_id = filePath.split("reference_")[1].split("/")[0];
                                                         Reference this_reference = DataContainer.findReferenceByServerId(Integer.parseInt(this_reference_server_id), app.getDataBaseHelper());
+                                                        if(this_reference != null){
                                                         this_file_manifest.setReference(this_reference);
                                                         DataContainer.updateFileManifest(this_file_manifest, app.getDataBaseHelper());
                                                         if (filePath.contains(".html")) {
@@ -168,19 +206,24 @@ public class DownloadRouteContent extends IntentService {
                                                             DataContainer.updateReference(this_reference, app.getDataBaseHelper());
 
                                                         }
+                                                        }
 
                                                     } else if (filePath.contains("interactive_image")) {
                                                         String this_ii_server_id = filePath.split("interactive_image_")[1].split("/")[0];
 
                                                         InteractiveImage this_ii = DataContainer.findInteractiveImageByServerId(Integer.parseInt(this_ii_server_id), app.getDataBaseHelper());
+                                                        if(this_ii != null){
                                                         this_ii.setFileManifest(this_file_manifest);
                                                         DataContainer.updateInteractiveImage(this_ii, app.getDataBaseHelper());
+                                                        }
 
                                                     }
                                                 } else if (filePath.contains("route_reference")) {
                                                     Reference this_reference = route.getReference();
+                                                    if(this_reference != null){
                                                     this_file_manifest.setReference(this_reference);
                                                     DataContainer.updateFileManifest(this_file_manifest, app.getDataBaseHelper());
+                                                }
                                                 }
 
                                             } else {
@@ -218,6 +261,8 @@ public class DownloadRouteContent extends IntentService {
                             route.setRouteContentLastUpdatedNow();
                             DataContainer.updateRoute(route, app.getDataBaseHelper());
                         }
+
+                        Log.d("RouteDownload", "media content: " + media_content_success);
 
 
                         // Route Map
@@ -311,11 +356,14 @@ public class DownloadRouteContent extends IntentService {
             }
             // send response back and set status
             if (media_content_success && map_success) {
+                Log.d("RouteDownload", "media and map success");
                 response_code = RESPONSE_CODE_SUCCESS;
                 PropertyHolder.setRouteContentStatus(route_id, PropertyHolder.STATUS_CODE_READY);
             } else {
                 response_code = RESPONSE_CODE_FAIL;
                 PropertyHolder.setRouteContentStatus(route_id, PropertyHolder.STATUS_CODE_MISSING);
+                Log.d("RouteDownload", "media: " + media_content_success + " map: " + map_success);
+
             }
 
             Intent localIntent =
@@ -325,4 +373,29 @@ public class DownloadRouteContent extends IntentService {
 
         }
     }
+
+    private boolean getRoute(int server_id, DataBaseHelper dataBaseHelper) {
+        boolean jsonSuccess = true;
+        String jsonObjectString = Util.getJSON(UtilLocal.API_ROUTES + server_id + "/", context);
+        if (jsonObjectString != null) {
+            JSONObject j;
+            try {
+                j = new JSONObject(jsonObjectString);
+                Route newRoute = JSONConverter.jsonObjectToRoute(j, dataBaseHelper);
+                Route existingRoute = DataContainer.findRouteByServerId(newRoute.getServerId(), dataBaseHelper);
+                if (existingRoute == null) {
+                    DataContainer.insertRoute(newRoute, dataBaseHelper);
+                } else {
+                    DataContainer.updateRouteFromServer(newRoute, existingRoute, app);
+                }
+                // update ID, which will be used in following code
+                route_id = newRoute.getId();
+            } catch (JSONException e) {
+                Log.e("JSON download 1", "" + e);
+                jsonSuccess = false;
+            }
+        }
+        return jsonSuccess;
+    }
+
 }

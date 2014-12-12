@@ -344,7 +344,7 @@ public class DownloadCoreData extends IntentService {
     }
 
     private boolean getRoute(int server_id, DataBaseHelper dataBaseHelper) {
-        jsonSuccess = true;
+        boolean jsonSuccess = true;
         String jsonObjectString = Util.getJSON(UtilLocal.API_ROUTES + server_id + "/", context);
         if (jsonObjectString != null) {
             JSONObject j;

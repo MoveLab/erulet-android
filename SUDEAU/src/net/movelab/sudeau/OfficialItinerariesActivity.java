@@ -345,7 +345,8 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
                 @Override
                 public void onClick(View v) {
                     Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
-                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, currentRoute.getId());
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_ID, currentRoute.getId());
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID, currentRoute.getServerId());
                     context.startService(startRouteContentDownloadIntent);
 
                     progress_bar.setVisibility(View.VISIBLE);
@@ -383,7 +384,8 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
                 @Override
                 public void onClick(View v) {
                     Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
-                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, currentRoute.getId());
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_ID, currentRoute.getId());
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID, currentRoute.getServerId());
                     context.startService(startRouteContentDownloadIntent);
 
                     progress_bar.setVisibility(View.VISIBLE);
@@ -484,6 +486,7 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
         String OPTION_1 = context.getString(R.string.trip_option_1);
         String OPTION_2 = context.getString(R.string.trip_option_2);
         final int this_route_id = route.getId();
+        final int this_route_server_id = route.getServerId();
         final ProgressBar progress_bar = pg;
         final ImageButton download_start = ds;
         final ImageButton download_cancel = dc;
@@ -530,7 +533,8 @@ class OfficialRouteArrayAdapter extends ArrayAdapter<Route> {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
-                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, this_route_id);
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_ID, this_route_id);
+                    startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID, this_route_server_id);
                     context.startService(startRouteContentDownloadIntent);
                     progress_bar.setVisibility(View.VISIBLE);
                     download_cancel.setVisibility(View.VISIBLE);

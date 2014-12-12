@@ -290,7 +290,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent startRouteContentDownloadIntent = new Intent(context, DownloadRouteContent.class);
-                        startRouteContentDownloadIntent.putExtra(DownloadRouteContent.OUTGOING_MESSAGE_KEY_ROUTE_ID, rbb.id);
+                        startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_ID, rbb.id);
+                        startRouteContentDownloadIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_SERVER_ID, DownloadRouteContent.SERVER_ID_CODE_GET_SERVER_ID);
                         context.startService(startRouteContentDownloadIntent);
                         dialogInterface.dismiss();
                         finish();

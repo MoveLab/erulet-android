@@ -381,7 +381,7 @@ public class DataContainer {
         Where<Route, Integer> where = queryBuilder.where();
         try {
             where.eq("official", true);
-            PreparedQuery<Route> preparedQuery = queryBuilder.prepare();
+            PreparedQuery<Route> preparedQuery = queryBuilder.orderBy("server_id", true).prepare();
             officialRoutes = db.getRouteDataDao().query(preparedQuery);
             return officialRoutes;
         } catch (SQLException e) {

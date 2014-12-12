@@ -338,10 +338,14 @@ public class JSONConverter {
             ArrayList<InteractiveImage> iilist = new ArrayList<InteractiveImage>();
             for (int i = 0; i < iis.length(); i++) {
                 InteractiveImage ii = jsonObjectToInteractiveImage(iis.getJSONObject(i), db);
+                if(ii != null){
                 ii.setHighlight(h);
                 iilist.add(ii);
+                }
             }
+            if(iilist .size() > 0){
             h.setInteractiveImages(iilist);
+            }
         }
         }
         return h;
@@ -370,24 +374,21 @@ public class JSONConverter {
 
     public static InteractiveImage jsonObjectToInteractiveImage(JSONObject j, DataBaseHelper db) throws JSONException {
 
-        InteractiveImage ii;
-        int server_id = j.optInt("server_id");
+        InteractiveImage ii = null;
+        int server_id = j.optInt("server_id", -1);
         if (server_id != -1) {
             ii = DataContainer.findInteractiveImageByServerId(server_id, db);
             if (ii == null) {
                 ii = new InteractiveImage();
-                ii.setServerId(j.optInt("server_id", -1));
+                ii.setServerId(server_id);
             }
-        } else {
-            ii = new InteractiveImage();
-            ii.setServerId(j.optInt("server_id", -1));
-        }
 
         ii.setOriginalHeight(j.optInt("original_height"));
         ii.setOriginalWidth(j.optInt("original_width"));
         JSONArray boxArray = j.optJSONArray("boxes");
         if (boxArray != null) {
             ii.setBoxes(jsonArrayToBoxes(boxArray, ii));
+        }
         }
         return ii;
     }
