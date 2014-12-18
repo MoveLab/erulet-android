@@ -12,6 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
 
 public class Switchboard extends FragmentActivity {
 
@@ -45,6 +50,22 @@ public class Switchboard extends FragmentActivity {
                 context.getString(R.string.internal_message_id)
                         + Util.MESSAGE_START_SYNC));
         }
+
+        if(!PropertyHolder.isGoogleMapsOfflineReady() && Util.isOnline(context)){
+        // do initial connect to Google Play Services so that map works offline
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+        if (status == ConnectionResult.SUCCESS) {
+            SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            if(supportMapFragment != null){
+            GoogleMap gm = supportMapFragment.getMap();
+            if(gm != null){
+                PropertyHolder.setGoogleMapsOfflineReady(true);
+                gm = null;
+            }
+            }
+        }
+        }
+
     }
 
     @Override

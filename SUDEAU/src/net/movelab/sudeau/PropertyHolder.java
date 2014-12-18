@@ -39,6 +39,7 @@ public class PropertyHolder {
     public static final String TRIP_IN_PROGRESS_FOLLOWING = "TRIP_IN_PROGRESS_FOLLOWING";
     public static final String TRIP_IN_PROGRESS_TRACKING = "TRIP_IN_PROGRESS_TRACKING";
     public static final String TRIP_IN_PROGRESS_MODE = "TRIP_IN_PROGRESS_MODE";
+    public static final String GOOGLE_MAPS_OFFLINE_READY = "GOOGLE_MAPS_OFFLINE_READY";
 
     public static final String CORE_DATA_STATUS = "CORE_DATA_STATUS";
     public static final String ROUTE_CONTENT_STATUS_PREFIX = "ROUTE_CONTENT_STATUS_ROUTE";
@@ -175,6 +176,16 @@ public class PropertyHolder {
     }
 
 
+    public static boolean isGoogleMapsOfflineReady() {
+        return sharedPreferences.getBoolean(GOOGLE_MAPS_OFFLINE_READY, false);
+    }
+
+    public static void setGoogleMapsOfflineReady(boolean _isReady) {
+        editor.putBoolean(GOOGLE_MAPS_OFFLINE_READY, _isReady);
+        editor.apply();
+    }
+
+
     public static boolean isRegistered() {
 		return sharedPreferences.getBoolean(IS_REGISTERED, false);
 	}
@@ -289,6 +300,7 @@ public class PropertyHolder {
         editor.putInt(ROUTE_CONTENT_STATUS_PREFIX + route_id, status_code);
         editor.apply();
     }
+
 
 
 

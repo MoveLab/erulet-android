@@ -180,7 +180,7 @@
     <string name="interactive_image">Imagen interactiva</string>
     <string name="interactive_pic">Fotografía interactiva</string>
     <string name="internet_needed_message">Te hace falta una conexión a Internet para responder la encuesta. Por favor, comprueba los ajustes y vuelve a esta actividad cuando tengas conexión</string>
-    <string name="internet_needed_message_content">Eth Holet necesita una conexión a Internet para descargar los mapas y los contenidos de los itinerarios. Antes de empezar una excursión conéctate a Internet y selecciona \'Sincronizar\' en las opciones del menú, por favor.</string>
+    <string name="internet_needed_message_content">Eth Holet necesita una conexión a Internet para descargar los mapas y los contenidos de los itinerarios. Antes de empezar una excursión conéctate a Internet por favor.</string>
     <string name="internet_needed_title">Hace falta Internet</string>
     <string name="ios_by">Aplicación iOS:</string>
     <string name="it_was_financed_by_the_european_union_through_the_">Ha sido financiado por la Unión Europea a través del proyecto Sud\'Eau2.</string>

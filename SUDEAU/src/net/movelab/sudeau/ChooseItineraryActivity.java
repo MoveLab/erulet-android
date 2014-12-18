@@ -65,6 +65,8 @@ public class ChooseItineraryActivity extends FragmentActivity {
     private int fourth_id = Menu.FIRST+3;
     private int fifth_id = Menu.FIRST+4;
 
+    private DownloadResultBroadcastReceiver mDownloadResultBroadcastReceiver;
+
 	private ProgressBar progressBar;
     private RelativeLayout core_data_loading;
 
@@ -99,7 +101,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
         progressBar = (ProgressBar) findViewById(R.id.pbChooseItinerary);
         core_data_loading = (RelativeLayout) findViewById(R.id.core_data_loading);
 
-        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L){
+        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L && (Util.isOnline(context) || PropertyHolder.isGoogleMapsOfflineReady())){
 		setUpMapIfNeeded();
 		setUpCamera();
         } else{
@@ -108,6 +110,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	}
 
     private void waitForCoreData(){
+        if(Util.isOnline(context)){
         core_data_loading.setVisibility(View.VISIBLE);
         IntentFilter coreDataResponseFilter = new IntentFilter(Util.INTENT_CODE_CORE_DATE_RESPONSE);
         DownloadResultBroadcastReceiver mDownloadResultBroadcastReceiver =
@@ -115,6 +118,9 @@ public class ChooseItineraryActivity extends FragmentActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mDownloadResultBroadcastReceiver,
                 coreDataResponseFilter);
+        } else{
+            showInternetNeededDialog();
+        }
     }
 
     public class DownloadResultBroadcastReceiver extends BroadcastReceiver {
@@ -145,11 +151,11 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	protected void onResume() {	
 		super.onResume();
         currentLocale = PropertyHolder.getLocale();
-        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L){
+        if(PropertyHolder.getLastUpdateGeneralMap() > 0L && PropertyHolder.getLastUpdateGeneralReferences() >= 0L && (Util.isOnline(context) || PropertyHolder.isGoogleMapsOfflineReady())){
         refreshMapView();
         }
     }
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
@@ -224,10 +230,13 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
-		if(tileProvider!=null){
-			tileProvider.close();
-		}
+        if(mDownloadResultBroadcastReceiver != null){
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mDownloadResultBroadcastReceiver);
+        }
+        if(tileProvider!=null){
+            tileProvider.close();
+        }
+        super.onDestroy();
 	}
 	
 	public void showItineraryOptions(){
@@ -331,7 +340,7 @@ public class ChooseItineraryActivity extends FragmentActivity {
 									.tileProvider(tileProvider));
 					tileOverlay.setVisible(true);
 				}	
-			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);			
+			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			mMap.setOnMapClickListener(new OnMapClickListener() {				
 				@Override
 				public void onMapClick(LatLng point) {
@@ -379,7 +388,12 @@ public class ChooseItineraryActivity extends FragmentActivity {
 	}
 	
 	private void refreshMapView(){
+        if(mMap != null){
 		mMap.clear();
+        } else{
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+        }
 		if(tileProvider!=null){
 			tileProvider.close();
 		}
@@ -438,6 +452,28 @@ public class ChooseItineraryActivity extends FragmentActivity {
 		}
 		return null;
 	}
+
+
+    private void showInternetNeededDialog() {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+                ChooseItineraryActivity.this);
+        builderSingle.setIcon(R.drawable.ic_launcher);
+        builderSingle.setTitle(getResources().getString(R.string.internet_needed_title));
+        builderSingle.setMessage(getResources().getString(R.string.internet_needed_message_content));
+        builderSingle.setNeutralButton(getResources().getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent i = new Intent(ChooseItineraryActivity.this,
+                                OfficialItinerariesActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                });
+
+        builderSingle.show();
+    }
 
 
 

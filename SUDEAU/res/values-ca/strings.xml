@@ -180,7 +180,7 @@
     <string name="interactive_image">Imatge interactiva</string>
     <string name="interactive_pic">Fotografia interactiva</string>
     <string name="internet_needed_message">Et cal una connexió a Internet per respondre l\'enquesta. Si us plau, comprova els ajustos i torna a aquesta activitat quan tinguis connexió\n</string>
-    <string name="internet_needed_message_content">A Eth Holet li cal una connexió a Internet per descarregar els mapes i els continguts dels itineraris. Abans de començar una excursió connecta\'t a Internet i selecciona \'Sincronitzar\' a les opcions del menú, si us plau.\n</string>
+    <string name="internet_needed_message_content">A Eth Holet li cal una connexió a Internet per descarregar els mapes i els continguts dels itineraris. Abans de començar una excursió connecta\'t a Internet, si us plau.\n</string>
     <string name="internet_needed_title">Cal Internet</string>
     <string name="ios_by">Aplicació iOS:</string>
     <string name="it_was_financed_by_the_european_union_through_the_">Ha estat finançat per la Unió Europea a través del projecte Sud\'Eau2.</string>

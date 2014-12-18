@@ -14,6 +14,11 @@ import android.provider.SyncStateContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
