@@ -22,7 +22,7 @@ import com.j256.ormlite.table.TableUtils;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	//Database Version
-	public static final int DATABASE_VERSION = 238;
+	public static final int DATABASE_VERSION = 239;
 	// Database Name
 	public static final String DATABASE_NAME = "appdata";
 		
@@ -76,7 +76,23 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, 
 			int newVersion) {
 
-		try {
+        if(oldVersion == 238 && newVersion == 239){
+            try {
+                Log.i(DataBaseHelper.class.getName(), "onUpgrade 238");
+                Dao<Box, Integer> dao = getBoxDao();
+                dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_oc TEXT;");
+                dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_es TEXT;");
+                dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_ca TEXT;");
+                dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_fr TEXT;");
+                dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_en TEXT;");
+            } catch (java.sql.SQLException e) {
+                Log.e(DataBaseHelper.class.getName(), "Can't add columns", e);
+                throw new RuntimeException(e);
+            }
+        } else{
+
+
+            try {
 			Log.i(DataBaseHelper.class.getName(), "onUpgrade");
 			TableUtils.dropTable(connectionSource, Route.class, true);
 			TableUtils.dropTable(connectionSource, Track.class, true);
@@ -91,7 +107,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 			Log.e(DataBaseHelper.class.getName(), "Can't drop databases", e);
 			throw new RuntimeException(e);
 		}
-
+        }
 	}
 	
 	public Dao<Box, Integer> getBoxDao() throws java.sql.SQLException {

@@ -8,6 +8,7 @@ import net.movelab.sudeau.model.Box;
 import net.movelab.sudeau.model.InteractiveImage;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -36,8 +37,10 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 	private int originalHeight;
 	private int originalWidth;
     HorizontalScrollView scrollView;
+    String currentLocale;
 
-	@Override
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);		
@@ -45,7 +48,13 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		if (app == null) {
             app = (EruletApp) getApplicationContext();
         }
-		image = (ImageView)findViewById(R.id.int_image);
+
+        Context context = getApplicationContext();
+        if (!PropertyHolder.isInit())
+            PropertyHolder.init(context);
+        currentLocale = PropertyHolder.getLocale();
+
+        image = (ImageView)findViewById(R.id.int_image);
 
         scrollView = (HorizontalScrollView) findViewById(R.id.heatMapScrollView);
 
@@ -113,7 +122,7 @@ public class InteractiveImageActivityHeatMap extends Activity implements View.On
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		dialog = builder.create();
 		dialog.setTitle( getString(R.string.info) );
-		dialog.setMessage( Html.fromHtml(b.getMessage()) );
+		dialog.setMessage( Html.fromHtml(b.getMessage(currentLocale)) );
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCanceledOnTouchOutside(true);
         WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();

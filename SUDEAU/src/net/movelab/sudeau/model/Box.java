@@ -20,6 +20,18 @@ public class Box {
 	private int maxY;	
 	@DatabaseField
 	private String message;
+    @DatabaseField
+    private String message_oc;
+    @DatabaseField
+    private String message_es;
+    @DatabaseField
+    private String message_ca;
+    @DatabaseField
+    private String message_fr;
+    @DatabaseField
+    private String message_en;
+
+
 	@DatabaseField(foreign=true, columnName="interactiveImageId")
     private InteractiveImage interactiveImage;
 	
@@ -45,15 +57,68 @@ public class Box {
 		this.interactiveImage = img;
 	}
 		
-	public String getMessage(){
-		return message;
-	}
 	
-	public void setMessage(String message){
-		this.message=message;
-	}
-	
-	public boolean isInside(int x, int y){
+    public String getFirstFilledMessage(){
+        String result = message_oc;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = message_es;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = message_ca;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = message_fr;
+        if(result != null && !result.isEmpty())
+            return result;
+        result = message_en;
+        if(result != null && !result.isEmpty())
+            return result;
+        return "";
+    }
+
+    public String getMessage(String lang) {
+        String result = "";
+        if(lang.equals("oc")){
+            result = message_oc;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("es")){
+            result = message_es;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("ca")){
+            result = message_ca;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("fr")){
+            result = message_fr;
+            if(result != null && !result.isEmpty())
+                return result;}
+        if(lang.equals("en"))
+            result = message_en;{
+            if(result != null && !result.isEmpty())
+                return result;}
+        return getFirstFilledMessage();
+    }
+
+    public void setMessage(String lang, String message) {
+        if(lang.equals("oc"))
+            this.message_oc = message;
+        if(lang.equals("es"))
+            this.message_es = message;
+        if(lang.equals("ca"))
+            this.message_ca = message;
+        if(lang.equals("fr"))
+            this.message_fr = message;
+        if(lang.equals("en"))
+            this.message_en = message;
+    }
+
+
+
+
+    public boolean isInside(int x, int y){
 		if( x <= maxX && x >= minX && y <= maxY && y >= minY )
 			return true;
 		return false;

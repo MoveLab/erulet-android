@@ -398,8 +398,11 @@ public class JSONConverter {
         for (int i = 0; i < ja.length(); i++) {
             JSONObject j = ja.optJSONObject(i);
             Box b = new Box(j.optInt("id"), j.optInt("min_x"), j.optInt("min_y"), j.optInt("max_x"), j.optInt("max_y"), ii);
-            // TODO languages
-            b.setMessage(j.optString("message_ca"));
+            b.setMessage("oc", j.optString("message_oc", ""));
+            b.setMessage("es", j.optString("message_es", ""));
+            b.setMessage("ca", j.optString("message_ca", ""));
+            b.setMessage("fr", j.optString("message_fr", ""));
+            b.setMessage("en", j.optString("message_en", ""));
             result.add(b);
         }
         return result;
