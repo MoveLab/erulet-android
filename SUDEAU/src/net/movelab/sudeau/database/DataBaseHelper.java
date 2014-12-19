@@ -1,5 +1,7 @@
 package net.movelab.sudeau.database;
 
+import net.movelab.sudeau.DownloadCoreData;
+import net.movelab.sudeau.PropertyHolder;
 import net.movelab.sudeau.model.FileManifest;
 import net.movelab.sudeau.model.HighLight;
 import net.movelab.sudeau.model.InteractiveImage;
@@ -10,6 +12,7 @@ import net.movelab.sudeau.model.Route;
 import net.movelab.sudeau.model.Step;
 import net.movelab.sudeau.model.Track;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -85,6 +88,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
                 dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_ca TEXT;");
                 dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_fr TEXT;");
                 dao.executeRaw("ALTER TABLE 'box' ADD COLUMN message_en TEXT;");
+                PropertyHolder.setCoreDataRefreshNeeded(true);
             } catch (java.sql.SQLException e) {
                 Log.e(DataBaseHelper.class.getName(), "Can't add columns", e);
                 throw new RuntimeException(e);

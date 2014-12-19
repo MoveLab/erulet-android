@@ -66,7 +66,6 @@ public class DownloadCoreData extends IntentService {
 
     Context context;
 
-
     public static String OUTGOING_MESSAGE_KEY_RESPONSE_CODE = "response_code";
 
     public static int RESPONSE_CODE_FAIL = 0;
@@ -93,6 +92,8 @@ public class DownloadCoreData extends IntentService {
 
                 DataBaseHelper dataBaseHelper = app.getDataBaseHelper();
 
+                Boolean refresh_json = PropertyHolder.isCoreDataRefreshNeeded();
+
                 // JSON
                 String jsonArrayStringFlatRoutes = Util.getJSON(UtilLocal.API_ROUTES_FLAT, context);
                 if (jsonArrayStringFlatRoutes != null) {
@@ -110,7 +111,7 @@ public class DownloadCoreData extends IntentService {
                                             String this_last_modified_date = this_j.optString("last_modified", null);
                                             if (this_last_modified_date != null) {
                                                 long lmod = Util.ecma262ToLong(this_last_modified_date);
-                                                if (lmod > local_lmod) {
+                                                if (lmod > local_lmod || refresh_json) {
                                                     // last modied on server after most recent update on phone
                                                     jsonSuccess = getRoute(this_server_id, dataBaseHelper);
                                                 }
@@ -131,6 +132,9 @@ public class DownloadCoreData extends IntentService {
                     }
                 }
 
+                if(jsonSuccess){
+                    PropertyHolder.setCoreDataRefreshNeeded(false);
+                }
 
                 // GENERAL REFERENCES
                 boolean grSuccess = true;

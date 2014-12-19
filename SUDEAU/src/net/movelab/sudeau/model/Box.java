@@ -57,7 +57,7 @@ public class Box {
 		this.interactiveImage = img;
 	}
 		
-	
+
     public String getFirstFilledMessage(){
         String result = message_oc;
         if(result != null && !result.isEmpty())

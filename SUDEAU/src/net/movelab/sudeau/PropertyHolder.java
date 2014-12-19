@@ -40,6 +40,7 @@ public class PropertyHolder {
     public static final String TRIP_IN_PROGRESS_TRACKING = "TRIP_IN_PROGRESS_TRACKING";
     public static final String TRIP_IN_PROGRESS_MODE = "TRIP_IN_PROGRESS_MODE";
     public static final String GOOGLE_MAPS_OFFLINE_READY = "GOOGLE_MAPS_OFFLINE_READY";
+    public static final String CORE_DATA_REFRESH_NEEDED = "CORE_DATA_REFRESH_NEEDED";
 
     public static final String CORE_DATA_STATUS = "CORE_DATA_STATUS";
     public static final String ROUTE_CONTENT_STATUS_PREFIX = "ROUTE_CONTENT_STATUS_ROUTE";
@@ -172,6 +173,16 @@ public class PropertyHolder {
 
     public static void setSyncAlarmOn(boolean _alarm_on) {
         editor.putBoolean(SYNC_ALARM_ON, _alarm_on);
+        editor.apply();
+    }
+
+
+    public static boolean isCoreDataRefreshNeeded() {
+        return sharedPreferences.getBoolean(CORE_DATA_REFRESH_NEEDED, false);
+    }
+
+    public static void setCoreDataRefreshNeeded(boolean _needed) {
+        editor.putBoolean(CORE_DATA_REFRESH_NEEDED, _needed);
         editor.apply();
     }
 

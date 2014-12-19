@@ -44,6 +44,9 @@ public class Switchboard extends FragmentActivity {
         if (!PropertyHolder.isInit())
             PropertyHolder.init(context);
 
+//TODO temp test
+        PropertyHolder.setCoreDataRefreshNeeded(true);
+
 
         if(!PropertyHolder.isSyncAlarmOn()){
         context.sendBroadcast( new Intent(
