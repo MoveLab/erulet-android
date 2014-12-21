@@ -39,17 +39,8 @@ public class JSONConverter {
 
         Route r;
         int server_id = j.optInt("server_id", -1);
-        if (server_id != -1) {
-            r = DataContainer.findRouteByServerId(server_id, db);
-            if (r == null) {
-                r = new Route();
-                r.setServerId(j.optInt("server_id", -1));
-            }
-        } else {
-            r = new Route();
-            r.setServerId(j.optInt("server_id", -1));
-        }
-
+        r = new Route();
+        r.setServerId(j.optInt("server_id", -1));
 
         r.setRouteJsonLastUpdatedNow();
 
@@ -158,8 +149,7 @@ public class JSONConverter {
 
     public static Route jsonToRoute(String json, DataBaseHelper db) throws JSONException {
         JSONObject j = new JSONObject(json);
-        Route r = jsonObjectToRoute(j, db);
-        return r;
+        return jsonObjectToRoute(j, db);
     }
 
 
@@ -167,25 +157,12 @@ public class JSONConverter {
 
         Track t;
         int server_id = j.optInt("server_id", -1);
-        if (server_id != -1) {
-            t = DataContainer.findTrackByServerId(server_id, db);
-            if (t == null) {
-                t = new Track();
-                t.setServerId(j.optInt("server_id", -1));
-            }
-        } else {
-            t = new Track();
-            t.setServerId(j.optInt("server_id", -1));
-        }
+        t = new Track();
+        t.setServerId(j.optInt("server_id", -1));
 
-
-        // again just using ca for now
+        // just using ca for name since it is never used
         if (j.has("name_ca")) {
             t.setName(j.getString("name_ca"));
-        }
-        // TODO tracks will not have references
-        if (j.has("reference")) {
-
         }
         if (j.has("steps")) {
             if (j.getJSONArray("steps") != null) {
@@ -223,17 +200,8 @@ public class JSONConverter {
 
         Step s;
         int server_id = j.optInt("server_id");
-
-//        if (server_id != -1) {
-//            s = DataContainer.findStepByServerId(server_id, db);
- //           if (s == null) {
-  //              s = new Step();
-   //             s.setServerId(j.optInt("server_id", -1));
-    //        }
-    //    } else {
-            s = new Step();
-            s.setServerId(j.optInt("server_id", -1));
-   //     }
+        s = new Step();
+        s.setServerId(j.optInt("server_id", -1));
 
         SimpleDateFormat spdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -279,16 +247,8 @@ public class JSONConverter {
 
         HighLight h;
         int server_id = j.optInt("server_id");
-        if (server_id != -1) {
-            h = DataContainer.findHighlightByServerId(server_id, db);
-            if (h == null) {
-                h = new HighLight();
-                h.setServerId(j.optInt("server_id", -1));
-            }
-        } else {
-            h = new HighLight();
-            h.setServerId(j.optInt("server_id", -1));
-        }
+        h = new HighLight();
+        h.setServerId(j.optInt("server_id", -1));
 
         h.setStep(s);
         h.setGlobalRating((float) j.optDouble("average_rating", -1.0));
@@ -355,18 +315,8 @@ public class JSONConverter {
 
         Reference r;
         int server_id = j.optInt("server_id");
-        if (server_id != -1) {
-            r = DataContainer.findReferenceByServerId(server_id, db);
-            if (r == null) {
-                r = new Reference();
-                r.setServerId(j.optInt("server_id", -1));
-            }
-        } else {
-            r = new Reference();
-            r.setServerId(j.optInt("server_id", -1));
-        }
-
-
+        r = new Reference();
+        r.setServerId(j.optInt("server_id", -1));
         r.setName(j.optString("name_ca", "none"));
         // TODO check that this is ok - I am not setting any reference file paths here -- only via file downloads
         return r;
@@ -376,19 +326,14 @@ public class JSONConverter {
 
         InteractiveImage ii = null;
         int server_id = j.optInt("server_id", -1);
-        if (server_id != -1) {
-            ii = DataContainer.findInteractiveImageByServerId(server_id, db);
-            if (ii == null) {
-                ii = new InteractiveImage();
-                ii.setServerId(server_id);
-            }
+        ii = new InteractiveImage();
+        ii.setServerId(server_id);
 
         ii.setOriginalHeight(j.optInt("original_height"));
         ii.setOriginalWidth(j.optInt("original_width"));
         JSONArray boxArray = j.optJSONArray("boxes");
         if (boxArray != null) {
             ii.setBoxes(jsonArrayToBoxes(boxArray, ii));
-        }
         }
         return ii;
     }
@@ -408,6 +353,8 @@ public class JSONConverter {
         return result;
     }
 
+
+// OBJECTS FROM JSON
 
     public static JSONObject highLightToJSONObject(HighLight h, EruletApp app) throws JSONException {
         if (h == null)

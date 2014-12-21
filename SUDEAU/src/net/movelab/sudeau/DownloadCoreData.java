@@ -1,29 +1,15 @@
 package net.movelab.sudeau;
 
 import android.app.IntentService;
-import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
-import android.os.ResultReceiver;
-import android.provider.SyncStateContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 
 import net.movelab.sudeau.database.DataBaseHelper;
 import net.movelab.sudeau.database.DataContainer;
 import net.movelab.sudeau.model.FileManifest;
-import net.movelab.sudeau.model.HighLight;
-import net.movelab.sudeau.model.InteractiveImage;
 import net.movelab.sudeau.model.JSONConverter;
 import net.movelab.sudeau.model.Reference;
 import net.movelab.sudeau.model.Route;
@@ -43,10 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -107,17 +89,20 @@ public class DownloadCoreData extends IntentService {
                                     if (this_server_id >= 0) {
                                         Route local_route = DataContainer.findRouteByServerId(this_server_id, dataBaseHelper);
                                         if (local_route != null) {
+                                            // route is on phone so first make sure user is not currently following it; if currently following, don't update it now, wait for next sync
+                                            if(PropertyHolder.getTripInProgressFollowing() != local_route.getId() && PropertyHolder.getTripInProgressTracking() != local_route.getId()){
                                             long local_lmod = local_route.getRouteJsonLastUpdated();
                                             String this_last_modified_date = this_j.optString("last_modified", null);
                                             if (this_last_modified_date != null) {
                                                 long lmod = Util.ecma262ToLong(this_last_modified_date);
                                                 if (lmod > local_lmod || refresh_json) {
-                                                    // last modied on server after most recent update on phone
+                                                    // last modified on server after most recent update on phone
                                                     jsonSuccess = getRoute(this_server_id, dataBaseHelper);
                                                 }
                                             } else {
                                                 // server has no last modified date so better update
                                                 jsonSuccess = getRoute(this_server_id, dataBaseHelper);
+                                            }
                                             }
                                         } else {
                                             // route is not  on phone at all so
@@ -319,13 +304,15 @@ public class DownloadCoreData extends IntentService {
                 List<Route> routes = DataContainer.getAllOfficialRoutes(dataBaseHelper);
                 for(Route route : routes){
                     // if last updates of either content or maps are above zero, then user has already downloaded it, so we should keep it in sync
+                    // but only if not currentlly following
+                    if(PropertyHolder.getTripInProgressTracking() != route.getId() && PropertyHolder.getTripInProgressFollowing() != route.getId()){
                     if(route.getRouteContentLastUpdated() > 0L || route.getLocalCartoLastUpdated() > 0L){
                         Intent updateRouteContentIntent = new Intent(context, DownloadRouteContent.class);
                         updateRouteContentIntent.putExtra(DownloadRouteContent.INCOMING_MESSAGE_KEY_ROUTE_ID, route.getId());
                         context.startService(updateRouteContentIntent);
                     }
                 }
-
+                }
                 // now sync ratings
                 context.startService(new Intent(context, UploadRatings.class));
 
@@ -364,8 +351,10 @@ public class DownloadCoreData extends IntentService {
                 if (existingRoute == null) {
                     DataContainer.insertRoute(newRoute, dataBaseHelper);
                 } else {
-                    DataContainer.updateRouteFromServer(newRoute, existingRoute, app);
-                }
+                    // check again that route not being followed:
+                    if(PropertyHolder.getTripInProgressFollowing() != existingRoute.getId() && PropertyHolder.getTripInProgressTracking() != existingRoute.getId()){
+                    DataContainer.updateOfficialRouteFromServer(newRoute, existingRoute, app);
+                }}
             } catch (JSONException e) {
                 Log.e("JSON download 1", "" + e);
                 jsonSuccess = false;

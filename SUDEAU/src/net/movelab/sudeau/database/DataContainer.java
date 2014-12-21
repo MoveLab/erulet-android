@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.movelab.sudeau.EruletApp;
+import net.movelab.sudeau.PropertyHolder;
 import net.movelab.sudeau.model.Box;
 //import net.movelab.sudeau.model.EruMedia;
 import net.movelab.sudeau.model.FileManifest;
@@ -708,6 +709,21 @@ public class DataContainer {
         return getTrackSteps(t, db);
     }
 
+    public static List<HighLight> getRouteHighlights(Route route, DataBaseHelper db) {
+        ArrayList<HighLight> result = new ArrayList<HighLight>();
+        List<Step> these_steps = getRouteSteps(route, db);
+        for(Step s : these_steps){
+            if(s.hasSingleHighLight()){
+                List<HighLight> these_highlights = getStepHighLights(s, db);
+                for(HighLight h : these_highlights){
+                    result.add(h);
+                }
+            }
+        }
+        return result;
+    }
+
+
     public static List<Box> getInteractiveImageBoxes(InteractiveImage img,
                                                      DataBaseHelper db) {
         db.getInteractiveImageDataDao().refresh(img);
@@ -910,12 +926,31 @@ public class DataContainer {
         }
     }
 
-    public static void updateRouteFromServer(Route updateRoute, Route existingRoute,
-                                   EruletApp app) {
+    public static void updateOfficialRouteFromServer(Route updatedRoute, Route existingRoute,
+                                                     EruletApp app) {
 
-        // TODO make this nicer - e.g. by transferring user ratings. But for now:
-        DataContainer.deleteRouteCascade(existingRoute, app);
-        insertRoute(updateRoute, app.getDataBaseHelper());
+        DataBaseHelper db = app.getDataBaseHelper();
+
+        updatedRoute.setUserRating(existingRoute.getUserRating());
+
+        if(existingRoute.getRouteContentLastUpdated() > 0L){
+        // set content last updated to 1, which will indicate that the route content has already been downloaded, so it should be synced; but also ensure that new content will be grabbed from the server to ensure up to date.
+        updatedRoute.setRouteContentLastUpdated(1L);
+        }
+
+
+        List<HighLight> updatedHighLights = getRouteHighlights(updatedRoute, db);
+
+        for(HighLight h: updatedHighLights){
+            HighLight existing_highlight = findHighlightByServerId(h.getServerId(), db);
+            if(existing_highlight != null){
+                h.setUserRating(existing_highlight.getUserRating());
+            }
+
+        }
+        deleteRouteCascade(existingRoute, app);
+        insertRoute(updatedRoute, db);
+        PropertyHolder.setRouteContentStatus(updatedRoute.getId(), PropertyHolder.STATUS_CODE_MISSING);
     }
 
 
